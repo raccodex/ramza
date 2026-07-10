@@ -97,6 +97,21 @@ Updated 2026-07-11:
 - Auth, admin, API, AJAX, upload and cron gates passed against the disposable DB.
 - Vendor runtime autoload verification completed with 18 pass, 0 fail.
 
+Phase 2A update:
+- Commit 2fafef3e raised the active PHP runtime floor to PHP 8.2.0 in the
+  bootstrap guard, current installer requirement check/text, and admin
+  system-status helper.
+- Full first-party lint was rerun after the commit in ordered chunks:
+  2,029 pass, 0 fail.
+- Existing web-SAPI probes were rerun after the commit against the disposable
+  database harness: 18 pass, 0 fail.
+- Final clean web-SAPI run produced no PHP warning/deprecation/fatal capture
+  files.
+- 03_PHP82_LINT_RESULTS.csv SHA-256:
+  EB7BE62002283D9D86525EF227D4B1640F4A9421EFB06D59A4D32CC6A2DB0533
+- 10_WEB_SAPI_PROBE_RESULTS.csv SHA-256:
+  E515C69CFB6117429D967C97DA1CD08C4FFB5F56642C6B87C142B7E397FE5C6E
+
 Still not claimed:
 - exhaustive production coverage of every route/payment/provider/integration
 - installer rebuild

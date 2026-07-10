@@ -2,25 +2,38 @@ RACSOCIAL PHP 8.2 MODERNIZATION
 PHP 8.2 COMPATIBILITY MATRIX
 Generated: 2026-07-10 (Asia/Karachi)
 Runtime under test: PHP 8.2.30 CLI, error_reporting=E_ALL
-Report status: PHASE 1A/1B COMPLETE, FIRST REMEDIATION BATCH COMPLETE
+Report status: PHASE 2A COMPLETE, ACTIVE PHP RUNTIME FLOOR RAISED TO 8.2
 
 1. COMPATIBILITY GATE
 ---------------------
-The minimum-version declarations remain at PHP 7.1 during this audit.
+The active supported runtime floor is now PHP 8.2.0.
 
-Reason PHP minimum was not raised:
-- PHP 8.2 executable syntax now passes for first-party candidates, but database
-  runtime and HTTP bootstrap probes were not safe to execute because the local
-  configuration could not be proven dev/test.
-- Broad runtime categories still require manual review and database-backed test
-  evidence before production requirements should be changed.
-- Installer rebuild and installer UI/backend redesign are explicitly out of scope
-  for Phase 1 and were not started.
+Reason PHP minimum was raised in Phase 2A:
+- Phase 1 completion decision recorded a supported PASS with PHP 8.2.30,
+  disposable database import from wowonder.sql, 2,029/2,029 first-party lint,
+  18/18 web-SAPI probes, auth/admin/API/AJAX/upload/cron gates, vendor autoload
+  verification, and final clean warning/deprecation/fatal logs.
+- Phase 2A updated active runtime checks only after that evidence existed.
 
-Known minimum-version locations:
-- assets/init.php: version_compare(PHP_VERSION, '7.1.0', '>=')
-- install/index.php: PHP 7.1+ installer requirement text/check
-- admin-panel/pages/changelog/content.phtml: historical PHP 8.2 support text only
+Updated active minimum-version locations:
+- assets/init.php: version_compare(PHP_VERSION, '8.2.0', '>=')
+- install/index.php: PHP 8.2+ installer requirement text/check
+- assets/includes/functions_one.php: admin system-status helper now reports an
+  error when PHP is below 8.2.0.
+- admin-panel/pages/changelog/content.phtml: left unchanged because its older
+  PHP references are historical changelog text.
+
+Phase 2A commit:
+- 2fafef3e fix: raise active PHP runtime floor to 8.2
+
+Post-commit verification:
+- full first-party lint: PASS, 2,029/2,029
+- web-SAPI probes against disposable database harness: PASS, 18/18
+- final PHP warning/deprecation/fatal capture files: none produced
+- lint result SHA-256:
+  EB7BE62002283D9D86525EF227D4B1640F4A9421EFB06D59A4D32CC6A2DB0533
+- web-SAPI result SHA-256:
+  E515C69CFB6117429D967C97DA1CD08C4FFB5F56642C6B87C142B7E397FE5C6E
 
 2. EXECUTABLE LINT SCOPE
 ------------------------

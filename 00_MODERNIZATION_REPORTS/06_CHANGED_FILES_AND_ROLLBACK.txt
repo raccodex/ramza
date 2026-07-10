@@ -202,3 +202,42 @@ Rollback for this safety checkpoint:
    git restore --source 2286a531 -- .gitignore 00_MODERNIZATION_REPORTS/06_CHANGED_FILES_AND_ROLLBACK.txt
 3. Use the Phase 2 external archive above only if full pre-Phase-2 workspace
    restoration is required.
+
+Phase 2A PHP runtime-floor update
+---------------------------------
+Commit: 2fafef3e
+Full hash: 2fafef3eec2f1447b74b4235a4b9162624421ac1
+
+Changed first-party code files:
+- assets/init.php
+- assets/includes/functions_one.php
+- install/index.php
+
+Purpose:
+- Raised the active supported PHP runtime floor from PHP 7.1 to PHP 8.2.0.
+- Kept the bootstrap check before database initialization.
+- Replaced the below-minimum bootstrap message with a safe database-independent
+  message that exposes no paths or secrets.
+- Updated the current installer requirement check/text.
+- Added the same PHP 8.2 floor to the admin system-status helper.
+
+Verification after commit:
+- Full first-party PHP lint: PASS, 2,029/2,029.
+- Existing web-SAPI probe suite: PASS, 18/18, using the disposable database
+  harness and not the unknown local database.
+- Final web-SAPI run produced no php82-web-sapi-error.log,
+  php82-web-sapi-captured.log, or php82-web-sapi-fatal.log files.
+
+Evidence hashes:
+- 00_MODERNIZATION_REPORTS/03_PHP82_LINT_RESULTS.csv:
+  EB7BE62002283D9D86525EF227D4B1640F4A9421EFB06D59A4D32CC6A2DB0533
+- 00_MODERNIZATION_REPORTS/10_WEB_SAPI_PROBE_RESULTS.csv:
+  E515C69CFB6117429D967C97DA1CD08C4FFB5F56642C6B87C142B7E397FE5C6E
+
+Rollback for this commit:
+1. Review current changes:
+   git status --short
+2. Compare the runtime-floor commit:
+   git show --stat 2fafef3e
+3. Restore only the PHP floor files if rollback is approved:
+   git restore --source 47134455 -- assets/init.php assets/includes/functions_one.php install/index.php
