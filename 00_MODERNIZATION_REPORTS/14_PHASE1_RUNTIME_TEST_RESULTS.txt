@@ -1,0 +1,68 @@
+RACSocial Phase 1 Runtime - Consolidated Test Results
+Generated: 2026-07-11 (Asia/Karachi)
+
+1. PHP Syntax
+-------------
+- first-party executable PHP/PHTML files: 2,029
+- pass: 2,029
+- fail: 0
+
+Machine-readable:
+- 00_MODERNIZATION_REPORTS/03_PHP82_LINT_RESULTS.csv
+
+2. Static Scan
+--------------
+Final token-aware candidate total: 89,320
+
+Current summary:
+- callback_signature: 38 needs-review
+- count_nullable: 938 needs-review
+- deprecated_dollar_brace_interpolation: 23 false-positive-literal-placeholder
+- direct_request_array: 9,931 needs-review
+- dynamic_property_write: 280 needs-review
+- error_suppression: 564 needs-review
+- interface_or_signature: 1,329 needs-review
+- loose_comparison_security: 13,501 needs-review
+- null_internal_function_argument: 1,012 needs-review
+- null_scalar_array_access: 58,786 needs-review
+- raw_mysqli: 2,704 needs-review
+- request_value_string_function: 142 needs-review
+- static_call: 72 needs-review
+
+Machine-readable:
+- 00_MODERNIZATION_REPORTS/04_PHP82_STATIC_SCAN_CANDIDATES.csv
+- 00_MODERNIZATION_REPORTS/04_PHP82_STATIC_SCAN_SUMMARY.csv
+
+3. Isolated Database
+--------------------
+- disposable DB: racsocial_php82_disposable_20260711_002958
+- imported tables: 139
+- seeded test users: 2
+- seeded admins: 1
+
+4. Web-SAPI Runtime
+-------------------
+- probes: 18
+- pass: 18
+- fail: 0
+- final PHP runtime error logs: none created
+
+Machine-readable:
+- 00_MODERNIZATION_REPORTS/10_WEB_SAPI_PROBE_RESULTS.csv
+
+5. Vendor Runtime
+-----------------
+- runtime autoload pass: 18
+- runtime autoload fail: 0
+- stale lock without runtime autoload: 1
+
+Machine-readable:
+- 00_MODERNIZATION_REPORTS/12_VENDOR_RUNTIME_VERIFICATION.csv
+
+6. Unsupported/Not Claimed
+--------------------------
+This report does not claim exhaustive production coverage of every route, payment
+provider, upload format, notification path, or third-party API integration. It
+claims the bounded Phase 1 runtime gates requested here, with evidence.
+
+END OF CONSOLIDATED TEST RESULTS

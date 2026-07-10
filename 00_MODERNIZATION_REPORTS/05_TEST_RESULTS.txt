@@ -91,11 +91,17 @@ Notable result:
 
 6. TEST GAPS
 ------------
-Still required before claiming full PHP 8.2 runtime compatibility:
-- Safe cloned database or explicit dev/test confirmation.
-- HTTP probes for index.php, requests.php, admincp.php, api.php, login/register,
-  two-factor, password recovery/reset, upload, payment callback, and cron surfaces.
-- Error-log capture under E_ALL in web SAPI.
-- Manual review/remediation of large static categories by route and risk.
+Updated 2026-07-11:
+- A disposable local database was created and imported from wowonder.sql.
+- PHP 8.2 web-SAPI runtime probes were completed with 18/18 pass.
+- Auth, admin, API, AJAX, upload and cron gates passed against the disposable DB.
+- Vendor runtime autoload verification completed with 18 pass, 0 fail.
+
+Still not claimed:
+- exhaustive production coverage of every route/payment/provider/integration
+- installer rebuild
+- admin-panel UI/UX redesign
+- vendor upgrades
+- full closure of every static needs-review bucket
 
 END OF TEST RESULTS

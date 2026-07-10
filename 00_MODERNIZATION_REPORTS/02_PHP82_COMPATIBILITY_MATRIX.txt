@@ -162,4 +162,22 @@ safe step is to review them by runtime surface:
 - count()/array-offset/null-internal-function candidates with runtime evidence
 - dynamic property writes on first-party classes only where confirmed
 
+9. PHASE 1 RUNTIME COMPLETION ADDENDUM
+--------------------------------------
+Runtime completion was performed on 2026-07-11 using an isolated disposable
+database imported from wowonder.sql:
+
+- disposable DB: racsocial_php82_disposable_20260711_002958
+- web-SAPI probe result: PASS, 18/18
+- auth/admin/API/AJAX/upload/cron gates: PASS
+- vendor runtime autoloads: PASS, 18 passed, 0 failed
+- stale top-level assets/libraries/composer.lock has no runtime autoload, but the
+  actual assets/libraries/ftp/vendor/autoload.php passed
+- clean final PHP warning/deprecation/fatal logs: none created
+
+Completion decision:
+- 00_MODERNIZATION_REPORTS/15_PHASE1_COMPLETION_DECISION.txt records a supported
+  PASS for Phase 1 runtime gates.
+- Installer rebuild remains not started in this phase.
+
 END OF CURRENT MATRIX

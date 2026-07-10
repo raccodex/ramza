@@ -1,0 +1,32 @@
+RACSocial Phase 1 Runtime - Vendor Verification
+Generated: 2026-07-11 (Asia/Karachi)
+
+1. Machine-Readable Result
+--------------------------
+00_MODERNIZATION_REPORTS/12_VENDOR_RUNTIME_VERIFICATION.csv
+
+2. Aggregate Result
+-------------------
+- runtime autoload pass: 18
+- runtime autoload fail: 0
+- missing autoload: 0
+- stale lock with no runtime autoload: 1
+
+3. Stale Lock Observation
+-------------------------
+assets/libraries/composer.lock requires nicolab/php-ftp-client v1.4.1, but
+assets/libraries/vendor/autoload.php is not present.
+
+This is not treated as a PHP 8.2 runtime autoload failure because the actual FTP
+library root assets/libraries/ftp/vendor/autoload.php exists and passed.
+
+4. Vendor Upgrade Status
+------------------------
+Vendor upgrades performed: 0
+
+5. Known Vendor Inventory Note
+------------------------------
+payfast/payfast-php-sdk v1.1.4 remains marked abandoned in its lock file. No
+replacement was attempted in Phase 1.
+
+END OF VENDOR VERIFICATION

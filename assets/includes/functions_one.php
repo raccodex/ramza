@@ -696,15 +696,17 @@ function Wo_UserData($user_id, $password = true)
     }
     $fetched_data['avatar_org'] = $fetched_data['avatar'];
     $fetched_data['cover_org'] = $fetched_data['cover'];
-    $explode2 = @end(explode('.', $fetched_data['cover']));
-    $explode3 = @explode('.', $fetched_data['cover']);
+    $cover_parts = explode('.', (string) $fetched_data['cover']);
+    $explode2 = end($cover_parts);
+    $explode3 = $cover_parts;
     $fetched_data['cover_full'] = $wo['userDefaultCover'];
     if ($fetched_data['cover'] != $wo['userDefaultCover']) {
         @$fetched_data['cover_full'] = $explode3[0] . '_full.' . $explode2;
     }
     $fetched_data['avatar_full'] = $fetched_data['avatar'];
-    $explode2 = @end(explode('.', $fetched_data['avatar']));
-    $explode3 = @explode('.', $fetched_data['avatar']);
+    $avatar_parts = explode('.', (string) $fetched_data['avatar']);
+    $explode2 = end($avatar_parts);
+    $explode3 = $avatar_parts;
     if ($fetched_data['avatar'] != $wo['userDefaultAvatar'] && $fetched_data['avatar'] != $wo['userDefaultFAvatar']) {
         @$fetched_data['avatar_full'] = $explode3[0] . '_full.' . $explode2;
     } else {

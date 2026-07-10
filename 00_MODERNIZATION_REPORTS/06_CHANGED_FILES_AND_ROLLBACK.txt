@@ -109,3 +109,40 @@ Rollback notes:
   above after review.
 - Full pre-change restoration remains available through the Phase 0 external
   archive listed at the top of this report.
+
+Phase 1 runtime completion batch
+--------------------------------
+Status: pending Git commit after report review/update in this working batch.
+
+Additional changed first-party code files:
+- assets/includes/functions_general.php
+
+Additional generated/updated report and tooling files:
+- .gitignore
+- 00_MODERNIZATION_REPORTS/09_ISOLATED_DATABASE_SETUP.txt
+- 00_MODERNIZATION_REPORTS/10_WEB_SAPI_PROBE_RESULTS.csv
+- 00_MODERNIZATION_REPORTS/10_WEB_SAPI_RUNTIME_PROBES.txt
+- 00_MODERNIZATION_REPORTS/11_AUTH_ADMIN_API_AJAX_UPLOAD_CRON_RESULTS.txt
+- 00_MODERNIZATION_REPORTS/12_VENDOR_RUNTIME_VERIFICATION.csv
+- 00_MODERNIZATION_REPORTS/12_VENDOR_RUNTIME_VERIFICATION.txt
+- 00_MODERNIZATION_REPORTS/13_PHASE1_RUNTIME_FIXES.txt
+- 00_MODERNIZATION_REPORTS/14_PHASE1_RUNTIME_TEST_RESULTS.txt
+- 00_MODERNIZATION_REPORTS/15_PHASE1_COMPLETION_DECISION.txt
+- 00_MODERNIZATION_REPORTS/runtime_config/config.php
+- 00_MODERNIZATION_REPORTS/tools/phase1_runtime_prepend.php
+- 00_MODERNIZATION_REPORTS/tools/phase1_runtime_probe.php
+- 00_MODERNIZATION_REPORTS/tools/phase1_runtime_router.php
+- 00_MODERNIZATION_REPORTS/tools/phase1_seed_runtime_users.php
+- 00_MODERNIZATION_REPORTS/tools/phase1_vendor_runtime_verify.php
+
+Additional code fixes:
+- assets/includes/functions_one.php: replaced end(explode(...)) usage with
+  explicit temporary arrays.
+- assets/includes/functions_general.php: hardened getBrowser() for unknown or
+  missing user-agent values and avoided null strripos() arguments.
+
+Additional verification:
+- 2,029 first-party executable files pass PHP 8.2 lint after runtime fixes.
+- 18/18 web-SAPI probes pass against disposable DB.
+- final clean web-SAPI run created no PHP warning/deprecation/fatal logs.
+- 18 vendor runtime autoloads pass, 0 fail.

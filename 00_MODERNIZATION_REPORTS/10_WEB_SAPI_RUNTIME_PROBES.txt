@@ -1,0 +1,58 @@
+RACSocial Phase 1 Runtime - Web SAPI Probe Results
+Generated: 2026-07-11 (Asia/Karachi)
+PHP web runtime: PHP 8.2.30 built-in server
+Probe base URL: http://127.0.0.1:8082
+
+1. Runtime Harness
+------------------
+Server command used PHP's built-in server with:
+- auto_prepend_file=00_MODERNIZATION_REPORTS/tools/phase1_runtime_prepend.php
+- router=00_MODERNIZATION_REPORTS/tools/phase1_runtime_router.php
+- document root=E:\RACSocial\Script\Script
+
+2. Machine-Readable Result
+--------------------------
+00_MODERNIZATION_REPORTS/10_WEB_SAPI_PROBE_RESULTS.csv
+
+3. Aggregate Result
+-------------------
+- total probes: 18
+- pass: 18
+- fail: 0
+
+Result classes:
+- pass: 14
+- pass-disposable-session: 2
+- pass-disposable-db-and-filesystem: 1
+- pass-disposable-db-mutation: 1
+
+4. Error Log Result
+-------------------
+Final clean run created no PHP warning/deprecation/fatal capture files:
+- no php82-web-sapi-error.log
+- no php82-web-sapi-captured.log
+- no php82-web-sapi-fatal.log
+
+Earlier pre-fix probes exposed runtime issues; those were fixed and the clean run
+was repeated after clearing generated logs.
+
+5. Covered Routes
+-----------------
+- /
+- /index.php
+- /admincp.php unauthenticated gate
+- /admincp.php authenticated admin
+- /api.php missing type
+- /api.php invalid type
+- /api.php user_data for disposable user
+- /api.php posts_data for disposable user
+- /api/v2/
+- /requests.php?f=login missing fields
+- /requests.php?f=login disposable user login
+- /requests.php?f=login disposable admin login
+- /requests.php?f=resend_two_factor missing hash
+- /requests.php?f=session_status authenticated
+- /requests.php?f=upload-blog-image authenticated PNG upload
+- /cron-job.php against disposable database
+
+END OF WEB SAPI PROBE RESULTS

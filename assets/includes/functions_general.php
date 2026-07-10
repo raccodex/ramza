@@ -2106,10 +2106,11 @@ function glob_recursive($base, $pattern, $flags = 0) {
 }
 
 function getBrowser() {
-    $u_agent  = $_SERVER['HTTP_USER_AGENT'];
+    $u_agent  = $_SERVER['HTTP_USER_AGENT'] ?? '';
     $bname    = 'Unknown';
     $platform = 'Unknown';
     $version  = "";
+    $ub       = 'Unknown';
     // First get the platform?
     if (preg_match('/macintosh|mac os x/i', $u_agent)) {
         $platform = 'mac';
@@ -2159,13 +2160,15 @@ function getBrowser() {
     if ($i != 1) {
         //we will have two since we are not using 'other' argument yet
         //see if version is before or after the name
-        if (strripos($u_agent, "Version") < strripos($u_agent, $ub)) {
-            $version = $matches['version'][0];
+        $version_position = strripos($u_agent, "Version");
+        $browser_position = strripos($u_agent, $ub);
+        if ($version_position !== false && $browser_position !== false && $version_position < $browser_position) {
+            $version = $matches['version'][0] ?? "";
         } else {
-            $version = $matches['version'][1];
+            $version = $matches['version'][1] ?? ($matches['version'][0] ?? "");
         }
     } else {
-        $version = $matches['version'][0];
+        $version = $matches['version'][0] ?? "";
     }
     // check if we have a number
     if ($version == null || $version == "") {
