@@ -50,7 +50,8 @@ For Git-based rollback after the initial checkpoint exists:
 
 Phase 1 remediation checkpoint
 ------------------------------
-Status: pending Git commit after report review/update in this working batch.
+Commit: 24e1bcf6
+Full hash: 24e1bcf6b2a8bbdd5e99280887dc2ccc99c944c7
 
 Changed first-party code files:
 - updater.php
