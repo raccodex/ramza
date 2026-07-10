@@ -1,0 +1,132 @@
+<div class="page-margin mt-0">
+	<div class="wow_content popular_posts_hdr">
+		<h2><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.875 4.85206C10.5115 5.30657 8.69343 3.48853 9.14794 2.125M9.70814 1.56479L6.77052 4.50241C5.49342 5.77951 4.58742 7.37969 4.14938 9.13186L4.00743 9.69963C3.9632 9.87655 4.12345 10.0368 4.30036 9.99257L4.86814 9.85062C6.62031 9.41258 8.22049 8.50658 9.49759 7.22948L12.4352 4.29186C12.7968 3.93023 13 3.43975 13 2.92833C13 1.86334 12.1367 1 11.0717 1C10.5603 1 10.0698 1.20316 9.70814 1.56479Z" stroke="currentColor" stroke-width="1.5"/><path d="M9.64374 1.57584C10.0124 1.20714 10.5125 1 11.0339 1C12.1198 1 13 1.88023 13 2.96605C13 3.48748 12.7929 3.98755 12.4242 4.35626L11.853 4.92742C10.4628 5.39083 8.60917 3.53722 9.07258 2.14701L9.64374 1.57584Z" class="icon_main" stroke-width="1.5"/><path d="M1.76692 12.3225C1.75017 12.2942 1.73968 12.2679 1.73968 12.2444C1.73968 12.0088 1.48358 11.9989 1.41962 12.0001C1.41005 12.0003 1.39837 12.0006 1.3888 12.0006C1.23561 12.0006 1.0997 12.0931 1.04139 12.2348L1.004 12.3256C0.965878 12.3834 1.20591 12.8649 1.48962 12.75C1.79219 12.75 1.92108 12.5828 1.76692 12.3225Z" class="icon_main_fill icon_main" stroke-width="1.5"/></svg>&nbsp;<?php echo $wo['lang']['design']; ?></h2>
+	</div>
+</div>
+
+<div class="wo_settings_page wow_content">
+
+	<form  method="post" class="setting-profile-form" enctype="multipart/form-data">
+		<div class="setting-profile-alert setting-update-alert"></div>
+		 
+		<div class="setting-panel">
+			<!-- Text input-->
+			<?php if (!empty($wo['setting']['background_image'])) { ?>
+				<div class="wow_form_fields mb-0">
+					<label for="background_image_status"><?php echo $wo['lang']['theme']; ?></label>
+				</div>
+				<div class="form-group wo_prof_des_toggle">
+					<?php 
+						$selected_my_background   = ($wo['setting']['background_image_status'] == '1')   ? ' checked' : '';
+						$selected_defualt_background = ($wo['setting']['background_image_status'] == '0')   ? ' checked' : '';
+					?>
+					<div class="round-check">
+						<input type="radio" name="background_image_status" id="background_image_status-0" value="defualt" <?php echo $selected_defualt_background; ?>>
+						<label for="background_image_status-0"><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor" /></svg></span> <?php echo $wo['lang']['deafult']; ?></label>
+					</div>
+					<div class="round-check">
+						<input type="radio" name="background_image_status" id="background_image_status-1" value="my_background" <?php echo $selected_my_background; ?>>
+						<label for="background_image_status-1"><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor" /></svg></span> <?php echo $wo['lang']['my_background']; ?></label>
+					</div>
+				</div>
+			<?php }?>
+			<?php if ($wo['config']['profile_back'] == 1) { ?>
+				<div class="btn-file wo_sett_designs">
+					<input type="file" id="background_image" accept="image/*" name="background_image">
+					<div class="main change-file-ico">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5,6V17.5A4,4 0 0,1 12.5,21.5A4,4 0 0,1 8.5,17.5V5A2.5,2.5 0 0,1 11,2.5A2.5,2.5 0 0,1 13.5,5V15.5A1,1 0 0,1 12.5,16.5A1,1 0 0,1 11.5,15.5V6H10V15.5A2.5,2.5 0 0,0 12.5,18A2.5,2.5 0 0,0 15,15.5V5A4,4 0 0,0 11,1A4,4 0 0,0 7,5V17.5A5.5,5.5 0 0,0 12.5,23A5.5,5.5 0 0,0 18,17.5V6H16.5Z"></path></svg>
+					</div>
+					<div>
+						<b><?php echo $wo['lang']['background'];?></b>
+						<div class="mt-1 avatar-read hidden">
+							<input type="text" class="change-file-input" readonly="">
+						</div>
+					</div>
+				</div>
+				<div class="clear"></div>
+			<?php } ?>
+			
+			<?php if ($wo['config']['css_upload'] == 1) { ?>
+				<hr>
+			<?php if (!empty($wo['setting']['css_file']) && file_exists($wo['setting']['css_file'])) { ?>
+				<div class="wow_form_fields mb-0">
+					<label for="css_status"><?php echo $wo['lang']['design'];?></label>
+				</div>
+				<div class="form-group wo_prof_des_toggle">
+					<?php 
+						$selected_my_css   = (!empty($wo['setting']['css_file']) && file_exists($wo['setting']['css_file'])) ? ' checked' : '';
+						$selected_defualt_css = (!empty($wo['setting']['css_file']) && file_exists($wo['setting']['css_file']))   ? ' checked' : '';
+					?>
+					<div class="round-check">
+						<input type="radio" name="css_status" id="css_status-0" value="1" <?php echo $selected_defualt_css; ?>>
+						<label for="css_status-0"><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor" /></svg></span> <?php echo $wo['lang']['css_status_default']; ?></label>
+					</div>
+					<div class="round-check">
+						<input type="radio" name="css_status" id="css_status-1" value="2" <?php echo $selected_my_css; ?>>
+						<label for="css_status-1"><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor" /></svg></span> <?php echo $wo['lang']['css_status_my']; ?></label>
+					</div>
+				</div>
+			<?php } ?>
+			<?php } ?>
+			<?php if ($wo['config']['css_upload'] == 1) { ?>
+				<div class="btn-file wo_sett_designs">
+					<input type="file" id="css_file" accept="text/css" name="css_file">
+					<div class="main change-file-ico">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5,6V17.5A4,4 0 0,1 12.5,21.5A4,4 0 0,1 8.5,17.5V5A2.5,2.5 0 0,1 11,2.5A2.5,2.5 0 0,1 13.5,5V15.5A1,1 0 0,1 12.5,16.5A1,1 0 0,1 11.5,15.5V6H10V15.5A2.5,2.5 0 0,0 12.5,18A2.5,2.5 0 0,0 15,15.5V5A4,4 0 0,0 11,1A4,4 0 0,0 7,5V17.5A5.5,5.5 0 0,0 12.5,23A5.5,5.5 0 0,0 18,17.5V6H16.5Z"></path></svg>
+					</div>
+					<div>
+						<b><?php echo $wo['lang']['css_file'];?></b>
+						<span class="help-block"><?php echo $wo['lang']['css_file_info'];?></span>
+						<div class="clear"></div>
+						<div class="mt-1 css_file-read hidden">
+							<input type="text" class="change-file-input" readonly="">
+						</div>
+					</div>
+				</div>
+				
+			<?php } ?>
+		</div>
+		
+		<div class="text-center">
+			<button type="submit" class="btn btn-main btn-mat btn-mat-raised add_wow_loader"><?php echo $wo['lang']['save']; ?></button>
+		</div>
+		
+         <input type="hidden" name="user_id" id="user-id" value="<?php echo $wo['setting']['user_id'];?>">
+         <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+   </form>
+</div>
+<script type="text/javascript">
+$(function() {
+  $("#background_image").change(function () {
+         var filename = $(this).val().replace(/C:\\fakepath\\/i, '');
+         $(".avatar-read input").val(filename);
+         $(".avatar-read").removeClass('hidden');
+    });
+  $("#css_file").change(function () {
+         var filename = $(this).val().replace(/C:\\fakepath\\/i, '');
+         $(".css_file-read input").val(filename);
+         $(".css_file-read").removeClass('hidden');
+    });
+  $('form.setting-profile-form').ajaxForm({
+    url: Wo_Ajax_Requests_File() + '?f=update_design_setting',
+    beforeSend: function() {
+      $('.wo_settings_page').find('.add_wow_loader').addClass('btn-loading');
+    },
+    success: function(data) {
+      if (data.status == 200) {
+        scrollToTop();
+        $('.setting-profile-alert').html('<div class="alert alert-success">' + data.message + '</div>');
+        $('.alert-success').fadeIn('fast', function() {
+          $(this).delay(2500).slideUp(500, function() {
+            $(this).remove();
+          });
+        });
+      } 
+      $('.wo_settings_page').find('.add_wow_loader').removeClass('btn-loading');
+    }
+  });
+  $("#background_image").on('change', function() {
+         $("#background_image_status-1").attr("checked", true);
+  });
+});
+</script>

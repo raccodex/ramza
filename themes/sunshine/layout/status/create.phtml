@@ -1,0 +1,201 @@
+<div class="page-margin">
+	<div class="row">
+		<div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+		<div class="col-md-7 middlecol">
+			<form class="create-user-story form-horizontal" method="post">
+				<div class="page-margin mt-0">
+					<div class="wow_content popular_posts_hdr flex">
+						<h2><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M11,19A6,6 0 0,0 17,13H19A8,8 0 0,1 11,21A8,8 0 0,1 3,13A8,8 0 0,1 11,5V7A6,6 0 0,0 5,13A6,6 0 0,0 11,19M19,5H22V7H19V10H17V7H14V5H17V2H19V5Z"></path></svg>&nbsp;<?php echo $wo['lang']['create_new_status'];?></h2>
+						<div class="btnss">
+							<button class="btn btn-main btn-mat add_wow_loader" type="submit"><?php echo $wo['lang']['create']; ?></button>
+						</div>
+					</div>
+				</div>
+
+				<div class="page-margin wow_content wow_sett_content">
+					<div class="create-status-alert setting-update-alert hidden">
+						<div class="alert alert-danger"><?php echo $wo['lang']['max_number_status_6'] ?></div>
+					</div>
+					
+					<div class="publisher-hidden-option">
+						<div id="progress">
+							<span id="percent">0%</span>
+							<div class="progress">
+								<div id="bar" class="progress-bar progress-bar-striped active"></div> 
+							</div>
+							<div class="clear"></div>
+						</div>
+					</div>
+					<div class="wow_form_fields">
+						<label for="whats_going"><?php echo $wo['lang']['whats_going']; ?></label>
+						<textarea name="description" id="whats_going" rows="3" class="form-control input-md"></textarea>
+					</div>
+					<div class="wow_form_fields">
+						<label><?php echo $wo['lang']['media'];?></label>
+						<div class="wow_fcov_image wow_stroy_media" data-block="thumdrop-zone">
+							<div id="wow_fcov_img_holder">
+								
+							</div>
+							<div class="upload_ad_image" onclick="document.getElementById('user-storymedia').click(); return false">
+								<div class="upload_ad_image_content">
+									<svg width="55" height="48" viewBox="0 0 55 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M28.8002 11.8198L28.8925 11.8474L28.8973 11.8418C29.2564 11.8983 29.6089 11.681 29.7145 11.3247C30.6475 8.1896 33.5873 5.99924 36.8624 5.99924C37.2683 5.99924 37.5975 5.67003 37.5975 5.26413C37.5975 4.85821 37.2683 4.52902 36.8624 4.52902C32.8073 4.52902 29.3997 7.22893 28.3056 10.9057C28.1896 11.2949 28.4113 11.7038 28.8002 11.8198Z" class="icon_main_fill icon_main" stroke-width="0.3"></path><path d="M45.0534 33.9345H41.5429C41.2198 33.9345 40.9577 33.6725 40.9577 33.3494C40.9577 33.0263 41.2198 32.7643 41.5429 32.7643H45.0534C49.8926 32.7643 53.83 28.8269 53.83 23.9877C53.83 19.1485 49.8926 15.2112 45.0534 15.2112H44.969C44.7993 15.2112 44.638 15.1376 44.5268 15.0093C44.4157 14.881 44.3655 14.7109 44.3898 14.5429C44.442 14.1784 44.4683 13.8123 44.4683 13.4559C44.4683 9.26192 41.0559 5.84945 36.8619 5.84945C35.2303 5.84945 33.6744 6.35933 32.362 7.32432C32.0736 7.53621 31.6641 7.44218 31.4973 7.12496C27.7807 0.0477366 18.0732 -0.902663 13.0403 5.25391C10.9202 7.84758 10.0872 11.2215 10.7547 14.5099C10.8282 14.8731 10.5503 15.2116 10.1813 15.2116H9.94683C5.10763 15.2116 1.17027 19.149 1.17027 23.9882C1.17027 28.8274 5.10763 32.7647 9.94683 32.7647H13.4574C13.7805 32.7647 14.0425 33.0268 14.0425 33.3498C14.0425 33.6729 13.7805 33.9349 13.4574 33.9349H9.94683C4.46227 33.9349 0 29.4727 0 23.9881C0 18.6574 4.21522 14.2925 9.48751 14.0518C8.99226 10.6402 9.9393 7.19891 12.1343 4.51334C17.5226 -2.07868 27.8491 -1.33981 32.2143 6.01078C33.6069 5.13772 35.2004 4.67971 36.8617 4.67971C41.9429 4.67971 45.9693 9.00449 45.617 14.0572C50.8407 14.3502 55 18.6921 55 23.9877C55 29.4727 50.5377 33.9345 45.0532 33.9345L45.0534 33.9345Z" class="icon_main_fill"></path><path d="M12.6439 33.019C12.6439 41.1676 19.2732 47.7967 27.4217 47.7967C35.5704 47.7967 42.1995 41.1675 42.1995 33.019C42.1995 24.8703 35.5704 18.2412 27.4217 18.2412C19.2731 18.2412 12.6439 24.8704 12.6439 33.019ZM14.1144 33.019C14.1144 25.6816 20.0842 19.7117 27.4217 19.7117C34.7591 19.7117 40.729 25.6815 40.729 33.019C40.729 40.3564 34.7591 46.3263 27.4217 46.3263C20.0843 46.3263 14.1144 40.3565 14.1144 33.019Z" class="icon_main_fill icon_main" stroke-width="0.3"></path><path d="M27.1107 38.9073C27.1107 39.2267 27.3698 39.4857 27.6891 39.4857C28.0084 39.4857 28.2675 39.2271 28.2675 38.9073V27.7698C28.2675 27.4504 28.0085 27.1914 27.6891 27.1914C27.3697 27.1914 27.1107 27.4504 27.1107 27.7698V38.9073Z" class="icon_main_fill icon_main" stroke-width="0.3"></path><path d="M27.6893 28.5892L24.6715 31.607L27.6893 28.5892ZM27.6893 28.5892L30.7072 31.6071C30.82 31.7199 30.9685 31.7765 31.1162 31.7765L27.6893 28.5892ZM23.8534 31.6071C24.0793 31.833 24.4457 31.8332 24.6714 31.6071L31.1162 31.7765C31.2636 31.7765 31.4122 31.7204 31.5252 31.6071C31.7511 31.3811 31.7511 31.0151 31.5251 30.7892L28.0983 27.3623C27.8724 27.1364 27.506 27.1363 27.2803 27.3623C27.2803 27.3623 27.2803 27.3623 27.2803 27.3623C27.2803 27.3623 27.2802 27.3624 27.2802 27.3624L23.8534 30.7892C23.6275 31.0151 23.6275 31.3812 23.8534 31.6071Z" class="icon_main_fill icon_main" stroke-width="0.3"></path></svg> 
+									<?php echo $wo['lang']['drop_img_videos_here'] ?> <?php echo $wo['lang']['or']; ?> <b class="main"><?php echo $wo['lang']['drag_browse']; ?></b>
+								</div>
+							</div>
+							<span class="wow_stroy_media_count hidden" id="user-story-total">
+								<input type="text" class="form-control input-md bg_read_input" readonly>
+							</span>
+						</div>
+					</div>
+					<div class="wow_form_fields" id="custom_thumbnail" style="display: none;">
+						<label><?php echo $wo['lang']['custom_thumbnail'];?></label>
+						<div class="wow_fcov_image wow_stroy_media">
+							<div id="wow_fcov_img_holder">
+								
+							</div>
+							<div class="upload_ad_image" onclick="document.getElementById('user-storymedia-2').click(); return false">
+								<div class="upload_ad_image_content">
+									<svg width="55" height="48" viewBox="0 0 55 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M28.8002 11.8198L28.8925 11.8474L28.8973 11.8418C29.2564 11.8983 29.6089 11.681 29.7145 11.3247C30.6475 8.1896 33.5873 5.99924 36.8624 5.99924C37.2683 5.99924 37.5975 5.67003 37.5975 5.26413C37.5975 4.85821 37.2683 4.52902 36.8624 4.52902C32.8073 4.52902 29.3997 7.22893 28.3056 10.9057C28.1896 11.2949 28.4113 11.7038 28.8002 11.8198Z" class="icon_main_fill icon_main" stroke-width="0.3"></path><path d="M45.0534 33.9345H41.5429C41.2198 33.9345 40.9577 33.6725 40.9577 33.3494C40.9577 33.0263 41.2198 32.7643 41.5429 32.7643H45.0534C49.8926 32.7643 53.83 28.8269 53.83 23.9877C53.83 19.1485 49.8926 15.2112 45.0534 15.2112H44.969C44.7993 15.2112 44.638 15.1376 44.5268 15.0093C44.4157 14.881 44.3655 14.7109 44.3898 14.5429C44.442 14.1784 44.4683 13.8123 44.4683 13.4559C44.4683 9.26192 41.0559 5.84945 36.8619 5.84945C35.2303 5.84945 33.6744 6.35933 32.362 7.32432C32.0736 7.53621 31.6641 7.44218 31.4973 7.12496C27.7807 0.0477366 18.0732 -0.902663 13.0403 5.25391C10.9202 7.84758 10.0872 11.2215 10.7547 14.5099C10.8282 14.8731 10.5503 15.2116 10.1813 15.2116H9.94683C5.10763 15.2116 1.17027 19.149 1.17027 23.9882C1.17027 28.8274 5.10763 32.7647 9.94683 32.7647H13.4574C13.7805 32.7647 14.0425 33.0268 14.0425 33.3498C14.0425 33.6729 13.7805 33.9349 13.4574 33.9349H9.94683C4.46227 33.9349 0 29.4727 0 23.9881C0 18.6574 4.21522 14.2925 9.48751 14.0518C8.99226 10.6402 9.9393 7.19891 12.1343 4.51334C17.5226 -2.07868 27.8491 -1.33981 32.2143 6.01078C33.6069 5.13772 35.2004 4.67971 36.8617 4.67971C41.9429 4.67971 45.9693 9.00449 45.617 14.0572C50.8407 14.3502 55 18.6921 55 23.9877C55 29.4727 50.5377 33.9345 45.0532 33.9345L45.0534 33.9345Z" class="icon_main_fill"></path><path d="M12.6439 33.019C12.6439 41.1676 19.2732 47.7967 27.4217 47.7967C35.5704 47.7967 42.1995 41.1675 42.1995 33.019C42.1995 24.8703 35.5704 18.2412 27.4217 18.2412C19.2731 18.2412 12.6439 24.8704 12.6439 33.019ZM14.1144 33.019C14.1144 25.6816 20.0842 19.7117 27.4217 19.7117C34.7591 19.7117 40.729 25.6815 40.729 33.019C40.729 40.3564 34.7591 46.3263 27.4217 46.3263C20.0843 46.3263 14.1144 40.3565 14.1144 33.019Z" class="icon_main_fill icon_main" stroke-width="0.3"></path><path d="M27.1107 38.9073C27.1107 39.2267 27.3698 39.4857 27.6891 39.4857C28.0084 39.4857 28.2675 39.2271 28.2675 38.9073V27.7698C28.2675 27.4504 28.0085 27.1914 27.6891 27.1914C27.3697 27.1914 27.1107 27.4504 27.1107 27.7698V38.9073Z" class="icon_main_fill icon_main" stroke-width="0.3"></path><path d="M27.6893 28.5892L24.6715 31.607L27.6893 28.5892ZM27.6893 28.5892L30.7072 31.6071C30.82 31.7199 30.9685 31.7765 31.1162 31.7765L27.6893 28.5892ZM23.8534 31.6071C24.0793 31.833 24.4457 31.8332 24.6714 31.6071L31.1162 31.7765C31.2636 31.7765 31.4122 31.7204 31.5252 31.6071C31.7511 31.3811 31.7511 31.0151 31.5251 30.7892L28.0983 27.3623C27.8724 27.1364 27.506 27.1363 27.2803 27.3623C27.2803 27.3623 27.2803 27.3623 27.2803 27.3623C27.2803 27.3623 27.2802 27.3624 27.2802 27.3624L23.8534 30.7892C23.6275 31.0151 23.6275 31.3812 23.8534 31.6071Z" class="icon_main_fill icon_main" stroke-width="0.3"></path></svg> <?php echo $wo['lang']['select']; ?> <?php echo $wo['lang']['photos']; ?>
+								</div>
+							</div>
+							<span class="wow_stroy_media_count hidden" id="user-story-total-2">
+								<input type="text" class="form-control input-md bg_read_input" readonly>
+							</span>
+						</div>
+					</div>
+					
+
+					<input type="file" name="statusMedia[]" class="hidden" id="user-storymedia" multiple>
+					<input type="file" name="cover" class="hidden" id="user-storymedia-2">
+				</div>
+			</form>
+		</div>
+		<!-- .col-md-8 -->
+		<?php echo Wo_LoadPage('sidebar/content');?>
+	</div>
+	<!-- .row -->
+</div>
+
+<script>
+	jQuery(document).ready(function($) {
+    var thumb_drop_block = $("[data-block='thumdrop-zone']");
+
+    if (typeof(window.FileReader) == 'undefined') {
+      thumb_drop_block.find('.thumbnail-rendderer div').text('Drag drop is not supported in your browser!');
+    }
+    else{
+      thumb_drop_block[0].ondragover = function() {
+          thumb_drop_block.addClass('hover');
+          return false;
+      };
+          
+      thumb_drop_block[0].ondragleave = function() {
+          thumb_drop_block.removeClass('hover');
+          return false;
+      };
+
+      thumb_drop_block[0].ondrop = function(event) {
+          event.preventDefault();
+          thumb_drop_block.removeClass('hover');
+          var file = event.dataTransfer.files;
+          if (file.length > 6) {
+          	$(".create-status-alert").removeClass('hidden');
+          	return false;
+          }
+          if (file.length == 1) {
+          	var ext = getExtension(file[0].name);
+				    switch (ext.toLowerCase()) {
+					    case 'm4v':
+					    case 'avi':
+					    case 'mpg':
+					    case 'mp4':
+					    $('#custom_thumbnail').slideDown();
+				    }
+          }
+          $("#user-storymedia").prop('files', file);
+          $("#user-story-total input").val(file.length + ' file(s) selected');
+          $("#user-story-total").removeClass('hidden').slideDown(200);
+      };
+    }
+  });
+	function getExtension(filename) {
+	  var parts = filename.split('.');
+	  return parts[parts.length - 1];
+	}
+   jQuery(document).ready(function($) {
+      $("#user-storymedia").change(function () {
+        var numFiles = this.files.length;
+        if (numFiles > 6) {
+         $("#user-storymedia").val('');
+         $(".create-status-alert").removeClass('hidden');
+        }
+        else{
+            $("#user-story-total input").val(numFiles + ' file(s) selected');
+            $("#user-story-total").removeClass('hidden').slideDown(200);
+        }
+        var ext = getExtension(this.files[0].name);
+	    switch (ext.toLowerCase()) {
+		    case 'm4v':
+		    case 'avi':
+		    case 'mpg':
+		    case 'mp4':
+		    return $('#custom_thumbnail').slideDown();
+	    }
+	    $('#custom_thumbnail').slideUp();
+      });
+      $("#user-storymedia-2").change(function () {
+        var numFiles = this.files.length;
+        if (numFiles > 6) {
+         $("#user-storymedia-2").val('');
+         $(".create-status-alert").removeClass('hidden');
+        }
+        else{
+            $("#user-story-total-2 input").val(numFiles + ' file(s) selected');
+            $("#user-story-total-2").removeClass('hidden').slideDown(200);
+        }
+      });
+      var bar = $('#bar');
+	    var percent = $('#percent');
+
+      $('.create-user-story').ajaxForm({
+       url: Wo_Ajax_Requests_File() + '?f=status&s=new',
+       type:"POST",
+       beforeSend: function() {
+       	var percentVal = '0%';
+        bar.width(percentVal);
+        percent.html(percentVal);
+        $('.create-user-story').find('.add_wow_loader').addClass('btn-loading');
+       },
+       uploadProgress: function (event, position, total, percentComplete) {
+           var percentVal = percentComplete + '%';
+           bar.width(percentVal);
+           $('#progress').slideDown(200);
+           if(percentComplete > 50) {
+             percent.addClass('white');
+           }
+           percent.html(percentVal);
+      },
+       success: function(data) {
+        scrollToTop();
+        if (data['status'] == 200) {
+          $(".create-status-alert").removeClass('hidden').html('<div class="alert alert-success">'+ data['message'] +'</div>');
+          window.location = '<?php echo $wo['config']['site_url']; ?>';
+        } 
+
+        else if (data['message']) {
+          $(".create-status-alert").removeClass('hidden').html('<div class="alert alert-danger">' + data['message'] + '</div>');
+        }
+        else{
+        	if(data.invalid_file == 3){
+	          $("#adult_image_file").modal('show');
+	          Wo_Delay(function(){
+	            $("#adult_image_file").modal('hide');
+	          },3000);
+	        }
+        } 
+
+        $('.create-user-story').find('.add_wow_loader').removeClass('btn-loading');
+      }});
+
+   });
+</script>

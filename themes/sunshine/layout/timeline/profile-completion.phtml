@@ -1,0 +1,78 @@
+<div class="col-md-12">
+	<div class="page-margin mt-0 wow_content profile-completion-bar bar-<?php echo array_sum($wo['pr_complition']);?>" data-profile-completion="<?php echo array_sum($wo['pr_complition']); ?>">
+		<div class="hdr">
+			<div class="progresss"></div>
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<div>
+				<h3><?php echo $wo['lang']['pr_completion']; ?></h3>
+				<div class="body">
+					<?php if (empty($wo['pr_complition'][1])): ?>
+						<div class="step" id="add-profile-avatar">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 8l.01 0"></path><path d="M4 4m0 3a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v10a3 3 0 0 1 -3 3h-10a3 3 0 0 1 -3 -3z"></path><path d="M4 15l4 -4a3 5 0 0 1 3 0l5 5"></path><path d="M14 14l1 -1a3 5 0 0 1 3 0l2 2"></path></svg>&nbsp;&nbsp;<?php echo $wo['lang']['ad_pr_picture']; ?>   
+						</div>
+					<?php else: ?>
+						<div class="step done">
+						   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#42a846" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>&nbsp;&nbsp;<?php echo $wo['lang']['ad_pr_picture']; ?>
+						</div>
+					<?php endif; ?>
+
+					<?php if (!empty($wo['pr_complition'][2])): ?>
+						<div class="step done">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#42a846" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>&nbsp;&nbsp;<?php echo $wo['lang']['add_ur_name']; ?>
+						</div>
+					<?php else: ?>
+						<a class="step" href="<?php echo Wo_SeoLink('index.php?link1=setting&page=profile-setting');?>" data-ajax="?link1=setting&page=profile-setting">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M20 17v-12c0 -1.121 -.879 -2 -2 -2s-2 .879 -2 2v12l2 2l2 -2z"></path><path d="M16 7h4"></path><path d="M18 19h-13a2 2 0 1 1 0 -4h4a2 2 0 1 0 0 -4h-3"></path></svg>&nbsp;&nbsp;<?php echo $wo['lang']['add_ur_name']; ?>
+						</a>
+					<?php endif; ?>
+
+					<?php if (!empty($wo['pr_complition'][3])): ?>
+						<div class="step done">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#42a846" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>&nbsp;&nbsp;<?php echo $wo['lang']['ad_ur_workplace']; ?>
+						</div>
+					<?php else: ?>
+						<a class="step" href="<?php echo Wo_SeoLink('index.php?link1=setting&page=profile-setting');?>" data-ajax="?link1=setting&page=profile-setting">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"></path><path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2"></path><path d="M12 12l0 .01"></path><path d="M3 13a20 20 0 0 0 18 0"></path></svg>&nbsp;&nbsp;<?php echo $wo['lang']['ad_ur_workplace']; ?>
+						</a> 
+					<?php endif; ?>
+
+					<?php if (!empty($wo['pr_complition'][4])): ?>
+						<div class="step done">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#42a846" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>&nbsp;&nbsp;<?php echo $wo['lang']['ad_ur_country']; ?>
+						</div>
+					<?php else: ?>
+						<a class="step" href="<?php echo Wo_SeoLink('index.php?link1=setting&page=general-setting');?>" data-ajax="?link1=setting&page=general-setting">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path><path d="M3.6 9l16.8 0"></path><path d="M3.6 15l16.8 0"></path><path d="M11.5 3a17 17 0 0 0 0 18"></path><path d="M12.5 3a17 17 0 0 1 0 18"></path></svg>&nbsp;&nbsp;<?php echo $wo['lang']['ad_ur_country']; ?>
+						</a>
+					<?php endif; ?>
+
+					<?php if (!empty($wo['pr_complition'][5])): ?>
+						<div class="step done">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#42a846" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>&nbsp;&nbsp;<?php echo $wo['lang']['ad_ur_address']; ?>
+						</div>
+					<?php else: ?>
+						<a class="step" href="<?php echo Wo_SeoLink('index.php?link1=setting&page=profile-setting');?>" data-ajax="?link1=setting&page=profile-setting">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 11m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"></path></svg>&nbsp;&nbsp;<?php echo $wo['lang']['ad_ur_address']; ?>
+						</a>
+					<?php endif; ?>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+
+	<script>
+	jQuery(document).ready(function($) {
+		$("#add-profile-avatar").click(function(event) {
+			$('.profile-avatar-changer').find('input').trigger('click');
+		});
+	});
+
+	new CircleProgress('.progresss', {
+		max: 100,
+		value: <?php echo array_sum($wo['pr_complition']); ?>,
+		textFormat: 'percent',
+	});
+	</script>
+</div>

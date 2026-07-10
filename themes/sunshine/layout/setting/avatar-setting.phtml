@@ -1,0 +1,91 @@
+<div class="page-margin mt-0">
+	<div class="wow_content popular_posts_hdr">
+		<h2><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.03409 4.80137C7.34519 3.48302 8.55499 2.5 10 2.5C11.445 2.5 12.6548 3.48302 12.9659 4.80137L13.0959 4.82783C15.0836 5.2324 16.6665 6.69859 17.1846 8.61505C17.6051 10.1707 17.6051 11.8063 17.1846 13.362C16.6665 15.2785 15.0836 16.7447 13.0959 17.1492L12.7161 17.2265C10.9246 17.5912 9.07538 17.5912 7.28394 17.2265L6.90411 17.1492C4.9164 16.7447 3.3335 15.2785 2.81542 13.362C2.39486 11.8063 2.39486 10.1707 2.81542 8.61504C3.3335 6.69859 4.9164 5.2324 6.90411 4.82783L7.03409 4.80137Z" class="icon_main" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 2.5C8.55499 2.5 7.34519 3.48302 7.03409 4.80137L6.90411 4.82783C4.9164 5.2324 3.3335 6.69859 2.81542 8.61504C2.39486 10.1707 2.39486 11.8063 2.81542 13.362C3.3335 15.2785 4.9164 16.7447 6.90411 17.1492L7.28394 17.2265C9.07538 17.5912 10.9246 17.5912 12.7161 17.2265L13.0959 17.1492C15.0836 16.7447 16.6665 15.2785 17.1846 13.362C17.6051 11.8063 17.6051 10.1707 17.1846 8.61505" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.91699 10.8333C7.91699 9.68274 8.84973 8.75 10.0003 8.75C11.1509 8.75 12.0837 9.68274 12.0837 10.8333C12.0837 11.9839 11.1509 12.9167 10.0003 12.9167C8.84973 12.9167 7.91699 11.9839 7.91699 10.8333Z" class="icon_main" stroke-width="1.5"/></svg>&nbsp;<?php echo $wo['lang']['avatar_and_cover']; ?></h2>
+	</div>
+</div>
+
+<div class="wo_settings_page wow_content">
+
+   <form  method="post" class="form-horizontal setting-profile-form" enctype="multipart/form-data">
+      <div class="setting-profile-alert setting-update-alert"></div>
+	  
+	  <div class="wow_cset_cover" title="<?php echo $wo['lang']['cover']; ?>">
+            <div class="wow_cset_cover_hdr">
+                <span class="btn btn-file" id="coverimage-holder" onclick="$('#cover').trigger('click'); return false;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14,6L10.25,11L13.1,14.8L11.5,16C9.81,13.75 7,10 7,10L1,18H23L14,6Z" /></svg>
+                </span>
+                <input type="file" class="hidden" id="cover" accept="image/x-png, image/gif, image/jpeg" name="cover">
+            </div>
+			<div class="avatar-read" id="cover-form"><p></p></div>
+		</div>
+		<div class="wow_cset_avtr">
+            <div class="wow_cset_avtr_hdr">
+                <span class="btn btn-file" id="avatarimage-holder" onclick="$('#avatar').trigger('click'); return false;" title="<?php echo $wo['lang']['avatar']; ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z" /></svg>
+                </span>
+                <input type="file" class="hidden" id="avatar" accept="image/x-png, image/gif, image/jpeg" name="avatar">
+            </div>
+			<div class="avatar-read" id="photo-form"><p></p></div>
+		</div>
+	  
+		<div class="text-center">
+			<button type="submit" class="btn btn-main btn-mat btn-mat-raised add_wow_loader"><?php echo $wo['lang']['save']; ?></button>
+		</div>
+
+      <input type="hidden" name="user_id" id="user-id" value="<?php echo $wo['setting']['user_id'];?>">
+      <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+   </form>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#cover").on('change', function() {
+	//Get count of selected files
+	$("#coverimage-holder").html("<img src='" + window.URL.createObjectURL(this.files[0]) + "' alt='Picture'>");
+	});
+});
+
+$(document).ready(function() {
+	$("#avatar").on('change', function() {
+	//Get count of selected files
+	$("#avatarimage-holder").html("<img src='" + window.URL.createObjectURL(this.files[0]) + "' alt='Picture'>");
+	});
+});
+
+$(function() {
+  $("#cover").change(function() {
+            var filename = $(this).val().replace(/C:\\fakepath\\/i, '');
+            $("#cover-form p").html(filename);
+            $("#cover-form").fadeIn(200);
+        });
+  $('form.setting-profile-form').ajaxForm({
+    url: Wo_Ajax_Requests_File() + '?f=update_images_setting',
+    beforeSend: function() {
+      $('.wo_settings_page').find('.add_wow_loader').addClass('btn-loading');
+    },
+    success: function(data) {
+      if (data.status == 200) {
+        scrollToTop();
+        $(".cover-read, .avatar-read").slideUp(200);
+        if (data.avatar) {
+          <?php if ($wo['config']['node_socket_flow'] == "1") { ?>
+            socket.emit("on_avatar_changed", {from_id: _getCookie("user_id"), name: data.avatar});
+          <?php } ?>
+          var user_id = $('form.setting-profile-form').find('#user-id').val();
+          $('[id^=updateImage-' + user_id + ']').fadeOut(300, function () { $('[id^=updateImage-' + user_id + ']').attr("src", data.avatar)}).fadeIn(300);
+        }
+        if (data.cover) {
+          $('[id^=cover-image]').fadeOut(300, function () { $('[id^=cover-image]').attr("src", data.cover)}).fadeIn(300);
+        }
+        $('.setting-profile-alert').html('<div class="alert alert-success">' + data.message + '</div>');
+        $('.alert-success').fadeIn('fast', function() {
+          $(this).delay(2500).slideUp(500, function() {
+            $(this).remove();
+          });
+        });
+      } 
+      $('.wo_settings_page').find('.add_wow_loader').removeClass('btn-loading');
+    }
+  });
+});
+</script>

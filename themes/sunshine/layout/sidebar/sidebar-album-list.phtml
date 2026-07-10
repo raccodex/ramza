@@ -1,0 +1,9 @@
+<div class="album_data">
+	<a href="<?php echo $wo['album']['url'];?>" data-ajax="?link1=post&id=<?php echo $wo['album']['id']?>" data-toggle="tooltip" title="<?php echo $wo['album']['album_name']; ?>">
+		<?php if ($wo['album']['blur'] == 1) { ?>
+			<img src="<?php echo $wo['album']['first_image']?>" class="image_blur">
+		<?php }else{ ?>
+			<img src="<?php echo $wo['album']['first_image']?>">
+		<?php } ?>
+	</a>
+</div>

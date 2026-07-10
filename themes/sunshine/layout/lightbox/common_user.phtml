@@ -1,0 +1,244 @@
+<div class="lightbox-content wo_com_usr_lbox">
+	<svg xmlns="http://www.w3.org/2000/svg" onclick="Wo_CloseLightbox();" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+	<section class="regular slider">
+		<?php foreach ($wo['popover_array'] as $key => $wo['popover']) {
+			if (!empty($wo['popover'])) {
+				$common = array('count' => 0, 'relationship' => 0 , 'school' => 0, 'working' => 0, 'birthday' => 0, 'country' => 0, 'city' => 0);
+				if (!empty($wo['popover']['relationship_id'])) {
+					if ($wo['user']['relationship_id'] == $wo['popover']['relationship_id']) {
+						$common['count'] = $common['count'] + 1;
+						$common['relationship'] = 1;
+					}
+				}
+				if (!empty($wo['popover']['school'])) {
+					if ($wo['user']['school'] == $wo['popover']['school']) {
+						$common['count'] = $common['count'] + 1;
+						$common['school'] = 1;
+					}
+				}
+				if (!empty($wo['popover']['working'])) {
+					if ($wo['user']['working'] == $wo['popover']['working']) {
+						$common['count'] = $common['count'] + 1;
+						$common['working'] = 1;
+					}
+				}
+				if (!empty($wo['popover']['birthday'])) {
+					if ($wo['user']['birthday'] == $wo['popover']['birthday'] && $wo['user']['birthday'] != '0000-00-00') {
+						$common['count'] = $common['count'] + 1;
+						$common['birthday'] = 1;
+					}
+				}
+				if (!empty($wo['popover']['country_id'])) {
+					if ($wo['user']['country_id'] == $wo['popover']['country_id']) {
+						$common['count'] = $common['count'] + 1;
+						$common['country'] = 1;
+					}
+				}
+				if (!empty($wo['popover']['city'])) {
+					if ($wo['user']['city'] == $wo['popover']['city']) {
+						$common['count'] = $common['count'] + 1;
+						$common['city'] = 1;
+					}
+				}
+				$wo['popover']['common'] = $common;
+		?>
+		<div class="wo_com_lbox_slide" data-common-id="<?php echo($wo['popover']['user_id']) ?>">
+			<div class="wo_com_lbox_slide_innr">
+				<div class="wo_com_lbox_slide_bg">
+					<div class="user-cover" style="background-image: url(<?php echo $wo['popover']['cover']?>);"></div>
+					<div class="upop_mid">
+						<div class="avatar">
+							<img src="<?php echo $wo['popover']['avatar']; ?>" alt="user avatar">
+						</div>
+						<h2 class="user-name">
+							<a href="<?php echo $wo['popover']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['popover']['username']?>"><?php echo $wo['popover']['name']; ?></a>
+							<?php if($wo['popover']['verified'] == 1) {   ?>
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="verified-color feather feather-check-circle" title="<?php echo $wo['lang']['verified_user'];?>" data-toggle="tooltip"><path d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" /></svg>
+							<?php } ?>
+						</h2>
+						
+						<?php if ($wo['popover']['country_id'] > 0) { ?>
+							<p class="country">
+								<svg width="13" height="15" viewBox="0 0 13 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.25 7.12175C12.25 10.2573 9.7316 13.9443 6.625 13.9443C3.5184 13.9443 1 10.2573 1 7.12175C1 3.9862 3.5184 1.44434 6.625 1.44434C9.7316 1.44434 12.25 3.9862 12.25 7.12175Z" stroke="currentColor"/><path d="M4.86719 6.65408C4.86719 5.69525 5.65419 4.91797 6.625 4.91797C7.59581 4.91797 8.38281 5.69525 8.38281 6.65408C8.38281 7.61291 7.59581 8.39019 6.625 8.39019C5.65419 8.39019 4.86719 7.61291 4.86719 6.65408Z" class="icon_main"/></svg> <?php echo $wo['countries_name'][$wo['popover']['country_id']];?>
+							</p>
+						<?php } ?>
+						
+						<div class="user-button">
+							<?php echo Wo_GetFollowButton($wo['popover']['user_id']); ?>
+						</div>
+						
+						<ul class="user-information">
+							<?php $gender = ucfirst(strtolower($wo['popover']['gender']));?>
+							<?php if($wo['config']['user_lastseen'] == 1 && $wo['popover']['showlastseen'] != 0) {  ?>
+								<li>
+									<svg width="13" height="12" viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.55452 3.85142C3.77299 -0.0246924 9.22701 -0.0246921 11.4455 3.85142C12.1848 5.14324 12.1848 6.74544 11.4455 8.03725C9.22701 11.9134 3.77299 11.9134 1.55452 8.03725C0.815159 6.74544 0.81516 5.14324 1.55452 3.85142Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path fill-rule="evenodd" clip-rule="evenodd" d="M9 5.94465C9 7.04919 7.88028 7.94434 6.49961 7.94434C5.11893 7.94434 4 7.04919 4 5.94465C4 4.83948 5.11893 3.94434 6.49961 3.94434C7.88028 3.94434 9 4.83948 9 5.94465Z" class="icon_main" stroke-linecap="round" stroke-linejoin="round"/></svg> <?php echo Wo_UserStatus($wo['popover']['user_id'], $wo['popover']['lastseen']);?>
+								</li>&nbsp;&nbsp;&nbsp;&nbsp;
+							<?php } ?>
+							<li>
+								<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 9.86518C1 8.48627 1.9699 7.31174 3.28802 7.09442L3.40675 7.07485C4.46224 6.90083 5.53776 6.90083 6.59325 7.07485L6.71198 7.09442C8.0301 7.31174 9 8.48627 9 9.86518C9 10.4612 8.5323 10.9443 7.95536 10.9443H2.04464C1.4677 10.9443 1 10.4612 1 9.86518Z" stroke="currentColor"/><path d="M7 2.94434C7 4.04891 6.10457 4.94434 5 4.94434C3.89543 4.94434 3 4.04891 3 2.94434C3 1.83977 3.89543 0.944336 5 0.944336C6.10457 0.944336 7 1.83977 7 2.94434Z" class="icon_main"/></svg> 
+								<?php if (in_array($wo['popover']['gender'], array_keys($wo['genders']))) {
+									echo $wo['genders'][$wo['popover']['gender']];
+								}
+								else{
+									echo $wo['genders'][array_keys($wo['genders'])[0]];
+								} ;?>
+							</li>
+						</ul>
+						
+						<div class="upop_mid_innr">
+							<ul class="user-information wo_vew_apld_blocks">
+								<b>
+									<?php if ($wo['popover']['common']['count'] == 1) {
+										echo $wo['popover']['common']['count'] .' '. $wo['lang']['thing_in_common'];
+									}else{
+										echo $wo['popover']['common']['count'] .' '. $wo['lang']['things_in_common'];
+									} ?>
+								</b>
+								<?php if (!empty($wo['popover']['common']['relationship'])) { ?>
+									<li>
+										<svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.65593 5.7404L5.07865 10.3405C6.06366 11.6643 7.93633 11.6643 8.92135 10.3405L12.3441 5.7404C13.2186 4.56499 13.2186 2.89481 12.3441 1.71939C11.0638 -0.00124529 8.10474 0.509785 7 2.36572C5.89526 0.509785 2.93619 -0.00124511 1.65593 1.71939C0.781357 2.8948 0.781355 4.56499 1.65593 5.7404Z" class="icon_main" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.3441 5.7404L8.92135 10.3405C7.93633 11.6643 6.06366 11.6643 5.07865 10.3405L1.65593 5.7404C0.781355 4.56499 0.781357 2.8948 1.65593 1.71939C2.93619 -0.00124514 5.89526 0.509785 7 2.36572" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path></svg> <?php echo $wo['relationship'][$wo['popover']['relationship_id']];?>
+									</li>
+								<?php } ?>
+								<?php if (!empty($wo['popover']['common']['school'])) { ?>
+									<li>
+										<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.23525 4.96695C1.66958 3.11534 3.11534 1.66958 4.96696 1.23525C6.30417 0.921583 7.69583 0.921583 9.03305 1.23525C10.8847 1.66958 12.3304 3.11534 12.7647 4.96696C13.0784 6.30417 13.0784 7.69583 12.7647 9.03304C12.3304 10.8847 10.8847 12.3304 9.03304 12.7647C7.69583 13.0784 6.30417 13.0784 4.96696 12.7647C3.11534 12.3304 1.66958 10.8847 1.23525 9.03305C0.921583 7.69583 0.921583 6.30417 1.23525 4.96695Z" stroke="currentColor" stroke-linecap="round"></path><path d="M4.91992 9.08059V6.30653M9.08101 9.08059V7.00004M7.00047 8.38707V4.91949" class="icon_main" stroke-linecap="round"></path></svg> <?php echo ($wo['popover']['school_completed'] == 1)   ? $wo['lang']['studied_at'] : $wo['lang']['studying_at'] ;?> <?php echo $wo['popover']['school'];?>
+									</li>
+								<?php } ?>
+								<?php if (!empty($wo['popover']['common']['working'])) { ?>
+									<li>
+										<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.2462 1.09779L6.11848 0.614379L6.11848 0.614379L6.2462 1.09779ZM7.75286 1.09779L7.62515 1.58121V1.58121L7.75286 1.09779ZM6.37391 1.5812C6.78373 1.47293 7.21533 1.47293 7.62515 1.58121L7.88058 0.614379C7.30335 0.461874 6.69571 0.461874 6.11848 0.614379L6.37391 1.5812ZM10.2842 3.70877C10.2842 2.25418 9.29414 0.987842 7.88058 0.614379L7.62515 1.58121C8.60792 1.84085 9.28422 2.71637 9.28422 3.70877L10.2842 3.70877ZM4.71484 3.70877C4.71484 2.71637 5.39115 1.84085 6.37391 1.5812L6.11848 0.614379C4.70492 0.987842 3.71484 2.25418 3.71484 3.70877L4.71484 3.70877Z" class="icon_main_fill"></path><path d="M1.25567 9.93536L1.73647 9.79815L1.25567 9.93536ZM1.25332 6.29071L1.73412 6.42792V6.42792L1.25332 6.29071ZM12.7467 6.29072L12.2659 6.42792V6.42792L12.7467 6.29072ZM12.7443 9.93535L13.2251 10.0726L12.7443 9.93535ZM9.66193 12.7458L9.56727 12.2548L9.66193 12.7458ZM4.33807 12.7458L4.43273 12.2548L4.33807 12.7458ZM4.84865 3.37361L4.94331 3.86457H4.94331L4.84865 3.37361ZM9.15135 3.37361L9.24601 2.88265L9.15135 3.37361ZM9.86706 3.5116L9.7724 4.00256L9.86706 3.5116ZM12.6847 6.07347L13.1655 5.93626V5.93626L12.6847 6.07347ZM4.13294 3.5116L4.03828 3.02064L4.03828 3.02064L4.13294 3.5116ZM1.31531 6.07347L0.834508 5.93626H0.834508L1.31531 6.07347ZM4.2276 4.00256L4.94331 3.86457L4.75399 2.88265L4.03828 3.02064L4.2276 4.00256ZM9.05669 3.86456L9.7724 4.00256L9.96172 3.02064L9.24601 2.88265L9.05669 3.86456ZM12.2039 6.21068L12.2659 6.42792L13.2275 6.15351L13.1655 5.93626L12.2039 6.21068ZM1.73412 6.42792L1.79612 6.21068L0.834508 5.93626L0.772512 6.1535L1.73412 6.42792ZM1.73647 9.79815C1.42256 8.69816 1.42058 7.52664 1.73412 6.42792L0.772512 6.1535C0.40742 7.43286 0.410132 8.79449 0.77486 10.0726L1.73647 9.79815ZM12.2659 6.42792C12.5794 7.52664 12.5774 8.69816 12.2635 9.79815L13.2251 10.0726C13.5899 8.79449 13.5926 7.43286 13.2275 6.15351L12.2659 6.42792ZM9.56727 12.2548C7.87182 12.5817 6.12818 12.5817 4.43273 12.2548L4.24341 13.2367C6.06393 13.5878 7.93608 13.5878 9.75659 13.2367L9.56727 12.2548ZM4.94331 3.86457C6.30157 3.60268 7.69843 3.60268 9.05669 3.86456L9.24601 2.88265C7.76269 2.59665 6.23731 2.59665 4.75399 2.88265L4.94331 3.86457ZM4.43273 12.2548C3.13662 12.0049 2.09293 11.0472 1.73647 9.79815L0.77486 10.0726C1.23553 11.6869 2.57977 12.916 4.24341 13.2367L4.43273 12.2548ZM9.75659 13.2367C11.4202 12.916 12.7645 11.6869 13.2251 10.0726L12.2635 9.79815C11.9071 11.0472 10.8634 12.0049 9.56727 12.2548L9.75659 13.2367ZM9.7724 4.00256C10.9443 4.2285 11.8826 5.08479 12.2039 6.21068L13.1655 5.93626C12.7391 4.44217 11.498 3.31686 9.96172 3.02064L9.7724 4.00256ZM4.03828 3.02064C2.50198 3.31686 1.26088 4.44217 0.834508 5.93626L1.79612 6.21068C2.11742 5.08478 3.05574 4.2285 4.2276 4.00256L4.03828 3.02064ZM1.25716 6.86116C4.95993 8.23077 9.04007 8.23077 12.7428 6.86116L12.3959 5.92327C8.91702 7.21007 5.08298 7.21007 1.60408 5.92327L1.25716 6.86116Z" fill="currentColor"></path><path d="M4.33301 6V8.33333" class="icon_main" stroke-linecap="round"></path><path d="M9.66699 6V8.33333" class="icon_main" stroke-linecap="round"></path></svg> <?php echo $wo['lang']['working_at'];?> <?php echo $wo['popover']['working'];?>
+									</li>
+								<?php } ?>
+
+								<?php if (!empty($wo['popover']['common']['birthday'])) { ?>
+									<li>
+										<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.55519 9.16566L2.04255 9.05396L1.55519 9.16566ZM1.55519 5.23549L2.04255 5.34719L1.55519 5.23549ZM12.4442 5.23549L11.9568 5.34719L12.4442 5.23549ZM12.4442 9.16565L11.9568 9.05395L12.4442 9.16565ZM8.91977 12.7726L9.03649 13.2588L8.91977 12.7726ZM5.07958 12.7726L5.19629 12.2864L5.07958 12.7726ZM5.07958 1.62853L5.19629 2.11472L5.07958 1.62853ZM8.91977 1.62853L9.03649 1.14234L8.91977 1.62853ZM4.87973 1C4.87973 0.723858 4.65587 0.5 4.37973 0.5C4.10359 0.5 3.87973 0.723858 3.87973 1H4.87973ZM3.87973 2.67583C3.87973 2.95197 4.10359 3.17583 4.37973 3.17583C4.65587 3.17583 4.87973 2.95197 4.87973 2.67583H3.87973ZM10.1196 1C10.1196 0.723858 9.89576 0.5 9.61962 0.5C9.34348 0.5 9.11962 0.723858 9.11962 1H10.1196ZM9.11962 2.67583C9.11962 2.95197 9.34348 3.17583 9.61962 3.17583C9.89576 3.17583 10.1196 2.95197 10.1196 2.67583H9.11962ZM2.04255 9.05396C1.76316 7.83495 1.76316 6.56619 2.04255 5.34719L1.06783 5.12378C0.754735 6.48981 0.754735 7.91133 1.06783 9.27736L2.04255 9.05396ZM11.9568 5.34719C12.2362 6.56619 12.2362 7.83495 11.9568 9.05395L12.9315 9.27736C13.2446 7.91133 13.2446 6.48981 12.9315 5.12379L11.9568 5.34719ZM8.80306 12.2864C7.61685 12.5712 6.3825 12.5712 5.19629 12.2864L4.96286 13.2588C6.30251 13.5804 7.69684 13.5804 9.03649 13.2588L8.80306 12.2864ZM5.19629 2.11472C6.3825 1.82995 7.61685 1.82995 8.80306 2.11472L9.03649 1.14234C7.69684 0.820742 6.30251 0.820742 4.96286 1.14234L5.19629 2.11472ZM5.19629 12.2864C3.63706 11.9121 2.41147 10.6635 2.04255 9.05396L1.06783 9.27736C1.51932 11.2472 3.0246 12.7935 4.96286 13.2588L5.19629 12.2864ZM9.03649 13.2588C10.9748 12.7935 12.48 11.2472 12.9315 9.27736L11.9568 9.05395C11.5879 10.6635 10.3623 11.9121 8.80306 12.2864L9.03649 13.2588ZM8.80306 2.11472C10.3623 2.48903 11.5879 3.73761 11.9568 5.34719L12.9315 5.12379C12.48 3.15393 10.9748 1.60765 9.03649 1.14234L8.80306 2.11472ZM4.96286 1.14234C3.0246 1.60765 1.51932 3.15392 1.06783 5.12378L2.04255 5.34719C2.41147 3.73761 3.63706 2.48903 5.19629 2.11472L4.96286 1.14234ZM1.75978 5.01924H12.2396V4.01924H1.75978V5.01924ZM3.87973 1V2.67583H4.87973V1H3.87973ZM9.11962 1V2.67583H10.1196V1H9.11962Z" fill="currentColor"></path><path d="M7.96125 8.28268C8.23125 8.09068 8.39925 7.80268 8.39925 7.41268C8.39925 6.60268 7.77525 6.18268 7.03725 6.18268C6.29925 6.18268 5.66925 6.60268 5.66925 7.41268C5.66925 7.80268 5.84325 8.09068 6.10725 8.28268C5.74125 8.50468 5.53125 8.87068 5.53125 9.29668C5.53125 10.0707 6.10125 10.5507 7.03725 10.5507C7.96725 10.5507 8.54325 10.0707 8.54325 9.29668C8.54325 8.87068 8.33325 8.50468 7.96125 8.28268ZM7.03725 6.96268C7.34925 6.96268 7.57725 7.14268 7.57725 7.45468C7.57725 7.76068 7.34925 7.95268 7.03725 7.95268C6.72525 7.95268 6.49725 7.76068 6.49725 7.45468C6.49725 7.14268 6.72525 6.96268 7.03725 6.96268ZM7.03725 9.77068C6.64125 9.77068 6.35325 9.56668 6.35325 9.18868C6.35325 8.81668 6.64125 8.61268 7.03725 8.61268C7.43325 8.61268 7.72125 8.81668 7.72125 9.18868C7.72125 9.56668 7.43325 9.77068 7.03725 9.77068Z" class="icon_main_fill"></path></svg> <?php echo $wo['popover']['birthday'];?>
+									</li>
+								<?php } ?>
+								<?php if (!empty($wo['popover']['common']['country'])) { ?>
+									<li>
+										<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.4791 11.2135L4.98769 11.1213L4.98769 11.1213L5.4791 11.2135ZM5.492 11.1448L5.98342 11.2371L5.98342 11.2371L5.492 11.1448ZM8.50831 11.1448L8.0169 11.2371L8.0169 11.2371L8.50831 11.1448ZM8.52121 11.2135L9.01262 11.1213L9.01262 11.1213L8.52121 11.2135ZM8.32801 12.7013L8.77949 12.9161V12.9161L8.32801 12.7013ZM7.79867 12.65C7.68001 12.8993 7.78595 13.1977 8.0353 13.3163C8.28465 13.435 8.58298 13.3291 8.70164 13.0797L7.79867 12.65ZM5.6723 12.7013L5.22082 12.9161L5.22082 12.9161L5.6723 12.7013ZM5.29867 13.0797C5.41734 13.3291 5.71567 13.435 5.96501 13.3163C6.21436 13.1977 6.3203 12.8993 6.20164 12.65L5.29867 13.0797ZM6.57419 9.9617L6.44051 9.4799L6.44051 9.4799L6.57419 9.9617ZM7.42612 9.9617L7.5598 9.4799V9.4799L7.42612 9.9617ZM5.97052 11.3058L5.98342 11.2371L5.00058 11.0526L4.98769 11.1213L5.97052 11.3058ZM8.0169 11.2371L8.02979 11.3058L9.01262 11.1213L8.99973 11.0526L8.0169 11.2371ZM7.87652 12.4864L7.79867 12.65L8.70164 13.0797L8.77949 12.9161L7.87652 12.4864ZM5.22082 12.9161L5.29867 13.0797L6.20164 12.65L6.12379 12.4864L5.22082 12.9161ZM8.02979 11.3058C8.10489 11.7059 8.05111 12.1196 7.87652 12.4864L8.77949 12.9161C9.04513 12.3579 9.12672 11.7292 9.01262 11.1213L8.02979 11.3058ZM4.98769 11.1213C4.87359 11.7292 4.95518 12.3579 5.22082 12.9161L6.12379 12.4864C5.94921 12.1196 5.89542 11.7059 5.97052 11.3058L4.98769 11.1213ZM6.70788 10.4435C6.89919 10.3904 7.10112 10.3904 7.29243 10.4435L7.5598 9.4799C7.19355 9.37828 6.80676 9.37828 6.44051 9.4799L6.70788 10.4435ZM8.99973 11.0526C8.85783 10.2966 8.30043 9.6854 7.5598 9.4799L7.29243 10.4435C7.66251 10.5462 7.94479 10.853 8.0169 11.2371L8.99973 11.0526ZM5.98342 11.2371C6.05552 10.853 6.3378 10.5462 6.70788 10.4435L6.44051 9.4799C5.69988 9.6854 5.14248 10.2966 5.00058 11.0526L5.98342 11.2371Z" class="icon_main_fill"></path><path d="M12.36 5.47935C12.36 5.20321 12.1361 4.97936 11.86 4.97936C11.5839 4.97936 11.36 5.20321 11.36 5.47935H12.36ZM2.63999 5.47935C2.63999 5.20321 2.41614 4.97936 2.13999 4.97936C1.86385 4.97936 1.63999 5.20321 1.63999 5.47935H2.63999ZM8.6755 12.8047L8.56054 12.3181L8.6755 12.8047ZM5.32449 12.8047L5.43944 12.3181L5.32449 12.8047ZM8.88562 2.34282L8.53081 2.69512V2.69512L8.88562 2.34282ZM12.6452 6.83877C12.8398 7.03472 13.1563 7.03584 13.3523 6.84127C13.5483 6.6467 13.5494 6.33012 13.3548 6.13417L12.6452 6.83877ZM5.11438 2.34282L5.46919 2.69512L5.11438 2.34282ZM0.645196 6.13417C0.450627 6.33012 0.451749 6.6467 0.647702 6.84127C0.843655 7.03584 1.16024 7.03472 1.3548 6.83877L0.645196 6.13417ZM11.36 5.47935V8.75825H12.36V5.47935H11.36ZM2.63999 8.75825V5.47935H1.63999V8.75825H2.63999ZM8.56054 12.3181C7.53409 12.5606 6.46589 12.5606 5.43944 12.3181L5.20953 13.2913C6.38718 13.5696 7.61281 13.5696 8.79045 13.2913L8.56054 12.3181ZM5.43944 12.3181C3.80173 11.9313 2.63999 10.4585 2.63999 8.75825H1.63999C1.63999 10.9177 3.11614 12.7968 5.20953 13.2913L5.43944 12.3181ZM8.79045 13.2913C10.8838 12.7968 12.36 10.9177 12.36 8.75825H11.36C11.36 10.4585 10.1983 11.9313 8.56054 12.3181L8.79045 13.2913ZM8.53081 2.69512L12.6452 6.83877L13.3548 6.13417L9.24042 1.99052L8.53081 2.69512ZM4.75958 1.99052L0.645196 6.13417L1.3548 6.83877L5.46919 2.69512L4.75958 1.99052ZM9.24042 1.99052C8.80596 1.55297 8.44537 1.18831 8.12123 0.939234C7.7857 0.68141 7.43051 0.5 7 0.5V1.5C7.12177 1.5 7.26495 1.54239 7.51193 1.73218C7.77031 1.93071 8.07639 2.23746 8.53081 2.69512L9.24042 1.99052ZM5.46919 2.69512C5.92361 2.23746 6.22969 1.93071 6.48807 1.73218C6.73505 1.54239 6.87823 1.5 7 1.5V0.5C6.56949 0.5 6.2143 0.681409 5.87877 0.939234C5.55463 1.18831 5.19404 1.55297 4.75958 1.99052L5.46919 2.69512Z" fill="currentColor"></path></svg> <?php echo $wo['lang']['living_in'];?> <?php echo $wo['countries_name'][$wo['popover']['country_id']];?>
+									</li>
+								<?php } ?>
+								<?php if (!empty($wo['popover']['common']['city'])) { ?>
+									<li>
+										<svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.3337 6.45032C11.3337 9.46045 8.94584 13 6.00033 13C3.05481 13 0.666992 9.46045 0.666992 6.45032C0.666992 3.44019 3.05481 1 6.00033 1C8.94584 1 11.3337 3.44019 11.3337 6.45032Z" stroke="currentColor"></path><path d="M4.33301 5.99998C4.33301 5.07951 5.0792 4.33331 5.99967 4.33331C6.92015 4.33331 7.66634 5.07951 7.66634 5.99998C7.66634 6.92045 6.92015 7.66665 5.99967 7.66665C5.0792 7.66665 4.33301 6.92045 4.33301 5.99998Z" class="icon_main"></path></svg> <?php echo $wo['lang']['living_in'];?> <?php echo $wo['popover']['city'];?>
+									</li>
+								<?php } ?>
+							</ul>
+						</div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</div>
+		<?php } } ?>
+	</section>
+</div>
+
+<script src="<?php echo $wo['config']['theme_url'];?>/javascript/slick/slick.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+	slack = $(".regular").slick({
+        dots: false,
+		<?php if (count($wo['popover_array']) == 1) { ?>
+          centerMode: false,
+		<?php }elseif (count($wo['popover_array']) > 1) { ?>
+          centerMode: true,
+		<?php } ?>
+		centerPadding: '60px',
+        infinite: false,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+		<?php if($wo['language_type'] == 'rtl') { ?>
+		rtl: true,
+		<?php } ?>
+        arrows:true,
+        prevArrow:'<button type="button" class="slick-prev slick-arrow" onclick="GetPreCommon()"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" /></svg></button>',
+        nextArrow:'<button type="button" class="slick-next slick-arrow" onclick="GetNextCommon()"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg></button>',
+		responsive: [
+		{
+			breakpoint: 1400,
+			settings: {
+				slidesToShow: 2,
+				centerMode: false,
+			}
+		},
+		{
+			breakpoint: 992,
+			settings: {
+				slidesToShow: 1,
+			}
+		},
+		]
+	});
+	$('.regular').slick('slickGoTo',<?php echo $wo['slide_num']; ?>);
+
+	function GetPreCommon() {
+        user_id = 0;
+        index = $('.slick-current').attr('data-slick-index');
+        index = parseInt(index);
+        //if (index > 0) {
+            attr = parseInt(index);
+            user_id = $("[data-slick-index="+attr+"]").find('.wo_com_lbox_slide').attr('data-common-id');
+        //}
+        Wo_CloseLightbox();
+
+        $('#contnet').append('<div class="lightbox-container"><div class="lightbox-backgrond" onclick="Wo_CloseLightbox();"></div><div class="lb-preloader" style="display:block"><svg width="50px" height="50px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><circle cx="50" cy="50" r="40" stroke="#676d76" fill="none" stroke-width="6" stroke-linecap="round"><animate attributeName="stroke-dashoffset" dur="1.5s" repeatCount="indefinite" from="0" to="502"></animate><animate attributeName="stroke-dasharray" dur="1.5s" repeatCount="indefinite" values="150.6 100.4;1 250;150.6 100.4"></animate></circle></svg></div></div>');
+        $.get(Wo_Ajax_Requests_File(), {f:'show_common_user',s:'pre', user_id:user_id}, function(data) {
+          if (data.status == 200) {
+          document.body.style.overflow = 'hidden';
+            $('.lightbox-container').html(data.html);
+            if (data.html.length == 0) {
+	             document.body.style.overflow = 'auto';
+	          }
+          }
+          else{
+          	Wo_CloseLightbox();
+          }
+          
+        });
+        
+        
+        // user_id = $('.wo_com_lbox_slide').first().attr('data-common-id');
+        // user_id = $('.slick-active').find('.wo_com_lbox_slide').first().attr('data-common-id');
+        // $.post(Wo_Ajax_Requests_File() + '?f=show_common_user&s=pre', {user_id: user_id}, function(data, textStatus, xhr) {
+        //   if (data.status == 200 && data.html != '') {
+
+             
+        //      setTimeout(function () {
+        //       $('.slick-track').prepend(data.html);
+        //        for (var i = 0; i < $('.slick-slide').length; i++) {
+        //         $($('.slick-slide')[i]).attr('data-slick-index', i);
+        //       }
+        //      },3000)
+             
+        //   }
+        // });
+	}
+
+	function GetNextCommon() {
+        user_id = 0;
+        index = $('.slick-current').attr('data-slick-index');
+        attr = parseInt(index);
+        user_id = $("[data-slick-index="+attr+"]").find('.wo_com_lbox_slide').attr('data-common-id');
+        Wo_CloseLightbox();
+
+        $('#contnet').append('<div class="lightbox-container"><div class="lightbox-backgrond" onclick="Wo_CloseLightbox();"></div><div class="lb-preloader" style="display:block"><svg width="50px" height="50px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><circle cx="50" cy="50" r="40" stroke="#676d76" fill="none" stroke-width="6" stroke-linecap="round"><animate attributeName="stroke-dashoffset" dur="1.5s" repeatCount="indefinite" from="0" to="502"></animate><animate attributeName="stroke-dasharray" dur="1.5s" repeatCount="indefinite" values="150.6 100.4;1 250;150.6 100.4"></animate></circle></svg></div></div>');
+        $.get(Wo_Ajax_Requests_File(), {f:'show_common_user',s:'next', user_id:user_id}, function(data) {
+          if (data.status == 200) {
+          document.body.style.overflow = 'hidden';
+            $('.lightbox-container').html(data.html);
+          }
+          if (data.html.length == 0) {
+             document.body.style.overflow = 'auto';
+          }
+          });
+        // user_id = $('.wo_com_lbox_slide').last().attr('data-common-id');
+        // $.post(Wo_Ajax_Requests_File() + '?f=show_common_user&s=next', {user_id: user_id}, function(data, textStatus, xhr) {
+        //   if (data.status == 200 && data.html != '') {
+        //     $('.slick-track').append(data.html);
+        //   }
+        // });
+	}
+</script>

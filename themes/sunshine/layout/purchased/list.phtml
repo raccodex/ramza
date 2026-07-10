@@ -1,0 +1,15 @@
+<div class="col-lg-4 col-md-6" data-purchase-id="<?php echo $wo['purchase']->id; ?>">
+	<div class="wow_content my_purchased">
+		<div class="id">#<?php echo $wo['purchase']->id; ?></div>
+		<a href="<?php echo $wo['purchase']->url; ?>" class="title"><?php echo $wo['purchase']->data['name']; ?></a>
+		<div class="price">
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 20.5H7C4 20.5 2 19 2 15.5V8.5C2 5 4 3.5 7 3.5H17C20 3.5 22 5 22 8.5V15.5C22 19 20 20.5 17 20.5Z" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path class="icon_main" d="M2 9H3C6 9 7 8 7 5V4" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path class="icon_main" d="M22 9H21C18 9 17 8 17 5V4" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path class="icon_main" d="M2 15H3C6 15 7 16 7 19V20" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path class="icon_main" d="M22 15H21C18 15 17 16 17 19V20" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg> <?php echo number_format($wo['purchase']->price,2); ?>
+		</div>
+		<div class="price">
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2C17.52 2 22 6.48 22 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path class="icon_main" d="M15.7099 15.1798L12.6099 13.3298C12.0699 13.0098 11.6299 12.2398 11.6299 11.6098V7.50977" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg> <?php echo $wo['purchase']->date; ?>
+		</div>
+		<div class="foot">
+			<a class="btn btn-main btn-sm" href="javascript:void(0)" onclick="DownloadPurchased('<?php echo $wo['purchase']->order_hash_id; ?>','order')"> <?php echo $wo['lang']['download_invoice'] ?></a>
+		</div>
+	</div>
+</div>

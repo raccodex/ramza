@@ -1,0 +1,67 @@
+<?php echo Wo_LoadPage('forum/headers/header'); ?>
+<div class="" id="threadreply">
+	<form action="#" class="form" id="newtopicreply" method="post">
+		<div class="page-margin mt-0">
+			<div class="wow_content popular_posts_hdr flex">
+				<h2>&nbsp;<?php echo $wo['lang']['reply'];?> > <?php echo $wo['thread']['headline']; ?></h2>
+
+				<div class="btnss">
+					<button class="btn btn-main btn-mat add_wow_loader" type="submit"><?php echo $wo['lang']['reply']; ?></button>
+				</div>
+			</div>
+		</div>
+
+		<div class="page-margin wow_content wow_sett_content">
+			
+			<div id="newtopicreply-alert"></div>
+			<div class="wow_form_fields">
+				<label for="subject"><?php echo $wo['lang']['subject']; ?></label>
+				<input type="text" name="subject" id="subject" value="<?php echo($wo['thread']['headline']); ?>">
+			</div>
+			<div class="wow_form_fields mb-0">
+				<label for="replythread"><?php echo $wo['lang']['your_reply']; ?></label>
+				<textarea id="replythread" name="content"></textarea>
+			</div>
+			
+		</div>
+	</form>
+	<div class="clear"></div>
+</div>
+
+<?php if (isset($wo['bbcodeditor']) && $wo['bbcodeditor']): ?>
+
+<script>
+	jQuery(document).ready(function($) {
+
+		$('#newtopicreply').ajaxForm({
+
+	      url: Wo_Ajax_Requests_File()  +  '?f=threadreply&tid=<?php echo $wo['thread']['id']; ?>&fid=<?php echo $wo['thread']['forum']; ?>&q=0&hash=' + $('.main_session').val(),
+	      dataType:'json',
+	      beforeSend: function() {
+	        Wo_progressIconLoader($('#newtopicreply').find('button'));
+	      },
+	      success: function(data) {
+	        scrollToTop();
+	        if (data['status'] == 200) {
+	        	if (node_socket_flow == "1") {
+			        socket.emit("user_notification", { to_id: data.user_id, user_id: _getCookie("user_id"), type: "added" });
+			    }
+	         	$("#newtopicreply-alert").html('<div class="alert page-margin alert-success">'+ data['message'] +'</div>');
+	         	window.location = data.url;
+	          
+	        } else {
+	        	
+	         	$("#newtopicreply-alert").html('<div class="alert page-margin alert-danger">' + data['message'] + '</div>');
+	        } 
+	        Wo_progressIconLoader($('#newtopicreply').find('button'));
+	      }
+		});
+		
+		$('#replythread').bbcode();
+		$("#replythread").autogrow({vertical: true, horizontal: false});
+	});
+</script>
+	
+<?php endif ?>
+
+<?php echo Wo_LoadPage('forum/headers/footer'); ?>

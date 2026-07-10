@@ -1,0 +1,46 @@
+<div class="page-margin">
+	<div class="row">
+		<div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+		<div class="col-md-7 profile-lists singlecol">
+			<div class="page-margin mt-0">
+				<div class="wow_content popular_posts_hdr">
+					<img src="<?php echo $wo['config']['theme_url'];?>/img/groups.png" class="bg_trail">
+					<h2><svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 11.8248C1 10.3231 2.09114 9.04403 3.57403 8.80737L3.7076 8.78606C4.89502 8.59655 6.10498 8.59655 7.2924 8.78606L7.42597 8.80737C8.90886 9.04403 10 10.3231 10 11.8248C10 12.4738 9.47383 13 8.82477 13H2.17523C1.52617 13 1 12.4738 1 11.8248Z" class="icon_main" stroke-width="1.5"></path><path d="M8.125 3.625C8.125 5.07475 6.94975 6.25 5.5 6.25C4.05025 6.25 2.875 5.07475 2.875 3.625C2.875 2.17525 4.05025 1 5.5 1C6.94975 1 8.125 2.17525 8.125 3.625Z" class="icon_main" stroke-width="1.5"></path><path d="M10 6.25C11.6108 6.25 12.9167 5.07475 12.9167 3.625C12.9167 2.17525 11.6108 1 10 1M11.9916 13H13.6942C14.4154 13 15 12.4738 15 11.8248C15 10.3231 13.7876 9.04403 12.14 8.80737V8.80737C12.0412 8.79318 11.9413 8.78606 11.8414 8.78606C11.5747 8.78606 11.4921 8.78606 11.0343 8.78606" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>&nbsp;<?php echo $wo['lang']['groups']; ?></h2>
+				</div>
+			</div>
+			<div class="page-margin wow_content wow_big_head_link">
+				<ul class="list-unstyled">
+					<?php if ($wo['config']['can_use_groups']) { ?>
+					<li><a href="<?php echo Wo_SeoLink('index.php?link1=groups'); ?>" data-ajax="?link1=groups"><?php echo $wo['lang']['my_groups'] ?></a></li>
+					<?php } ?>
+					<li><a href="<?php echo Wo_SeoLink('index.php?link1=suggested-groups'); ?>" data-ajax="?link1=suggested-groups"><?php echo $wo['lang']['suggested_groups'] ?></a></li>
+					<li class="active"><a href="<?php echo Wo_SeoLink('index.php?link1=joined_groups'); ?>" data-ajax="?link1=joined_groups"><?php echo $wo['lang']['joined_groups'] ?></a></li>
+				</ul>
+			</div>
+			
+				<div class="row cool-style-album-row">
+					<?php if ($wo['config']['can_use_groups']) { ?>
+						<div class="cool-style-album col-xs-12 col-sm-12 col-lg-4">
+							<a class="btn btn-main btn-mat btn_create_big album" href="<?php echo Wo_SeoLink('index.php?link1=create-group');?>" data-ajax="?link1=create-group">
+								<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30.4119 21.0827C29.326 25.7117 25.7117 29.3261 21.0826 30.4119C17.7396 31.1961 14.2604 31.1961 10.9174 30.4119C6.28835 29.3261 2.67395 25.7117 1.58813 21.0827C0.803958 17.7396 0.803958 14.2605 1.58813 10.9175C2.67395 6.28841 6.28834 2.67402 10.9174 1.58819C14.2604 0.804021 17.7396 0.804021 21.0826 1.58819C25.7116 2.67401 29.326 6.2884 30.4119 10.9174C31.196 14.2605 31.196 17.7396 30.4119 21.0827Z" stroke="currentColor" stroke-width="2"/><path d="M30.4119 21.0827C31.196 17.7396 31.196 14.2605 30.4119 10.9174C29.326 6.2884 25.7116 2.67401 21.0826 1.58819C17.7396 0.804021 14.2604 0.804021 10.9174 1.58819C6.28834 2.67402 2.67395 6.28841 1.58812 10.9175C0.803957 14.2605 0.803957 17.7396 1.58813 21.0827C2.67395 25.7117 6.28834 29.3261 10.9174 30.4119" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20.1673 16H11.834M16.0007 20.1666L16.0007 11.8333" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> <?php echo $wo['lang']['create'] ?>
+							</a>
+						</div>
+					<?php } ?>
+				
+					<?php
+						$pages = Wo_GetUsersGroups($wo['user']['user_id'], 50);
+						if (count($pages) > 0) {
+							foreach ($pages as $wo['group']) {
+								$wo['group']['Wo_GroupSug'] = true;
+								echo Wo_LoadPage('group/group-list');
+							}
+						} else {
+							echo '<div class="cool-style-album col-xs-6 col-sm-6 col-lg-4 empty"><div class="wow_content btn_create_big album"><div class="empty_state"><svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 11.8248C1 10.3231 2.09114 9.04403 3.57403 8.80737L3.7076 8.78606C4.89502 8.59655 6.10498 8.59655 7.2924 8.78606L7.42597 8.80737C8.90886 9.04403 10 10.3231 10 11.8248C10 12.4738 9.47383 13 8.82477 13H2.17523C1.52617 13 1 12.4738 1 11.8248Z" class="icon_main" stroke-width="1.5"></path><path d="M8.125 3.625C8.125 5.07475 6.94975 6.25 5.5 6.25C4.05025 6.25 2.875 5.07475 2.875 3.625C2.875 2.17525 4.05025 1 5.5 1C6.94975 1 8.125 2.17525 8.125 3.625Z" class="icon_main" stroke-width="1.5"></path><path d="M10 6.25C11.6108 6.25 12.9167 5.07475 12.9167 3.625C12.9167 2.17525 11.6108 1 10 1M11.9916 13H13.6942C14.4154 13 15 12.4738 15 11.8248C15 10.3231 13.7876 9.04403 12.14 8.80737V8.80737C12.0412 8.79318 11.9413 8.78606 11.8414 8.78606C11.5747 8.78606 11.4921 8.78606 11.0343 8.78606" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>' . $wo['lang']['no_groups_found'] . '</div></div></div>';
+						}
+					?>
+					<div class="clear"></div>
+				</div>
+		</div>
+	</div>
+	<!-- .row -->
+</div>

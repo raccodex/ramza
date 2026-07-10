@@ -1,0 +1,103 @@
+<?php 
+$rand = rand(111,9999);
+if ($wo['story']['processing'] > 0 && (Wo_IsModerator() || Wo_IsAdmin() || $wo['story']['user_id'] == $wo['user']['id'])) { ?>
+	<div class="alert alert-warning vid_procss_alrt processing_alert_<?php echo $wo['media']['storyId'];?>"><span class="pointer" onclick="ProcessingVideo('<?php echo $wo['media']['storyId'];?>')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span><?php echo $wo['lang']['processing_video']; ?></div>
+<?php } ?>
+<video id="video--<?php echo $wo['media']['storyId'] ;?>" class="plyrr-<?php echo $wo['media']['storyId'].$rand ;?> <?php echo($wo['rvad_con']); ?>" playsinline preload="metadata" poster="<?php  echo $wo['media']['video_thumb'];?>" data-setup="{}" data-post-video="<?php echo $wo['media']['storyId'];?>">
+	<?php if (empty($wo['story']['240p_video']) && empty($wo['story']['360p_video'])  && empty($wo['story']['480p_video'])  && empty($wo['story']['720p_video'])  && empty($wo['story']['1080p_video'])  && empty($wo['story']['2048p_video'])  && empty($wo['story']['4096p_video'])) { ?>
+		<source src="<?php echo $wo['media']['filename'];?>" type='video/mp4'>
+		<source src="<?php echo $wo['media']['filename'];?>" type='video/webm'>
+	<?php }else{ ?>
+		<?php if (!empty($wo['story']['4096p_video'])) { ?>
+			<source src="<?php echo($wo['story']['4096p_video']) ?>" type="video/mp4" data-quality="4096p" size='4096' label='4096p' res='4096'>
+		<?php } ?>
+		<?php if (!empty($wo['story']['2048p_video'])) { ?>
+			<source src="<?php echo($wo['story']['2048p_video']) ?>" type="video/mp4" data-quality="2048p" size='2048' label='2048p' res='2048'>
+		<?php } ?>
+		<?php if (!empty($wo['story']['1080p_video'])) { ?>
+			<source src="<?php echo($wo['story']['1080p_video']) ?>" type="video/mp4" data-quality="1080p" size='1080' label='1080p' res='1080'>
+		<?php } ?>
+		<?php if (!empty($wo['story']['720p_video'])) { ?>
+			<source src="<?php echo($wo['story']['720p_video']) ?>" type="video/mp4" data-quality="720p" size='720' label='720p' res='720'>
+		<?php } ?>
+		<?php if (!empty($wo['story']['480p_video'])) { ?>
+			<source src="<?php echo($wo['story']['480p_video']) ?>" type="video/mp4" data-quality="480p" size='480' label='480p' res='480'>
+		<?php } ?>
+		<?php if (!empty($wo['story']['360p_video'])) { ?>
+			<source src="<?php echo($wo['story']['360p_video']) ?>" type="video/mp4" data-quality="360p" size='360' label='360p' res='360'>
+		<?php } ?>
+		<?php if (!empty($wo['story']['240p_video'])) { ?>
+			<source src="<?php echo($wo['story']['240p_video']) ?>" type="video/mp4" data-quality="240p" size='240' label='240p' res='240'>
+		<?php } ?>
+	<?php } ?>
+</video>
+<?php if(isset($wo['page']) && $wo['page']== 'reels') { ?>
+	<div class="video-text-overlay">
+		
+		<!--<h1><?php echo $wo['story']['videoTitle'] ?></h1>
+		<p><?php  $wo['story']['postText'] ?></p>-->
+		
+        <div class="shorts_events">
+            <div>
+                <div class="user-avatar">
+                <img src="<?php echo $wo['story']['publisher']['avatar']?>" alt="<?php echo $wo['story']['publisher']['name']?> Profile Picture" >
+                </div>
+                <?php if ($wo['loggedin']) { ?>
+                <div class="like-btn <?php echo (Wo_IsLiked($wo['story']['id'], $wo['user']['user_id']) === true) ? 'active-like' : ''; ?> reels_like_btn pointer" onclick="Wo_RegisterReelsLike(<?php echo $wo['story']['id']; ?>,this)" >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="feather-thumbs-up" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z"></path></svg>
+                    <p class="short_likes"><?php echo $wo['story']['likeCount'] ?></p>
+                </div>
+                <?php }else{ ?>
+                	<div class="like-btn reels_like_btn pointer" onclick="window.location.href = '<?php echo($wo['config']['site_url']) ?>'" >
+	                    <svg xmlns="http://www.w3.org/2000/svg" class="feather-thumbs-up" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z"></path></svg>
+	                    <p class="short_likes"><?php echo $wo['story']['likeCount'] ?></p>
+	                </div>
+                <?php } ?>
+                <div class="pointer" onclick="Wo_EnableCommentBox()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="feather-thumbs-down" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9M5,5V7H19V5H5M5,9V11H13V9H5M5,13V15H15V13H5Z"></path></svg>
+                    <p><?php echo $wo['story']['commentCount'] ?></p>
+                </div>
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="feather-thumbs-down" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"></path></svg>
+                    <p id="video-views-count-<?php echo $wo['story']['id'];?>"><?php echo $wo['story']['videoViews'] ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<div class="video-post-text-overlay">
+		<p ><?php echo $wo['story']['videoTitle']?></p>
+	</div>
+<?php } ?>
+
+<script>
+
+var wovideo = '.plyrr-<?php echo $wo['story']['id'].$rand ;?>';
+var players = new Plyr(wovideo, {
+	<?php if (Wo_IsMobile() == false) { ?>
+	ratio: '16:9',
+	<?php } ?>
+	fullscreen: {
+		iosNative: true
+	},
+	resetOnEnd: true,
+	<?php if(isset($wo['page']) && $wo['page']== 'reels') { ?>
+	fullscreen: false,
+	<?php } ?>
+});
+
+players.on('play', (event) => {
+	Wo_AddVideoViews(<?php echo $wo['story']['id'];?>);
+   <?php if(isset($wo['page']) && $wo['page'] == 'watch') { ?>
+    players.pause();
+    $('.plyrr-<?php echo $wo['story']['id'].$rand ;?>').removeClass('plyrr-<?php echo $wo['story']['id'];?> video-container');
+    Wo_OpenLightBox(<?php echo $wo['story']['id'];?>)
+    <?php } ?>
+    //$('.video-text-overlay').fadeOut();
+  $('video').not('.plyrr-<?php echo $wo['story']['id'].$rand ;?>').trigger('pause');
+});
+
+players.on('pause', (event) => {
+    //$('.video-text-overlay').fadeIn();
+});
+</script>

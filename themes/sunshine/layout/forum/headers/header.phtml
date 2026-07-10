@@ -1,0 +1,63 @@
+<script src="<?php echo $wo['config']['theme_url'];?>/javascript/bbcode/jquery.bbcode.js"></script>
+<link rel="stylesheet" href="<?php echo $wo['config']['theme_url'];?>/javascript/bbcode/jquery.bbcode.css" media="all">
+<style>
+.f_category,.member_list,.adv-mbr-search,.g_search, .bg-main, .blocksubhead {background-color: <?php echo $wo['config']['header_background'];?>;color: #fff;}
+.section-list {padding: 10px;}
+.forum-tabs{width: 100%;overflow: hidden;margin-bottom: 20px;}
+.forum-tabs li{width: 25%;background-color: #a84849;float: left;text-align: center;font-size: 14px;}
+.forum-tabs li a{width: 100%;padding: 10px 0px;background-color: #a84849;color: #fff;vertical-align: middle;}
+.forum-tabs li a:hover{background: rgba(245, 245, 245, 0.04);}
+.navbar-collapse {padding-left: 0 !important;}
+.flink {color: <?php echo $wo['config']['btn_background_color'];?> !important;}
+blockquote {border-left: 2px solid <?php echo $wo['config']['btn_background_color'];?> !important;}
+.bbcode-editor .bbcode-toolbar {color: #fff;background: <?php echo $wo['config']['header_background'];?>;padding: 8px;padding-bottom: 5px;}
+</style>
+<?php 
+$forum_class = 'search-forums';
+if (!empty($_GET['fid'])) {
+	$forum_class = 'search-forum-threads';
+}
+if ($_GET['link1'] == 'showthread') {
+	$forum_class = 'forum-messages-search';
+}
+
+ ?>
+<div class="page-margin" id="forum-cont">
+	<?php if ($wo['config']['user_ads'] == 1): ?>
+		<div id="sidebar-sticky-forum">
+			<?php 
+			  $wo['sidebar-ad'] = Wo_GetAdsByType('forum');
+			  if (!empty($wo['sidebar-ad'])) {
+				echo Wo_LoadPage('ads/includes/forum-ad');
+			  }
+			?>
+			<div class="clear"></div>
+		</div>
+	<?php endif; ?>
+		
+	<div class="page-margin mt-0">
+		<div class="wow_content popular_posts_hdr">
+			<img src="<?php echo $wo['config']['theme_url'];?>/img/forum.png" class="bg_trail">
+			<h2><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 1.5C8.14723 1.5 7.29445 1.59802 6.45869 1.79406C4.14417 2.33698 2.33698 4.14417 1.79406 6.45869C1.40198 8.13021 1.40198 9.86979 1.79406 11.5413C2.33698 13.8558 4.14418 15.663 6.4587 16.2059C8.13021 16.598 9.86979 16.598 11.5413 16.2059C13.8558 15.663 15.663 13.8558 16.2059 11.5413C16.402 10.7055 16.5 9.85276 16.5 8.99998" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M1.79406 11.5413C1.40198 9.86979 1.40198 8.13021 1.79406 6.45869C2.33698 4.14417 4.14417 2.33698 6.45869 1.79406C7.29445 1.59802 8.14723 1.5 9 1.5M6.4587 16.2059C8.13021 16.598 9.86979 16.598 11.5413 16.2059C13.8558 15.663 15.663 13.8558 16.2059 11.5413C16.402 10.7055 16.5 9.85276 16.5 8.99998" class="icon_main" stroke-width="1.5" stroke-linecap="round"></path><path d="M16.5007 4.41665C16.5007 5.56724 15.5679 6.49998 14.4173 6.49998C13.2667 6.49998 12.334 5.56724 12.334 4.41665C12.334 3.26605 13.2667 2.33331 14.4173 2.33331C15.5679 2.33331 16.5007 3.26605 16.5007 4.41665Z" stroke="currentColor" stroke-width="1.5"></path></svg>&nbsp;<?php echo $wo['lang']['forum']; ?></h2>
+		</div>
+	</div>
+	
+	<div class="page-margin wow_content wow_big_head_link flex">
+		<ul class="list-unstyled">
+			<li class="<?php if ($wo['active'] == 'forums') echo 'active'; ?>"><a href="<?php echo Wo_SeoLink('index.php?link1=forum');?>" data-ajax="?link1=forum"><?php echo $wo['lang']['browse_forum']; ?></a></li>
+			<li class="<?php if ($wo['active'] == 'members') echo 'active'; ?>"><a href="<?php echo Wo_SeoLink('index.php?link1=forum-members');?>" data-ajax="?link1=forum-members"><?php echo $wo['lang']['members']; ?></a></li>
+			<li class="<?php if ($_GET['link1'] == 'mythreads') echo 'active'; ?>"><a href="<?php echo Wo_SeoLink('index.php?link1=mythreads');?>" data-ajax="?link1=mythreads"><?php echo $wo['lang']['my_threads']; ?></a></li>
+			<li class="<?php if ($_GET['link1'] == 'mymessages') echo 'active'; ?>"><a href="<?php echo Wo_SeoLink('index.php?link1=mymessages');?>" data-ajax="?link1=mymessages"><?php echo $wo['lang']['my_messages']; ?></a></li>
+		</ul>
+		
+		<div class="right_part">
+			<div class="dropdown market_widget wow_movie_filter">
+				<a href="<?php echo Wo_SeoLink('index.php?link1=forum-search');?>" data-ajax="?link1=forum-search" class="btn btn-mat btn-main dropdown-toggle" role="button">
+					<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="2"/><path d="M14.5 15.5L18.5 19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Tab panes -->
+	<div class="tab-content" id="tab-content">

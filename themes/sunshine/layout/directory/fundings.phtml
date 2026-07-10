@@ -1,0 +1,143 @@
+<?php
+$not_found = '<div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5,12C18,12 20,14 20,16.5C20,17.38 19.75,18.21 19.31,18.9L22.39,22L21,23.39L17.88,20.32C17.19,20.75 16.37,21 15.5,21C13,21 11,19 11,16.5C11,14 13,12 15.5,12M15.5,14A2.5,2.5 0 0,0 13,16.5A2.5,2.5 0 0,0 15.5,19A2.5,2.5 0 0,0 18,16.5A2.5,2.5 0 0,0 15.5,14M7,15V17H9C9.14,18.55 9.8,19.94 10.81,21H5C3.89,21 3,20.1 3,19V5C3,3.89 3.89,3 5,3H19A2,2 0 0,1 21,5V13.03C19.85,11.21 17.82,10 15.5,10C14.23,10 13.04,10.37 12.04,11H7V13H10C9.64,13.6 9.34,14.28 9.17,15H7M17,9V7H7V9H17Z" /></svg> ' . $wo["lang"]["no_result"] . '</div>';
+$type_to_find = '<div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9.62,12L12,5.67L14.37,12M11,3L5.5,17H7.75L8.87,14H15.12L16.25,17H18.5L13,3H11Z" /></svg> ' . $wo["lang"]["what_are_looking_for"] . '</div>';
+
+$page = isset($_GET['page-id']) ? $_GET['page-id'] : 1;
+$filter_keyword = (!empty($_GET['query'])) ? Wo_Secure($_GET['query']) : '';
+$db->pageLimit = 20;
+$link = '';
+$fundings = $db->objectbuilder()->orderBy('id', 'DESC')->paginate(T_FUNDING, $page);
+
+
+?>
+<div class="">
+<div class="page-margin">
+	<div class="page-margin mt-0">
+		<div class="wow_content popular_posts_hdr">
+			<h2 class="flex">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" class="icon_main" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path><path d="M12 6l-3.293 3.293a1 1 0 0 0 0 1.414l.543 .543c.69 .69 1.81 .69 2.5 0l1 -1a3.182 3.182 0 0 1 4.5 0l2.25 2.25"></path><path d="M12.5 15.5l2 2"></path><path d="M15 13l2 2"></path></svg>&nbsp;
+				<p><?php echo $wo['lang']['welcome_discover'] ?> <?php echo $wo['lang']['funding'] ?><b><?php echo $wo['lang']['unlock_financial_opportunities'] ?></b></p>
+			</h2>
+		</div>
+	</div>
+	
+    <div class="row">
+        <div class="col-md-3 leftcol">
+			<div class="fund_prnt"><?php echo Wo_LoadPage("directory/left-sidebar"); ?></div>
+		</div>
+        <div class="col-md-9 singlecol products">
+            <div class="wo_market">
+                <div class="market_bottom">
+					<div id="products" class="row">
+                    <?php
+                    if (count($fundings) > 0) {
+                        foreach ($fundings as $key => $wo['fund']){
+                            $wo['fund'] = (array) $wo['fund'];
+                            if (!empty($wo['fund']['image'])) {
+                                $wo['fund']['image'] = Wo_GetMedia($wo['fund']['image']);
+                            }
+                            $wo['fund']['user_data'] = Wo_UserData($wo['fund']['user_id']);
+                            $wo['fund']['raised'] = $db->where('funding_id', $wo['fund']['id'])->getValue(T_FUNDING_RAISE, "SUM(amount)");
+                            $wo['fund']['bar']    = 0;
+                            if (empty($wo['fund']['raised'])) {
+                                $wo['fund']['raised'] = 0;
+                            } elseif (!empty($wo['fund']['raised']) && $wo['fund']['raised'] >= $wo['fund']['amount']) {
+                                $wo['fund']['bar'] = 100;
+                            } elseif (!empty($wo['fund']['raised']) && $wo['fund']['raised'] < $wo['fund']['amount'] && $wo['fund']['raised'] > 0) {
+                                $percent       = ($wo['fund']['raised'] * 100) / $wo['fund']['amount'];
+                                $wo['fund']['bar'] = $percent;
+                            }
+
+                            echo Wo_LoadPage('funding/list');
+                        }
+                    }
+                    else {
+                        echo '<div class="col-md-12"><div class="wow_content"><div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12.75,3.94C13.75,3.22 14.91,2.86 16.22,2.86C16.94,2.86 17.73,3.05 18.59,3.45C19.45,3.84 20.13,4.3 20.63,4.83C21.66,6.11 22.09,7.6 21.94,9.3C21.78,11 21.22,12.33 20.25,13.27L12.66,20.86C12.47,21.05 12.23,21.14 11.95,21.14C11.67,21.14 11.44,21.05 11.25,20.86C11.06,20.67 10.97,20.44 10.97,20.16C10.97,19.88 11.06,19.64 11.25,19.45L15.84,14.86C16.09,14.64 16.09,14.41 15.84,14.16C15.59,13.91 15.36,13.91 15.14,14.16L10.55,18.75C10.36,18.94 10.13,19.03 9.84,19.03C9.56,19.03 9.33,18.94 9.14,18.75C8.95,18.56 8.86,18.33 8.86,18.05C8.86,17.77 8.95,17.53 9.14,17.34L13.73,12.75C14,12.5 14,12.25 13.73,12C13.5,11.75 13.28,11.75 13.03,12L8.44,16.64C8.25,16.83 8,16.92 7.73,16.92C7.45,16.92 7.21,16.83 7,16.64C6.8,16.45 6.7,16.22 6.7,15.94C6.7,15.66 6.81,15.41 7.03,15.19L11.63,10.59C11.88,10.34 11.88,10.11 11.63,9.89C11.38,9.67 11.14,9.67 10.92,9.89L6.28,14.5C6.06,14.7 5.83,14.81 5.58,14.81C5.3,14.81 5.06,14.71 4.88,14.5C4.69,14.3 4.59,14.06 4.59,13.78C4.59,13.5 4.69,13.27 4.88,13.08C7.94,10 9.83,8.14 10.55,7.45L14.11,10.97C14.5,11.34 14.95,11.53 15.5,11.53C16.2,11.53 16.75,11.25 17.16,10.69C17.44,10.28 17.54,9.83 17.46,9.33C17.38,8.83 17.17,8.41 16.83,8.06L12.75,3.94M14.81,10.27L10.55,6L3.47,13.08C2.63,12.23 2.15,10.93 2.04,9.16C1.93,7.4 2.41,5.87 3.47,4.59C4.66,3.41 6.08,2.81 7.73,2.81C9.39,2.81 10.8,3.41 11.95,4.59L16.22,8.86C16.41,9.05 16.5,9.28 16.5,9.56C16.5,9.84 16.41,10.08 16.22,10.27C16.03,10.45 15.8,10.55 15.5,10.55C15.23,10.55 15,10.45 14.81,10.27V10.27Z"></path></svg>' . $wo['lang']['no_funding_found'] . '</div></div></div>';
+                    }
+                    ?>
+					</div>
+				</div>
+            </div>
+            <div class="clear"></div>
+            <?php if (!empty($fundings)) { ?>
+                <div class="wo-admincp-feturepager">
+                    <div class="">
+                        <span>
+                          <?php echo "Showing $page out of " . $db->totalPages; ?>
+                        </span>
+                    </div>
+                    <div class="">
+                        <nav>
+                            <ul class="pagination">
+                                <li>
+                                    <a href="<?php echo Wo_Link('directory/fundings?page-id=1') . $link; ?>"
+                                       data-ajax="?link1=directory-fundings&page-id=1<?php echo($link); ?>"
+                                       class="waves-effect" title='First Page'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M11 7l-5 5l5 5"></path><path d="M17 7l-5 5l5 5"></path></svg>
+                                    </a>
+                                </li>
+                                <?php if ($page > 1) { ?>
+                                    <li>
+                                        <a href="<?php echo Wo_Link('directory/fundings?page-id=' . ($page - 1)) . $link; ?>"
+                                           data-ajax="?link1=directory-fundings&page-id=<?php echo ($page - 1) . $link; ?>"
+                                           class="waves-effect" title='Previous Page'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 6l-6 6l6 6"></path></svg>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+
+                                <?php
+                                $nums = 0;
+                                $nums_pages = ($page > 4) ? ($page - 4) : $page;
+
+                                for ($i = $nums_pages; $i <= $db->totalPages; $i++) {
+                                    if ($nums < 20) {
+                                        ?>
+                                        <li class="<?php echo ($page == $i) ? 'active' : ''; ?>">
+                                            <a href="<?php echo Wo_Link('directory/fundings?page-id=' . ($i)) . $link; ?>"
+                                               data-ajax="?link1=directory-fundings&page-id=<?php echo ($i) . $link; ?>"
+                                               class="waves-effect">
+                                                <?php echo $i ?>
+                                            </a>
+                                        </li>
+
+                                    <?php }
+                                    $nums++;
+                                } ?>
+
+                                <?php if ($db->totalPages > $page) { ?>
+                                    <li>
+                                        <a href="<?php echo Wo_Link('directory/fundings?page-id=' . ($page + 1)) . $link; ?>"
+                                           data-ajax="?link1=directory-fundings&page-id=<?php echo ($page + 1) . $link; ?>"
+                                           class="waves-effect" title="Next Page">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M9 6l6 6l-6 6"></path></svg>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                                <li>
+                                    <a href="<?php echo Wo_Link('directory/fundings?page-id=' . ($db->totalPages)) . $link; ?>"
+                                       data-ajax="?link1=directory-fundings&page-id=<?php echo($db->totalPages) ?><?php echo($link); ?>"
+                                       class="waves-effect" title='Last Page'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 7l5 5l-5 5"></path><path d="M13 7l5 5l-5 5"></path></svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            <?php } ?>
+
+
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+
+
+    jQuery(document).ready(function ($) {
+
+    });
+</script>

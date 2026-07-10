@@ -1,0 +1,15 @@
+<div class="post-fetched-url wo_post_fetch_event wo_post_fetch_offer">
+	<a href="<?php echo $wo['story']['offer']['url'];?>">
+		<?php if (!empty($wo['story']['offer']['image'])) {?>
+			<img src="<?php echo $wo['story']['offer']['image'];?>"/>
+		<?php } ?>
+		<div class="fetched-url-text">
+			<div class="wo_jlist_info_date">
+				<p><?php echo $wo['lang']['end_date'];?></p>
+				<b><?php echo $wo['story']['offer']['expire_date'];?></b>
+			</div>
+			<div class="btn btn-main"><?php echo $wo['story']['offer']['offer_text']; ?></div>
+		</div>
+		<div class="clear"></div>
+	</a>
+</div>

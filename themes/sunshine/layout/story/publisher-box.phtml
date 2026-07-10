@@ -1,0 +1,1633 @@
+<?php
+$hashtag = '';
+$url = '';
+if (isset($_GET['link1']) && $_GET['link1'] == 'hashtag' && !empty($_GET['hash'])) {
+  $hashtag = '#' . $_GET['hash'];
+}
+if (!empty($_GET['url'])) {
+  $url = urldecode($_REQUEST['url']);
+}
+?>
+<form action="#" method="post" class="post publisher-box" id="publisher-box-focus">
+	<div class="panel post panel-shadow sun_pub_box">
+		<div id="post-textarea"  onclick="Wo_ShowPosInfo();">
+			<div class="wo_pub_txtara_combo">
+				<?php //if ($wo['page'] != 'events') { ?>
+					<img class="post-avatar" src="<?php echo (empty($wo['page_profile']['avatar'])) ? $wo['user']['avatar'] : $wo['page_profile']['avatar'];?>">
+				<?php //} ?>
+				<div id="loading_indicator"></div>
+				<textarea onkeyup="textAreaAdjust(this, 70)" name="postText" class="form-control postText" cols="10" rows="3" placeholder="<?php echo TextForMode('publisher_box_placeholder'); ?>" dir="auto"><?php echo $url; ?></textarea>
+				
+				<button class="btn btn-main"><?php echo TextForMode('create_post'); ?></button>
+				<!--Add Emojis-->
+				<div class="dropdown add-emoticons">
+					<a href="#" class="dropdown-toggle" type="button" id="dropdownEmo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" onclick="load_ajax_publisher_emojii('<?php echo $wo['config']['theme_url'];?>/emoji/');">
+						<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="24" height="24" viewBox="0 0 24 24" class="feather feather-emoticons"><path d="M12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 Z M12,21 C16.9705627,21 21,16.9705627 21,12 C21,7.02943725 16.9705627,3 12,3 C7.02943725,3 3,7.02943725 3,12 C3,16.9705627 7.02943725,21 12,21 Z M15.2746538,14.2978292 L16.9105622,15.4483958 C15.7945475,17.0351773 13.9775544,18 12,18 C10.0224456,18 8.20545254,17.0351773 7.08943782,15.4483958 L8.72534624,14.2978292 C9.4707028,15.3575983 10.6804996,16 12,16 C13.3195004,16 14.5292972,15.3575983 15.2746538,14.2978292 Z M14,11 L14,9 L16,9 L16,11 L14,11 Z M8,11 L8,9 L10,9 L10,11 L8,11 Z" /></svg>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-right publisher-box-emooji" aria-labelledby="dropdownEmo">
+						
+					</ul>
+				</div>
+			</div>
+		</div>
+		
+		<!--Uploaded Video-->
+		<?php if ($wo['config']['video_upload'] == 1) { ?>
+		<div class="publisher-hidden-option" id="video-form">
+			<div class="inner-addon <?php echo Wo_RightToLeft('left-addon');?>">
+                <textarea onkeyup="textAreaAdjust(this, 70)" name="videoTitle" class="form-control videoTitle" cols="10" rows="3" placeholder="<?php echo TextForMode('publisher_box_title_placeholder'); ?>" dir="auto"><?php echo $url; ?></textarea>
+                <span class="pull-left">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-video"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+					<input name="videocount" type="text" class="form-control bg_read_input" readonly>
+				</span>
+				<?php if ($wo['config']['ffmpeg_system'] != 'on') { ?>
+				<span class="pull-right pointer video-custom-thumb">
+					<?php echo $wo['lang']['custom_thumbnail']; ?>&nbsp;<i class="fa fa-caret-down"></i>
+				</span>
+				<?php } ?>
+			</div>
+			<div class="video-poster-image">
+				<div class="thumb-renderer pointer" onclick="$('#custom-video-thumb').trigger('click');">
+					<div id="post_vthumb_droparea">
+						<div class="preview">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload-cloud" color="#384047"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path><polyline points="16 16 12 12 8 16"></polyline></svg>
+							<div class="error-text-renderer"></div>
+							<div>
+								<p><?php echo $wo['lang']['drop_img_here']; ?> <?php echo $wo['lang']['or']; ?> <?php echo $wo['lang']['browse_to_upload']; ?></p>
+							</div>
+						</div>
+						<div class="image"></div>
+					</div>
+				</div>
+			</div>
+			<input type="file" class="hidden" name="video_thumb" id="custom-video-thumb" accept="image/*">
+		</div>
+		<?php } ?>
+
+        <!--Uploaded Audio-->
+		<?php if ($wo['config']['audio_upload'] == 1) { ?>
+		<div class="publisher-hidden-option" id="music-form">
+			<div class="inner-addon <?php echo Wo_RightToLeft('left-addon');?>">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-music"><path d="M9 17H5a2 2 0 0 0-2 2 2 2 0 0 0 2 2h2a2 2 0 0 0 2-2zm12-2h-4a2 2 0 0 0-2 2 2 2 0 0 0 2 2h2a2 2 0 0 0 2-2z"></path><polyline points="9 17 9 5 21 3 21 15"></polyline></svg>
+				<input name="musiccount" type="text" class="form-control bg_read_input" readonly>
+			</div>
+		</div>
+		<?php } ?>
+		<!--Poll Options-->
+		<div id="poll-form">
+			<div class="publisher-hidden-option answers">
+				<input name="answer[]" type="text" class="form-control" placeholder="<?php echo $wo['lang']['answer'] ?> 1">
+				<input name="answer[]" type="text" class="form-control" placeholder="<?php echo $wo['lang']['answer'] ?> 2">
+			</div>
+			<div class="create-poll" onclick="Wo_AddAnswer();" id="add_answer">
+				<div class="create-text"><?php echo $wo['lang']['add_answer'] ?></div>
+			</div>
+		</div>
+		<!--Create Album-->
+		<div style="position:relative;">
+			<div id="album-form">
+				<div class="publisher-hidden-option">
+					<input name="album_name" type="text" class="form-control" placeholder="<?php echo $wo['lang']['album_name'];?>">
+				</div>
+			</div>
+			<div class="publisher-hidden-option" id="photo-form">
+				<div class="inner-addon <?php echo Wo_RightToLeft('left-addon');?>">
+					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="feather feather-image"><rect x="11" y="5" width="4" height="4" rx="2" class="icon_main" stroke-width="1.5"></rect><path d="M2.71809 15.2014L4.45698 13.4625C6.08199 11.8375 8.71665 11.8375 10.3417 13.4625L12.0805 15.2014M12.0805 15.2014L12.7849 14.497C14.0825 13.1994 16.2143 13.2961 17.3891 14.7059L17.802 15.2014M12.0805 15.2014L14.6812 17.802M1.35288 13.0496C0.882374 11.0437 0.882374 8.95626 1.35288 6.95043C2.00437 4.17301 4.17301 2.00437 6.95043 1.35288C8.95626 0.882375 11.0437 0.882374 13.0496 1.35288C15.827 2.00437 17.9956 4.17301 18.6471 6.95044C19.1176 8.95626 19.1176 11.0437 18.6471 13.0496C17.9956 15.827 15.827 17.9956 13.0496 18.6471C11.0437 19.1176 8.95626 19.1176 6.95044 18.6471C4.17301 17.9956 2.00437 15.827 1.35288 13.0496Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+					<input name="phtoscount" type="text" class="form-control bg_read_input" readonly>
+				</div>
+				<?php if ($wo['config']['website_mode'] != 'askfm' && $wo['config']['website_mode'] != 'instagram') { ?>
+				<div class="create-album <?php echo Wo_RightToLeft('pull-right');?>" onclick="Wo_OpenAlbum();">
+					<div class="create-text"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.6471 13.0496C17.9956 15.827 15.827 17.9956 13.0496 18.6471C11.0437 19.1176 8.95626 19.1176 6.95043 18.6471C4.17301 17.9956 2.00437 15.827 1.35288 13.0496C0.882374 11.0437 0.882375 8.95626 1.35288 6.95044C2.00437 4.17301 4.173 2.00437 6.95043 1.35288C8.95625 0.882376 11.0437 0.882376 13.0496 1.35288C15.827 2.00437 17.9956 4.173 18.6471 6.95043C19.1176 8.95625 19.1176 11.0437 18.6471 13.0496Z" class="icon_main" stroke-width="1.5"></path><path d="M18.6471 13.0496C19.1176 11.0437 19.1176 8.95625 18.6471 6.95043C17.9956 4.173 15.827 2.00437 13.0496 1.35288C11.0437 0.882376 8.95625 0.882376 6.95043 1.35288C4.173 2.00437 2.00437 4.17301 1.35288 6.95044C0.882375 8.95626 0.882375 11.0437 1.35288 13.0496C2.00437 15.827 4.17301 17.9956 6.95043 18.6471" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12.5 10H7.5M10 12.5L10 7.5" class="icon_main" stroke-width="1.5" stroke-linecap="round"></path></svg> <?php echo $wo['lang']['create_album'];?></div>
+				</div>
+				<?php } ?>
+				<div class="clear"></div>
+				<div style="overflow-x: auto;"><div id="image-holder"></div></div>
+			</div>
+		</div>
+		<!--Uploaded File-->
+		<div class="publisher-hidden-option" id="file-form">
+			<div class="inner-addon <?php echo Wo_RightToLeft('left-addon');?>">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+				<input name="filename" type="text" class="form-control bg_read_input" readonly>
+			</div>
+		</div>
+		<!--Set Location-->
+		<div class="publisher-hidden-option" id="map-form">
+			<div class="inner-addon <?php echo Wo_RightToLeft('left-addon');?>">
+				<svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="feather feather-map-pin"><path d="M17 9.17548C17 13.6907 13.4183 19 9 19C4.58172 19 1 13.6907 1 9.17548C1 4.66029 4.58172 1 9 1C13.4183 1 17 4.66029 17 9.17548Z" stroke="currentColor" stroke-width="1.5"></path><path d="M6.5 8.5C6.5 7.11929 7.61929 6 9 6C10.3807 6 11.5 7.11929 11.5 8.5C11.5 9.88071 10.3807 11 9 11C7.61929 11 6.5 9.88071 6.5 8.5Z" class="icon_main" stroke-width="1.5"></path></svg>
+				<input name="postMap" id="searchTextField" type="text" class="form-control" placeholder="<?php echo $wo['lang']['maps_placeholder']?>">
+				<?php if ($wo['config']['yandex_map'] == 1) { ?>
+          <div class="yandex_search_publisher"></div>
+        <?php } ?>
+			</div>
+		</div>
+		<!--Add Emojis-->
+		<div id="emo-form">
+			<div class="publisher-hidden-option" style="border-top: 1px dashed #ededed;">
+				<div class="feelings-type-to <?php echo Wo_RightToLeft('pull-left');?> pointer" onclick="Wo_RestFeelings();"></div>
+				<span class="feelings-value"></span>
+				<input name="feeling" id="feelings-text" type="text" class="form-control bg_read_input" placeholder="<?php echo html_entity_decode($wo["lang"]["feel_d"])?>" onclick="Wo_ShowFeelings();" autocomplete="no">
+				<input name="feeling_type" type="hidden" id="feeling-type" value="">
+				<div class="clear"></div>
+			</div>
+			<div class="feeling-type feeling-types">
+				<ul>
+					<li class="pointer" onclick='Wo_ShowFeelingType("feelings", "<?php echo $wo['lang']['feeling'];?>", "<?php echo $wo['lang']['feeling_q'];?>");'>
+						<svg fill="#009da0" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg" class="feather feather-user-plus"><path d="M0 0h24v24H0z" fill="none"></path><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"></path></svg> <span><?php echo $wo['lang']['feeling'];?></span>
+					</li>
+					<li class="pointer" onclick='Wo_ShowFeelingType("traveling", "<?php echo $wo['lang']['traveling'];?>" , "<?php echo $wo['lang']['traveling_q'];?>");'>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-briefcase" color="#3F51B5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> <span><?php echo $wo['lang']['traveling'];?></span>
+					</li>
+					<li class="pointer" onclick='Wo_ShowFeelingType("watching", "<?php echo $wo['lang']['watching'];?>", "<?php echo $wo['lang']['watching_q'];?>");'>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tv" color="#E91E63"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg> <span><?php echo $wo['lang']['watching'];?></span>
+					</li>
+					<li class="pointer" onclick='Wo_ShowFeelingType("playing", "<?php echo $wo['lang']['playing'];?>", "<?php echo $wo['lang']['playing_q'];?>");'>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-target" color="#FF9800"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg> <span><?php echo $wo['lang']['playing'];?></span>
+					</li>
+					<li class="pointer" onclick='Wo_ShowFeelingType("listening", "<?php echo addslashes($wo['lang']['listening']);?>", "<?php echo addslashes($wo['lang']['listening_q']);?>");'>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-headphones" color="#03A9F4"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg> <span><?php echo $wo['lang']['listening'];?></span>
+					</li>
+				</ul>
+			</div>
+			<div class="feeling-type feelings">
+				<ul>
+					<?php foreach ($wo['feelingIcons'] as $icon_name => $icon_code) { ?>
+					<li class="pointer" onclick="Wo_AddFeeling('<?php echo $icon_name;?>', '<?php echo $wo['lang'][$icon_name]; ?>', '<?php echo $icon_code;?>');"><i class="twa-lg twa twa-<?php echo $icon_code; ?>"></i> <?php echo $wo['lang'][$icon_name]; ?></li>
+					<?php } ?>
+				</ul>
+			</div>
+		</div>
+		<!--Add Stickers-->
+		<?php if ($wo['config']['stickers'] == 1): ?>
+		<div id="gif-form">
+			<div class="w100" id="publisher-box-stickers">
+				<input type="text" class="form-control" style="border: none;" placeholder="<?php echo $wo['lang']['search'] ?> GIFs" onkeyup="Wo_GetPostStickers(this.value)">
+				<div class="ball-pulse <?php echo Wo_RightToLeft('pull-right');?>" style="margin: -33px 10px 0px 0px;"><div></div><div></div><div></div></div>
+				<div id="publisher-box-stickers-cont" onscroll="GifScrolled(this)" oldWord="" loadOffset="0"></div>
+			</div>
+		</div>
+		<?php endif ?>
+		
+		<div id="results"></div>
+		
+		<!--Progress Bar-->
+		<div class="publisher-hidden-option">
+			<div id="progress">
+				<span id="percent" class="<?php echo Wo_RightToLeft('pull-right');?>">0%</span>
+				<div class="progress">
+					<div id="bar" class="progress-bar progress-bar-striped active"></div> 
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		
+		<!--Publisher Box Footer-->
+		<div class="sun_pub_mid_foot">
+			<!--Add Post Color-->
+			<?php if ($wo['config']['colored_posts_system'] == 1 && !empty($wo['post_colors']) && $wo['config']['can_use_colored_posts']) { ?>
+			<div class="all_colors">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onclick="Wo_CloseColor()"><path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+				<div>
+				<?php foreach ($wo['post_colors'] as $key => $color) {
+					if (!empty($color->color_1) && !empty($color->color_2) && !empty($color->text_color)) { ?>
+						<div class="pointer all_colors_display" onclick="Wo_ChangeColor('<?php echo $color->color_1; ?>','<?php echo $color->color_2; ?>','<?php echo $color->text_color; ?>','',<?php echo $color->id; ?>)"> 
+							<div class="all_colors_style" style="background-image: linear-gradient(45deg, <?php echo $color->color_1; ?> 0%, <?php echo $color->color_2; ?> 100%);"></div>
+						</div>
+				<?php }elseif (!empty($color->image) && !empty($color->text_color)) { ?>
+					<div class="pointer all_colors_display" onclick="Wo_ChangeColor('','','<?php echo $color->text_color; ?>','<?php echo Wo_GetMedia($color->image); ?>',<?php echo $color->id; ?>)"> 
+						<div class="all_colors_style_image" style="background-image:url('<?php echo Wo_GetMedia($color->image); ?>');"></div>
+					</div>
+				<?php } ?>
+				<?php } ?>
+				</div>
+				<input type="hidden" name="post_color" id="post_color_input">
+			</div>
+			<?php } ?>
+			<!--Uploaded Image-->
+			<div class="poster-left-buttons" onclick="Wo_ShowPosInfo();">
+				<span class="btn btn-file img">
+					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="11" y="5" width="4" height="4" rx="2" class="icon_main" stroke-width="1.5"/>
+<path d="M2.71809 15.2014L4.45698 13.4625C6.08199 11.8375 8.71665 11.8375 10.3417 13.4625L12.0805 15.2014M12.0805 15.2014L12.7849 14.497C14.0825 13.1994 16.2143 13.2961 17.3891 14.7059L17.802 15.2014M12.0805 15.2014L14.6812 17.802M1.35288 13.0496C0.882374 11.0437 0.882374 8.95626 1.35288 6.95043C2.00437 4.17301 4.17301 2.00437 6.95043 1.35288C8.95626 0.882375 11.0437 0.882374 13.0496 1.35288C15.827 2.00437 17.9956 4.17301 18.6471 6.95044C19.1176 8.95626 19.1176 11.0437 18.6471 13.0496C17.9956 15.827 15.827 17.9956 13.0496 18.6471C11.0437 19.1176 8.95626 19.1176 6.95044 18.6471C4.17301 17.9956 2.00437 15.827 1.35288 13.0496Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+ <?php echo $wo['lang']['upload_images']; ?>
+					<input type="file" id="publisher-photos" accept="image/x-png, image/gif, image/jpeg" name="postPhotos[]" multiple="multiple">
+				</span>
+			</div>
+			<?php if ($wo['config']['website_mode'] == 'linkedin' && empty($wo['page_profile']) && ($wo['page'] == 'timeline' || $wo['page'] == 'home')) { ?>
+				<div class="poster-left-buttons" onclick="OpenLinkedinJobModal()">
+					<span class="btn btn-file">
+						<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.05872 1.62224L7.86715 0.89712L8.05872 1.62224ZM9.94206 1.62224L9.75048 2.34736V2.34736L9.94206 1.62224ZM8.2503 2.34736C8.74164 2.21755 9.25914 2.21755 9.75048 2.34736L10.1336 0.897121C9.39117 0.70096 8.60961 0.70096 7.86715 0.89712L8.2503 2.34736ZM13.2313 4.88596C13.2313 3.00996 11.9544 1.37818 10.1336 0.89712L9.75048 2.34736C10.9251 2.65769 11.7313 3.70324 11.7313 4.88596L13.2313 4.88596ZM6.26953 4.88596C6.26953 3.70324 7.07569 2.65769 8.2503 2.34736L7.86715 0.89712C6.04635 1.37818 4.76953 3.00995 4.76953 4.88596L6.26953 4.88596Z" fill="currentColor"></path><path d="M1.81958 12.6692L2.54079 12.4634L1.81958 12.6692ZM1.81665 8.11341L2.53785 8.31922L1.81665 8.11341ZM16.1834 8.11341L15.4621 8.31922V8.31922L16.1834 8.11341ZM16.1804 12.6692L16.9016 12.875L16.1804 12.6692ZM12.3274 16.1822L12.1854 15.4458L12.3274 16.1822ZM5.67259 16.1822L5.81458 15.4458L5.67259 16.1822ZM6.31081 4.46702L6.4528 5.20346L6.31081 4.46702ZM11.6892 4.46702L11.8312 3.73059L11.6892 4.46702ZM12.5838 4.63952L12.4418 5.37595V5.37595L12.5838 4.63952ZM16.1059 7.84185L16.8271 7.63604V7.63604L16.1059 7.84185ZM5.41618 4.63952L5.27418 3.90308V3.90308L5.41618 4.63952ZM1.89414 7.84185L1.17293 7.63604L1.17293 7.63604L1.89414 7.84185ZM5.55817 5.37595L6.4528 5.20346L6.16882 3.73059L5.27418 3.90308L5.55817 5.37595ZM11.5472 5.20346L12.4418 5.37595L12.7258 3.90308L11.8312 3.73059L11.5472 5.20346ZM15.3847 8.04767L15.4621 8.31922L16.9046 7.9076L16.8271 7.63604L15.3847 8.04767ZM2.53785 8.31922L2.61535 8.04766L1.17293 7.63604L1.09544 7.90759L2.53785 8.31922ZM2.54079 12.4634C2.15476 11.1107 2.15237 9.67003 2.53785 8.31922L1.09544 7.90759C0.632629 9.52936 0.636111 11.2552 1.09837 12.875L2.54079 12.4634ZM15.4621 8.31922C15.8476 9.67004 15.8452 11.1107 15.4592 12.4634L16.9016 12.875C17.3639 11.2552 17.3674 9.52937 16.9046 7.9076L15.4621 8.31922ZM12.1854 15.4458C10.0817 15.8514 7.91826 15.8514 5.81458 15.4458L5.5306 16.9187C7.82188 17.3605 10.1781 17.3605 12.4694 16.9187L12.1854 15.4458ZM6.4528 5.20346C8.13499 4.87912 9.86501 4.87912 11.5472 5.20346L11.8312 3.73059C9.9614 3.37008 8.0386 3.37008 6.16882 3.73059L6.4528 5.20346ZM5.81458 15.4458C4.24038 15.1423 2.97333 13.9791 2.54079 12.4634L1.09837 12.875C1.68724 14.9385 3.40511 16.5089 5.5306 16.9187L5.81458 15.4458ZM12.4694 16.9187C14.5949 16.5089 16.3128 14.9385 16.9016 12.875L15.4592 12.4634C15.0267 13.9791 13.7596 15.1423 12.1854 15.4458L12.4694 16.9187ZM12.4418 5.37595C13.8611 5.6496 14.9962 6.68632 15.3847 8.04767L16.8271 7.63604C16.281 5.7224 14.6917 4.28213 12.7258 3.90308L12.4418 5.37595ZM5.27418 3.90308C3.30826 4.28213 1.71903 5.7224 1.17293 7.63604L2.61535 8.04766C3.00384 6.68632 4.1389 5.6496 5.55817 5.37595L5.27418 3.90308ZM1.77809 8.94371C6.43453 10.6661 11.5655 10.6661 16.2219 8.94371L15.7015 7.53686C11.3809 9.13501 6.6191 9.13501 2.29847 7.53686L1.77809 8.94371Z" class="icon_main_fill"></path><path d="M5.66602 7.75V10.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12.334 7.75V10.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg> <?php echo $wo['lang']['create_job']; ?>
+					</span>
+				</div>
+			<?php } else { ?>
+				<?php if ($wo['config']['post_poll'] == 1 && ($wo['config']['ai_image_system'] != 1)) { ?>
+				<!--Create Poll-->
+				<div class="poster-left-buttons" onclick="Wo_ShowPosInfo();">
+					<span class="btn btn-file poll-form pol">
+						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.35288 6.95043C2.00437 4.17301 4.17301 2.00437 6.95043 1.35287C8.95625 0.882372 11.0437 0.882372 13.0496 1.35287C15.827 2.00437 17.9956 4.17301 18.6471 6.95043C19.1176 8.95625 19.1176 11.0437 18.6471 13.0496C17.9956 15.827 15.827 17.9956 13.0496 18.6471C11.0437 19.1176 8.95626 19.1176 6.95044 18.6471C4.17301 17.9956 2.00437 15.827 1.35288 13.0496C0.882374 11.0437 0.882374 8.95626 1.35288 6.95043Z" class="icon_main" stroke-width="1.5"/>
+<path d="M1.35288 6.95043C0.882374 8.95625 0.882374 11.0437 1.35288 13.0496C2.00437 15.827 4.17301 17.9956 6.95044 18.6471C8.95626 19.1176 11.0437 19.1176 13.0496 18.6471C15.827 17.9956 17.9956 15.827 18.6471 13.0496C19.1176 11.0437 19.1176 8.95625 18.6471 6.95043C17.9956 4.17301 15.827 2.00437 13.0496 1.35287" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M5.31836 7.39934L6.35863 8.43962L8.43918 6.35907M11.0399 7.91948H14.6808M5.31836 12.6007L6.35863 13.641L8.43918 11.5604M11.0399 13.1208H14.6808" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+ <?php echo $wo['lang']['create_poll']; ?>
+					</span>
+				</div>
+				<?php } ?>
+				<?php if ($wo['config']['ai_image_system'] == 1) { ?>
+				<!--Create Poll-->
+				<div class="poster-left-buttons" onclick="Wo_ShowPosInfo();">
+					<span class="new-feature"><?php echo $wo['lang']['new']; ?></span>
+					<span class="btn btn-file" onclick="openAIModel()">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z" class="icon_main" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><g><path d="M15.75 5H21.25" class="icon_main" stroke-width="2" stroke-linecap="round"/><path d="M18.5 7.75V2.25" class="icon_main" stroke-width="2" stroke-linecap="round"/></g><path d="M2.67188 18.9486L7.60187 15.6386C8.39187 15.1086 9.53187 15.1686 10.2419 15.7786L10.5719 16.0686C11.3519 16.7386 12.6119 16.7386 13.3919 16.0686L17.5519 12.4986C18.3319 11.8286 19.5919 11.8286 20.3719 12.4986L22.0019 13.8986" class="icon_main" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> <?php echo $wo['lang']['generate_ai_image']; ?>
+					</span>
+				</div>
+				<?php } ?>
+			<?php } ?>
+			<?php if ($wo['config']['website_mode'] != 'askfm') { ?>
+				<?php if ($wo['config']['ai_post_system'] == 1) { ?>
+					<div class="poster-left-buttons" onclick="Wo_ShowPosInfo();">
+						<span class="new-feature"><?php echo $wo['lang']['new']; ?></span>
+					<span class="btn btn-file" onclick="openPostModel()">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g><path d="M9.56055 18V13" class="icon_main" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 15.5H7" class="icon_main" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></g><path d="M8 2V5" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 2V5" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.8098 3.42188C19.1498 3.54187 20.8398 4.77188 20.9398 9.47188L21.0698 15.6419C21.1498 19.7619 20.1998 21.8319 15.1998 21.9419L9.19983 22.0619C4.19983 22.1619 3.15983 20.1219 3.07983 16.0119L2.93983 9.83187C2.83983 5.13188 4.48983 3.83187 7.80983 3.58187L15.8098 3.42188Z" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg> <?php echo TextForMode('generate_ai_post') ?>
+					</span>
+				</div>
+				<?php } ?>
+			<!--Uploaded Video-->
+			<?php if ($wo['config']['video_upload'] == 1 && ($wo['config']['ai_post_system'] != 1)) { ?>
+				<div class="poster-left-buttons" onclick="Wo_ShowPosInfo();">
+					<span class="btn btn-file vid">
+						<svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.1579 5.60503C15.614 7.1139 15.614 10.8861 13.1579 12.395L6.52631 16.4689C4.07017 17.9778 1 16.0917 1 13.074L1 4.92602C1 1.90827 4.07018 0.0221756 6.52632 1.53105L13.1579 5.60503Z" class="icon_main" stroke-width="1.5"/>
+<path d="M6.52631 16.4689C4.07017 17.9778 1 16.0917 1 13.074L1 4.92602C1 1.90827 4.07018 0.0221756 6.52632 1.53105L13.1579 5.60503" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
+ <?php echo $wo['lang']['upload_video']; ?>
+						<input type="file" id="publisher-video" name="postVideo" accept="<?php echo($wo['config']['ffmpeg_system'] == 'on' ? '*/*' : 'video/*') ?>">
+					</span>
+				</div>
+			<?php } ?>
+                
+			
+			<div class="poster-left-buttons" onclick="Wo_ShowPosInfo();">
+				<span class="btn mor">
+					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M18.6471 13.0496C17.9956 15.827 15.827 17.9956 13.0496 18.6471C11.0437 19.1176 8.95626 19.1176 6.95043 18.6471C4.17301 17.9956 2.00437 15.827 1.35288 13.0496C0.882374 11.0437 0.882375 8.95626 1.35288 6.95044C2.00437 4.17301 4.173 2.00437 6.95043 1.35288C8.95625 0.882376 11.0437 0.882376 13.0496 1.35288C15.827 2.00437 17.9956 4.173 18.6471 6.95043C19.1176 8.95625 19.1176 11.0437 18.6471 13.0496Z" class="icon_main" stroke-width="1.5"/>
+<path d="M18.6471 13.0496C19.1176 11.0437 19.1176 8.95625 18.6471 6.95043C17.9956 4.173 15.827 2.00437 13.0496 1.35288C11.0437 0.882376 8.95625 0.882376 6.95043 1.35288C4.173 2.00437 2.00437 4.17301 1.35288 6.95044C0.882375 8.95626 0.882375 11.0437 1.35288 13.0496C2.00437 15.827 4.17301 17.9956 6.95043 18.6471" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M12.5 10H7.5M10 12.5L10 7.5" class="icon_main" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
+ <span><?php echo $wo['lang']['more']; ?></span>
+				</span>
+			</div>
+			<?php } ?>
+		</div>
+		
+		
+		<!--Publisher Box Footer-->
+		<div class="publisher-box-footer">
+			<div class="sun_pub_more">
+			
+			<?php if ($wo['config']['website_mode'] == 'linkedin' && empty($wo['page_profile']) && ($wo['page'] == 'timeline' || $wo['page'] == 'home')) { ?>
+
+				<?php if ($wo['config']['post_poll'] == 1) { ?>
+				<!--Create Poll-->
+				<div class="sun_pub_more_items">
+				<div class="poster-left-buttons" onclick="Wo_ShowPosInfo();">
+					<span class="btn btn-file poll-form pol">
+						<span><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.35288 6.95043C2.00437 4.17301 4.17301 2.00437 6.95043 1.35287C8.95625 0.882372 11.0437 0.882372 13.0496 1.35287C15.827 2.00437 17.9956 4.17301 18.6471 6.95043C19.1176 8.95625 19.1176 11.0437 18.6471 13.0496C17.9956 15.827 15.827 17.9956 13.0496 18.6471C11.0437 19.1176 8.95626 19.1176 6.95044 18.6471C4.17301 17.9956 2.00437 15.827 1.35288 13.0496C0.882374 11.0437 0.882374 8.95626 1.35288 6.95043Z" class="icon_main" stroke-width="1.5"></path>
+<path d="M1.35288 6.95043C0.882374 8.95625 0.882374 11.0437 1.35288 13.0496C2.00437 15.827 4.17301 17.9956 6.95044 18.6471C8.95626 19.1176 11.0437 19.1176 13.0496 18.6471C15.827 17.9956 17.9956 15.827 18.6471 13.0496C19.1176 11.0437 19.1176 8.95625 18.6471 6.95043C17.9956 4.17301 15.827 2.00437 13.0496 1.35287" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+<path d="M5.31836 7.39934L6.35863 8.43962L8.43918 6.35907M11.0399 7.91948H14.6808M5.31836 12.6007L6.35863 13.641L8.43918 11.5604M11.0399 13.1208H14.6808" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg></span> <?php echo $wo['lang']['create_poll']; ?>
+					</span>
+				</div>
+				</div>
+				<?php } ?>
+			<?php } ?>
+			<!--Add GIFs-->
+			<?php if ($wo['config']['stickers'] == 1): ?>
+			<div class="sun_pub_more_items gif-form">
+				<div class="poster-left-buttons">
+					<span class="btn btn-file btngif gif" style="padding: 0px;">
+						<span><svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.35288 7.39477C2.00437 4.61734 4.17301 2.44871 6.95043 1.79721C8.95626 1.32671 11.0437 1.32671 13.0496 1.79721C15.827 2.44871 17.9956 4.61735 18.6471 7.39477C19.1176 9.40059 19.1176 11.4881 18.6471 13.4939C17.9956 16.2713 15.827 18.44 13.0496 19.0915C11.0437 19.562 8.95626 19.562 6.95044 19.0915C4.17301 18.44 2.00437 16.2713 1.35288 13.4939C0.882374 11.4881 0.882374 9.40059 1.35288 7.39477Z" class="icon_main" stroke-width="1.5"/>
+<path d="M18.6471 13.4939C19.1176 11.4881 19.1176 9.40059 18.6471 7.39477C17.9956 4.61735 15.827 2.44871 13.0496 1.79721C11.0437 1.32671 8.95626 1.32671 6.95043 1.79721C4.17301 2.44871 2.00437 4.61734 1.35288 7.39477C0.882374 9.40059 0.882374 11.4881 1.35288 13.4939C2.00437 16.2713 4.17301 18.44 6.95044 19.0915C7.87029 19.3072 8.80731 19.424 9.74576 19.4419" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+<rect x="7" y="7.44434" width="6" height="6" rx="3" class="icon_main" stroke-width="1.5"/>
+<circle cx="14" cy="5.44434" r="1" class="icon_main_fill"/>
+</svg>
+</span> <?php echo $wo['lang']['gif']; ?>
+					</span>
+				</div>
+			</div>
+			<?php endif ?>
+			<!--Record Audio-->
+			<?php if ($wo['config']['audio_upload'] == 1) { ?>
+			<div class="sun_pub_more_items" id="recordPostAudioWrapper">
+				<div class="poster-left-buttons">
+					<span class="btn btn-file rec">
+						<span id="recordPostAudio" data-record="0"><svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15.75 9.45306C15.75 9.03885 15.4142 8.70306 15 8.70306C14.5858 8.70306 14.25 9.03885 14.25 9.45306H15.75ZM1.75 9.45306C1.75 9.03885 1.41421 8.70306 1 8.70306C0.585786 8.70306 0.25 9.03885 0.25 9.45306H1.75ZM7.25 19C7.25 19.4142 7.58579 19.75 8 19.75C8.41421 19.75 8.75 19.4142 8.75 19H7.25ZM14.25 9.45306C14.25 13.1821 11.4107 16.1284 8 16.1284V17.6284C12.3213 17.6284 15.75 13.9259 15.75 9.45306H14.25ZM8 16.1284C4.58929 16.1284 1.75 13.1821 1.75 9.45306H0.25C0.25 13.9259 3.67872 17.6284 8 17.6284V16.1284ZM7.25 16.8784V19H8.75V16.8784H7.25Z" fill="currentColor"></path>
+<path d="M8.45001 13.6323L8.55647 14.3747L8.55648 14.3747L8.45001 13.6323ZM7.55926 13.6323L7.66572 12.8899H7.66572L7.55926 13.6323ZM7.55259 1.03274L7.44457 0.290562L7.55259 1.03274ZM8.45668 1.03274L8.5647 0.290562H8.5647L8.45668 1.03274ZM3.88008 9.91268L3.13809 10.022L3.88008 9.91268ZM3.88027 4.75693L3.13829 4.64758L3.88027 4.75693ZM12.1266 4.77402L12.8687 4.66576L12.1266 4.77402ZM12.1268 9.8956L11.3846 9.78734L12.1268 9.8956ZM8.54978 13.618L8.44332 12.8756L8.44331 12.8756L8.54978 13.618ZM8.55343 1.04682L8.44541 1.789H8.44541L8.55343 1.04682ZM7.44044 1.04907L7.54846 1.79125L7.44044 1.04907ZM7.4441 13.6158L7.33764 14.3582H7.33764L7.4441 13.6158ZM7.54846 1.79125L7.66061 1.77492L7.44457 0.290562L7.33242 0.306886L7.54846 1.79125ZM8.34866 1.77492L8.44541 1.789L8.66145 0.304644L8.5647 0.290562L8.34866 1.77492ZM8.44331 12.8756L8.34354 12.8899L8.55648 14.3747L8.65624 14.3604L8.44331 12.8756ZM7.66572 12.8899L7.55056 12.8734L7.33764 14.3582L7.4528 14.3747L7.66572 12.8899ZM8.34355 12.8899C8.11859 12.9221 7.89068 12.9221 7.66572 12.8899L7.4528 14.3747C7.81899 14.4272 8.19029 14.4272 8.55647 14.3747L8.34355 12.8899ZM7.66061 1.77492C7.88893 1.74169 8.12034 1.74169 8.34866 1.77492L8.5647 0.290562C8.1931 0.236479 7.81617 0.236479 7.44457 0.290562L7.66061 1.77492ZM4.62206 9.80333C4.38107 8.16812 4.38124 6.5016 4.62226 4.86628L3.13829 4.64758C2.87592 6.4278 2.87571 8.2417 3.13809 10.022L4.62206 9.80333ZM11.3844 4.88228C11.6215 6.50721 11.6217 8.16253 11.3846 9.78734L12.8689 10.0039C13.1269 8.23535 13.1267 6.43416 12.8687 4.66576L11.3844 4.88228ZM11.3846 9.78734C11.1451 11.4291 9.92649 12.6629 8.44332 12.8756L8.65623 14.3604C10.8489 14.046 12.5412 12.2505 12.8689 10.0039L11.3846 9.78734ZM12.8687 4.66576C12.5413 2.42095 10.8522 0.623499 8.66145 0.304644L8.44541 1.789C9.92762 2.00473 11.145 3.24066 11.3844 4.88228L12.8687 4.66576ZM4.62226 4.86628C4.86285 3.23377 6.07433 2.0058 7.54846 1.79125L7.33242 0.306886C5.15066 0.624428 3.46766 2.41269 3.13829 4.64758L4.62226 4.86628ZM3.13809 10.022C3.46773 12.2587 5.15401 14.0451 7.33764 14.3582L7.55056 12.8734C6.07546 12.6618 4.86268 11.436 4.62206 9.80333L3.13809 10.022Z" class="icon_main_fill"></path>
+</svg></span> <?php echo $wo['lang']['record_voice']; ?>
+					</span>
+					<span id="postRecordingTime" class="hidden">00:00</span>
+				</div>
+			</div>
+			<?php } ?>
+			<?php if ($wo['config']['post_feelings'] == 1) { ?>
+			<!--Add Feeling-->
+			<div class="sun_pub_more_items emo-form">
+				<div class="poster-left-buttons">
+					<span class="btn btn-file fel">
+						<span><svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.98389 9.05491L7.11798 15.955C8.59549 17.9408 11.4045 17.9408 12.882 15.955L18.0161 9.05491C19.328 7.29179 19.328 4.78651 18.0161 3.0234C16.0957 0.442437 11.6571 1.20898 10 3.99289C8.34289 1.20898 3.90428 0.442438 1.9839 3.0234C0.672036 4.78651 0.672033 7.29179 1.98389 9.05491Z" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18.0161 9.05491L12.882 15.955C11.4045 17.9408 8.59549 17.9408 7.11798 15.955L1.98389 9.05491C0.672033 7.29179 0.672036 4.78651 1.9839 3.0234C3.90428 0.442438 8.34289 1.20898 10 3.99289" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</span>
+						<?php echo $wo['lang']['feelings']; ?>
+					</span>
+				</div>
+			</div>
+			<?php } ?>
+			<!--Uploaded File-->
+			<?php if($wo['config']['fileSharing'] == 1) { ?>
+			<div class="sun_pub_more_items">
+				<div class="poster-left-buttons">
+					<span class="btn btn-file fil">
+						<span><svg width="22" height="19" viewBox="0 0 22 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M11 1.44434C14.5488 1.44434 17.4665 3.97146 17.8086 7.20675C19.6853 8.02189 21 9.91087 21 12.111C21 15.0565 18.6436 17.4443 15.7368 17.4443L5.73684 17.4443C3.12076 17.4443 1 15.2953 1 12.6443C1 10.5521 2.32099 8.77253 4.16392 8.11532C4.15992 8.02546 4.15789 7.93512 4.15789 7.84434C4.15789 4.30971 7.22121 1.44434 11 1.44434Z" class="icon_main" stroke-width="1.5"/>
+<path d="M11 1.44434C7.22121 1.44434 4.15789 4.30971 4.15789 7.84434C4.15789 7.93512 4.15992 8.02546 4.16392 8.11532C2.32099 8.77253 1 10.5521 1 12.6443C1 15.2953 3.12076 17.4443 5.73684 17.4443L15.7368 17.4443C18.6436 17.4443 21 15.0565 21 12.111" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
+</span> <?php echo $wo['lang']['upload_files']; ?>
+						<input type="file" id="publisher-file" name="postFile">
+					</span>
+				</div>
+			</div>
+			<?php } ?>
+
+			<!--Create Product-->
+			<?php if ($wo['page'] != 'group' && $wo['config']['classified'] == 1 && $wo['config']['can_use_market']) { ?>
+			<div class="sun_pub_more_items">
+				<div class="poster-left-buttons">
+					<a href="#" data-toggle="modal" data-target="#create-product-modal" class="btn btn-file sel">
+						<span><svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5.66667 4.83331L5.499 5.23252C5.22832 5.877 5.16028 6.58862 5.30394 7.27272C5.52315 8.31654 6.35414 9.12274 7.40412 9.31024L7.49657 9.32675C7.82956 9.38621 8.17044 9.38621 8.50343 9.32675L8.59588 9.31024C9.64586 9.12274 10.4769 8.31654 10.6961 7.27272C10.8397 6.58862 10.7717 5.877 10.501 5.23252L10.3333 4.83331" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+<path d="M14.8507 11.6191C14.3756 13.7086 12.7514 15.3503 10.6686 15.8543C8.91827 16.2778 7.08186 16.2778 5.3315 15.8543C3.24876 15.3503 1.62459 13.7086 1.14945 11.6191C0.724914 9.7522 0.828162 7.80397 1.44764 5.99237L1.53968 5.72322C2.2213 3.72988 3.92409 2.25844 5.9952 1.87305L6.56236 1.76751C7.51269 1.59068 8.48749 1.59068 9.43782 1.76752L10.005 1.87305C12.0761 2.25844 13.7789 3.72988 14.4605 5.72324L14.5525 5.99237C15.172 7.80397 15.2752 9.7522 14.8507 11.6191Z" class="icon_main" stroke-width="1.5"></path>
+</svg></span> <?php echo $wo['lang']['sell_product']; ?>
+					</a>
+				</div>
+			</div>
+			<?php } ?>
+			<!--Add Color-->
+			<?php if ($wo['config']['colored_posts_system'] == 1 && !empty($wo['post_colors']) && $wo['config']['can_use_colored_posts']) { ?>
+			<div class="sun_pub_more_items" onclick="Wo_ShowColors()">
+				<div class="poster-left-buttons">
+					<span class="btn btn-file" style="padding: 0px;">
+						<span><svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5.42631 10.7125C5.06441 9.16972 5.06441 7.56407 5.42631 6.02125C5.92742 3.88493 7.59548 2.21687 9.7318 1.71576C11.2746 1.35386 12.8803 1.35386 14.4231 1.71576C16.5594 2.21687 18.2275 3.88493 18.7286 6.02125C19.0905 7.56407 19.0905 9.16971 18.7286 10.7125C18.2275 12.8489 16.5594 14.5169 14.4231 15.018C12.8803 15.3799 11.2746 15.3799 9.7318 15.018M5.42631 10.7125C5.92742 12.8489 7.59548 14.5169 9.7318 15.018M5.42631 10.7125C5.19844 9.74112 5.11405 8.74478 5.17313 7.75491C5.08958 7.77196 5.00622 7.79024 4.92307 7.80974C3.09194 8.23927 1.66217 9.66903 1.23265 11.5002C0.92245 12.8226 0.92245 14.1988 1.23265 15.5213C1.66217 17.3524 3.09194 18.7822 4.92307 19.2117C6.24549 19.5219 7.62175 19.5219 8.94417 19.2117C10.7753 18.7822 12.2051 17.3524 12.6346 15.5213C12.6541 15.4381 12.6724 15.3548 12.6894 15.2712C11.6996 15.3303 10.7032 15.2459 9.7318 15.018" class="icon_main" stroke-width="1.5"/>
+<path d="M5.42633 10.7125C5.06443 9.16972 5.06443 7.56407 5.42633 6.02125C5.92744 3.88493 7.5955 2.21687 9.73182 1.71576C11.2746 1.35386 12.8803 1.35386 14.4231 1.71576C16.5594 2.21687 18.2275 3.88493 18.7286 6.02125C19.0905 7.56407 19.0905 9.16971 18.7286 10.7125C18.2275 12.8489 16.5594 14.5169 14.4231 15.018C12.8803 15.3799 11.2746 15.3799 9.73182 15.018M5.42633 10.7125C5.92744 12.8489 7.5955 14.5169 9.73182 15.018M5.42633 10.7125C5.19846 9.74112 5.11407 8.74478 5.17315 7.75491M9.73182 15.018C10.7032 15.2459 11.6996 15.3303 12.6895 15.2712" stroke="currentColor" stroke-width="1.5"/>
+</svg>
+</span> <?php echo $wo['lang']['color']; ?>
+					</span>
+				</div>
+			</div>
+			<?php } ?>
+			<?php if ($wo['config']['post_location'] == 1) { ?>
+			<!--Add Location-->
+			<div class="sun_pub_more_items">
+				<div class="poster-left-buttons">
+					<span class="btn btn-file map-form loc">
+						<span><svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 9.17548C17 13.6907 13.4183 19 9 19C4.58172 19 1 13.6907 1 9.17548C1 4.66029 4.58172 1 9 1C13.4183 1 17 4.66029 17 9.17548Z" stroke="currentColor" stroke-width="1.5"></path>
+<path d="M6.5 8.5C6.5 7.11929 7.61929 6 9 6C10.3807 6 11.5 7.11929 11.5 8.5C11.5 9.88071 10.3807 11 9 11C7.61929 11 6.5 9.88071 6.5 8.5Z" class="icon_main" stroke-width="1.5"></path>
+</svg></span> <?php echo $wo['lang']['location']; ?>
+					</span>
+				</div>
+			</div>
+			<?php } ?>
+			<!--Uploaded Music-->
+			<?php if ($wo['config']['audio_upload'] == 1) { ?>
+			<div class="sun_pub_more_items">
+				<div class="poster-left-buttons">
+					<span class="btn btn-file aud">
+						<span>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M18.75 3.333c-.36.052-.826.161-1.511.322l-5.6 1.318c-.451.106-.75.177-.98.249-.22.069-.326.125-.399.178a1.25 1.25 0 00-.41.519c-.035.082-.065.198-.082.428-.018.24-.018.547-.018 1.01V19a.75.75 0 01-1.5 0V7.332c0-.43 0-.793.022-1.094.023-.316.073-.614.197-.906a2.75 2.75 0 01.904-1.142c.257-.188.535-.304.837-.4.288-.09.64-.173 1.06-.271l.025-.006 5.6-1.318.034-.008c.643-.15 1.173-.276 1.608-.338.448-.065.879-.078 1.3.057a2.75 2.75 0 011.52 1.204c.229.38.315.802.355 1.253.038.437.038.982.038 1.643V16a.75.75 0 01-1.5 0V6.04c0-.703 0-1.182-.033-1.545-.031-.358-.088-.518-.145-.613a1.25 1.25 0 00-.691-.547c-.107-.034-.275-.053-.63-.002z" class="icon_main_fill"/>
+  <path fill-rule="evenodd" d="M21.75 10a.75.75 0 00-1.5 0v3a3.75 3.75 0 101.436 2.305.747.747 0 00.064-.305v-5zm-12 3a.75.75 0 00-1.5 0v3a3.75 3.75 0 101.5 3v-6zm-1.5 6a2.25 2.25 0 10-4.5 0 2.25 2.25 0 004.5 0zM18 13.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z"/>
+</svg>
+</span> <?php echo $wo['lang']['audio_upload']; ?>
+						<input type="file" id="publisher-music" name="postMusic" accept="audio/*">
+					</span>
+				</div>
+			</div>
+			<?php } ?>
+			<?php if ($wo['config']['post_poll'] == 1 && $wo['config']['ai_image_system'] == 1) { ?>
+			<div class="sun_pub_more_items">
+				<div class="poster-left-buttons">
+					<span class="btn btn-file poll-form pol">
+						<span><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.35288 6.95043C2.00437 4.17301 4.17301 2.00437 6.95043 1.35287C8.95625 0.882372 11.0437 0.882372 13.0496 1.35287C15.827 2.00437 17.9956 4.17301 18.6471 6.95043C19.1176 8.95625 19.1176 11.0437 18.6471 13.0496C17.9956 15.827 15.827 17.9956 13.0496 18.6471C11.0437 19.1176 8.95626 19.1176 6.95044 18.6471C4.17301 17.9956 2.00437 15.827 1.35288 13.0496C0.882374 11.0437 0.882374 8.95626 1.35288 6.95043Z" class="icon_main" stroke-width="1.5"/>
+<path d="M1.35288 6.95043C0.882374 8.95625 0.882374 11.0437 1.35288 13.0496C2.00437 15.827 4.17301 17.9956 6.95044 18.6471C8.95626 19.1176 11.0437 19.1176 13.0496 18.6471C15.827 17.9956 17.9956 15.827 18.6471 13.0496C19.1176 11.0437 19.1176 8.95625 18.6471 6.95043C17.9956 4.17301 15.827 2.00437 13.0496 1.35287" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M5.31836 7.39934L6.35863 8.43962L8.43918 6.35907M11.0399 7.91948H14.6808M5.31836 12.6007L6.35863 13.641L8.43918 11.5604M11.0399 13.1208H14.6808" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></span> <?php echo $wo['lang']['create_poll']; ?>
+					</span>
+				</div>
+			</div>
+			<?php } ?>
+
+<?php if ($wo['config']['reels_upload'] == 1) { ?>
+			<div class="sun_pub_more_items">
+				<div class="poster-left-buttons">
+					<span class="btn btn-file vid">
+						<span><svg width="16" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 6.99988H21.5M16.3 2.49988L19 6.99988M10.5 1.99988L13.5 6.99988M5.5 2.49988L8 6.99988M7.5 16.9999C7.5 17.276 7.27614 17.4999 7 17.4999C6.72386 17.4999 6.5 17.276 6.5 16.9999M7.5 16.9999C7.5 16.7237 7.27614 16.4999 7 16.4999C6.72386 16.4999 6.5 16.7237 6.5 16.9999M7.5 16.9999H6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><rect x="2" y="2" width="20" height="20" rx="5" class="icon_main" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></rect></svg></span> <?php echo $wo['lang']['upload_reels']; ?>
+						<input type="file" id="publisher-reels" name="postVideo" accept="<?php echo($wo['config']['ffmpeg_system'] == 'on' ? '*/*' : 'video/*') ?>">
+					</span>
+				</div>
+			</div>
+			<?php } ?>
+
+			<?php if ($wo['config']['video_upload'] == 1 && $wo['config']['ai_post_system'] == 1) { ?>
+			<div class="sun_pub_more_items">
+				<div class="poster-left-buttons">
+					<span class="btn btn-file vid">
+						<span><svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.1579 5.60503C15.614 7.1139 15.614 10.8861 13.1579 12.395L6.52631 16.4689C4.07017 17.9778 1 16.0917 1 13.074L1 4.92602C1 1.90827 4.07018 0.0221756 6.52632 1.53105L13.1579 5.60503Z" class="icon_main" stroke-width="1.5"/>
+<path d="M6.52631 16.4689C4.07017 17.9778 1 16.0917 1 13.074L1 4.92602C1 1.90827 4.07018 0.0221756 6.52632 1.53105L13.1579 5.60503" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+</svg></span> <?php echo $wo['lang']['upload_video']; ?>
+						<input type="file" id="publisher-video" name="postVideo" accept="<?php echo($wo['config']['ffmpeg_system'] == 'on' ? '*/*' : 'video/*') ?>">
+					</span>
+				</div>
+			</div>
+			<?php } ?>
+			</div>
+      <?php if ($wo['config']['website_mode'] == 'askfm' && $wo['config']['shout_box_system'] == 1 && $wo['config']['can_use_shout_box']) { ?>
+    	<div class="w_ask_anonymously">
+    		<div class="w-float-left">
+	          <label for="ask_anonymously" class="w-main-label"><?php echo $wo['lang']['ask_anonymously']; ?></label>
+	      </div>
+	      <div class="form-group w-float-left w-switcher">
+	          <input type="hidden" name="ask_anonymously" value="0" />
+	          <input type="checkbox" name="postPrivacy" id="chck-ask_anonymously" value="4">
+	          <label for="chck-ask_anonymously" class="w-check-trail"><span class="w-check-handler"></span></label>
+	      </div>
+	      <div class="clearfix"></div>
+    	</div>
+      <?php } ?>
+
+		 <div class="pub-footer-bottom">
+			<div class="pub_footer_bottom_btns">
+				<div class="pub_footer_middle">
+				<div class=""><div class="ball-pulse"><div></div><div></div><div></div></div></div>
+				
+			<div class="charsLeft-post"><span id="charsLeft"></span></div>
+			
+			<?php if ($wo['config']['website_mode'] != 'askfm') { ?>
+			<?php if (!isset($wo['input']['recipient']) && $wo['page'] != 'group') { ?>
+			
+				<div class="poster-left-select">
+					<div class="publisher-hidden-option inputsm">
+						<?php $postprivacyCookie = (!empty($_COOKIE['post_privacy'])) ? $_COOKIE['post_privacy'] : 0;?>
+						<div class="sun_pub_privacy">
+							<div class="sun_pub_privacy_dropdown">
+								<?php  if (empty($wo['page_profile'])) {?>
+									<?php if ($postprivacyCookie == 3) {?>
+										<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z" /></svg> <?php echo $wo['lang']['only_me'];?></p>
+										<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+									<?php } ?>
+									<?php if ($postprivacyCookie == 0) {?>
+										<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg> <?php echo $wo['lang']['everyone'];?></p>
+										<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+									<?php } ?>
+									<?php if ($postprivacyCookie == 4) {?>
+										<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12,3C9.31,3 7.41,4.22 7.41,4.22L6,9H18L16.59,4.22C16.59,4.22 14.69,3 12,3M12,11C9.27,11 5.39,11.54 5.13,11.59C4.09,11.87 3.25,12.15 2.59,12.41C1.58,12.75 1,13 1,13H23C23,13 22.42,12.75 21.41,12.41C20.75,12.15 19.89,11.87 18.84,11.59C18.84,11.59 14.82,11 12,11M7.5,14A3.5,3.5 0 0,0 4,17.5A3.5,3.5 0 0,0 7.5,21A3.5,3.5 0 0,0 11,17.5C11,17.34 11,17.18 10.97,17.03C11.29,16.96 11.63,16.9 12,16.91C12.37,16.91 12.71,16.96 13.03,17.03C13,17.18 13,17.34 13,17.5A3.5,3.5 0 0,0 16.5,21A3.5,3.5 0 0,0 20,17.5A3.5,3.5 0 0,0 16.5,14C15.03,14 13.77,14.9 13.25,16.19C12.93,16.09 12.55,16 12,16C11.45,16 11.07,16.09 10.75,16.19C10.23,14.9 8.97,14 7.5,14M7.5,15A2.5,2.5 0 0,1 10,17.5A2.5,2.5 0 0,1 7.5,20A2.5,2.5 0 0,1 5,17.5A2.5,2.5 0 0,1 7.5,15M16.5,15A2.5,2.5 0 0,1 19,17.5A2.5,2.5 0 0,1 16.5,20A2.5,2.5 0 0,1 14,17.5A2.5,2.5 0 0,1 16.5,15Z" /></svg> <?php echo $wo['lang']['anonymous'];?></p>
+										<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+									<?php } ?>
+									<?php if ($postprivacyCookie == 5 && $wo['config']['website_mode'] == 'patreon') {?>
+											<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> <?php echo $wo['lang']['patrons'];?></p>
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+										<?php } ?>
+										<?php if ($postprivacyCookie == 5 && $wo['config']['website_mode'] == 'linkedin') {?>
+											<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> <?php echo $wo['lang']['hiring'];?></p>
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+										<?php } ?>
+                                    <?php if ($postprivacyCookie == 6 && $wo['config']['monetization'] == 1) {?>
+                                        <p><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M880-720v480q0 33-23.5 56.5T800-160H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-720 80h640v-80H160v80Zm0 160v240h640v-240H160Zm0 240v-480 480Z"></path></svg> <?php echo $wo['lang']['monetized'];?></p>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+                                    <?php } ?>
+
+									<?php if ($wo['config']['connectivitySystem'] == 0) { ?>
+										<?php if ($postprivacyCookie == 2) {?>
+											<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg> <?php echo $wo['lang']['people_i_follow'];?></p>
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+										<?php } ?>
+										<?php if ($postprivacyCookie == 1) {?>
+											<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16,13C15.71,13 15.38,13 15.03,13.05C16.19,13.89 17,15 17,16.5V19H23V16.5C23,14.17 18.33,13 16,13M8,13C5.67,13 1,14.17 1,16.5V19H15V16.5C15,14.17 10.33,13 8,13M8,11A3,3 0 0,0 11,8A3,3 0 0,0 8,5A3,3 0 0,0 5,8A3,3 0 0,0 8,11M16,11A3,3 0 0,0 19,8A3,3 0 0,0 16,5A3,3 0 0,0 13,8A3,3 0 0,0 16,11Z" /></svg> <?php echo $wo['lang']['people_follow_me'];?></p>
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+										<?php } ?>
+										
+									<?php } else {?>
+										<?php if ($postprivacyCookie == 1) {?>
+											<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16,13C15.71,13 15.38,13 15.03,13.05C16.19,13.89 17,15 17,16.5V19H23V16.5C23,14.17 18.33,13 16,13M8,13C5.67,13 1,14.17 1,16.5V19H15V16.5C15,14.17 10.33,13 8,13M8,11A3,3 0 0,0 11,8A3,3 0 0,0 8,5A3,3 0 0,0 5,8A3,3 0 0,0 8,11M16,11A3,3 0 0,0 19,8A3,3 0 0,0 16,5A3,3 0 0,0 13,8A3,3 0 0,0 16,11Z" /></svg> <?php echo $wo['lang']['my_friends'];?></p>
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+										<?php } ?>
+									<?php }?>
+								<?php } else {?>
+										<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg> <?php echo $wo['lang']['everyone'];?></p>
+										<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+								<?php } ?>
+							</div>
+							<ul class="sun_pub_privacy_menu">
+								<p><?php echo $wo['lang']['show_to'];?></p>
+								<?php if (empty($wo['page_profile'])) {?>
+									<li>
+										<label>
+											<input type="radio" class="option-input radio" name="postPrivacy" id="3" value="3" <?php echo ($postprivacyCookie == 3) ? ' checked': ''?>>
+											<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z" /></svg> <?php echo $wo['lang']['only_me'];?></span>
+										</label>
+									</li>
+									<li>
+										<label>
+											<input type="radio" class="option-input radio" name="postPrivacy" id="0" value="0" <?php echo ($postprivacyCookie == 0) ? ' checked': ''?>>
+											<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg> <?php echo $wo['lang']['everyone'];?></span>
+										</label>
+									</li>
+									<?php if ($wo['config']['connectivitySystem'] == 0) { ?>
+										<li>
+											<label>
+												<input type="radio" class="option-input radio" name="postPrivacy" id="2" value="2" <?php echo ($postprivacyCookie == 2) ? ' checked': ''?>>
+												<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg> <?php echo $wo['lang']['people_i_follow'];?></span>
+											</label>
+										</li>
+										<li>
+											<label>
+												<input type="radio" class="option-input radio" name="postPrivacy" id="1" value="1" <?php echo ($postprivacyCookie == 1) ? ' checked': ''?>>
+												<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16,13C15.71,13 15.38,13 15.03,13.05C16.19,13.89 17,15 17,16.5V19H23V16.5C23,14.17 18.33,13 16,13M8,13C5.67,13 1,14.17 1,16.5V19H15V16.5C15,14.17 10.33,13 8,13M8,11A3,3 0 0,0 11,8A3,3 0 0,0 8,5A3,3 0 0,0 5,8A3,3 0 0,0 8,11M16,11A3,3 0 0,0 19,8A3,3 0 0,0 16,5A3,3 0 0,0 13,8A3,3 0 0,0 16,11Z" /></svg> <?php echo $wo['lang']['people_follow_me'];?></span>
+											</label>
+										</li>
+									<?php } else {?>
+										<li>
+											<label>
+												<input type="radio" class="option-input radio" name="postPrivacy" id="1" value="1" <?php echo ($postprivacyCookie == 1) ? ' checked': ''?>>
+												<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16,13C15.71,13 15.38,13 15.03,13.05C16.19,13.89 17,15 17,16.5V19H23V16.5C23,14.17 18.33,13 16,13M8,13C5.67,13 1,14.17 1,16.5V19H15V16.5C15,14.17 10.33,13 8,13M8,11A3,3 0 0,0 11,8A3,3 0 0,0 8,5A3,3 0 0,0 5,8A3,3 0 0,0 8,11M16,11A3,3 0 0,0 19,8A3,3 0 0,0 16,5A3,3 0 0,0 13,8A3,3 0 0,0 16,11Z" /></svg> <?php echo $wo['lang']['my_friends'];?></span>
+											</label>
+										</li>
+									<?php }?>
+									<?php if ($wo['config']['shout_box_system'] == 1 && $wo['config']['can_use_shout_box']) { ?>
+										<li>
+											<label>
+												<input type="radio" class="option-input radio" name="postPrivacy" id="4" value="4" <?php echo ($postprivacyCookie == 4) ? ' checked': ''?>>
+												<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12,3C9.31,3 7.41,4.22 7.41,4.22L6,9H18L16.59,4.22C16.59,4.22 14.69,3 12,3M12,11C9.27,11 5.39,11.54 5.13,11.59C4.09,11.87 3.25,12.15 2.59,12.41C1.58,12.75 1,13 1,13H23C23,13 22.42,12.75 21.41,12.41C20.75,12.15 19.89,11.87 18.84,11.59C18.84,11.59 14.82,11 12,11M7.5,14A3.5,3.5 0 0,0 4,17.5A3.5,3.5 0 0,0 7.5,21A3.5,3.5 0 0,0 11,17.5C11,17.34 11,17.18 10.97,17.03C11.29,16.96 11.63,16.9 12,16.91C12.37,16.91 12.71,16.96 13.03,17.03C13,17.18 13,17.34 13,17.5A3.5,3.5 0 0,0 16.5,21A3.5,3.5 0 0,0 20,17.5A3.5,3.5 0 0,0 16.5,14C15.03,14 13.77,14.9 13.25,16.19C12.93,16.09 12.55,16 12,16C11.45,16 11.07,16.09 10.75,16.19C10.23,14.9 8.97,14 7.5,14M7.5,15A2.5,2.5 0 0,1 10,17.5A2.5,2.5 0 0,1 7.5,20A2.5,2.5 0 0,1 5,17.5A2.5,2.5 0 0,1 7.5,15M16.5,15A2.5,2.5 0 0,1 19,17.5A2.5,2.5 0 0,1 16.5,20A2.5,2.5 0 0,1 14,17.5A2.5,2.5 0 0,1 16.5,15Z" /></svg> <?php echo $wo['lang']['anonymous'];?></span>
+											</label>
+										</li>
+									<?php } ?>
+                                    <?php if ($wo['config']['monetization'] == 1) { ?>
+                                        <li class="<?php echo($wo['have_monetization'] == 1 ? '' : 'disabled') ?>" <?php echo($wo['have_monetization'] == 1 ? '' : 'onclick="showMonetizationModel()"') ?>>
+                                            <label>
+                                                <input type="radio" class="option-input radio" name="postPrivacy" id="6" value="6" <?php echo ($postprivacyCookie == 6) ? ' checked': ''?>>
+                                                <span><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M880-720v480q0 33-23.5 56.5T800-160H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-720 80h640v-80H160v80Zm0 160v240h640v-240H160Zm0 240v-480 480Z"></path></svg> <?php echo $wo['lang']['monetized'];?></span>
+                                            </label>
+                                        </li>
+                                    <?php } ?>
+									<?php if ($wo['config']['website_mode'] == 'patreon') { ?>
+										<li>
+											<label>
+												<input type="radio" class="option-input radio" name="postPrivacy" id="5" value="5" <?php echo ($postprivacyCookie == 5) ? ' checked': ''?>>
+												<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> <?php echo $wo['lang']['patrons'];?></span>
+											</label>
+										</li>
+									<?php } ?>
+									<?php if ($wo['config']['website_mode'] == 'linkedin') { ?>
+										<li>
+											<label>
+												<input type="radio" class="option-input radio" name="postPrivacy" id="5" value="5" <?php echo ($postprivacyCookie == 5) ? ' checked': ''?>>
+												<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> <?php echo $wo['lang']['hiring'];?></span>
+											</label>
+										</li>
+									<?php } ?>
+								<?php } else { ?>
+									<li>
+										<label>
+											<input type="radio" class="option-input radio" name="postPrivacy" id="0" value="0">
+											<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg> <?php echo $wo['lang']['everyone'];?></span>
+										</label>
+									</li>
+									<li>
+										<label>
+											<input type="radio" class="option-input radio" name="postPrivacy" id="2" value="2">
+											<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z" /></svg> <?php echo $wo['lang']['liked_my_page'];?></span>
+										</label>
+									</li>
+								<?php } ?>
+							</ul>
+						</div>
+					</div>
+				</div>
+			<?php } ?>
+			<?php } ?>
+			
+			</div>
+				<div>
+					<?php if ($wo['config']['live_video'] == 1 && ($wo['config']['millicast_live_video'] == 1 || $wo['config']['agora_live_video'] == 1) && $wo['config']['can_use_live']) { ?>
+						<a class="btn btn-default btn-mat btn-go-live" onclick="$('body').removeClass('pub-focus');" href="<?php echo($wo['config']['site_url']) ?>/live" data-ajax="?link1=live"><svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.35288 7.39477C2.00437 4.61734 4.17301 2.44871 6.95043 1.79721C8.95626 1.32671 11.0437 1.32671 13.0496 1.79721C15.827 2.44871 17.9956 4.61735 18.6471 7.39477C19.1176 9.40059 19.1176 11.4881 18.6471 13.4939C17.9956 16.2713 15.827 18.44 13.0496 19.0915C11.0437 19.562 8.95626 19.562 6.95044 19.0915C4.17301 18.44 2.00437 16.2713 1.35288 13.4939C0.882374 11.4881 0.882374 9.40059 1.35288 7.39477Z" stroke="currentColor" stroke-width="1.5"/>
+<path d="M12.1618 9.315C12.9461 9.81693 12.9461 11.0717 12.1618 11.5737L9.51471 13.2677C8.73039 13.7696 7.75 13.1422 7.75 12.1383L7.75 8.75033C7.75 7.74647 8.73039 7.11906 9.51471 7.62099L12.1618 9.315Z" class="icon_main" stroke-width="1.5"/>
+</svg>
+ <?php echo $wo['lang']['live']; ?></a>
+					<?php } ?>
+					<button type="button" onclick="Wo_GetPRecordLink($('#postRecord'))" id="publisher-button" class="btn btn-main btn-mat add_wow_loader">
+						<span><?php echo TextForMode('share'); ?></span>
+					</button>
+				</div>
+			</div>
+			
+			<div id="status"></div>
+			
+			<div class="clear"></div>
+			<div class="w_search_for" style="display: none;">
+				<div class="clearfix"></div>
+				<br>
+				<div class="form-group inner-addon left-addon ">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search glyphicon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+					<input type="text" class="form-control search-input" onkeyup="SearchForFriends(this.value)" placeholder="<?php echo $wo['lang']['search_for_friends'];?>" dir="auto">
+					<input type="hidden" name="parts" id="w_search_users">
+					<span class="input-group-addon" id="w_search_mbrs">0</span>
+					<div class="w_search_for_users"></div>
+				</div>
+			</div>
+		 </div>
+      </div>
+   </div>
+   <?php if (isset($wo['input']['recipient'])) { ?>
+   <input type="hidden" name="recipient_id" value="<?php echo $wo['user_profile']['user_id']; ?>">
+   <?php } ?>
+   <?php if ($wo['page'] == 'page') {?>
+   <input type="hidden" name="page_id" value="<?php echo $wo['page_profile']['page_id']; ?>">
+   <?php } else if ($wo['page'] == 'group') {?>
+   <input type="hidden" name="group_id" value="<?php echo $wo['group_profile']['id']; ?>">
+   <?php } else if ($wo['page'] == 'events') { ?>
+   <input type="hidden" name="event_id" value="<?php echo $wo['event']['id']; ?>">
+   <?php } ?>
+   <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+   <input type="hidden" name="postRecord" value="" id="postRecord">
+   <?php if ($wo['config']['ai_post_system'] == 1 || $wo['config']['ai_image_system'] == 1) { ?>
+   	<input type="hidden" name="ai_post" value="off" id="isAiPost">
+   <?php } ?>
+   <input type="hidden" name="postSticker" value="" id="postSticker" onchange="alert(this.value)">
+</form>
+<div id="hidden_inputbox"></div>
+<?php echo Wo_LoadPage('products/create'); ?>
+<?php if ($wo['config']['ai_post_system'] == 1) { echo Wo_LoadPage('modals/ai_post');} ?>
+<?php if ($wo['config']['ai_image_system'] == 1) { echo Wo_LoadPage('modals/ai_images');} ?>
+<script type="text/javascript">
+	var imgArray = [];
+	var aiImages = [];
+
+function Wo_ChangeColor(color_1,color_2,text_color,image,id) {
+	if (color_1 != '' && color_2 != '' && text_color != '' && id) {
+		$('.wo_pub_txtara_combo').css("cssText", "background-image: linear-gradient(45deg, "+color_1+" 0%, "+color_2+" 100%) !important;color: "+text_color+" !important");
+		$('#post_color_input').val(id);
+		$('.post.publisher-box').addClass('wo_pub_change_color');
+	}
+	else if(text_color != '' && image != '' && id){
+		$('.wo_pub_txtara_combo').css("cssText", "background-position: center !important;background-repeat: no-repeat !important;background-size: cover !important;background-image:url('"+image+"') !important;color: "+text_color+" !important");
+		$('#post_color_input').val(id);
+		$('.post.publisher-box').addClass('wo_pub_change_color');
+	};
+}
+function Wo_ShowColors() {
+	if ($('.all_colors').is(":visible")) {
+		$('.all_colors').hide();
+		$('#post_color_input').val("");
+		$('.post.publisher-box').removeClass('wo_pub_change_color');
+	}
+	else{
+		$('.all_colors').show();
+	}
+}
+function Wo_CloseColor() {
+	$('.all_colors').hide();
+	$('.wo_pub_txtara_combo').css("cssText", "");
+	$('#post_color_input').val("");
+	$('.post.publisher-box').removeClass('wo_pub_change_color');
+	$(".all_colors_display").removeClass('selected');
+}
+
+$(document).ready(function(){
+	$(".sun_pub_privacy_dropdown").click(function(){
+		$(".sun_pub_privacy").toggleClass("showMenu");
+		$(".sun_pub_privacy_menu > li:not(.disabled)").click(function(){
+			$(".sun_pub_privacy_dropdown > p").html($(this).find('span').html());
+			$(".sun_pub_privacy").removeClass("showMenu");
+		});
+	});
+});
+
+jQuery(document).click(function(event){
+    if (!(jQuery(event.target).closest(".sun_pub_privacy").length)) {
+        jQuery('.sun_pub_privacy').removeClass('showMenu');
+    }
+});
+
+var deleted_images = [];
+function DeleteImageById(name,id) {
+	$('#image_to_'+id).remove();
+	imgArray.splice(id, 1);
+	var image_holder = $("#image-holder");
+	image_holder.empty();
+
+	for (var i = 0; i < imgArray.length; i++){
+
+		var reader = new FileReader();
+		var ii = 0;
+		reader.onload = function (e) {
+			name = "'"+imgArray[ii].name+"'";
+		  image_holder.append('<span class="thumb-image-delete" id="image_to_'+ii+'"><span onclick="DeleteImageById('+name+','+ii+')" class="pointer thumb-image-delete-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg></span><img src="'+e.target.result+'" class="thumb-image"></span>')
+		  ii = ii +1;
+
+		}
+		image_holder.show();
+    reader.readAsDataURL(imgArray[i]);
+	}
+	$("#publisher-photos")[0].files = new FileListItems(imgArray);
+	if ($('.add_more_images').length == 0) {
+		image_holder.prepend('<span class="wow_prod_imgs add_more_images"><div class="upload-product-image" onclick="document.getElementById(\'publisher-photos\').click(); return false"><div class="upload-image-content"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"></path></svg></div></div></span>')
+	}
+}
+
+
+$(document).ready(function() {
+	$("textarea.postText").keyup(function(){
+		if($(this).val().length > 180){
+			$('.all_colors').hide();
+			$('.wo_pub_txtara_combo').css("cssText", "");
+			$('#post_color_input').val("");
+			$('.post.publisher-box').removeClass('wo_pub_change_color');
+			$(".all_colors_display").removeClass('selected');
+		}
+		else {
+			
+		}
+	});
+	
+	$(".all_colors_display").click(function() {
+		$(".all_colors_display").removeClass('selected');
+		$(this).addClass('selected');
+	});
+	
+	$("#publisher-photos").on('change', function(e) {
+		$('#postSticker').val('');
+		var imgPath = $(this)[0].value;
+		var extn = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
+		var image_holder = $("#image-holder");
+		var countFiles = $(this)[0].files.length;
+		let self = this;
+
+		if (extn == "gif" || extn == "png" || extn == "jpg" || extn == "jpeg") {
+			if (typeof(FileReader) != "undefined") {
+				for (var i = 0; i < countFiles; i++){
+
+					var reader = new FileReader();
+					
+					imgArray.push($(self)[0].files[i]);
+					if ($("#image-holder .thumb-image-delete").length == 0) {
+						var ii = 0;
+					}
+					else{
+						var ii = $("#image-holder .thumb-image-delete").length;
+					}
+					
+					reader.onload = function (e) {
+						name = "'"+$(self)[0].files[ii].name+"'";
+					  image_holder.append('<span class="thumb-image-delete" id="image_to_'+ii+'"><span onclick="DeleteImageById('+name+','+ii+')" class="pointer thumb-image-delete-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg></span><img src="'+e.target.result+'" class="thumb-image"></span>')
+					  ii = ii +1;
+
+					}
+					image_holder.show();
+          reader.readAsDataURL($("#publisher-photos")[0].files[i]);
+				}
+				$("#publisher-photos")[0].files = new FileListItems(imgArray);
+				if ($('.add_more_images').length == 0) {
+					image_holder.prepend('<span class="wow_prod_imgs add_more_images"><div class="upload-product-image" onclick="document.getElementById(\'publisher-photos\').click(); return false"><div class="upload-image-content"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"></path></svg></div></div></span>')
+				}
+					
+			}
+			else {
+        image_holder.html("<p>This browser does not support FileReader.</p>");
+      }
+		}
+	});
+});
+
+var fetch_url = 1;
+$(function () {
+   var allowed = "<?php echo $wo['config']['allowedExtenstion']?>";
+  <?php if (!empty($url)) { ?>
+    $('textarea').trigger('click');
+    setTimeout(function () {
+      $('textarea').trigger('keyup')
+    }, 1000);
+  <?php } ?>
+  $('.postText').triggeredAutocomplete({
+     hidden: '#hidden_inputbox',
+     source: Wo_Ajax_Requests_File() + "?f=mention",
+     trigger: "@" 
+  });
+  <?php if ($wo['config']['maxCharacters'] != 10000) { ?>
+  $('.postText').limit("<?php echo $wo['config']['maxCharacters'] - 10; ?>", '#charsLeft');
+  <?php } ?>
+  $('.emo-form').click(function () {
+    $('#emo-form').slideToggle(200);
+    Wo_RestFeelings();
+  });
+  
+  $('.gif-form').click(function () {
+    $('#gif-form').slideToggle(200);
+  });
+
+  $('.map-form').click(function () {
+    $('#map-form').slideToggle(200);
+	$('#map-form input').focus();
+  });
+  $('.poll-form').click(function () {
+    $('#poll-form').slideToggle(200);
+     $('.answers').find('input').each(function (index_id) {
+       $(this).val('');
+    });
+  });
+  $("#publisher-file").change(function () {
+    var filename = $(this).val().replace(/C:\\fakepath\\/i, '');
+    $("#file-form input").val(filename);
+    $("#file-form").slideDown(200);
+    if (Wo_IsFileAllowedToUpload(filename, allowed) == false) {
+      $("#file_not_supported").modal('show');
+      Wo_Delay(function(){
+        $("#file_not_supported").modal('hide');
+      },3000);
+      $("#publisher-file").val('');
+      $("#file-form input").val('');
+      $("#file-form").slideUp(200);
+      return false;
+    }
+  });
+
+  $("#publisher-photos").change(function () {
+  	$('#postSticker').val('');
+    var numFiles = this.files.length;
+    $('.create-album').css('display', 'unset');
+    let tx = "<?php echo $wo['lang']['photos_selected'];?>";
+    $("#photo-form input").val(tx.replace("COUNT", numFiles));
+    $("#photo-form").slideDown(200);
+  });
+
+  $("#publisher-video").change(function () {
+    var filename = $(this).val().replace(/C:\\fakepath\\/i, '');
+    $("#video-form input[type='text']").val(filename);
+    $("#video-form").slideDown(200);
+    if (Wo_IsFileAllowedToUpload(filename, allowed) == false) {
+      $("#file_not_supported").modal('show');
+      Wo_Delay(function(){
+        $("#file_not_supported").modal('hide');
+      },3000);
+      $("#publisher-video").val('');
+      $("#video-form input[type='text']").val('');
+      $("#video-form").slideUp(200);
+      return false;
+    }
+  });
+
+    $("#publisher-reels").change(function () {
+        var filename = $(this).val().replace(/C:\\fakepath\\/i, '');
+        $("#video-form input[type='text']").val(filename);
+        $("#video-form").append('<input type="hidden" name="reels" value="true">');
+        $("#video-form").slideDown(200);
+        if (Wo_IsFileAllowedToUpload(filename, allowed) == false) {
+            $("#file_not_supported").modal('show');
+            Wo_Delay(function(){
+                $("#file_not_supported").modal('hide');
+            },3000);
+            $("#publisher-video").val('');
+            $("#video-form input[type='text']").val('');
+            $("#video-form").slideUp(200);
+            return false;
+        }
+    });
+  $("#publisher-music").change(function () {
+    var filename = $(this).val().replace(/C:\\fakepath\\/i, '');
+    $("#music-form input").val(filename);
+    $("#music-form").slideDown(200);
+    if (Wo_IsFileAllowedToUpload(filename, allowed) == false) {
+      $("#file_not_supported").modal('show');
+      Wo_Delay(function(){
+        $("#file_not_supported").modal('hide');
+      },3000);
+      $("#publisher-music").val('');
+      $("#music-form input").val('');
+      $("#music-form").slideUp(200);
+      return false;
+    }
+  });
+
+  $(document).on("click",".read-ads-description",function(event) {
+    var self = $(this);
+    self.toggleClass('unsetheight');
+  });
+
+  $(document).on('click', '.rads-clicks', function(event) {
+    var self  = $(this);
+    var ad_id = self.attr('id');
+    var url   = self.find('a').attr('href');
+    window.open(url, '_blank');
+    if (ad_id) {
+      $.ajax({
+        url: Wo_Ajax_Requests_File() ,
+        type: 'GET',
+        dataType: 'json',
+        data: {f: 'ads',s:'rads-c',ad_id:ad_id},
+      })
+      .done(function(data) {/*pass*/})
+      .fail(function() {/*pass*/});
+    }
+    event.preventDefault();
+  });
+
+  $(document).on('click', '.rvad-clicks', function(event) {
+    var self  = $(this);
+    self.off("click").removeClass('rvad-clicks');
+    var ad_id = self.parent().attr('id');
+    var url   = self.find('a').attr('href');
+    if (ad_id) {
+      $.ajax({
+        url: Wo_Ajax_Requests_File() ,
+        type: 'GET',
+        dataType: 'json',
+        data: {f: 'ads',s:'rads-c',ad_id:ad_id},
+      })
+      .done(function(data) {/*pass*/})
+      .fail(function() {/*pass*/});
+    }
+    event.preventDefault();
+  });
+
+  $(document).on('click', '.rvad-views', function(event) {
+    var self  = $(this);
+    self.off("click").removeClass('rvad-views');
+    var ad_id = self.parent().attr('id');
+    var url   = self.find('a').attr('href');
+    if (ad_id) {
+      $.ajax({
+        url: Wo_Ajax_Requests_File() ,
+        type: 'GET',
+        dataType: 'json',
+        data: {f: 'ads',s:'rads-v',ad_id:ad_id},
+      })
+      .done(function(data) {/*pass*/})
+      .fail(function() {/*pass*/});
+    }
+    event.preventDefault();
+  });
+
+
+
+  <?php if ($wo['config']['video_upload'] == 1) { ?>  
+  var thumb_drop_block = $(".thumb-renderer");
+
+  if (typeof(window.FileReader) == 'undefined') {
+    thumb_drop_block.find('.preview').text('Drag drop is not supported in your browser!');
+  }
+
+  else{
+    thumb_drop_block[0].ondragover = function() {
+        thumb_drop_block.addClass('hover');
+        return false;
+    };
+        
+    thumb_drop_block[0].ondragleave = function() {
+        thumb_drop_block.removeClass('hover');
+        return false;
+    };
+
+    thumb_drop_block[0].ondrop = function(event) {
+        event.preventDefault();
+        thumb_drop_block.removeClass('hover');
+        var file = event.dataTransfer.files;
+        $("#post_vthumb_droparea").find('.preview').hide(5, function() {
+	      $("#post_vthumb_droparea").find('.image').html($("<img>",{
+	        src:window.URL.createObjectURL(file[0])
+	      })).show(5);
+	    });
+        $("#custom-video-thumb").prop('files', file);
+    };
+  }
+  <?php } ?>
+
+  $("#custom-video-thumb").change(function(event) {
+    $("#post_vthumb_droparea").find('.preview').hide(5, function() {
+      $("#post_vthumb_droparea").find('.image').html($("<img>",{
+        src:window.URL.createObjectURL(event.target.files[0])
+      })).show(5);
+    });;
+  });
+
+  $(".video-custom-thumb").click(function(event) {
+    $(this).find('i').toggleClass('rotate-90d');
+
+    $('.video-poster-image').slideToggle(100,function () {
+      var display_stat = $(this).css('display');
+
+      if (display_stat == 'none') {
+        $(".video-poster-image").find('.preview').show(10);
+        $(".video-poster-image").find('.image').empty().hide(10);
+        $("#custom-video-thumb").val('');
+      }
+
+    });
+  });
+
+  $(document).on('click', '.rads-views', function(event) {
+    var self  = $(this);
+    var ad_id = self.attr('id');
+    var url   = self.find('a').attr('href');
+    window.open(url, '_blank');
+    if (ad_id) {
+      $.ajax({
+        url: Wo_Ajax_Requests_File() ,
+        type: 'GET',
+        dataType: 'json',
+        data: {f: 'ads',s:'rads-v',ad_id:ad_id},
+      })
+      .done(/* pass */)
+      .fail(/* pass */)
+    }
+    event.preventDefault();
+  });
+
+  var bar = $('#bar');
+  var percent = $('#percent');
+  var status = $('#status');
+  var publisher_button = $('#publisher-button');
+
+  $('form.post').ajaxForm({
+    url: Wo_Ajax_Requests_File() + '?f=posts&s=insert_new_post',
+    beforeSend: function () {
+      var percentVal = '0%';
+      bar.width(percentVal);
+      percent.html(percentVal);
+   //    publisher_button.attr('disabled', true);
+   //    publisher_button.css('color', '#333');
+	  // $('#publisher-box-focus .pub-footer-bottom').find('.ball-pulse').fadeIn(100);
+    },
+    uploadProgress: function (event, position, total, percentComplete) {
+      var percentVal = percentComplete + '%';
+      bar.width(percentVal);
+      $('#progress').slideDown(200);
+      percent.html(percentVal);
+    },beforeSubmit: function (a,b,c) {
+    	for (var i = 0 ;i < a.length ; i++) {
+    		if (a[i].name == 'postPhotos[]') {
+    			for (var b = 0 ;b < deleted_images.length ; b++) {
+    				if (a[i].value.name == deleted_images[b]) {
+    					a[i] = {name:'',value:''};
+    				}
+    			}
+    		}
+    	}
+    	deleted_images = [];
+    	
+    },
+    success: function (data) {
+    	$("#image-holder").empty();
+      imgArray = [];
+    	publisher_button.removeClass('btn-loading');
+      $('#post_color_input').val("");
+      $('.all_colors').hide();
+	  $('.wo_pub_txtara_combo').css("cssText", "");
+	  $('.postText').css("cssText", "");
+	  $('.post.publisher-box').removeClass('wo_pub_change_color');
+      $('#progress').slideUp(200);
+      publisher_button.attr('disabled', false);
+      publisher_button.css('color', '#fff');
+      percent.removeClass('white');
+      $('.postText').css('height', 'auto');
+      $("#postRecord").val('');
+      $("#postSticker").val('');
+      if(data.status == 200) {
+      	$('#user_post_count').text(data.post_count);
+          if(data.redirect_to == 'lightbox') {
+              window.location.href ="<?php echo Wo_SeoLink('index.php?link1=reels') ?>" + "/" +   data.post_id
+              return
+          }
+        if(data.html.length > 0) {
+          $('#posts, #posts_hashtag').find('.posts-container').remove();
+        }
+        if (data.mention && data.mention.length > 0 && node_socket_flow == "1") {
+	        $.each(data.mention, function( index, value ) {
+	          socket.emit("user_notification", { to_id: value, user_id: _getCookie("user_id")});
+	        });
+	     }
+	    if ($("[name='recipient_id']").length > 0) {
+	    	if (node_socket_flow == "1") { socket.emit("user_notification", { to_id: $("[name='recipient_id']").val(), user_id: _getCookie("user_id")}); }
+	    }
+      if (node_socket_flow == "1") { socket.emit("update_new_posts", { user_id: _getCookie("user_id")}); }
+	    if ($("[name='page_id']").length > 0) {
+	    	if (node_socket_flow == "1") { socket.emit("page_notification", { to_id: $("[name='page_id']").val(), user_id: _getCookie("user_id")}); }
+	    }
+        $('#posts, #posts_hashtag').prepend(data.html);
+        if (data.send_notify && data.send_notify == 'yes' && data.post_id) {
+        	$.post(Wo_Ajax_Requests_File() + '?f=posts&s=send_notify', {post_id: data.post_id}, function(data, textStatus, xhr) {});
+        }
+        $('#video-form, #emo-form, #music-form, #map-form, #file-form, #photo-form, #album-form, .feeling-type, #poll-form, #gif-form').slideUp(200);
+        $(".video-poster-image").hide(10, function() {
+          $(this).find('.preview').show(10);
+          $(this).find('.image').empty().hide(10);
+          $(".video-custom-thumb").find('i').removeClass('rotate-90d');
+        });
+		$("body").removeClass('pub-focus');
+        Wo_RemoveFetchedUrl();
+		Wo_HidePosInfo();
+        $('form.post').clearForm();
+        $('.feelings-value').html('');
+        $('#postSticker').html('');
+        $('select').prop('selectedIndex', 1);
+        <?php if ($wo['config']['maxCharacters'] != 10000) { ?>
+        $('#charsLeft').text("<?php echo $wo['config']['maxCharacters'] - 10; ?>");
+        <?php } ?>
+        <?php if (!empty($url)) { ?>
+        window.close();
+        <?php } ?>
+        if (data.invalid_file == 1) {
+          $("#invalid_file").modal('show');
+          Wo_Delay(function(){
+            $("#invalid_file").modal('hide');
+          },3000);
+        }
+        else if(data.invalid_file == 2){
+          $("#file_not_supported").modal('show');
+          Wo_Delay(function(){
+            $("#file_not_supported").modal('hide');
+          },3000);
+        }
+        else if(data.invalid_file == 3){
+          $("#adult_image_file").modal('show');
+          Wo_Delay(function(){
+            $("#adult_image_file").modal('hide');
+          },3000);
+        }
+        else if(data.invalid_file == 4){
+          $("#approve_post").modal('show');
+          Wo_Delay(function(){
+            $("#approve_post").modal('hide');
+          },3000);
+        }
+        else{
+        	if (data.errors && data.errors != '') {
+        		$("#error_post").modal('show');
+        		$('#error_post_text').text(data.errors);
+		        Wo_Delay(function(){
+		            $("#error_post").modal('hide');
+		        },3000);
+        	}
+        }
+      } 
+      else if (data.status == 300) {
+      	$('#video-form, #emo-form, #music-form, #map-form, #file-form, #photo-form, #album-form, .feeling-type, #poll-form, #gif-form').slideUp(200);
+        $(".video-poster-image").hide(10, function() {
+          $(this).find('.preview').show(10);
+          $(this).find('.image').empty().hide(10);
+          $(".video-custom-thumb").find('i').removeClass('rotate-90d');
+        });
+      	$("body").removeClass('pub-focus');
+        Wo_RemoveFetchedUrl();
+		Wo_HidePosInfo();
+        $('form.post').clearForm();
+        $('.feelings-value').html('');
+        $('#postSticker').html('');
+        $('select').prop('selectedIndex', 1);
+        <?php if ($wo['config']['maxCharacters'] != 10000) { ?>
+        $('#charsLeft').text("<?php echo $wo['config']['maxCharacters'] - 10; ?>");
+        <?php } ?>
+      	$("#ffmpeg_file").modal('show');
+        Wo_Delay(function(){
+            $("#ffmpeg_file").modal('hide');
+        },3000);
+        if (data.update && data.update == 1) {
+        	intervalUpdates = setTimeout(function(){ Wo_intervalUpdates(1); }, 10000);
+        }
+
+      }
+      else if (data.status == 400) {
+        if (data.invalid_file == 1) {
+          $("#invalid_file").modal('show');
+          Wo_Delay(function(){
+            $("#invalid_file").modal('hide');
+          },3000);
+        }
+        else if(data.invalid_file == 2){
+          $("#file_not_supported").modal('show');
+          Wo_Delay(function(){
+            $("#file_not_supported").modal('hide');
+          },3000);
+        }
+        else if(data.invalid_file == 3){
+          $("#adult_image_file").modal('show');
+          Wo_Delay(function(){
+            $("#adult_image_file").modal('hide');
+          },3000);
+        }
+        else if(data.invalid_file == 4){
+          $("#pro_upload_file").modal('show');
+          Wo_Delay(function(){
+            $("#pro_upload_file").modal('hide');
+          },3000);
+        }
+        else{
+        	if (data.errors && data.errors != '') {
+        		$("#error_post").modal('show');
+        		$('#error_post_text').text(data.errors);
+		        Wo_Delay(function(){
+		            $("#error_post").modal('hide');
+		        },3000);
+        	}
+         // alert('Foramt is not supported, please try again later');
+        }
+      } 
+      fetch_url = 1;
+      $('#publisher-box-focus .pub-footer-bottom').find('.ball-pulse').fadeOut(100);
+    }
+  });
+
+  <?php if ($wo['config']['google_map']) { ?>
+  var pac_input = document.getElementById('searchTextField');
+  (function pacSelectFirst(input) {
+    // store the original event binding function
+    var _addEventListener = (input.addEventListener) ? input.addEventListener : input.attachEvent;
+    function addEventListenerWrapper(type, listener) {
+      // Simulate a 'down arrow' keypress on hitting 'return' when no pac suggestion is selected,
+      // and then trigger the original listener.
+      if(type == "keydown") {
+        var orig_listener = listener;
+        listener = function (event) {
+          var suggestion_selected = $(".pac-item-selected").length > 0;
+          if(event.which == 13 && !suggestion_selected) {
+            var simulated_downarrow = $.Event("keydown", {
+              keyCode: 40,
+              which: 40
+            });
+            orig_listener.apply(input, [simulated_downarrow]);
+          }
+          orig_listener.apply(input, [event]);
+        };
+      }
+      // add the modified listener
+      _addEventListener.apply(input, [type, listener]);
+    }
+    if(input.addEventListener)
+      input.addEventListener = addEventListenerWrapper;
+    else if(input.attachEvent)
+      input.attachEvent = addEventListenerWrapper;
+  })(pac_input);
+
+  $(function () {
+     var autocomplete = new google.maps.places.Autocomplete(pac_input);
+  });
+  <?php } ?>
+<?php if ($wo['config']['yandex_map'] == 1) { ?>
+  $(function() {
+    $('#searchTextField').on( "keydown", function() {
+      let self = this;
+      var myGeocoder = ymaps.geocode($(this).val());
+      myGeocoder.then(
+          function (res) {
+            if (res.geoObjects.getLength() == 0) {
+              $('.yandex_search_publisher').html('');
+            }
+            else{
+              let html = '';
+              for (var i = 0; i < res.geoObjects.getLength(); i++) {
+                html += '<p class="pointer" onclick="AddYandexResult(\'#searchTextField\',this,\'.yandex_search_publisher\')">'+res.geoObjects.get(i).properties.get('name')+'</p>';
+              }
+              $('.yandex_search_publisher').html(html);
+            }
+          },
+          function (err) {
+              $('.yandex_search_publisher').html('');
+          }
+      );
+    });
+  });
+<?php } ?>
+
+  var getUrl  = $('.form-control.postText'); //url to extract from text field
+  var sent = 0;
+  $('.form-control.postText').bind("paste keyup input propertychange", function(e) {    
+    // if ($(this).val() == '') {
+    //     fetch_url = 1;
+    //  }
+    if (($(".extracted_url").length > 0)){
+      return false;
+    }
+
+    else if (/(https?:\/\/(?:.*)\.(?:png|jpg|gif|jpeg))/ig.test(getUrl.val())) {
+      /* pass */
+    }
+
+    else{
+    	
+      var match_url = /(https?:\/\/[^\s]+)/g;
+      if (match_url.test(getUrl.val()) && sent == 0 && fetch_url == 1) {
+
+      	  sent = 1;
+
+          $("#results").hide();
+          $("#loading_indicator").show(); 
+          var extracted_url = getUrl.val().match(match_url)[0];
+
+          $.post(Wo_Ajax_Requests_File() + '?f=posts&s=fetch_url',{'url': extracted_url}, function(data){         
+            extracted_images = data.images;
+            total_images     = parseInt(data.images.length-1);
+            img_arr_pos      = total_images;
+            if(extracted_images != ''){
+              inc_image   = '<div class="extracted_thumb" id="extracted_thumb"><img src="'+data.images[img_arr_pos]+'"></div>';
+              input_image = data.images[img_arr_pos];
+            } 
+
+            else {
+              inc_image   = '';
+              input_image = '';
+            }
+            
+            var img_content = '';
+            if (total_images > 1) {
+              img_content = '<div class="thumb_select"><div class="thumb_sel"><span class="prev_thumb" id="thumb_next"><i class="fa fa-arrow-circle-right"></i></span><span class="next_thumb" id="thumb_prev"><i class="fa fa-arrow-circle-left"></i></span> </div><span class="small_text" id="total_imgs">'+img_arr_pos+' of '+total_images+'</span></div></div></div>';
+            }
+
+            var content = '<div class="extracted_url"><span class="remove-fetched-url" onclick="Wo_RemoveFetchedUrl();"><i class="fa fa-remove"></i></span>'+ inc_image +'<div class="extracted_content"><input class="form-control url-input" type="text" name="url_title" value="'+data.title+'" dir="auto"><br><textarea onkeyup="textAreaAdjust(this, 70)" class="form-control url-input-textarea url-input" name="url_content" placeholder="<?php echo $wo['lang']['description']?>" dir="auto">' + data.content + '</textarea><input type="hidden" id="url_image" name="url_image" value="'+ input_image +'"><input type="hidden" id="url_link" name="url_link" value="'+data.url+'"><div class="clear"></div>' + img_content;
+            if (data.tweet && data.tweet == 'yes') {
+            	var content = '<div class="extracted_url"><span class="remove-fetched-url" onclick="Wo_RemoveFetchedUrl();"><i class="fa fa-remove"></i></span>'+ inc_image +'<div class="extracted_content"><input class="form-control url-input hidden" type="text" name="url_title" value="'+data.title+'" dir="auto"><br><textarea onkeyup="textAreaAdjust(this, 70)" class="form-control url-input-textarea url-input hidden" name="url_content" placeholder="<?php echo $wo['lang']['description']?>" dir="auto">' + data.content + '</textarea><input type="hidden" id="url_image" name="url_image" value="'+ input_image +'"><input type="hidden" id="url_link" name="url_link" value="'+data.url+'"><div class="clear"></div>' + img_content+data.content;
+            }
+            if (data.mp4 && data.mp4 == 'yes') {
+            	var content = '<div class="extracted_url"><span class="remove-fetched-url" onclick="Wo_RemoveFetchedUrl();"><i class="fa fa-remove"></i></span>'+data.content+'<div class="clear"><input type="hidden" id="url_link" name="url_link" value="'+data.url+'"><input class="form-control url-input hidden" type="text" name="url_title" value="mp4" dir="auto"></div>';
+            }
+            if (data.facebook && data.facebook == 'yes') {
+
+            }
+            else{
+            	$("#results").html(content); 
+	            $("#results").fadeIn(); 
+            }
+
+            
+            $("#loading_indicator").hide();
+            sent = 0;
+
+          },'json');
+      }
+    }
+  });
+
+
+  
+  $("body").on("click","#thumb_prev", function(e){    
+    if(img_arr_pos>0) 
+    {
+      img_arr_pos--; 
+      
+      $("#extracted_thumb").html('<img src="'+extracted_images[img_arr_pos]+'">');
+
+      $("#url_image").attr('value', extracted_images[img_arr_pos]);
+      
+      $("#total_imgs").html((img_arr_pos) +' of '+ total_images);
+    }
+  });
+  
+  $("body").on("click","#thumb_next", function(e){    
+    if(img_arr_pos<total_images)
+    {
+      img_arr_pos++;
+      
+      $("#extracted_thumb").html('<img src="'+extracted_images[img_arr_pos]+'">');
+
+      $("#url_image").attr('value', extracted_images[img_arr_pos]);
+      
+      $("#total_imgs").html((img_arr_pos) +' of '+ total_images);
+    }
+  });
+
+});
+
+
+
+function Wo_RemoveFetchedUrl() {
+  fetch_url = 0;
+  var content = $('form.publisher-box').find('.extracted_url');
+  content.slideUp(function () {
+    $(this).remove();
+    if ($('.form-control.postText').val() != '') {
+    	$('.form-control.postText').focus();
+    }
+    
+    
+  });
+}
+
+function Wo_OpenAlbum() {
+  $('#album-form').slideToggle(100);
+  $('#album-form input').focus();
+}
+function Wo_ShowFeelings() {
+  if ($('.feelings-type-to').is(':empty')) {
+    $('.feeling-types').slideToggle(200);
+  }
+}
+var pac_input2 = document.getElementById('feelings-text');
+function Wo_ShowFeelingType(type, text, placeholder, icon) {
+  $('.feeling-types').slideUp(200, function () {
+    $('.feelings-type-to').html(text);
+    $('#feelings-text').attr('placeholder', decodeHtml(placeholder)).focus();
+    $('#feeling-type').val(type);
+    if (type != 'feelings') {
+      $('#feelings-text').attr('readonly', false);
+    }
+    <?php if ($wo['config']['google_map']) { ?>
+    if (type == 'traveling') {
+      var autocomplete = new google.maps.places.Autocomplete(pac_input2);
+    } else {
+      google.maps.event.clearInstanceListeners(pac_input2);
+    }
+    <?php } ?>
+    $('.' + type).slideToggle(200);
+  });
+}
+function Wo_RestFeelings() {
+  $('.feelings-type-to, .feelings-value').empty();
+  $('#feelings-text').val('');
+  $('#feelings-text').attr('readonly', true);
+  $('#feelings-text').attr('placeholder', decodeHtml("<?php echo $wo["lang"]["feel_d"]?>"));
+  $('.feeling-type, .feelings-type').slideUp(200);
+  <?php if ($wo['config']['google_map']) { ?>
+  google.maps.event.clearInstanceListeners(pac_input2);
+  <?php } ?>
+  Wo_ShowFeelings();
+}
+
+function Wo_AddFeeling(type, text, icon) {
+  $('#feelings-text').val(type);
+  $('.feelings-value').html('<span><i class="twa-lg twa twa-' + icon + '"></i> ' + text + '</span>')
+  Wo_ShowFeelingType('feelings', 'Feeling', 'What are you feeling ?', 'smile-o');
+}
+function smokeTheAt(str) {
+  var n = str.search("@");
+  if(n != "-1"){
+    alert('sd');
+  }
+}
+function CloseAnswer(id,self) {
+	$('#answer_'+id).remove();
+	$(self).remove();
+	answer_id = 0;
+	$('.answers').find('input').each(function (index_id) {
+	    answer_id = Number(index_id) + 1;
+	    $(this).attr('placeholder', "<?php echo $wo['lang']['answer'] ?> "+answer_id);
+	});
+}
+function Wo_AddAnswer() {
+  answer_id = 0;
+  $('.answers').find('input').each(function (index_id) {
+     answer_id = Number(index_id) + 1;
+  });
+  var last_answer_id = (Number(answer_id) + 1);
+  if (last_answer_id < 9) {
+     $('.answers').append('<span><input name="answer[]" type="text" class="form-control" placeholder="<?php echo $wo['lang']['answer'] ?> ' + last_answer_id + '" id="answer_' + last_answer_id + '"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onclick="CloseAnswer(' + last_answer_id + ',this);"><path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path></svg></span>');
+     if (last_answer_id == 8) {
+      $('#add_answer').hide();
+     }
+     $('.answers').find('input:last').focus();
+  } else {
+     $('#add_answer').hide();
+  }
+  
+}
+
+function Wo_HidePosInfo() {
+  $(".postText").attr('opened', '0');
+  $(".postText").css('height', '112px');
+  $("body").removeClass('pub-focus');
+  $(".publisher-box-footer").slideUp(100);
+  $(".add-emoticons").removeClass('show_emo');
+  fetch_url = 1;
+}
+function Wo_ShowPosInfo() {
+  $(".postText").attr('opened', '1');
+  $(".postText").css('height', '112px').focus();
+  $("body").addClass('pub-focus');
+  $(".publisher-box-footer").slideDown(100);
+  $(".add-emoticons").addClass('show_emo');
+}
+$(document).on('focus', '#publisher-box-focus',function(){
+	$("body").addClass('pub-focus');
+	if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
+	    $(".publisher-box-footer").slideDown(100);
+		$(".add-emoticons").addClass('show_emo');
+  		$(".postText").attr('opened', '1');
+	}
+});
+$('#focus-overlay').on('click',function (){
+	Wo_HidePosInfo();
+	$('#video-form, #emo-form, #music-form, #map-form, #file-form, #photo-form, #album-form, .feeling-type, #poll-form, #gif-form').slideUp(200);
+	$('.all_colors').hide();
+	$('.wo_pub_txtara_combo').css("cssText", "");
+	$('.postText').css("cssText", "");
+	$('#post_color_input').val("");
+	$('.post.publisher-box').removeClass('wo_pub_change_color');
+	$(".all_colors_display").removeClass('selected');
+});
+
+// $(function() {
+  // $(window).scroll(function() {
+    // var scrollfocus = $(window).scrollTop();
+    // if (scrollfocus >= 500) {
+      // $("body").removeClass('pub-focus');
+    // }
+  // });
+// });
+
+function Wo_ResetAnswers() {
+  $('.answers').find('input').each(function (index_id) {
+     $(this).val('');
+  });
+  $('#poll-form').slideUp(200);
+}
+function DeleteGif() {
+	var image_holder = $("#image-holder");
+	$('#postSticker').val('');
+    image_holder.empty();
+}
+function Wo_PostSticker(self){
+  if (!self) {
+    return false;
+  }
+
+  var image_holder = $("#image-holder");
+  image_holder.empty();
+  image_holder.append('<span class="thumb-image-delete" id="image_to_gif"><span onclick="DeleteGif()" class="pointer thumb-image-delete-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg></span><img src="'+$(self).attr('data-gif')+'" class="thumb-image"></span>')
+  image_holder.show();
+  $('.create-album').css('display', 'none');
+  $("#photo-form").slideDown(200);
+  $('#postSticker').val($(self).attr('data-gif'));
+  // Wo_Delay(function(){
+  //    Wo_GetPRecordLink();
+  // },500)
+}
+function GifScrolled(self) {
+	if ((($(self).prop("scrollHeight") - $(self).height()) - $(self).scrollTop()) < 300) {
+		Wo_GetPostStickers($('#publisher-box-stickers').attr('oldWord'),$('#publisher-box-stickers').attr('loadOffset'));
+	}
+}
+function Wo_GetPostStickers(keyword,offset = 0){
+  if (!keyword) {
+    //return false;
+  }
+  if ($('#publisher-box-stickers').attr('oldWord') != keyword) {
+  	$('#publisher-box-stickers-cont').empty();
+  	$('#publisher-box-stickers').attr('loadOffset', 0);
+  	$('#publisher-box-stickers').attr('oldWord', keyword);
+  }
+  else{
+  	$('#publisher-box-stickers').attr('loadOffset', parseInt($('#publisher-box-stickers').attr('loadOffset')) + 20);
+  }
+  $('#publisher-box-stickers').find('.ball-pulse').fadeIn(100);
+  Wo_Delay(function(){
+    $.ajax({
+      url: 'https://api.giphy.com/v1/gifs/search?',
+      type: 'GET',
+      dataType: 'json',
+      data: {q:keyword,api_key:'<?php echo $wo['config']['giphy_api'];?>', limit: 20,offset:offset},
+    })
+    .done(function(data) {
+      if (data.meta.status == 200 && data.data.length > 0) {
+        // $('#publisher-box-stickers-cont').empty();
+        var appended = false;
+        for (var i = 0; i < data.data.length; i++) {
+            appended = true;
+            if (appended == true) {
+              appended = false;
+              $('#publisher-box-stickers-cont').append($('<img alt="gif" src="'+data.data[i].images.fixed_height_small.url+'" data-gif="' + data.data[i].images.fixed_height.url + '" onclick="Wo_PostSticker(this)" autoplay loop>'));
+              appended = true;
+            }
+        }
+        var images = 0;
+        Wo_ElementLoad($('img[alt=gif]'), function(){
+          images++;
+        });
+        if (data.data.length == images || images >= 5) {
+          $('#publisher-box-stickers').find('.ball-pulse').fadeOut(100);
+        }
+      }
+      else{
+        $('#publisher-box-stickers-cont').html('<p class="no_gifs_found"><i class="fa fa-frown-o"></i> <?php echo $wo['lang']['no_result']; ?></p>');
+      }
+    })
+    .fail(function() {
+      console.log("error");
+    })
+  },100);
+}
+</script>

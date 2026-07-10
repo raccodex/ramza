@@ -1,0 +1,26 @@
+<div class="col-md-4 events-list-wrapper" data-event="<?php echo($wo['event']['id']);?>">
+	<div class="events-list-cover">
+		<a href="<?php echo $wo['event']['url']; ?>" class="event_cover" data-ajax="?link1=show-event&eid=<?php echo($wo['event']['id']);?>">
+			<img src="<?php echo $wo['event']['cover']; ?>" class="events-list-cover-img">
+			<span><?php echo $wo['event']['start_date'];?></span>
+		</a>
+		<div class="event-l-info">
+			<h3 class="events-list-name">
+				<a href="<?php echo $wo['event']['url']; ?>" data-ajax="?link1=show-event&eid=<?php echo($wo['event']['id']);?>"><?php echo $wo['event']['name']; ?></a>
+			</h3>
+			<div class="event-location-name">
+				<svg width="7" height="9" viewBox="0 0 7 9" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.5 4.19081C6.5 5.884 5.15685 7.875 3.5 7.875C1.84315 7.875 0.5 5.884 0.5 4.19081C0.5 2.49761 1.84315 1.125 3.5 1.125C5.15685 1.125 6.5 2.49761 6.5 4.19081Z" stroke="currentColor"/><path d="M2.5625 3.9375C2.5625 3.41973 2.98223 3 3.5 3C4.01777 3 4.4375 3.41973 4.4375 3.9375C4.4375 4.45527 4.01777 4.875 3.5 4.875C2.98223 4.875 2.5625 4.45527 2.5625 3.9375Z" class="icon_main"/></svg> <?php echo $wo['event']['location'];?>
+			</div>
+			<?php if ($wo["loggedin"]) { ?>
+			<div class="event-l-btns">
+				<?php echo Wo_GetGoingButton($wo['event']['id']);?>
+				<?php echo Wo_GetInterestedButton($wo['event']['id']);?>
+				<?php if (Wo_IsAdmin() || $wo['event']['poster_id'] == $wo['user']['id']){ ?>
+					<span><a href="<?php echo Wo_SeoLink('index.php?link1=edit-event&eid='.$wo['event']['id']); ?>" class="btn btn-default btn-mat"><?php echo $wo['lang']['edit']; ?></a></span>
+				<?php } ?>
+			</div>
+			<?php } ?>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>

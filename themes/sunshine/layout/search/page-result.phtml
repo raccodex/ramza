@@ -1,0 +1,14 @@
+<div class="page_list boosted_pages cool-style-album col-xs-6 col-sm-6 col-lg-4" data-id="<?php echo $wo['result']['id']; ?>" data-search-type="<?php echo $wo['result']['type']; ?>">
+	<div class="wow_content album_parent">
+		<div class="avatar">
+			<a href="<?php echo $wo['result']['url']. $wo['marker'];?>ref=se" data-ajax="?link1=timeline&u=<?php echo $wo['result']['username']?>&ref=se">
+				<img src="<?php echo $wo['result']['cover'];?>" alt="<?php echo $wo['result']['name']; ?> Profile Picture" />
+				<img class="thumb" src="<?php echo $wo['result']['avatar'];?>" alt="<?php echo $wo['result']['name']; ?> Profile Picture" />
+			</a>
+		</div>
+		<div class="album-name">
+			<a href="<?php echo $wo['result']['url']. $wo['marker'];?>ref=se" data-ajax="?link1=timeline&u=<?php echo $wo['result']['username']?>&ref=se"><h4><?php echo $wo['result']['name']; ?></h4></a>
+			<a href="<?php echo $wo['result']['url']. $wo['marker'];?>ref=se" data-ajax="?link1=timeline&u=<?php echo $wo['result']['username']?>&ref=se"><p><?php echo $wo['result']['category']; ?></p></a>
+		</div>
+	</div>
+</div>

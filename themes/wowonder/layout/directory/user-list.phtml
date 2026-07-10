@@ -1,0 +1,33 @@
+<tr class="user-list" id="UserID_<?php echo $wo['userlist']['user_id']?>" data-user-id="<?php echo $wo['userlist']['user_id']?>" data_selected="<?php echo $wo['userlist']['user_id']?>">
+    <td>
+        <a href="<?php echo $wo['userlist']['url']; ?>">
+            <img src="<?php echo $wo['userlist']['avatar']; ?>" class="setting-avatar rounded-circle" alt="<?php echo $wo['userlist']['avatar']?> Profile Picture">
+            <?php echo $wo['userlist']['name']; ?>
+        </a>
+    </td>
+    <td>
+        <div class="dropdown" style="display: inline;">
+            <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sliders dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+            <div class="dropdown-menu dropdown-menu-right" role="menu">
+                <?php if ($wo['config']['connectivitySystem'] == 0) { ?>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="getUserId(<?php echo $wo['userlist']['user_id']?>);" data-toggle="modal" data-target="#FollowersForm">Add Followers</a>
+                <?php } ?>
+                <a class="dropdown-item" target="_blank" href="<?php echo Wo_SeoLink('index.php?link1=setting&user=' . $wo['userlist']['username'] . '&page=general-setting') ?>">Edit</a>
+                <a class="dropdown-item" href="javascript:void(0)" onclick="Wo_DeleteUser(<?php echo $wo['userlist']['user_id']?>,'hide');">Delete</a>
+                <a class="dropdown-item" href="javascript:void(0)" onclick="Wo_DeleteUserPosts(<?php echo $wo['userlist']['user_id']?>,'hide');">Delete Posts</a>
+                <a class="dropdown-item" href="javascript:void(0)" onclick="Wo_DeleteUserArticles(<?php echo $wo['userlist']['user_id']?>,'hide');">Delete Articles</a>
+                <a class="dropdown-item" href="javascript:void(0)" onclick="Wo_DeleteUserStories(<?php echo $wo['userlist']['user_id']?>,'hide');">Delete Stories</a>
+                <a class="dropdown-item" href="javascript:void(0)" onclick="Wo_DeleteUserMessages(<?php echo $wo['userlist']['user_id']?>,'hide');">Delete Messages</a>
+                <a class="dropdown-item" href="javascript:void(0)" onclick="Wo_DeleteUserNotifications(<?php echo $wo['userlist']['user_id']?>,'hide');">Delete Notifications</a>
+                <?php if ($wo['userlist']['user_id'] != $wo['user']['user_id']) { ?>
+                    <?php if ($wo['userlist']['banned'] == 1) { ?>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Wo_UnBanUser(<?php echo $wo['userlist']['user_id']?>,'hide');">Unban User</a>
+                    <?php }else{ ?>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Wo_BanUser(<?php echo $wo['userlist']['user_id']?>,'hide');">Ban User</a>
+                    <?php } ?>
+                <?php } ?>
+                <a class="dropdown-item" href="<?php echo Wo_LoadAdminLinkSettings('manage-permissions?user_id='.$wo['userlist']['user_id']); ?>">Manage Permissions</a>
+            </div>
+        </div>
+    </td>
+</tr>

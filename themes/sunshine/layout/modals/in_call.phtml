@@ -1,0 +1,22 @@
+<div class="modal fade" id="re-calling-modal" role="dialog" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog wow_mat_mdl modal-md">
+		<div class="modal-content text-center wo_calling_modals video">
+			<img src="<?php echo $wo['incall']['in_call_user']['avatar'];?>" alt="" class="hidden-mobile-image">
+			<div class="modal-header">
+				<div class="avatar">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M17,10.5V7A1,1 0 0,0 16,6H4A1,1 0 0,0 3,7V17A1,1 0 0,0 4,18H16A1,1 0 0,0 17,17V13.5L21,17.5V6.5L17,10.5Z" /></svg>
+					<img src="<?php echo $wo['incall']['in_call_user']['avatar'];?>" alt="">
+				</div>
+				<h4 class="modal-title"><?php echo $wo['lang']['new_video_call'];?></h4>
+			</div>
+			<div class="modal-body">
+				<p><b><?php echo $wo['incall']['in_call_user']['name'];?></b><br><?php echo $wo['lang']['new_video_call_desc'];?></p>
+				<div class="clear"></div>
+			</div>
+			<div class="modal-footer">
+				<button data-href="<?php echo $wo['incall']['url'];?>" type="button" class="btn answer-call btn-main btn-mat" onclick="Wo_AnswerCall('<?php echo $wo['incall']['id'];?>', '<?php echo $wo['incall']['url'];?>');"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M17 9.2L22.2133 5.55071C22.4395 5.39235 22.7513 5.44737 22.9096 5.6736C22.9684 5.75764 23 5.85774 23 5.96033V18.0397C23 18.3158 22.7761 18.5397 22.5 18.5397C22.3974 18.5397 22.2973 18.5081 22.2133 18.4493L17 14.8V19C17 19.5523 16.5523 20 16 20H2C1.44772 20 1 19.5523 1 19V5C1 4.44772 1.44772 4 2 4H16C16.5523 4 17 4.44772 17 5V9.2ZM5 8V10H7V8H5Z"></path></svg> <?php echo $wo['lang']['accept_and_start'];?></button>
+				<button type="button" class="btn decline-call btn-default btn-mat" onclick="Wo_DeclineCall('<?php echo $wo['incall']['id'];?>');"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12.0007 10.5865L16.9504 5.63672L18.3646 7.05093L13.4149 12.0007L18.3646 16.9504L16.9504 18.3646L12.0007 13.4149L7.05093 18.3646L5.63672 16.9504L10.5865 12.0007L5.63672 7.05093L7.05093 5.63672L12.0007 10.5865Z"></path></svg> <?php echo $wo['lang']['decline'];?></button>
+			</div>
+		</div>
+	</div>
+</div>

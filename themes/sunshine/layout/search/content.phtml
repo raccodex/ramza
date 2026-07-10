@@ -1,0 +1,494 @@
+<?php 
+$not_found = '<div class="col-md-12"><div class="wow_content"><div class="empty_state"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.79406 6.45869C2.33698 4.14417 4.14417 2.33698 6.45869 1.79406C8.13021 1.40198 9.86979 1.40198 11.5413 1.79406C13.8558 2.33698 15.663 4.14417 16.2059 6.4587C16.598 8.13021 16.598 9.86979 16.2059 11.5413C15.663 13.8558 13.8558 15.663 11.5413 16.2059C9.86979 16.598 8.13021 16.598 6.4587 16.2059C4.14418 15.663 2.33698 13.8558 1.79406 11.5413C1.40198 9.86979 1.40198 8.13021 1.79406 6.45869Z" stroke="currentColor" stroke-width="1.5"></path>
+<path d="M16.2059 6.4587C15.663 4.14417 13.8558 2.33698 11.5413 1.79406C9.86979 1.40198 8.13021 1.40198 6.45869 1.79406C4.14417 2.33698 2.33698 4.14417 1.79406 6.45869C1.40198 8.13021 1.40198 9.86979 1.79406 11.5413C2.33698 13.8558 4.14418 15.663 6.4587 16.2059C8.13021 16.598 9.86979 16.598 11.5413 16.2059" class="icon_main" stroke-width="1.5" stroke-linecap="round"></path>
+<path d="M7.48515 8.4132C7.65455 7.9897 7.99012 7.65412 8.41363 7.48472L10.1117 6.80548C10.792 6.53338 11.4671 7.20845 11.1949 7.88871L10.5157 9.5868C10.3463 10.0103 10.0107 10.3459 9.58723 10.5153L7.88913 11.1945C7.20887 11.4666 6.53381 10.7916 6.80591 10.1113L7.48515 8.4132Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg> ' . $wo["lang"]["no_result"] . '</div></div></div>';
+$type_to_find = '<div class="col-md-12"><div class="wow_content"><div class="empty_state"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.79406 6.45869C2.33698 4.14417 4.14417 2.33698 6.45869 1.79406C8.13021 1.40198 9.86979 1.40198 11.5413 1.79406C13.8558 2.33698 15.663 4.14417 16.2059 6.4587C16.598 8.13021 16.598 9.86979 16.2059 11.5413C15.663 13.8558 13.8558 15.663 11.5413 16.2059C9.86979 16.598 8.13021 16.598 6.4587 16.2059C4.14418 15.663 2.33698 13.8558 1.79406 11.5413C1.40198 9.86979 1.40198 8.13021 1.79406 6.45869Z" stroke="currentColor" stroke-width="1.5"></path>
+<path d="M16.2059 6.4587C15.663 4.14417 13.8558 2.33698 11.5413 1.79406C9.86979 1.40198 8.13021 1.40198 6.45869 1.79406C4.14417 2.33698 2.33698 4.14417 1.79406 6.45869C1.40198 8.13021 1.40198 9.86979 1.79406 11.5413C2.33698 13.8558 4.14418 15.663 6.4587 16.2059C8.13021 16.598 9.86979 16.598 11.5413 16.2059" class="icon_main" stroke-width="1.5" stroke-linecap="round"></path>
+<path d="M7.48515 8.4132C7.65455 7.9897 7.99012 7.65412 8.41363 7.48472L10.1117 6.80548C10.792 6.53338 11.4671 7.20845 11.1949 7.88871L10.5157 9.5868C10.3463 10.0103 10.0107 10.3459 9.58723 10.5153L7.88913 11.1945C7.20887 11.4666 6.53381 10.7916 6.80591 10.1113L7.48515 8.4132Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg> ' . $wo["lang"]["what_are_looking_for"] . '</div></div></div>';
+?>
+
+<div class="page-margin">
+	<div class="wow_content popular_posts_hdr">
+		<h2 class="flex"><svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.969 18.5307C17.2619 18.8236 17.7368 18.8236 18.0297 18.5307C18.3226 18.2378 18.3226 17.7629 18.0297 17.47L16.969 18.5307ZM13.915 15.4766L16.969 18.5307L18.0297 17.47L14.9756 14.416L13.915 15.4766Z" class="icon_main_fill"/><path d="M2.76311 7.43667C3.24887 5.36581 4.86581 3.74886 6.93667 3.26311C8.43222 2.9123 9.98866 2.9123 11.4842 3.26311C13.5551 3.74886 15.172 5.36581 15.6578 7.43667C16.0086 8.93222 16.0086 10.4887 15.6578 11.9842C15.172 14.0551 13.5551 15.672 11.4842 16.1578C9.98866 16.5086 8.43222 16.5086 6.93667 16.1578C4.86581 15.672 3.24887 14.0551 2.76311 11.9842C2.4123 10.4887 2.4123 8.93222 2.76311 7.43667Z" class="icon_main" stroke-width="1.5" stroke-linecap="round"/><path d="M2.76311 7.43667C2.4123 8.93222 2.4123 10.4887 2.76311 11.9842C3.24887 14.0551 4.86581 15.672 6.93667 16.1578C8.43222 16.5086 9.98866 16.5086 11.4842 16.1578C13.5551 15.672 15.172 14.0551 15.6578 11.9842C16.0086 10.4887 16.0086 8.93222 15.6578 7.43667C15.172 5.36581 13.5551 3.74886 11.4842 3.26311C9.98866 2.9123 8.43222 2.9123 6.93667 3.26311" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>&nbsp;<p><?php echo $wo['lang']['search'];?><b><?php echo TextForMode('search_header_label'); ?></b></p></h2>
+	</div>
+</div>
+
+<div class="page-margin">
+	
+	<form action="<?php echo Wo_SeoLink('index.php?link1=search') ?>" method="get" class="search-filter-form" id="search_form">
+		<div class="page-margin wow_content wow_big_head_link full flex wow_search_head">
+			<div class="right_part">
+				<div class="search-blog">
+					<input type="text" name="query" id="query" placeholder="<?php echo $wo['lang']['keyword'];?>" value="<?php echo (isset($_GET['query'])) ? Wo_Secure($_GET['query']): '';?>" autocomplete="off">
+				</div>
+				
+				<div class="dropdown market_widget count">
+					<div class="m_widget_head">
+						<select name="country" id="country">
+							
+							<?php 
+								foreach ($wo['countries_name'] as $country_ids => $country) { 
+								$selected_c = (!empty($_GET['country']) && $_GET['country'] == $country_ids) ? ' selected': '';
+							?>
+								<option value="<?php echo $country_ids;?>" <?php echo $selected_c?>><?php echo $country;?></option>
+							<?php 
+							if ($country_ids == '0') { ?>
+								<option value="all" <?php if(empty($_GET['country'])){ ?> selected <?php } ?>><?php echo $wo['lang']['all'];?></option>
+							<?php }
+						} ?>
+						</select>
+					</div>
+				</div>
+				
+				<button type="submit" class="btn btn-main btn-mat"><?php echo $wo['lang']['search'];?></button>
+			
+				<div class="dropdown market_widget">
+					<div class="btn btn-mat btn-default dropdown-toggle" data-toggle="dropdown" role="button">
+						<svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.0086 1.5H2.99063C1.64578 1.5 0.862648 3.03017 1.6428 4.13351L5.05925 8.96527C5.45848 9.52988 5.67302 10.2058 5.67302 10.899V14.2744C5.67302 15.5036 6.6623 16.5 7.88264 16.5C9.10298 16.5 10.0923 15.5036 10.0923 14.2744V10.9488C10.0923 10.2248 10.3262 9.52062 10.7588 8.94251L14.3301 4.16979C15.1518 3.07156 14.374 1.5 13.0086 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.0923 10.7458C10.0923 10.0374 10.3262 9.34833 10.7588 8.78264L14.3301 4.11244C15.1518 3.0378 14.374 1.5 13.0086 1.5H2.99063C1.64578 1.5 0.862648 2.9973 1.6428 4.07694L5.05925 8.80491C5.45848 9.35739 5.67302 10.0188 5.67302 10.6971V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+					</div>
+					<div class="dropdown-menu dropdown-menu-right wow_srch_drp_mnu" aria-labelledby="srch_fltrs">
+						<li>
+							<?php
+								$fields = Wo_GetUserCustomFields();
+								if (count($fields) > 0) {
+									foreach ($fields as $key => $wo['field']) {
+										$wo['field']['issearch'] = true;
+										echo Wo_LoadPage('setting/profile-fields');
+									}
+								}
+							?>
+						</li>
+						<li>
+							<script>
+								<?php
+									$age_from = 18;
+									if (!empty($_GET['age_from']) && is_numeric($_GET['age_from'])) {
+										$age_from = Wo_Secure( $_GET['age_from'] );
+									}
+									$age_to = 50;
+									if (!empty($_GET['age_to']) && is_numeric($_GET['age_to'])) {
+										$age_to = Wo_Secure( $_GET['age_to'] );
+									}
+								?>
+								$( function() {
+									$( "#slider-range" ).slider({
+										range: true,
+										min: 10,
+										max: 70,
+										values: [ <?php echo $age_from;?>, <?php echo $age_to;?> ],
+										slide: function( event, ui ) {
+											$( "#amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+											$( "#age_from" ).val( ui.values[ 0 ] );
+											$( "#age_to" ).val( ui.values[ 1 ] );
+										}
+									});
+									$( "#amount" ).val( $( "#slider-range" ).slider( "values", 0 ) + " - " + $( "#slider-range" ).slider( "values", 1 ) );
+								});
+							</script>
+							<?php 
+								$selected_filterbyage_on = '';
+								$selected_filterbyage_off = 'checked';
+
+								$agefilter_style = "display: none;";
+								if (!empty($_GET['filterbyage'])) {
+									if ($_GET['filterbyage'] == 'yes') {
+										$selected_filterbyage_on = 'checked';
+										$selected_filterbyage_off = '';
+										$agefilter_style = "display: block;";
+									} else if ($_GET['filterbyage'] == 'no') {
+										$selected_filterbyage_on = '';
+										$selected_filterbyage_off = 'checked';
+									} 
+								}
+							?>
+							<div class="wow_srch_innr_filtr">
+								<p><?php echo $wo['lang']['age']; ?></p>
+								<div class="pp_mat_input">
+									<div class="round_check">
+										<input type="radio" name="filterbyage" id="filterbyage-0" value="yes" onclick="$('.agefilter_hide').css({'display':'block'});" <?php echo $selected_filterbyage_on;?>>
+										<label class="radio-inline" for="filterbyage-0"><?php echo $wo['lang']['yes']; ?></label> 
+									</div>
+									<div class="round_check">
+										<input type="radio" name="filterbyage" id="filterbyage-1" value="no" onclick="$('.agefilter_hide').css({'display':'none'});" <?php echo $selected_filterbyage_off;?>>
+										<label class="radio-inline" for="filterbyage-1"><?php echo $wo['lang']['no']; ?></label>
+									</div>
+									<input type="text" id="amount" class="agefilter_hide age_number" readonly style="display:none;">
+								</div>
+								<div class="agefilter_hide" id="agefilter" style="<?php echo $agefilter_style;?>">
+									<div id="slider-range"></div>
+									<input type="hidden" name="age_from" id="age_from" value="<?php echo $age_from;?>">
+									<input type="hidden" name="age_to" id="age_to" value="<?php echo $age_to;?>">
+								</div>
+							</div>
+						</li>
+						<li>
+							<?php 
+								$selected_verified_all = 'checked';
+								$selected_verified_on = '';
+								$selected_verified_off = '';
+								if (!empty($_GET['verified'])) {
+									if ($_GET['verified'] == 'on') {
+										$selected_verified_on = 'checked';
+										$selected_verified_all = '';
+									} else if ($_GET['verified'] == 'off') {
+										$selected_verified_off = 'checked';
+										$selected_verified_all = '';
+									} 
+								}
+							?>
+							<div class="wow_srch_innr_filtr">
+								<p><?php echo $wo['lang']['verified']; ?></p>
+								<div class="pp_mat_input">
+									<div class="round_check">
+										<input type="radio" name="verified" id="verified-0" value="all" <?php echo $selected_verified_all;?>>
+										<label class="radio-inline" for="verified-0"><?php echo $wo['lang']['all']; ?></label> 
+									</div>
+									<div class="round_check">
+										<input type="radio" name="verified" id="verified-1" value="on" <?php echo $selected_verified_on;?>>
+										<label class="radio-inline" for="verified-1"><?php echo $wo['lang']['verified']; ?></label>
+									</div>
+									<div class="round_check">
+										<input type="radio" name="verified" id="verified-2" value="off"<?php echo $selected_verified_off;?>>
+										<label class="radio-inline" for="verified-2"><?php echo $wo['lang']['unverified']; ?></label>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<?php 
+								$selected_status_all = 'checked';
+								$selected_status_on = '';
+								$selected_status_off = '';
+								if (!empty($_GET['status'])) {
+									if ($_GET['status'] == 'on') {
+										$selected_status_on = 'checked';
+										$selected_status_all = '';
+									} else if ($_GET['status'] == 'off') {
+										$selected_status_off = 'checked';
+										$selected_status_all = '';
+									} 
+								}
+							?>
+							<div class="wow_srch_innr_filtr">
+								<p><?php echo $wo['lang']['status']; ?></p>
+								<div class="pp_mat_input">
+									<div class="round_check">
+										<input type="radio" name="status" id="status-0" value="all" <?php echo $selected_status_all;?>>
+										<label class="radio-inline" for="status-0"><?php echo $wo['lang']['all']; ?></label> 
+									</div>
+									<div class="round_check">
+										<input type="radio" name="status" id="status-1" value="on" <?php echo $selected_status_on;?>>
+										<label class="radio-inline" for="status-1"><?php echo $wo['lang']['online']; ?></label>
+									</div>
+									<div class="round_check">
+										<input type="radio" name="status" id="status-2" value="off"<?php echo $selected_status_off;?>>
+										<label class="radio-inline" for="status-2"><?php echo $wo['lang']['offline']; ?></label>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<?php 
+								$selected_status_all_sex = 'checked';
+								$selected_status_male = '';
+								$selected_status_female = '';
+								if (!empty($_GET['gender'])) {
+									if ($_GET['gender'] == 'male') {
+										$selected_status_male = 'checked';
+										$selected_status_all = '';
+									} else if ($_GET['gender'] == 'female') {
+										$selected_status_female = 'checked';
+										$selected_status_all = '';
+									} 
+								}
+							?>
+							<div class="wow_srch_innr_filtr">
+								<p><?php echo $wo['lang']['gender']; ?></p>
+								<div class="pp_mat_input">
+									<div class="round_check">
+										<input type="radio" name="gender" id="gender-0" value="all" <?php echo $selected_status_all_sex;?>>
+										<label class="radio-inline" for="gender-0"><?php echo $wo['lang']['all']; ?></label> 
+									</div>
+									<?php 
+										$gender_images = Wo_GetGendersImages();
+										foreach ($wo['genders'] as $key => $gender) { 
+											if (!empty($_GET['gender'])) {
+												if ($_GET['gender'] == 'male') {
+													$selected_status_male = 'checked';
+													$selected_status_all = '';
+												} else if ($_GET['gender'] == 'female') {
+													$selected_status_female = 'checked';
+													$selected_status_all = '';
+												} 
+											}
+									?>
+										<?php
+											$selected_status = '';
+											$selected_status_all = '';
+											if (!empty($_GET['gender']) && $key == $_GET['gender']) {
+												$selected_status = 'checked';
+											}
+										?>
+										<div class="round_check">
+											<input type="radio" name="gender" id="gender-<?php echo($key) ?>" value="<?php echo($key) ?>" <?php echo $selected_status;?>>
+											<label class="radio-inline" for="gender-<?php echo($key) ?>"><?php echo $gender; ?></label> 
+										</div>
+									<?php } ?>
+								</div>
+							</div>
+						</li>
+						<li>
+							<?php 
+								$selected_status_image_all = 'checked';
+								$selected_status_image_y = '';
+								$selected_status_image_n = '';
+								if (!empty($_GET['image'])) {
+									if ($_GET['image'] == 'yes') {
+										$selected_status_image_y = 'checked';
+										$selected_status_image_all = '';
+									} else if ($_GET['image'] == 'no') {
+										$selected_status_image_n = 'checked';
+										$selected_status_image_all = '';
+									} 
+								}
+							?>
+							<div class="wow_srch_innr_filtr">
+								<p><?php echo $wo['lang']['profile_picture']; ?></p>
+								<div class="pp_mat_input">
+									<div class="round_check">
+										<input type="radio" name="image" id="image-0" value="all" <?php echo $selected_status_image_all;?>>
+										<label class="radio-inline" for="image-0"><?php echo $wo['lang']['all']; ?></label> 
+									</div>
+									<div class="round_check">
+										<input type="radio" name="image" id="image-1" value="yes" <?php echo $selected_status_image_y;?>>
+										<label class="radio-inline" for="image-1"><?php echo $wo['lang']['yes']; ?></label>
+									</div>
+									<div class="round_check">
+										<input type="radio" name="image" id="image-2" value="no" <?php echo $selected_status_image_n;?>>
+										<label class="radio-inline" for="image-2"><?php echo $wo['lang']['no']; ?></label>
+									</div>
+								</div>
+							</div>
+						</li>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	
+	<div class="page-margin wow_content wow_big_head_link wow_srch_tabs">
+		<ul class="list-unstyled" role="tablist">
+			<li class="active">
+				<a data-toggle="tab" data-target="#users" href="#">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.17773 17.531C3.17773 15.6539 4.51135 14.055 6.32377 13.7592L6.48702 13.7326C7.93831 13.4957 9.41716 13.4957 10.8684 13.7326L11.0317 13.7592C12.8441 14.055 14.1777 15.6539 14.1777 17.531C14.1777 18.3423 13.5346 19 12.7413 19H4.61412C3.82083 19 3.17773 18.3423 3.17773 17.531Z" stroke="currentColor" stroke-width="1.5"/><path d="M11.8861 7.28125C11.8861 9.09343 10.4496 10.5625 8.67773 10.5625C6.90582 10.5625 5.4694 9.09343 5.4694 7.28125C5.4694 5.46907 6.90582 4 8.67773 4C10.4496 4 11.8861 5.46907 11.8861 7.28125Z" stroke="currentColor" stroke-width="1.5"/><path d="M14.1777 10.5625C16.4329 10.5625 18.2611 9.09343 18.2611 7.28125C18.2611 5.46907 16.4329 4 14.1777 4M16.9659 19H19.3496C20.3593 19 21.1777 18.3423 21.1777 17.531C21.1777 15.6539 19.4804 14.055 17.1737 13.7592L16.9659 13.7326C16.4062 13.7326 16.3727 13.7326 15.6258 13.7326" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> <?php echo $wo['lang']['users'];?>
+				</a>
+			</li>
+			<?php if ($wo['config']['pages'] == 1) { ?>
+				<li>
+					<a data-toggle="tab" data-target="#pages" href="#">
+						<svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.17773 12.0516H13.6702C14.8499 12.0516 15.571 10.6446 14.9495 9.55558L14.5415 8.8407C14.1399 8.13721 14.14 7.24741 14.5415 6.54392L14.9495 5.82904C15.571 4.74002 14.8499 3.33301 13.6702 3.33301L5.17773 3.33301L5.17773 12.0516ZM5.17773 12.0516L5.17773 16.6663" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.6702 12.0516C14.8499 12.0516 15.571 10.6446 14.9495 9.55558L14.5415 8.8407C14.1399 8.13721 14.1399 7.24741 14.5415 6.54392L14.9495 5.82904C15.571 4.74002 14.8499 3.33301 13.6702 3.33301L5.17773 3.33301L5.17773 6.02564" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> <?php echo $wo['lang']['pages'];?>
+					</a>
+				</li>
+			<?php } ?>
+			<?php if ($wo['config']['groups'] == 1) { ?>
+				<li>
+					<a data-toggle="tab" data-target="#groups" href="#">
+						<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.60404 12.2682C7.24214 10.7254 7.24214 9.11974 7.60404 7.57691C8.10515 5.44059 9.77321 3.77254 11.9095 3.27142C13.4524 2.90953 15.058 2.90953 16.6008 3.27142C18.7371 3.77254 20.4052 5.44059 20.9063 7.57692C21.2682 9.11974 21.2682 10.7254 20.9063 12.2682C20.4052 14.4045 18.7371 16.0726 16.6008 16.5737C15.058 16.9356 13.4524 16.9356 11.9095 16.5737M7.60404 12.2682C8.10515 14.4045 9.77321 16.0726 11.9095 16.5737M7.60404 12.2682C7.37617 11.2968 7.29178 10.3004 7.35086 9.31057C7.26731 9.32762 7.18395 9.3459 7.1008 9.36541C5.26967 9.79493 3.83991 11.2247 3.41038 13.0558C3.10018 14.3782 3.10018 15.7545 3.41038 17.0769C3.83991 18.9081 5.26967 20.3378 7.1008 20.7674C8.42322 21.0775 9.79949 21.0775 11.1219 20.7674C12.953 20.3378 14.3828 18.9081 14.8123 17.0769C14.8318 16.9938 14.8501 16.9104 14.8672 16.8269C13.8773 16.886 12.881 16.8016 11.9095 16.5737" stroke="currentColor" stroke-width="1.5"/><path d="M7.60345 12.2682C7.24156 10.7254 7.24156 9.11974 7.60346 7.57691C8.10457 5.44059 9.77263 3.77254 11.9089 3.27142C13.4518 2.90953 15.0574 2.90953 16.6002 3.27142C18.7366 3.77254 20.4046 5.44059 20.9057 7.57692C21.2676 9.11974 21.2676 10.7254 20.9057 12.2682C20.4046 14.4045 18.7366 16.0726 16.6002 16.5737C15.0574 16.9356 13.4518 16.9356 11.9089 16.5737M7.60345 12.2682C8.10457 14.4045 9.77263 16.0726 11.9089 16.5737M7.60345 12.2682C7.37559 11.2968 7.2912 10.3004 7.35028 9.31057M11.9089 16.5737C12.8804 16.8016 13.8767 16.886 14.8666 16.8269" stroke="currentColor" stroke-width="1.5"/></svg> <?php echo $wo['lang']['groups'];?>
+					</a>
+				</li>
+			<?php } ?>
+			<?php if ($wo['config']['games'] == 1) { ?>
+				<li>
+					<a data-toggle="tab" data-target="#games" href="#">
+						<svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.4277 10C12.4277 11.2426 11.4204 12.25 10.1777 12.25C8.93509 12.25 7.92773 11.2426 7.92773 10C7.92773 8.75736 8.93509 7.75 10.1777 7.75C11.4204 7.75 12.4277 8.75736 12.4277 10Z" stroke="currentColor" stroke-width="1.5"/><path d="M17.6777 10L15.1777 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.67773 10L5.17773 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.1777 17.5L10.1777 15M10.1777 2.5L10.1777 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.1777 2.5L10.1777 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.1777 17.5L10.1777 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> <?php echo $wo['lang']['games'];?>
+					</a>
+				</li>
+			<?php } ?>
+		</ul>
+	</div>
+	
+	<div class="wo_search_page">
+		<div class="tab-content">
+			<div id="users" class="tab-pane fade in active">
+				<div id="users-cont" class="row cool-style-album-row wow_frnd_usr">
+					<?php
+					$search_query = '';
+						if (!isset($_GET['query'])) {
+							echo $type_to_find;
+						}
+						if (isset($_GET['query'])) {
+							$search_query = Wo_GetSearchFilter($_GET, 30);
+							if (count($search_query) != 0) {
+								foreach ($search_query as $wo['result']) {
+									if (!empty($wo['result']['avatar_full'])) {
+										$wo['result']['avatar'] = Wo_GetMedia($wo['result']['avatar_full']);
+									}
+									echo Wo_LoadPage('search/user-result');
+								}
+							} else {
+								echo $not_found;
+							}
+						}
+					?>
+				</div>
+				<div class="clear"></div>
+				<?php if (!empty($search_query)) { ?>
+				<div class="load-more">
+					<button class="btn btn-default text-center pointer load-more-users"><?php echo $wo['lang']['load_more_users'] ?></button>
+				</div>
+				<?php } ?>
+			</div>
+						
+			<?php if ($wo['config']['pages'] == 1) { ?>
+				<div id="pages" class="tab-pane fade">
+					<div class="wo_my_pages">
+						<div id="pages-cont" class="row cool-style-album-row">
+							<?php
+							$search_query = '';
+								if (!isset($_GET['query'])) {
+									echo $type_to_find;
+								}
+								if (isset($_GET['query'])) {
+									$search_query = Wo_GetSearchAdv($_GET['query'], 'pages');
+									if (count($search_query) != 0) {
+										foreach ($search_query as $wo['result']) {
+											echo Wo_LoadPage('search/page-result');
+										}
+									} else {
+										echo $not_found;
+									}
+								}
+							?>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<?php if (!empty($search_query)) { ?>
+					<div class="load-more">
+						<button class="btn btn-default text-center pointer load-more-pages"><?php echo $wo['lang']['load_more_pages'] ?></button>
+					</div>
+					<?php } ?>
+				</div>
+			<?php } ?>
+						
+			<?php if ($wo['config']['groups'] == 1) { ?>
+				<div id="groups" class="tab-pane fade">
+					<div id="groups-cont" class="row cool-style-album-row">
+						<?php
+						$search_query = '';
+							if (!isset($_GET['query'])) {
+								echo $type_to_find;
+							}
+							if (isset($_GET['query'])) {
+								$search_query = Wo_GetSearchAdv($_GET['query'], 'groups');
+								if (count($search_query) != 0) {
+									foreach ($search_query as $wo['result']) {
+										echo Wo_LoadPage('search/group-result');
+									}
+								} else {
+									echo $not_found;
+								}
+							}
+						?>
+					</div>
+					<div class="clear"></div>
+					<?php if (!empty($search_query)) { ?>
+					<div class="load-more">
+						<button class="btn btn-default text-center pointer load-more-groups"><?php echo $wo['lang']['load_more_groups'] ?></button>
+					</div>
+					<?php } ?>
+				</div>
+			<?php } ?>
+						
+			<?php if ($wo['config']['games'] == 1) { ?>
+				<div id="games" class="tab-pane fade">
+					<div class="row wow_srch_game_tabss">
+						<?php
+							if (!isset($_GET['query'])) {
+								echo $type_to_find;
+							}
+							if (isset($_GET['query'])) {
+								$search_query = Wo_GetSearchAdv($_GET['query'], 'games');
+								if (count($search_query) != 0) {
+									foreach ($search_query as $wo['game']) {
+										echo Wo_LoadPage('games/game-style');
+									}
+								} else {
+									echo $not_found;
+								}
+							}
+						?>
+					</div>
+				</div>
+			<?php } ?>
+		</div>
+		<div class="clear"></div>
+	</div>
+</div>
+
+<script>
+$(document).on('click', '.wow_srch_drp_mnu', function (e) {
+  e.stopPropagation();
+});
+
+  jQuery(document).ready(function($) {
+    //Load more users
+    $(".load-more-users").click(function(event) {
+      var form = document.getElementById('search_form');
+	  var formdata = new FormData(form);
+      var u_offset = ($("[data-search-type=user]").length > 0) ? $("[data-search-type=user]").last().attr('data-id') : 0;
+      $.ajax({
+      	processData: false,
+        url: Wo_Ajax_Requests_File()+'?f=load-more-users&offset='+u_offset,
+        type: 'POST',
+        dataType: 'json',
+        data: formdata,
+        contentType: false,
+        success:function(data){
+          if (data['status'] == 200) {
+            $("#users-cont").append(data['html'])
+          }else{$(".load-more-users").remove()}
+        }
+      })    
+    });
+    //Load more groups
+    $(".load-more-groups").click(function(event) {
+      var g_offset = ($("[data-search-type=group]").length > 0) ? $("[data-search-type=group]").last().attr('data-id') : 0;
+      $.ajax({
+        url: Wo_Ajax_Requests_File(),
+        type: 'GET',
+        dataType: 'json',
+        data: {f: 'load-more-groups',offset:g_offset,query:$("#query").val()},
+        success:function(data){
+          if (data['status'] == 200) {
+            $("#groups-cont").append(data['html'])
+          }else{$(".load-more-groups").remove()}
+        }
+      })   
+    });
+    //Load more pages
+    $(".load-more-pages").click(function(event) {
+      var p_offset = ($("[data-search-type=page]").length > 0) ? $("[data-search-type=page]").last().attr('data-id') : 0;
+      $.ajax({
+        url: Wo_Ajax_Requests_File(),
+        type: 'GET',
+        dataType: 'json',
+        data: {f: 'load-more-pages',offset:p_offset,query:$("#query").val()},
+        success:function(data){
+          if (data['status'] == 200) {
+            $("#pages-cont").append(data['html'])
+          }else{$(".load-more-pages").remove()}
+        }
+      })   
+    });
+
+    
+    $("#input").hover(function(event) {
+      $("#input").focus()
+    });
+
+  });
+</script>

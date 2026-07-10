@@ -1,0 +1,46 @@
+<div class="page-margin mt-0">
+	<div class="wow_content popular_posts_hdr">
+		<h2><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>&nbsp;<?php echo $wo['lang']['delete_account']; ?></h2>
+	</div>
+</div>
+
+<div class="wo_settings_page wow_content">
+
+	<form action="#" method="post" class="form-horizontal setting-delete-account-form">
+		<div class="setting-delete-account-alert setting-update-alert"></div>
+		
+		<div class="wow_form_fields">
+			<label for="password"><?php echo $wo['lang']['current_password']; ?></label>  
+			<input id="password" name="password" type="password" class="form-control input-md">
+		</div>
+
+		<div class="text-center">
+			<button type="submit" class="btn btn-main btn-mat btn-mat-raised add_wow_loader"><?php echo $wo['lang']['delete']; ?></button>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+$(function() {
+  $('form.setting-delete-account-form').ajaxForm({
+    url: Wo_Ajax_Requests_File() + '?f=delete_user_account',
+    beforeSend: function() {
+      $('.wo_settings_page').find('.add_wow_loader').addClass('btn-loading');
+    },
+    success: function(data) {
+      if (data.status == 200) {
+        $('.setting-delete-account-alert').html('<div class="alert alert-success">' + data.message + '</div>');
+        $('.alert-success').fadeIn('fast', function() {
+          window.setTimeout(function() {
+            window.location.href = data.location;
+          }, 3000);
+        });
+      } else {
+        var errors = data.errors.join("<br>");
+        $('.setting-delete-account-alert').html('<div class="alert alert-danger">' + errors + '</div>');
+        $('.alert-danger').fadeIn(300);
+      }
+      $('.wo_settings_page').find('.add_wow_loader').removeClass('btn-loading');
+    }
+  });
+});
+</script>

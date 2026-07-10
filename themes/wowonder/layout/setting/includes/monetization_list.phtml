@@ -1,0 +1,129 @@
+<div class="col-md-12 address_<?php echo $wo['monetization']->id ?>">
+    <div class="address_book">
+        <div class="address_book_innr">
+            <div class="address_box">
+                <p class="addrs_name"><?php echo $wo['monetization']->title ?></p>
+                <p class="addrs_phone"><?php echo  $wo['currencies'][$wo['monetization']->currency]['text'] ?> <?php echo $wo['config']['currency_symbol_array'][$wo['currencies'][$wo['monetization']->currency]['text']] ?><?php echo number_format($wo['monetization']->price, 2); ?> <small class="addrs_street">/ <?php echo $wo['lang'][$wo['monetization']->period]; ?></small></p>
+                <p class="addrs_count"><?php echo $wo['monetization']->description; ?></p>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <a href="javascript:void(0)" class="btn btn-info" onclick="EditMonetization('<?php echo $wo['monetization']->id ?>')" title="<?php echo $wo['lang']['edit'] ?>">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"/></svg>
+                    </a>
+                    <a href="javascript:void(0)" class="btn btn-danger" onclick="DeleteMonetization('<?php echo $wo['monetization']->id ?>','hide')" title="<?php echo $wo['lang']['delete'] ?>">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="edit_monetization_modal_<?php echo $wo['monetization']->id ?>" role="dialog" data-keyboard="false">
+    <div class="modal-dialog wow_mat_mdl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+                <h4 class="modal-title"><?php echo $wo['lang']['edit_monetization'] ?></h4>
+            </div>
+
+            <form class="form form-horizontal edit_monetization_form_<?php echo $wo['monetization']->id ?>" method="post" action="#">
+                <div class="modal-body twocheckout_modal">
+                    <div class="modal_edit_monetization_modal_alert_<?php echo $wo['monetization']->id ?>"></div>
+                    <div class="clear"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="wow_form_fields">
+                                <label for="title"><?php echo $wo['lang']['title']; ?></label>
+                                <input id="title" name="title" type="text" autocomplete="off" value="<?php echo $wo['monetization']->title ?>">
+                            </div>
+                        </div>
+
+                        <div class="col-md-8">
+                            <div class="wow_form_fields">
+                                <label for="price"><?php echo $wo['lang']['price']; ?>(USD)</label>
+                                <input id="price" name="price" type="number" autocomplete="off" placeholder="10" value="<?php echo $wo['monetization']->price ?>">
+                            </div>
+                        </div>
+						
+                        <div class="col-md-4">
+                            <div class="wow_form_fields">
+								<label for="currency">&nbsp;</label>
+                                <select id="currency" name="currency">
+                                    <option value="<?php echo $wo['monetization']->currency; ?>"><?php echo  $wo['currencies'][$wo['monetization']->currency]['text'] ?> (<?php echo  $wo['currencies'][$wo['monetization']->currency]['symbol'] ?>)</option>
+                                    <?php foreach ($wo['currencies'] as $key => $currency) { ?>
+                                        <option value="<?php echo $key; ?>"><?php echo  $currency['text'] ?> (<?php echo  $currency['symbol'] ?>)</option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="wow_form_fields">
+								<label for="period"><?php echo $wo['lang']['duration']; ?></label>
+                                <select id="period" name="period">
+                                    <option value="daily" <?php echo($wo['monetization']->period == 'daily' ? 'selected' : '') ?>><?php echo $wo['lang']['daily']; ?></option>
+                                          <option value="weekly" <?php echo($wo['monetization']->period == 'weekly' ? 'selected' : '') ?>><?php echo $wo['lang']['weekly']; ?></option>
+                                          <option value="monthly" <?php echo($wo['monetization']->period == 'monthly' ? 'selected' : '') ?>><?php echo $wo['lang']['monthly']; ?></option>
+                                          <option value="yearly" <?php echo($wo['monetization']->period == 'yearly' ? 'selected' : '') ?>><?php echo $wo['lang']['yearly']; ?></option>
+                                </select>
+                            </div>
+                        </div>
+						
+                        <div class="col-md-12">
+                            <div class="wow_form_fields">
+                                <label for="description"><?php echo $wo['lang']['description']; ?></label>
+                                <textarea id="description" name="description" type="text" autocomplete="off" rows="3"><?php echo $wo['monetization']->description ?></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="id" value="<?php echo $wo['monetization']->id ?>">
+                    <div class="clear"></div>
+                </div>
+                <div class="clear"></div>
+                <div class="modal-footer">
+                    <div class="ball-pulse">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <button type="submit" class="btn btn-main btn-mat"><?php echo $wo['lang']['edit']; ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var options = {
+            url: Wo_Ajax_Requests_File() + '?f=monetization&s=edit&hash=' + $('.main_session').val(),
+            beforeSubmit: function () {
+                $('.modal_edit_monetization_modal_alert_<?php echo $wo['monetization']->id ?>').empty();
+                $("#edit_monetization_modal_<?php echo $wo['monetization']->id ?>").find('.btn-mat').attr('disabled', 'true');
+                $("#edit_monetization_modal_<?php echo $wo['monetization']->id ?>").find('.btn-mat').text("<?php echo($wo['lang']['please_wait']) ?>");
+            },
+            success: function (data) {
+                console.log(data)
+                $("#edit_monetization_modal_<?php echo $wo['monetization']->id ?>").find('.btn-mat').removeAttr('disabled')
+                $("#edit_monetization_modal_<?php echo $wo['monetization']->id ?>").find('.btn-mat').text("<?php echo($wo['lang']['edit']) ?>");
+                if (data.status == 200) {
+                    $('.modal_edit_monetization_modal_alert_<?php echo $wo['monetization']->id ?>').html('<div class="alert alert-success bg-success"><i class="fa fa-check"></i> ' +
+                        data.message
+                        + '</div>');
+                    if (data.url && data.url != '') {
+                        setTimeout(function () {
+                            location.href = data.url;
+                        }, 2000);
+                    }
+                } else {
+                    console.log(123123213213)
+                    $('.modal_edit_monetization_modal_alert_<?php echo $wo['monetization']->id ?>').html('<div class="alert alert-danger bg-danger"> ' +
+                        data.message
+                        + '</div>');
+                }
+            }
+        };
+        $('.edit_monetization_form_<?php echo $wo['monetization']->id ?>').ajaxForm(options);
+    });
+</script>

@@ -1,0 +1,112 @@
+<?php echo Wo_LoadPage('forum/headers/header'); 
+$section = Wo_GetForumSec(array('id' => $wo['forum_data']['forum']['sections']));
+?>
+<div role="tabpanel" class="tab-pane active" id="forumdisplay">
+	<div class="page-margin mt-0 mb-0">
+		<div class="wow_content popular_posts_hdr flex">
+			<h2 class="flex">&nbsp;<p><?php echo($wo['forum_data']['forum']['name_lang']) ?><b><?php echo($wo['forum_data']['forum']['description_lang']) ?></b></p></h2>
+
+			<div class="btnss">
+				<button type="button" class="btn btn-default btn-mat" onclick="FroumShare(this)"><?php echo $wo['lang']['share_on_timeline']; ?></button>
+				<?php if ($wo['config']['can_use_forum']) { ?>
+					<a href="<?php echo Wo_SeoLink('index.php?link1=forumsadd&fid=' . $wo['forum_data']['forum']['id']) ?>" data-ajax="?link1=forumaddthred&fid=<?php echo $wo['forum_data']['forum']['id'];?>" class="btn btn-main btn-mat"><?php echo $wo['lang']['create_new_topic']; ?></a>
+				<?php } ?>
+			</div>
+		</div>
+	</div>
+
+	<div class="w-100 wow_forum_sections" id="forum-threads">
+		<?php if (count($wo['forum_data']['threads']) > 0): ?>
+			<?php foreach ($wo['forum_data']['threads'] as $wo['thread']): ?>
+				<?php echo Wo_LoadPage("forum/includes/post-list"); ?>
+			<?php endforeach; ?>
+		<?php else: ?>
+			<?php echo '<div class="page-margin"><div class="wow_content"><div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M18,22A2,2 0 0,0 20,20V4C20,2.89 19.1,2 18,2H12V9L9.5,7.5L7,9V2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18Z" /></svg>' . $wo['lang']['no_threads_found'] .  '</div></div></div>'; ?>
+		<?php endif; ?>
+	</div>
+	<div class="posts_load">
+		<?php if (count($wo['forum_data']['threads']) >= 10): ?>
+		<div class="load-more">
+			<button class="btn btn-default text-center pointer forum-posts-load"  >
+			<i class="fa fa-arrow-down progress-icon" data-icon="arrow-down"></i> <?php echo $wo['lang']['load_more_posts'] ?></button>
+		</div>
+		<?php endif ?>
+	</div>  
+</div>
+<div class="clear"></div>
+
+<?php echo Wo_LoadPage('forum/headers/footer'); ?>
+<div class="modal fade in" id="forum-shared" role="dialog">
+    <div class="modal-dialog">
+    
+      <div class="modal-content">
+        <p style="text-align: center;padding: 30px 20px;font-family: Hind,Arial;font-size: 16px;">
+          <i class="fa fa-check" aria-hidden="true" style="color: green;"></i>      
+          <?php echo $wo['lang']['forum_shared']; ?>
+        </p>
+      </div>
+      
+    </div>
+</div>
+<script>
+	function FroumShare(self) {
+		$("#forum-shared").modal('show');
+		$(self).attr('disabled', 'true');
+		$.post(Wo_Ajax_Requests_File() + '?f=forum_share&hash_id=' + $('.main_session').val(), {id: <?php echo $_GET['fid']; ?>}, function(data, textStatus, xhr) {
+			setTimeout(function (argument) {
+				$(self).removeAttr('disabled');
+				$("#forum-shared").modal('hide');
+			},2000);
+		});
+	}
+	$(".forum-posts-load").click(function () {
+	      $.ajax({
+	         url: Wo_Ajax_Requests_File(),
+	         type: 'GET',
+	         dataType: 'json',
+	         data: {
+	         	f:"forum-posts-load",
+	         	forum:<?php echo $_GET['fid']; ?>,
+	         	offset:($(".topic-list").length > 0) ? $(".topic-list:last").attr('data-forum') : 0,
+	         },
+	         success:function(data){
+	            if (data['status'] == 200) {
+	                $(".threads-table tbody").append(data['html'])
+	             }else{
+	               $(".posts_load").remove()
+	             }
+	         }
+	      });
+	   	});
+
+	var delay = (function(){
+		var timer = 0;
+		return function(callback, ms){
+		  clearTimeout (timer);
+		  timer = setTimeout(callback, ms);
+		};
+	})();
+
+	$("#search-forum-threads").keyup(function(event) {
+      delay(function(){
+      if ($("#search-forum-threads").val().trim()) {
+	      $.ajax({
+	        url: Wo_Ajax_Requests_File(),
+	        type: 'GET',
+	        data: {	f:"forum-thread-search",
+	        		keyword:$("#search-forum-threads").val(),
+	        		fid:<?php echo($wo['forum_data']['forum']['id']) ?>
+	        	},
+	        dataType: "json",
+	        success: function(data){
+	          if (data['status'] == 200) {
+	          	$("#forum-threads").html(data['html']);
+	          }
+	          else if(data['status'] == 404){
+	         	 $("#forum-threads").html('<tr> <td colspan="5" class="text-center" style="padding:40px 40px;" >' + data['html'] + '</td></tr>');
+	          }
+	        }
+	      })}
+      }, 1000 );
+  	});
+</script>

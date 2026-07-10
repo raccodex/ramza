@@ -1,0 +1,276 @@
+<?php $job_type = array('full_time','part_time','internship','volunteer','contract'); ?>
+<div class="page-margin">
+	<div class="wow_content popular_posts_hdr">
+		<h2 class="flex"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.05872 1.62224L7.86715 0.89712L8.05872 1.62224ZM9.94206 1.62224L9.75048 2.34736V2.34736L9.94206 1.62224ZM8.2503 2.34736C8.74164 2.21755 9.25914 2.21755 9.75048 2.34736L10.1336 0.897121C9.39117 0.70096 8.60961 0.70096 7.86715 0.89712L8.2503 2.34736ZM13.2313 4.88596C13.2313 3.00996 11.9544 1.37818 10.1336 0.89712L9.75048 2.34736C10.9251 2.65769 11.7313 3.70324 11.7313 4.88596L13.2313 4.88596ZM6.26953 4.88596C6.26953 3.70324 7.07569 2.65769 8.2503 2.34736L7.86715 0.89712C6.04635 1.37818 4.76953 3.00995 4.76953 4.88596L6.26953 4.88596Z" fill="currentColor"></path><path d="M1.81958 12.6692L2.54079 12.4634L1.81958 12.6692ZM1.81665 8.11341L2.53785 8.31922L1.81665 8.11341ZM16.1834 8.11341L15.4621 8.31922V8.31922L16.1834 8.11341ZM16.1804 12.6692L16.9016 12.875L16.1804 12.6692ZM12.3274 16.1822L12.1854 15.4458L12.3274 16.1822ZM5.67259 16.1822L5.81458 15.4458L5.67259 16.1822ZM6.31081 4.46702L6.4528 5.20346L6.31081 4.46702ZM11.6892 4.46702L11.8312 3.73059L11.6892 4.46702ZM12.5838 4.63952L12.4418 5.37595V5.37595L12.5838 4.63952ZM16.1059 7.84185L16.8271 7.63604V7.63604L16.1059 7.84185ZM5.41618 4.63952L5.27418 3.90308V3.90308L5.41618 4.63952ZM1.89414 7.84185L1.17293 7.63604L1.17293 7.63604L1.89414 7.84185ZM5.55817 5.37595L6.4528 5.20346L6.16882 3.73059L5.27418 3.90308L5.55817 5.37595ZM11.5472 5.20346L12.4418 5.37595L12.7258 3.90308L11.8312 3.73059L11.5472 5.20346ZM15.3847 8.04767L15.4621 8.31922L16.9046 7.9076L16.8271 7.63604L15.3847 8.04767ZM2.53785 8.31922L2.61535 8.04766L1.17293 7.63604L1.09544 7.90759L2.53785 8.31922ZM2.54079 12.4634C2.15476 11.1107 2.15237 9.67003 2.53785 8.31922L1.09544 7.90759C0.632629 9.52936 0.636111 11.2552 1.09837 12.875L2.54079 12.4634ZM15.4621 8.31922C15.8476 9.67004 15.8452 11.1107 15.4592 12.4634L16.9016 12.875C17.3639 11.2552 17.3674 9.52937 16.9046 7.9076L15.4621 8.31922ZM12.1854 15.4458C10.0817 15.8514 7.91826 15.8514 5.81458 15.4458L5.5306 16.9187C7.82188 17.3605 10.1781 17.3605 12.4694 16.9187L12.1854 15.4458ZM6.4528 5.20346C8.13499 4.87912 9.86501 4.87912 11.5472 5.20346L11.8312 3.73059C9.9614 3.37008 8.0386 3.37008 6.16882 3.73059L6.4528 5.20346ZM5.81458 15.4458C4.24038 15.1423 2.97333 13.9791 2.54079 12.4634L1.09837 12.875C1.68724 14.9385 3.40511 16.5089 5.5306 16.9187L5.81458 15.4458ZM12.4694 16.9187C14.5949 16.5089 16.3128 14.9385 16.9016 12.875L15.4592 12.4634C15.0267 13.9791 13.7596 15.1423 12.1854 15.4458L12.4694 16.9187ZM12.4418 5.37595C13.8611 5.6496 14.9962 6.68632 15.3847 8.04767L16.8271 7.63604C16.281 5.7224 14.6917 4.28213 12.7258 3.90308L12.4418 5.37595ZM5.27418 3.90308C3.30826 4.28213 1.71903 5.7224 1.17293 7.63604L2.61535 8.04766C3.00384 6.68632 4.1389 5.6496 5.55817 5.37595L5.27418 3.90308ZM1.77809 8.94371C6.43453 10.6661 11.5655 10.6661 16.2219 8.94371L15.7015 7.53686C11.3809 9.13501 6.6191 9.13501 2.29847 7.53686L1.77809 8.94371Z" class="icon_main_fill"></path><path d="M5.66602 7.75V10.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12.334 7.75V10.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>&nbsp;<p><?php echo $wo['lang']['jobs']; ?><b><?php echo $wo['lang']['search_find_job_at']; ?> <?php echo $wo['config']['siteName'];?></b></p></h2>
+	</div>
+	
+	<?php if ($wo['config']['user_ads'] == 1): ?>
+		<div id="sidebar-sticky-jobs">
+			<?php 
+			  $wo['sidebar-ad'] = Wo_GetAdsByType('jobs');
+			  if (!empty($wo['sidebar-ad'])) {
+				echo Wo_LoadPage('ads/includes/jobs-ad');
+			  }
+			?>
+			<div class="clear"></div>
+		</div>
+	<?php endif; ?>
+	
+	<div class="row">
+		<div class="col-lg-5">
+			<div class="page-margin wow_content wow_big_head_link flex full">
+				<div class="right_part">
+					<div class="search-blog">
+						<form action="">
+							<input type="text" onkeyup="Wo_SearchJobs(this.value)" placeholder="<?php echo $wo['lang']['search_for_jobs']; ?>" id="product-text">
+							<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="2"></circle><path d="M14.5 15.5L18.5 19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+						</form>
+					</div>
+				
+					<div class="dropdown market_widget">
+						<div class="btn btn-mat btn-main dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+							<svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.0086 1.5H2.99063C1.64578 1.5 0.862648 3.03017 1.6428 4.13351L5.05925 8.96527C5.45848 9.52988 5.67302 10.2058 5.67302 10.899V14.2744C5.67302 15.5036 6.6623 16.5 7.88264 16.5C9.10298 16.5 10.0923 15.5036 10.0923 14.2744V10.9488C10.0923 10.2248 10.3262 9.52062 10.7588 8.94251L14.3301 4.16979C15.1518 3.07156 14.374 1.5 13.0086 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.0923 10.7458C10.0923 10.0374 10.3262 9.34833 10.7588 8.78264L14.3301 4.11244C15.1518 3.0378 14.374 1.5 13.0086 1.5H2.99063C1.64578 1.5 0.862648 2.9973 1.6428 4.07694L5.05925 8.80491C5.45848 9.35739 5.67302 10.0188 5.67302 10.6971V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+						</div>
+						<div class="dropdown-menu dropdown-menu-right jobss">
+							<div class="market_widget">
+								<div class="m_widget_head"><?php echo (!empty($_GET['type']) && in_array($_GET['type'], $job_type)) ? $wo['lang'][$_GET['type']]: $wo['lang']['job_type'];?></div>
+								<div class="market_categories">
+									<ul class="product-category-slider">
+										<?php 
+										
+											$category_id = (!empty($_GET['c_id'])) ? (int) $_GET['c_id'] : 0;
+											$type = (!empty($_GET['type'])) ? $_GET['type'] : '';
+											foreach ($job_type as $key => $category) {
+												$active = ($type == $category) ? 'active' : '';
+										?>
+											<li class="<?php echo $active?>" data_prodect_type_id="<?php echo($category) ?>"><a href="<?php echo Wo_SeoLink('index.php?link1=jobs');?>?c_id=<?php echo($category_id) ?>&type=<?php echo($category) ?>"><?php echo $wo['lang'][$category];?></a></li>
+										<?php } ?>
+									</ul>
+								</div>
+							</div>
+							
+							<div class="market_widget">
+								<div class="m_widget_head"><?php echo (!empty($_GET['c_id']) && in_array($_GET['c_id'], array_keys($wo['job_categories']))) ? $wo['job_categories'][$_GET['c_id']]: $wo['lang']['categories'];?></div>
+								<div class="market_categories">
+									<ul class="product-category-slider">
+										<?php 
+											$category_id = (!empty($_GET['c_id'])) ? (int) $_GET['c_id'] : 0;
+											$type = (!empty($_GET['type'])) ? $_GET['type'] : '';
+											foreach ($wo['job_categories'] as $key => $category) {
+												$active = ($category_id == $key) ? 'active' : '';
+										?>
+											<li class="<?php echo $active?>"><a href="<?php echo Wo_SeoLink('index.php?link1=jobs');?>?c_id=<?php echo($key) ?>&type=<?php echo($type) ?>"><?php echo $category;?></a></li>
+										<?php } ?>
+									</ul>
+								</div>
+							</div>
+							
+							<div class="market_widget">
+								<div class="m_widget_head"><?php echo $wo['lang']['location_dist'];?></div>
+								<div class="select-nearby-users-distance wo_select_job_dist">
+									<form>
+										<input type="range" class="cusrange" id="nearby-users-distance" name="amountRange" onchange="Wo_SearchJobsNearBy();" value="0" min="0" max="300" oninput="this.form.amountInput.value=this.value">
+										<input type="number" name="amountInput" min="0" max="4000" value="0" oninput="this.form.amountRange.value=this.value" readonly id="cusrange-reader"/> km
+									</form>
+								</div>
+							</div>
+							
+							<?php if ($wo['loggedin'] == true) { ?>
+							<?php if ($wo['config']['nearby_business_system'] == 1) { ?>
+								<a href="<?php echo($wo['config']['site_url'].'/nearby_business') ?>" data-ajax="?link1=nearby_business" class="btn btn-block btn-main btn-mat side_mkt_btn"><?php echo $wo['lang']['nearby_business'] ?></a>
+							<?php } ?>
+							<?php } ?>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<?php
+				$category_name = '';
+			$data = array();
+			if (!empty($_GET['c_id'])) {
+				if (is_numeric($_GET['c_id'])) {
+					if (array_key_exists($_GET['c_id'], $wo['job_categories'])) {
+						?>
+						<input type="hidden" value="<?php echo Wo_Secure($_GET['c_id']); ?>" id="c_id" />
+						<?php
+						$category_name = $wo['job_categories'][$_GET['c_id']];
+						$data['c_id'] = Wo_Secure($_GET['c_id']);
+					}
+				}
+			} else {
+				echo '<input type="hidden" value="0" id="c_id" />';
+			}
+
+			if (!empty($_GET['type'])) {
+					if (in_array($_GET['type'], $job_type)) {
+						?>
+						<input type="hidden" value="<?php echo Wo_Secure($_GET['type']); ?>" id="job_type" />
+						<?php
+						$data['type'] = Wo_Secure($_GET['type']);
+					}
+			} else {
+				echo '<input type="hidden" value="" id="job_type" />';
+			}
+			?>
+
+			<div id="products">
+				<?php
+					$data['limit'] = 10;
+					$jobs = Wo_GetAllJobs($data);
+					if (count($jobs) > 0) {
+				?>
+				<?php
+				foreach ($jobs as $key => $wo['job']) {
+					echo Wo_LoadPage('jobs/jobs_list'); 
+				}
+				} else {
+					echo '<div class="wow_content"><div class="empty_state"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.05872 1.62224L7.86715 0.89712L8.05872 1.62224ZM9.94206 1.62224L9.75048 2.34736V2.34736L9.94206 1.62224ZM8.2503 2.34736C8.74164 2.21755 9.25914 2.21755 9.75048 2.34736L10.1336 0.897121C9.39117 0.70096 8.60961 0.70096 7.86715 0.89712L8.2503 2.34736ZM13.2313 4.88596C13.2313 3.00996 11.9544 1.37818 10.1336 0.89712L9.75048 2.34736C10.9251 2.65769 11.7313 3.70324 11.7313 4.88596L13.2313 4.88596ZM6.26953 4.88596C6.26953 3.70324 7.07569 2.65769 8.2503 2.34736L7.86715 0.89712C6.04635 1.37818 4.76953 3.00995 4.76953 4.88596L6.26953 4.88596Z" fill="currentColor"></path><path d="M1.81958 12.6692L2.54079 12.4634L1.81958 12.6692ZM1.81665 8.11341L2.53785 8.31922L1.81665 8.11341ZM16.1834 8.11341L15.4621 8.31922V8.31922L16.1834 8.11341ZM16.1804 12.6692L16.9016 12.875L16.1804 12.6692ZM12.3274 16.1822L12.1854 15.4458L12.3274 16.1822ZM5.67259 16.1822L5.81458 15.4458L5.67259 16.1822ZM6.31081 4.46702L6.4528 5.20346L6.31081 4.46702ZM11.6892 4.46702L11.8312 3.73059L11.6892 4.46702ZM12.5838 4.63952L12.4418 5.37595V5.37595L12.5838 4.63952ZM16.1059 7.84185L16.8271 7.63604V7.63604L16.1059 7.84185ZM5.41618 4.63952L5.27418 3.90308V3.90308L5.41618 4.63952ZM1.89414 7.84185L1.17293 7.63604L1.17293 7.63604L1.89414 7.84185ZM5.55817 5.37595L6.4528 5.20346L6.16882 3.73059L5.27418 3.90308L5.55817 5.37595ZM11.5472 5.20346L12.4418 5.37595L12.7258 3.90308L11.8312 3.73059L11.5472 5.20346ZM15.3847 8.04767L15.4621 8.31922L16.9046 7.9076L16.8271 7.63604L15.3847 8.04767ZM2.53785 8.31922L2.61535 8.04766L1.17293 7.63604L1.09544 7.90759L2.53785 8.31922ZM2.54079 12.4634C2.15476 11.1107 2.15237 9.67003 2.53785 8.31922L1.09544 7.90759C0.632629 9.52936 0.636111 11.2552 1.09837 12.875L2.54079 12.4634ZM15.4621 8.31922C15.8476 9.67004 15.8452 11.1107 15.4592 12.4634L16.9016 12.875C17.3639 11.2552 17.3674 9.52937 16.9046 7.9076L15.4621 8.31922ZM12.1854 15.4458C10.0817 15.8514 7.91826 15.8514 5.81458 15.4458L5.5306 16.9187C7.82188 17.3605 10.1781 17.3605 12.4694 16.9187L12.1854 15.4458ZM6.4528 5.20346C8.13499 4.87912 9.86501 4.87912 11.5472 5.20346L11.8312 3.73059C9.9614 3.37008 8.0386 3.37008 6.16882 3.73059L6.4528 5.20346ZM5.81458 15.4458C4.24038 15.1423 2.97333 13.9791 2.54079 12.4634L1.09837 12.875C1.68724 14.9385 3.40511 16.5089 5.5306 16.9187L5.81458 15.4458ZM12.4694 16.9187C14.5949 16.5089 16.3128 14.9385 16.9016 12.875L15.4592 12.4634C15.0267 13.9791 13.7596 15.1423 12.1854 15.4458L12.4694 16.9187ZM12.4418 5.37595C13.8611 5.6496 14.9962 6.68632 15.3847 8.04767L16.8271 7.63604C16.281 5.7224 14.6917 4.28213 12.7258 3.90308L12.4418 5.37595ZM5.27418 3.90308C3.30826 4.28213 1.71903 5.7224 1.17293 7.63604L2.61535 8.04766C3.00384 6.68632 4.1389 5.6496 5.55817 5.37595L5.27418 3.90308ZM1.77809 8.94371C6.43453 10.6661 11.5655 10.6661 16.2219 8.94371L15.7015 7.53686C11.3809 9.13501 6.6191 9.13501 2.29847 7.53686L1.77809 8.94371Z" class="icon_main_fill"></path><path d="M5.66602 7.75V10.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12.334 7.75V10.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>' . $wo['lang']['no_available_jobs'] . '</div></div>';
+				}
+				?>
+			</div>
+
+			<div class="posts_load load-produts">
+			    <?php if (count($jobs) > 0): ?>
+				<div class="load-more">
+                    <button class="btn btn-default text-center pointer" onclick="Wo_LoadJobs();">
+                    <i class="fa fa-arrow-down progress-icon" data-icon="arrow-down"></i> <?php echo $wo['lang']['load_more_jobs'] ?></button>
+                </div>
+                <?php endif ?>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="col-lg-7 jobDetails">
+			<div class="page-margin"><div class="wow_content"><div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 512 512" width="512" height="512" fill="currentColor"><g><path d="M507.606,422.754l-86.508-86.508l42.427-42.426c3.676-3.676,5.187-8.993,3.992-14.053s-4.923-9.14-9.855-10.784   L203.104,184.13c-5.389-1.797-11.333-0.394-15.35,3.624c-4.018,4.018-5.421,9.96-3.624,15.35l84.853,254.559   c1.645,4.932,5.725,8.661,10.784,9.855c5.059,1.197,10.377-0.315,14.053-3.992l42.427-42.426l86.508,86.507   c2.929,2.929,6.768,4.394,10.606,4.394s7.678-1.464,10.606-4.394l63.64-63.64C513.465,438.109,513.465,428.612,507.606,422.754z    M433.36,475.787l-86.508-86.507c-5.857-5.858-15.356-5.858-21.213,0l-35.871,35.871l-67.691-203.073l203.073,67.691   l-35.871,35.871c-5.853,5.852-5.858,15.356,0,21.213l86.508,86.508L433.36,475.787z"></path><path d="M195,120c8.284,0,15-6.716,15-15V15c0-8.284-6.716-15-15-15s-15,6.716-15,15v90C180,113.284,186.716,120,195,120z"></path><path d="M78.327,57.114c-5.857-5.858-15.355-5.858-21.213,0c-5.858,5.858-5.858,15.355,0,21.213l63.64,63.64   c5.857,5.858,15.356,5.858,21.213,0c5.858-5.858,5.858-15.355,0-21.213L78.327,57.114z"></path><path d="M120.754,248.033l-63.64,63.64c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.858,15.356,5.858,21.213,0l63.64-63.64   c5.858-5.858,5.858-15.355,0-21.213C136.109,242.175,126.611,242.175,120.754,248.033z"></path><path d="M269.246,141.967l63.64-63.64c5.858-5.858,5.858-15.355,0-21.213c-5.857-5.858-15.355-5.858-21.213,0l-63.64,63.64   c-5.858,5.858-5.858,15.355,0,21.213C253.89,147.825,263.389,147.825,269.246,141.967z"></path><path d="M120,195c0-8.284-6.716-15-15-15H15c-8.284,0-15,6.716-15,15s6.716,15,15,15h90C113.284,210,120,203.284,120,195z"></path></g></svg>Click on the Jobs list to view the Job Details</div></div></div>
+			
+			<?php if (count($jobs) == 0) { 
+				echo '<div class="page-margin"><div class="wow_content"><div class="empty_state"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.05872 1.62224L7.86715 0.89712L8.05872 1.62224ZM9.94206 1.62224L9.75048 2.34736V2.34736L9.94206 1.62224ZM8.2503 2.34736C8.74164 2.21755 9.25914 2.21755 9.75048 2.34736L10.1336 0.897121C9.39117 0.70096 8.60961 0.70096 7.86715 0.89712L8.2503 2.34736ZM13.2313 4.88596C13.2313 3.00996 11.9544 1.37818 10.1336 0.89712L9.75048 2.34736C10.9251 2.65769 11.7313 3.70324 11.7313 4.88596L13.2313 4.88596ZM6.26953 4.88596C6.26953 3.70324 7.07569 2.65769 8.2503 2.34736L7.86715 0.89712C6.04635 1.37818 4.76953 3.00995 4.76953 4.88596L6.26953 4.88596Z" fill="currentColor"></path><path d="M1.81958 12.6692L2.54079 12.4634L1.81958 12.6692ZM1.81665 8.11341L2.53785 8.31922L1.81665 8.11341ZM16.1834 8.11341L15.4621 8.31922V8.31922L16.1834 8.11341ZM16.1804 12.6692L16.9016 12.875L16.1804 12.6692ZM12.3274 16.1822L12.1854 15.4458L12.3274 16.1822ZM5.67259 16.1822L5.81458 15.4458L5.67259 16.1822ZM6.31081 4.46702L6.4528 5.20346L6.31081 4.46702ZM11.6892 4.46702L11.8312 3.73059L11.6892 4.46702ZM12.5838 4.63952L12.4418 5.37595V5.37595L12.5838 4.63952ZM16.1059 7.84185L16.8271 7.63604V7.63604L16.1059 7.84185ZM5.41618 4.63952L5.27418 3.90308V3.90308L5.41618 4.63952ZM1.89414 7.84185L1.17293 7.63604L1.17293 7.63604L1.89414 7.84185ZM5.55817 5.37595L6.4528 5.20346L6.16882 3.73059L5.27418 3.90308L5.55817 5.37595ZM11.5472 5.20346L12.4418 5.37595L12.7258 3.90308L11.8312 3.73059L11.5472 5.20346ZM15.3847 8.04767L15.4621 8.31922L16.9046 7.9076L16.8271 7.63604L15.3847 8.04767ZM2.53785 8.31922L2.61535 8.04766L1.17293 7.63604L1.09544 7.90759L2.53785 8.31922ZM2.54079 12.4634C2.15476 11.1107 2.15237 9.67003 2.53785 8.31922L1.09544 7.90759C0.632629 9.52936 0.636111 11.2552 1.09837 12.875L2.54079 12.4634ZM15.4621 8.31922C15.8476 9.67004 15.8452 11.1107 15.4592 12.4634L16.9016 12.875C17.3639 11.2552 17.3674 9.52937 16.9046 7.9076L15.4621 8.31922ZM12.1854 15.4458C10.0817 15.8514 7.91826 15.8514 5.81458 15.4458L5.5306 16.9187C7.82188 17.3605 10.1781 17.3605 12.4694 16.9187L12.1854 15.4458ZM6.4528 5.20346C8.13499 4.87912 9.86501 4.87912 11.5472 5.20346L11.8312 3.73059C9.9614 3.37008 8.0386 3.37008 6.16882 3.73059L6.4528 5.20346ZM5.81458 15.4458C4.24038 15.1423 2.97333 13.9791 2.54079 12.4634L1.09837 12.875C1.68724 14.9385 3.40511 16.5089 5.5306 16.9187L5.81458 15.4458ZM12.4694 16.9187C14.5949 16.5089 16.3128 14.9385 16.9016 12.875L15.4592 12.4634C15.0267 13.9791 13.7596 15.1423 12.1854 15.4458L12.4694 16.9187ZM12.4418 5.37595C13.8611 5.6496 14.9962 6.68632 15.3847 8.04767L16.8271 7.63604C16.281 5.7224 14.6917 4.28213 12.7258 3.90308L12.4418 5.37595ZM5.27418 3.90308C3.30826 4.28213 1.71903 5.7224 1.17293 7.63604L2.61535 8.04766C3.00384 6.68632 4.1389 5.6496 5.55817 5.37595L5.27418 3.90308ZM1.77809 8.94371C6.43453 10.6661 11.5655 10.6661 16.2219 8.94371L15.7015 7.53686C11.3809 9.13501 6.6191 9.13501 2.29847 7.53686L1.77809 8.94371Z" class="icon_main_fill"></path><path d="M5.66602 7.75V10.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12.334 7.75V10.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>' . $wo['lang']['no_available_jobs'] . '</div></div></div>';
+				}
+			?>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="delete-job-modal" role="dialog">
+	<div class="modal-dialog modal-md wow_mat_mdl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><?php echo $wo['lang']['delete_job']; ?></h4>
+			</div>
+			<div class="modal-body">
+				<p><?php echo $wo['lang']['confirm_delete_job']; ?></p>
+				<input type="hidden" id="delet_job_id">
+			</div>
+			<div class="modal-footer">
+				<div class="ball-pulse"><div></div><div></div><div></div></div>
+				<button id="delete-all-post" type="button" onclick="Wo_DeleteJob();" class="btn btn-main btn-mat"><?php echo $wo['lang']['delete']; ?></button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+function loadJob(id) {
+	$('.jobDetails').html('<div class="wo_loading_jelly" style="color: #a52729"><div></div><div></div></div>');
+	$.post(Wo_Ajax_Requests_File() + '?f=job&s=load_job', {id: id}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('.jobDetails').html(data.html);
+			}
+		}
+	});
+}
+function Wo_OpenJobDeleteBox(job_id) {
+  $('#delet_job_id').val(job_id);
+  var delete_box = $('#delete-job-modal');
+  delete_box.modal({
+    show: true
+  });
+}
+function Wo_DeleteJob() {
+  Wo_CloseLightbox();
+  var job_id = $('#delet_job_id').val();
+  var delete_box = $('#delete-job-modal');
+  $('#delete-job-modal').find('.ball-pulse').fadeIn(100);
+  $.get(Wo_Ajax_Requests_File(), {
+    f: 'job',
+    s: 'delete_job',
+    job_id: job_id
+  }, function (data) {
+    if(data.status == 200) {
+      delete_box.modal('hide');
+      setTimeout(function () {
+        $('#product-' + job_id).slideUp(200, function () {
+          $(this).remove();
+        });
+      }, 300);
+    }
+    $('#delete-job-modal').find('.ball-pulse').fadeOut(100);
+  });
+}
+function Wo_SearchJobsNearBy() {
+	length = $('#cusrange-reader').val();
+	text_value = $('#job-text').val();
+	var c_id = 0;
+	if ($('#c_id').length > 0) {
+		c_id = $('#c_id').val();
+	}
+	var type = '';
+	if ($('#job_type').length > 0) {
+		type = $('#job_type').val();
+	}
+	$.post(Wo_Ajax_Requests_File() + '?f=job&s=search_jobs', {value: text_value, c_id:c_id,type:type, length: length}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('#products').html(data.html);
+			} else {
+				$('#products').html('<?php echo $wo['lang']['no_available_jobs'] ?>');
+			}
+		}
+	});
+}
+function Wo_LoadJobs() {
+	$('.load-produts').html('<div class="white-loading list-group"><div class="cs-loader"><div class="cs-loader-inner"><label> ●</label><label> ●</label><label> ●</label><label> ●</label><label> ●</label><label> ●</label></div></div></div>');
+	var $c_id = $('#c_id').val();
+	var text = $('#job-text').val();
+	var $last_id = $('.product:last').attr('data-id');
+	var price = $('.product:last').attr('data_price');
+	var length = $('#distance_val').text();
+	var price_sort = $('#PriceSortValue').attr('data_PriceSortType');
+	var type = '';
+	if ($('#job_type').length > 0) {
+		type = $('#job_type').val();
+	}
+	$.post(Wo_Ajax_Requests_File() + '?f=job&s=search_jobs', {last_id: $last_id, c_id:$c_id,type:type, length: length,price_sort:price_sort,price:price,text:text}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('.load-produts').html('<div class="load-more"><button class="btn btn-default text-center pointer" onclick="Wo_LoadJobs();"><i class="fa fa-arrow-down progress-icon" data-icon="arrow-down"></i> <?php echo $wo['lang']['load_more_products'] ?></button></div>');
+				$('#products').append(data.html);
+			} else {
+				$('.load-produts').html('<div class="load-more"><button class="btn btn-default text-center pointer" onclick="Wo_LoadJobs();"><?php echo $wo['lang']['no_available_jobs'] ?></button></div>');
+			}
+		}
+	});
+}
+function Wo_SearchJobs(value) {
+	length = $('#distance_val').text();
+	var price_sort = $('#PriceSortValue').attr('data_PriceSortType');
+	var c_id = 0;
+	if ($('#c_id').length > 0) {
+		c_id = $('#c_id').val();
+	}
+	var type = '';
+	if ($('#job_type').length > 0) {
+		type = $('#job_type').val();
+	}
+	$.post(Wo_Ajax_Requests_File() + '?f=job&s=search_jobs', {value: value, c_id:c_id,type:type, length: length,price_sort:price_sort}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('#products').html(data.html);
+			} else {
+				$('#products').html('<?php echo $wo['lang']['no_available_jobs'] ?>');
+			}
+		}
+	});
+}
+</script>

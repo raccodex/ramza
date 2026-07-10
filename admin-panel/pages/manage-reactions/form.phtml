@@ -1,0 +1,17 @@
+<?php echo($wo['reaction_name']) ?>
+<div class="form-group form-float">
+  <div class="form-line focused">
+    <label class="form-label">Reaction Icon</label>
+        <input type="file" class="form-control" name="ramza">
+  </div>
+</div>
+<?php if ($wo['reaction_id'] < 7) { ?>
+  <?php if (!empty($wo['ramza_icon'])) { ?>
+<label for="ramza_to_use">Use Default Icon</label>
+<div class="form-group">
+    <input type="radio" name="ramza_to_use" id="ramza_to_use-enabled" value="1">
+    <label for="ramza_to_use-enabled">Default</label>
+</div>
+<?php } ?>
+<?php } ?>
+<input type="hidden" name="id" value="<?php echo($wo['reaction_id']) ?>">

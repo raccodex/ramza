@@ -1,0 +1,34 @@
+<tr class="setting-postlist" id="PostID_<?php echo $wo['story']->id?>" data-post-id="<?php echo $wo['story']->id?>" data_selected="<?php echo $wo['story']->id ?>">
+   <td><input type="checkbox" id="check-data-<?php echo $wo['story']->id?>" class="delete-checkbox filled-in"><label for="check-data-<?php echo $wo['story']->id?>"></label></td>
+   <td><?php echo $wo['story']->id?></td>
+    <td>
+        <?php
+        $monetization_owner = Wo_UserData($wo['story']->monetization->user_id);
+        ?>
+        <a href="<?php echo $monetization_owner['url']; ?>">
+            <img src="<?php echo $monetization_owner['avatar']?>" class="setting-avatar" alt="<?php echo $monetization_owner['avatar']?> Profile Picture">
+            <?php echo $monetization_owner['name']; ?>
+        </a>
+    </td>
+    <td>
+      <a href="<?php echo $wo['story']->publisher['url']; ?>">
+      <img src="<?php echo $wo['story']->publisher['avatar']?>" class="setting-avatar" alt="<?php echo $wo['story']->publisher['avatar']?> Profile Picture">
+      <?php echo $wo['story']->publisher['name']; ?>
+      </a>
+   </td>
+    <td>
+        <?php echo  $wo['story']->monetization->period; ?>
+    </td>
+    <td>
+        <?php echo  number_format($wo['story']->monetization->price, 2) . " " . $wo['currencies'][$wo['story']->monetization->currency]['text'];  ?>
+    </td>
+   <td>
+      <?php echo $wo['story']->monetization->title; ?>
+   </td>
+   <td>
+         <?php echo $wo['story']->last_payment_date ?>
+   </td>
+   <td>
+      <button onclick="Wo_AdminDeleteSubscription(<?php echo $wo['story']->id?>,'hide');" type="button" class="btn bg-danger admn_table_btn">Delete</button>
+   </td>
+</tr>

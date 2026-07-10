@@ -1,0 +1,40 @@
+<?php if (count($wo['section']['forums']) > 0): ?>
+	<div class="wow_forum_sections">
+		<div class="f_category show-forums" id="<?php echo $wo['section']['id']; ?>">
+			<?php echo $wo['section']['section_name_lang']; ?>
+		</div>
+		<div class="f_topics" data-slide="<?php echo $wo['section']['id']; ?>">
+			<?php foreach ($wo['section']['forums'] as $wo['forum']):?>
+				<div class="wow_content section-list">
+					<div class="topic_icon">
+						<svg xmlns="http://www.w3.org/2000/svg" class="<?php if ($wo['forum']['posts'] > 50) echo 'bg-main';?>" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M17,12V3A1,1 0 0,0 16,2H3A1,1 0 0,0 2,3V17L6,13H16A1,1 0 0,0 17,12M21,6H19V15H6V17A1,1 0 0,0 7,18H18L22,22V7A1,1 0 0,0 21,6Z" /></svg>
+					</div>
+					<div class="forum-meta-d titles">
+						<div><a href="<?php echo Wo_SeoLink('index.php?link1=forums&fid='.$wo['forum']['id']);?>" data-ajax="?link1=forums&fid=<?php echo $wo['forum']['id'];?>" class="ftitle"><?php echo $wo['forum']['name_lang']; ?></a></div>
+						<div class="small fdesc"><?php echo $wo['forum']['description_lang']; ?></div>
+					</div>
+					<div class="forum-meta-d small">
+						<?php 
+						$last_replay = Wo_GetForumThreads(array('forum' => $wo['forum']['id'] , 'limit' => 1));
+						$last_replay = !empty($last_replay[0]) ? $last_replay[0] : array();
+						if (!empty($last_replay)) { ?>
+							<div>
+								<span class="avatar"><img src="<?php echo $last_replay['user_data']['avatar']?>" width="30" height="30" alt="User avatar"></span>
+								<a href="<?php echo $last_replay['url'];?>" class="reply_title" data-ajax="?link1=showthread&tid=<?php echo $last_replay['id'];?>"><?php echo (Wo_GetShortTitle($last_replay['headline'], false, 50))  ?></a>
+								<?php echo $wo['lang']['by']; ?> <a href="<?php echo $last_replay['user_data']['url']?>" class="reply_user" data-ajax="?link1=timeline&u=<?php echo $last_replay['user_data']['username']; ?>"><?php echo $last_replay['user_data']['name']?></a>
+								<br>
+								<time><?php echo Wo_Time_Elapsed_String($last_replay['posted']); ?></time>
+							</div>
+						<?php } ?>
+					</div>
+					<div class="forum-meta-d topics">
+						<div>
+							<span><b><?php echo $wo['lang']['topics']; ?></b> <?php echo $wo['forum']['posts']; ?></span>
+							<span><b><?php echo $wo['lang']['posts']; ?></b> <?php echo $wo['forum']['posts']; ?></span>
+						</div>
+					</div>
+				</div>
+			<?php endforeach;?>
+		</div>
+	</div>
+<?php endif; ?>

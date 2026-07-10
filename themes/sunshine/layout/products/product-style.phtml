@@ -1,0 +1,23 @@
+<div class="product col-proxs-12 col-xs-6 col-sm-4 col-md-4" id="product_<?php echo $wo['product']['id'];?>">
+	<div class="product_info wow_main_mkt_prod">
+		<div class="product-image">
+			<a href="<?php echo $wo['product']['url']?>" data-ajax="?link1=post&id=<?php echo $wo['product']['seo_id'];?>"><img src="<?php echo $wo['product']['images'][0]['image_org'];?>"></a>
+			<div class="product-by">
+				<?php if ($wo['loggedin'] && $wo['product']['user_id'] == $wo['user']['user_id']) { ?>
+					<a onclick="RemoveUserProduct(<?php echo $wo['product']['id'];?>,'hide')" class="pointer product-list">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>
+					</a>
+				<?php } ?>
+			</div>
+		</div>
+		<div class="produc_info">
+			<div class="product-title">
+				<a href="<?php echo $wo['product']['url']?>" data-ajax="?link1=post&id=<?php echo $wo['product']['seo_id'];?>" title="<?php echo $wo['product']['name']?>"><?php echo $wo['product']['name']?></a>
+			</div>
+			<div class="product-price">
+				<?php echo (!empty($wo['currencies'][$wo['product']['currency']]['symbol'])) ? $wo['currencies'][$wo['product']['currency']]['symbol'] : $wo['config']['classified_currency_s'];?><?php echo $wo['product']['price_format']; ?>
+			</div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>

@@ -1,0 +1,241 @@
+<div class="page-margin">
+	<div class="wow_content popular_posts_hdr">
+		<img src="<?php echo $wo['config']['theme_url'];?>/img/marketplace.png" class="bg_trail">
+		<h2 class="flex"><svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.66667 4.83331L5.499 5.23252C5.22832 5.877 5.16028 6.58862 5.30394 7.27272C5.52315 8.31654 6.35414 9.12274 7.40412 9.31024L7.49657 9.32675C7.82956 9.38621 8.17044 9.38621 8.50343 9.32675L8.59588 9.31024C9.64586 9.12274 10.4769 8.31654 10.6961 7.27272C10.8397 6.58862 10.7717 5.877 10.501 5.23252L10.3333 4.83331" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M14.8507 11.6191C14.3756 13.7086 12.7514 15.3503 10.6686 15.8543C8.91827 16.2778 7.08186 16.2778 5.3315 15.8543C3.24876 15.3503 1.62459 13.7086 1.14945 11.6191C0.724914 9.7522 0.828162 7.80397 1.44764 5.99237L1.53968 5.72322C2.2213 3.72988 3.92409 2.25844 5.9952 1.87305L6.56236 1.76751C7.51269 1.59068 8.48749 1.59068 9.43782 1.76752L10.005 1.87305C12.0761 2.25844 13.7789 3.72988 14.4605 5.72324L14.5525 5.99237C15.172 7.80397 15.2752 9.7522 14.8507 11.6191Z" class="icon_main" stroke-width="1.5"></path></svg>&nbsp;<p><?php echo $wo['lang']['market']; ?><b><?php echo $wo['lang']['buy_sell_at']; ?> <?php echo $wo['config']['siteName'];?></b></p></h2>
+	</div>
+</div>
+
+<div class="page-margin wow_content wow_big_head_link flex">
+	<ul class="list-unstyled">
+		<?php if ($wo['loggedin'] == true && $wo['config']['can_use_market']) { ?>
+			<li><a href="<?php echo Wo_SeoLink('index.php?link1=my-products'); ?>" data-ajax="?link1=my-products"><?php echo $wo['lang']['my_products'];?></a></li>
+		<?php } ?>
+		
+		<?php if ($wo['config']['store_system'] == 'on') { ?>
+			<li><a href="<?php echo Wo_SeoLink('index.php?link1=purchased'); ?>" data-ajax="?link1=purchased"><?php echo $wo['lang']['purchased'] ?></a></li>
+		<?php } ?>
+		
+		<li class="active"><a href="<?php echo Wo_SeoLink('index.php?link1=products'); ?>" data-ajax="?link1=products"><?php echo $wo['lang']['market'];?></a></li>
+	</ul>
+	
+	<div class="right_part">
+		<div class="search-blog">
+			<form action="">
+				<?php
+					$placeholder = $wo['lang']['search_for_products_main'];
+					if (!empty($category_name)) {
+						$placeholder = str_replace('{category_name}', $category_name, $wo['lang']['search_for_products']);
+					}
+				?>
+				<input type="text" onkeyup="Wo_SearchProducts(this.value)" placeholder="<?php echo $placeholder; ?>" id="product-text">
+				<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="2"/><path d="M14.5 15.5L18.5 19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+			</form>
+		</div>
+	
+		<div class="dropdown market_widget">
+			<div class="btn btn-mat btn-main dropdown-toggle" data-toggle="dropdown" role="button">
+				<svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.0086 1.5H2.99063C1.64578 1.5 0.862648 3.03017 1.6428 4.13351L5.05925 8.96527C5.45848 9.52988 5.67302 10.2058 5.67302 10.899V14.2744C5.67302 15.5036 6.6623 16.5 7.88264 16.5C9.10298 16.5 10.0923 15.5036 10.0923 14.2744V10.9488C10.0923 10.2248 10.3262 9.52062 10.7588 8.94251L14.3301 4.16979C15.1518 3.07156 14.374 1.5 13.0086 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.0923 10.7458C10.0923 10.0374 10.3262 9.34833 10.7588 8.78264L14.3301 4.11244C15.1518 3.0378 14.374 1.5 13.0086 1.5H2.99063C1.64578 1.5 0.862648 2.9973 1.6428 4.07694L5.05925 8.80491C5.45848 9.35739 5.67302 10.0188 5.67302 10.6971V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+			</div>
+			<div class="dropdown-menu dropdown-menu-right">
+				<div class="market_widget">
+					<div class="m_widget_head">
+						<?php echo $wo['lang']['sort_by'];?>
+					</div>
+
+					<div class="market_categories">
+						<ul class="product-sort-slider">
+							<li class="active" onclick="changePriceSortValue('latest');$(this).addClass('active');"><a href="javascript:void(0)"><?php echo $wo['lang']['latest'] ?></a></li>
+							<li onclick="changePriceSortValue('price_low');$(this).addClass('active');"><a href="javascript:void(0)"><?php echo $wo['lang']['price_low'] ?></a></li>
+							<li onclick="changePriceSortValue('price_high');$(this).addClass('active');"><a href="javascript:void(0)"><?php echo $wo['lang']['price_high'] ?></a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="market_widget">
+					<div class="m_widget_head">
+						<?php echo $wo['lang']['categories'];?>
+					</div>
+
+					<div class="market_categories">
+						<ul class="product-category-slider">
+							<?php 
+								$category_id = (!empty($_GET['c_id'])) ? (int) $_GET['c_id'] : 0;
+								foreach ($wo['products_categories'] as $key => $category) {
+									$active = ($category_id == $key) ? 'active' : '';
+							?>
+								<li class="<?php echo $active?>" data_prodect_cat_id="<?php echo($key) ?>"><a href="<?php echo Wo_SeoLink('index.php?link1=products&c_id=' . $key);?>"><?php echo $category;?></a></li>
+							<?php } ?>
+						</ul>
+					</div>
+				</div>
+				<?php if ( !empty($_GET['c_id']) && !empty($wo['products_sub_categories'][$_GET['c_id']])) { ?>
+					<div class="market_widget">
+						<div class="m_widget_head">
+							<?php echo $wo['lang']['sub_category'];?>
+						</div>
+
+						<div class="market_categories">
+							<ul class="product-category-slider-sub">
+								<?php 
+									$category_id = (!empty($_GET['sub_id'])) ? (int) $_GET['sub_id'] : 0;
+									foreach ($wo['products_sub_categories'][$_GET['c_id']] as $key => $category) {
+										$active = ($category_id == $category['id']) ? 'active' : '';
+								?>
+									<li class="<?php echo $active?>" data_prodect_cat_id="<?php echo($category['id']) ?>"><a href="<?php echo Wo_SeoLink('index.php?link1=products&c_id=' . $_GET['c_id'].'&sub_id='.$category['id']);?>"><?php echo $category['lang'];?></a></li>
+								<?php } ?>
+							</ul>
+						</div>
+					</div>
+				<?php } ?>
+				<div class="market_widget">
+					<div class="m_widget_head">
+						<?php echo $wo['lang']['location_dist'];?>
+					</div>
+					
+					<div class="select-nearby-users-distance">
+						<form>
+							<input type="range" class="cusrange" id="nearby-users-distance" name="amountRange" onchange="Wo_SearchProductsNearBy();" value="0" min="0" max="300" oninput="this.form.amountInput.value=this.value">
+							<input type="number" name="amountInput" min="0" max="4000" value="0" oninput="this.form.amountRange.value=this.value" readonly id="cusrange-reader"/> km
+						</form>
+					</div>
+				</div>
+				<?php if ($wo['loggedin'] == true) { ?>
+				<?php if ($wo['config']['nearby_shop_system'] == 1) { ?>
+					<a href="<?php echo($wo['config']['site_url'].'/nearby_shops') ?>" data-ajax="?link1=nearby_shops" class="btn btn-block btn-main btn-mat side_mkt_btn"><?php echo $wo['lang']['nearby_shops'] ?></a>
+				<?php } ?>
+				<?php } ?>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="page-margin products wo_market">
+	<div class="latest-products">
+		<?php
+			$category_name = '';
+			$data = array();
+			if (!empty($_GET['c_id'])) {
+				if (is_numeric($_GET['c_id'])) {
+					if (array_key_exists($_GET['c_id'], $wo['products_categories'])) {
+						?>
+						<input type="hidden" value="<?php echo Wo_Secure($_GET['c_id']); ?>" id="c_id" />
+						<?php
+						$category_name = $wo['products_categories'][$_GET['c_id']];
+						$data['c_id'] = Wo_Secure($_GET['c_id']);
+					}
+				}
+				if (!empty($wo['products_sub_categories'][$_GET['c_id']]) && !empty($_GET['sub_id'])) {
+					foreach ($wo['products_sub_categories'][$_GET['c_id']] as $key => $value) {
+						if ($_GET['sub_id'] == $value['id']) { ?>
+							<input type="hidden" value="<?php echo Wo_Secure($_GET['sub_id']); ?>" id="sub_id" />
+							<?php
+							$data['sub_id'] = Wo_Secure($value['id']);
+							break;
+						}
+					}
+				}
+			} else {
+				echo '<input type="hidden" value="0" id="c_id" />';
+				echo '<input type="hidden" value="" id="sub_id" />';
+			}
+		?>
+		<div class="market_bottom">
+			<?php
+				$data['limit'] = 10;
+				$products = Wo_GetProducts($data);
+				if (count($products) > 0) {
+			?>
+			<div id="products" class="row">
+				<?php
+				foreach ($products as $key => $wo['product']) {
+					echo Wo_LoadPage('products/products-list'); 
+				}
+				} else {
+					echo '<div class="col-md-12 common_things_roww"><div class="wow_content"><div class="empty_state"><svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.66667 4.83331L5.499 5.23252C5.22832 5.877 5.16028 6.58862 5.30394 7.27272C5.52315 8.31654 6.35414 9.12274 7.40412 9.31024L7.49657 9.32675C7.82956 9.38621 8.17044 9.38621 8.50343 9.32675L8.59588 9.31024C9.64586 9.12274 10.4769 8.31654 10.6961 7.27272C10.8397 6.58862 10.7717 5.877 10.501 5.23252L10.3333 4.83331" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M14.8507 11.6191C14.3756 13.7086 12.7514 15.3503 10.6686 15.8543C8.91827 16.2778 7.08186 16.2778 5.3315 15.8543C3.24876 15.3503 1.62459 13.7086 1.14945 11.6191C0.724914 9.7522 0.828162 7.80397 1.44764 5.99237L1.53968 5.72322C2.2213 3.72988 3.92409 2.25844 5.9952 1.87305L6.56236 1.76751C7.51269 1.59068 8.48749 1.59068 9.43782 1.76752L10.005 1.87305C12.0761 2.25844 13.7789 3.72988 14.4605 5.72324L14.5525 5.99237C15.172 7.80397 15.2752 9.7522 14.8507 11.6191Z" class="icon_main" stroke-width="1.5"></path></svg>' . $wo['lang']['no_available_products'] . '</div></div></div>';
+				}
+				?>
+			</div>
+		</div>
+	</div> 	
+	<div class="posts_load load-produts">
+		<?php if (count($products) > 0): ?>
+		<div class="load-more">
+			<button class="btn btn-default text-center pointer" onclick="Wo_LoadProducts();"><?php echo $wo['lang']['load_more_products'] ?></button></div>
+		<?php endif ?>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<script>
+$('.wow_main_blogs_bg').css('height', ($('.wow_main_float_head').height()) + 'px');
+
+function changePriceSortValue(price_sort) {
+	cat_id = $('.product-category-slider').find('.active').attr('data_prodect_cat_id');
+	sub_id = $('.product-category-slider-sub').find('.active').attr('data_prodect_cat_id');
+	distance = $('#distance_val').text();
+	$('.product-sort-slider li').removeClass('active');
+	$(this).addClass('active');
+	
+	$.post(Wo_Ajax_Requests_File() + '?f=get_prodects_by_filter', {price_sort: price_sort, cat_id:cat_id, sub_id:sub_id, distance: distance}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('#products').html(data.html);
+			} else {
+				$('#products').html('<div class="empty_state"><svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.66667 4.83331L5.499 5.23252C5.22832 5.877 5.16028 6.58862 5.30394 7.27272C5.52315 8.31654 6.35414 9.12274 7.40412 9.31024L7.49657 9.32675C7.82956 9.38621 8.17044 9.38621 8.50343 9.32675L8.59588 9.31024C9.64586 9.12274 10.4769 8.31654 10.6961 7.27272C10.8397 6.58862 10.7717 5.877 10.501 5.23252L10.3333 4.83331" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M14.8507 11.6191C14.3756 13.7086 12.7514 15.3503 10.6686 15.8543C8.91827 16.2778 7.08186 16.2778 5.3315 15.8543C3.24876 15.3503 1.62459 13.7086 1.14945 11.6191C0.724914 9.7522 0.828162 7.80397 1.44764 5.99237L1.53968 5.72322C2.2213 3.72988 3.92409 2.25844 5.9952 1.87305L6.56236 1.76751C7.51269 1.59068 8.48749 1.59068 9.43782 1.76752L10.005 1.87305C12.0761 2.25844 13.7789 3.72988 14.4605 5.72324L14.5525 5.99237C15.172 7.80397 15.2752 9.7522 14.8507 11.6191Z" class="icon_main" stroke-width="1.5"></path></svg><?php echo $wo['lang']['no_available_products'] ?></div>');
+			}
+		}
+	});
+}
+
+function Wo_SearchProductsNearBy() {
+	length = $('#cusrange-reader').val();
+	text_value = $('#product-text').val();
+	var c_id = 0;
+	if ($('#c_id').length > 0) {
+		c_id = $('#c_id').val();
+	}
+	var sub_id = $('#sub_id').val();
+	$.post(Wo_Ajax_Requests_File() + '?f=search_products', {value: text_value, c_id:c_id, sub_id:sub_id, length: length}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('#products').html(data.html);
+			} else {
+				$('#products').html('<?php echo $wo['lang']['no_available_products'] ?>');
+			}
+		}
+	});
+}
+function Wo_LoadProducts() {
+	$('.load-produts').html('<div class="white-loading list-group"><div class="cs-loader"><div class="cs-loader-inner"><label> ●</label><label> ●</label><label> ●</label><label> ●</label><label> ●</label><label> ●</label></div></div></div>');
+	var $c_id = $('#c_id').val();
+	var sub_id = $('#sub_id').val();
+	var $last_id = $('.product:last').attr('data-id');
+	var length = $('#cusrange-reader').val();
+	$.post(Wo_Ajax_Requests_File() + '?f=load_more_products', {last_id: $last_id, c_id:$c_id, sub_id:sub_id, length: length}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('.load-produts').html('<div class="load-more"><button class="btn btn-default text-center pointer" onclick="Wo_LoadProducts();"><i class="fa fa-arrow-down progress-icon" data-icon="arrow-down"></i> <?php echo $wo['lang']['load_more_products'] ?></button></div>');
+				$('#products').append(data.html);
+			} else {
+				$('.load-produts').html('<div class="load-more"><button class="btn btn-default text-center pointer" onclick="Wo_LoadProducts();"><?php echo $wo['lang']['no_available_products'] ?></button></div>');
+			}
+		}
+	});
+}
+function Wo_SearchProducts(value) {
+	length = $('#cusrange-reader').val();
+	var c_id = 0;
+	if ($('#c_id').length > 0) {
+		c_id = $('#c_id').val();
+	}
+	var sub_id = $('#sub_id').val();
+	$.post(Wo_Ajax_Requests_File() + '?f=search_products', {value: value, c_id:c_id, sub_id:sub_id, length: length}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('#products').html(data.html);
+			} else {
+				$('#products').html('<?php echo $wo['lang']['no_available_products'] ?>');
+			}
+		}
+	});
+}
+</script>

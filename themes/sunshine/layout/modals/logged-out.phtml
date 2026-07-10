@@ -1,0 +1,16 @@
+<div class="modal fade" id="logged-out-modal" role="dialog" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-md wow_mat_mdl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.75 6.25C16.75 6.66421 17.0858 7 17.5 7C17.9142 7 18.25 6.66421 18.25 6.25H16.75ZM13.75 1.75C13.3358 1.75 13 2.08579 13 2.5C13 2.91421 13.3358 3.25 13.75 3.25V1.75ZM3.25 13.75C3.25 13.3358 2.91421 13 2.5 13C2.08579 13 1.75 13.3358 1.75 13.75H3.25ZM6.25 18.25C6.66421 18.25 7 17.9142 7 17.5C7 17.0858 6.66421 16.75 6.25 16.75V18.25ZM6.25 3.25C6.66421 3.25 7 2.91421 7 2.5C7 2.08579 6.66421 1.75 6.25 1.75V3.25ZM1.75 6.25C1.75 6.66421 2.08579 7 2.5 7C2.91421 7 3.25 6.66421 3.25 6.25H1.75ZM13.75 16.75C13.3358 16.75 13 17.0858 13 17.5C13 17.9142 13.3358 18.25 13.75 18.25V16.75ZM18.25 13.75C18.25 13.3358 17.9142 13 17.5 13C17.0858 13 16.75 13.3358 16.75 13.75H18.25ZM18.25 6.25C18.25 3.76472 16.2353 1.75 13.75 1.75V3.25C15.4069 3.25 16.75 4.59315 16.75 6.25H18.25ZM1.75 13.75C1.75 16.2353 3.76472 18.25 6.25 18.25V16.75C4.59315 16.75 3.25 15.4069 3.25 13.75H1.75ZM6.25 1.75C3.76472 1.75 1.75 3.76472 1.75 6.25H3.25C3.25 4.59315 4.59315 3.25 6.25 3.25V1.75ZM13.75 18.25C16.2353 18.25 18.25 16.2353 18.25 13.75H16.75C16.75 15.4069 15.4069 16.75 13.75 16.75V18.25Z" fill="currentColor"></path><path d="M5.47665 9.78348C5.09813 9.95171 4.92766 10.3949 5.09589 10.7734C5.26412 11.152 5.70734 11.3224 6.08585 11.1542L5.47665 9.78348ZM6.57321 10.1169L6.87781 10.8022L6.87781 10.8022L6.57321 10.1169ZM13.4268 10.1169L13.1222 10.8022L13.1222 10.8022L13.4268 10.1169ZM13.9141 11.1542C14.2927 11.3224 14.7359 11.152 14.9041 10.7734C15.0723 10.3949 14.9019 9.95171 14.5234 9.78348L13.9141 11.1542ZM6.08585 11.1542L6.87781 10.8022L6.2686 9.4315L5.47665 9.78348L6.08585 11.1542ZM13.1222 10.8022L13.9141 11.1542L14.5234 9.78348L13.7314 9.4315L13.1222 10.8022ZM6.87781 10.8022C8.86553 9.91879 11.1345 9.91879 13.1222 10.8022L13.7314 9.4315C11.3558 8.3757 8.64417 8.3757 6.2686 9.43151L6.87781 10.8022Z" class="icon_main_fill"></path></svg> <?php echo $wo['lang']['session_expired']; ?></h4>
+			</div>
+			<div class="modal-body">
+				<p><?php echo $wo['lang']['session_expired_message'];?></p>
+			</div>
+			<div class="modal-footer">
+				<a href="<?php echo Wo_SeoLink('index.php?link1=welcome');?>" type="button" class="btn main btn-mat"><?php echo $wo['lang']['login'];?></a>
+			</div>
+		</div>
+	</div>
+</div>

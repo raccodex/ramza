@@ -1,0 +1,43 @@
+<div class="ads-cont-wrapper">
+	<?php if (count($wo['trans']) > 0): ?>
+		<table class="table table-responsive wow_wallet_trans">
+			<thead>
+				<tr>
+					<th><?php echo $wo['lang']['description']; ?></th>
+					<th><?php echo $wo['lang']['amount']; ?></th>
+					<th><?php echo $wo['lang']['type']; ?></th>
+				</tr>
+			</thead>
+			<tbody id="user-ads">
+				<?php foreach ($wo['trans'] as $key => $transaction): ?>
+					<tr data-ad-id="<?php echo $transaction['id']; ?>">
+						<td>
+							<div><b><?php echo $transaction['notes']; ?></b></div>
+							<div class="opacityy"><?php echo $transaction['transaction_dt']; ?></div>
+						</td>
+						<td><span><?php echo Wo_GetCurrency($wo['config']['ads_currency']); ?><?php echo number_format($transaction['amount'], 2); ?></span></td>
+						<td width="150" class="wallet_trans_type">
+							<?php if ($transaction['kind'] == "SALES") { ?>
+								<span class="badge success"><?php echo $transaction['kind']; ?></span>
+							<?php } else if ($transaction['kind'] == "PRO") { ?>
+								<span class="badge warning"><?php echo $transaction['kind']; ?></span>
+							<?php } else if ($transaction['kind'] == "SENT") { ?>
+								<span class="badge info"><?php echo $transaction['kind']; ?></span>
+							<?php } else if ($transaction['kind'] == "WALLET" || $transaction['kind'] == "RECEIVED" || $transaction['kind'] == "SALE") { ?>
+								<span class="badge success"><?php echo $transaction['kind']; ?></span>
+							<?php } else if ($transaction['kind'] == "PURCHASE") { ?>
+								<span class="badge danger"><?php echo $transaction['kind']; ?></span>
+							<?php } else { ?>
+								<span class="badge"><?php echo $transaction['kind']; ?></span>
+							<?php } ?>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	<?php else: ?>
+		<div class="empty_state">
+			<img class="empty_state_img" src="<?php echo $wo['config']['theme_url'];?>/img/no_transaction.svg"> <?php echo $wo['lang']['no_transactions_found']; ?>
+		</div>
+	<?php endif; ?>
+</div>

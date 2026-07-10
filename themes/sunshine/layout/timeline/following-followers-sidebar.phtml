@@ -1,0 +1,34 @@
+<?php if (Wo_FriendPrivacy($wo['user_profile']['id'],$wo['user_profile']['friend_privacy'])): ?>
+<ul class="page-margin wow_content negg_padd list-unstyled event-options-list" id="sidebar-following-list-container">
+	<div class="wo_page_hdng profile_hdng_side">
+		<div class="wo_page_hdng_innr">
+			<a href="<?php echo Wo_SeoLink('index.php?link1=timeline&u=' . $wo['user_profile']['username'] . '&type=following');?>" data-ajax="?link1=timeline&u=<?php echo $wo['user_profile']['username']?>&type=following" class="pointer"><?php echo $wo['lang']['following'];?></a>&nbsp;<div style="font-weight: normal">(<?php echo number_format($wo['user_profile']['details']['following_count']);?>)</div>
+		</div>
+	</div>
+	<li>
+		<div class="sidebar-following-users-container profile_side_users"><?php
+            foreach (Wo_GetFollowing($wo['user_profile']['user_id'], 'profile', 5 , 0, array('in' => 'profile_sidebar', 'following_data' => $wo['user_profile']['following_data'])) as $wo['UsersList']) {
+               $wo['UsersList']['user_name'] = $wo['UsersList']['name'];
+               echo Wo_LoadPage('sidebar/profile-sidebar-user-list');
+            } 
+            ?></div>
+	</li>
+	<li><div class="clear"></div></li>
+</ul>
+<ul class="page-margin wow_content negg_padd list-unstyled event-options-list" id="sidebar-followers-list-container">
+	<div class="wo_page_hdng profile_hdng_side">
+		<div class="wo_page_hdng_innr">
+			<a href="<?php echo Wo_SeoLink('index.php?link1=timeline&u=' . $wo['user_profile']['username'] . '&type=followers');?>" data-ajax="?link1=timeline&u=<?php echo $wo['user_profile']['username']?>&type=followers"><?php echo $wo['lang']['followers'];?></a>&nbsp;<div style="font-weight: normal">(<?php echo number_format($wo['user_profile']['details']['followers_count']);?>)</div>
+		</div>
+	</div>
+	<li>
+		<div class="sidebar-followers-users-container profile_side_users"><?php 
+            foreach (Wo_GetFollowers($wo['user_profile']['user_id'],'profile',5 , 0, array('in' => 'profile_sidebar', 'followers_data' => $wo['user_profile']['followers_data'])) as $wo['UsersList']) {
+               $wo['UsersList']['user_name'] = $wo['UsersList']['name'];
+               echo Wo_LoadPage('sidebar/profile-sidebar-user-list');
+             } 
+             ?></div>
+	</li>
+	<li><div class="clear"></div></li>
+</ul>
+<?php endif; ?>

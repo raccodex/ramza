@@ -1,0 +1,80 @@
+<div class="page-margin mt-0">
+	<div class="wow_content popular_posts_hdr flex">
+		<h2>&nbsp;<?php echo $wo['lang']['admin'];?></h2>
+		<div class="wow_form_fields mt-0 mb-0 profile_search">
+			<input type="text" placeholder="<?php echo $wo['lang']['search']; ?>.." id='search-page-admins' onkeydown="Wo_SearchPageAdminUsers(this.value)" autocomplete="off">
+			<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="2"></circle><path d="M14.5 15.5L18.5 19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+		</div>
+	</div>
+</div>
+
+<div class="wo_settings_page wow_content profile-lists">
+
+	<div class="row setting-well" id="page_admins">
+		<?php
+			$requests = Wo_GetPageAdmins($wo['setting']['page_id']);
+			if (count($requests) > 0) {
+				foreach ($requests as $wo['member']) {
+          $wo['member']['page_name'] = $wo['setting']['page_name'];
+					echo Wo_LoadPage('page-setting/admin-list');
+				}
+			} else {
+				echo '<div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16 17V19H2V17S2 13 9 13 16 17 16 17M12.5 7.5A3.5 3.5 0 1 0 9 11A3.5 3.5 0 0 0 12.5 7.5M15.94 13A5.32 5.32 0 0 1 18 17V19H22V17S22 13.37 15.94 13M15 4A3.39 3.39 0 0 0 13.07 4.59A5 5 0 0 1 13.07 10.41A3.39 3.39 0 0 0 15 11A3.5 3.5 0 0 0 15 4Z" /></svg>' . $wo['lang']['no_members_found'] . '</div>';
+			}
+		?>
+	</div>
+</div>
+
+<style>#search-page-admins{min-width: 300px;}</style>
+
+<script>
+   function Wo_SearchPageAdminUsers(name = '') {
+      if (!name) {
+         return false;
+      }
+      $.ajax({
+         url: Wo_Ajax_Requests_File(),
+         type: 'GET',
+         dataType: 'json',
+         data: {f: 'pages',s:'get_mbr',name:name,page:'<?php echo $wo['setting']['page_id']; ?>'},
+      })
+      .done(function(data) {
+         if (data.status == 200) {
+            $("#page_admins").html(data.html)
+         }
+         else{
+            $("#page_admins").html('<h5 class="search-filter-center-text"><?php echo $wo['lang']['no_result']; ?></h5>');
+         }
+      })
+      .fail(function() {
+         console.log("error");
+      })
+
+   }
+
+   function Wo_AddPageAdmin(member_id = false,page_id = false,self = false){
+     if (!member_id || !page_id || !self) {
+       return false;
+     }
+     $.ajax({
+       url: Wo_Ajax_Requests_File(),
+       type: 'GET',
+       dataType: 'json',
+       data: {f: 'pages',s:'add_admin',user_id:member_id,page_id:page_id},
+     })
+     .done(function(data) {
+       if (data.status == 200 && data.code == 1) {
+         $(self).find('svg').replaceWith('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>');
+         $('#privileges_admin_page_'+member_id).slideDown();
+       }
+       else if(data.status == 200 && data.code == 0){
+         $(self).find('svg').replaceWith('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg>');
+         $('#privileges_admin_page_'+member_id).slideUp();
+       }
+     })
+     .fail(function() {
+       console.log("error");
+     })
+     
+   }
+</script>

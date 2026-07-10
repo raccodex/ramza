@@ -1,0 +1,82 @@
+<div class="page-margin">
+	<div class="page-margin mt-0">
+		<div class="wow_content popular_posts_hdr">
+			<img src="<?php echo $wo['config']['theme_url'];?>/img/movie.png" class="bg_trail">
+			<h2><svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 3H2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M5 9L3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M4 6H1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M11.0405 6.76489C11.4547 6.76489 11.7905 6.42911 11.7905 6.01489C11.7905 5.60068 11.4547 5.26489 11.0405 5.26489V6.76489ZM7.26758 6.76489H11.0405V5.26489H7.26758V6.76489Z" fill="currentColor"></path><path d="M15.9565 4.31789L9.74062 1.20572C8.24481 0.4568 6.58475 1.87646 7.09377 3.46927L7.80822 5.70498C7.87161 5.90334 7.8715 6.11654 7.80789 6.31484L7.09769 8.52875C6.58704 10.1206 8.24472 11.5421 9.74133 10.7956L15.954 7.69688C17.3475 7.00183 17.349 5.01506 15.9565 4.31789Z" class="icon_main" stroke-width="1.5"></path></svg>&nbsp;<?php echo $wo['lang']['movies']; ?></h2>
+		</div>
+	</div>
+	
+	<div class="page-margin wow_content wow_big_head_link flex">
+		<ul class="list-unstyled">
+			<li class="movies-subheadnav"><a href="javascript:void(0);" data-movies="new"><?php echo $wo['lang']['new'];?></a></li>
+			<li class="movies-subheadnav"><a href="javascript:void(0);" data-movies="rec"><?php echo $wo['lang']['recommended'] ?></a></li>
+			<li class="movies-subheadnav"><a href="javascript:void(0);" data-movies="mtw"><?php echo $wo['lang']['most_watched'];?></a></li>
+		</ul>
+		
+		<div class="right_part">
+			<div class="search-blog">
+				<form action="">
+					<input type="text" placeholder="<?php echo $wo['lang']['search']; ?>" id="search-movies">
+					<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="2"/><path d="M14.5 15.5L18.5 19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+					<ul class="search-result" id="search-movies-result"></ul>
+				</form>
+			</div>
+			
+			<div class="dropdown market_widget wow_movie_filter">
+				<div class="btn btn-mat btn-main dropdown-toggle" data-toggle="dropdown" role="button">
+					<svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.0086 1.5H2.99063C1.64578 1.5 0.862648 3.03017 1.6428 4.13351L5.05925 8.96527C5.45848 9.52988 5.67302 10.2058 5.67302 10.899V14.2744C5.67302 15.5036 6.6623 16.5 7.88264 16.5C9.10298 16.5 10.0923 15.5036 10.0923 14.2744V10.9488C10.0923 10.2248 10.3262 9.52062 10.7588 8.94251L14.3301 4.16979C15.1518 3.07156 14.374 1.5 13.0086 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.0923 10.7458C10.0923 10.0374 10.3262 9.34833 10.7588 8.78264L14.3301 4.11244C15.1518 3.0378 14.374 1.5 13.0086 1.5H2.99063C1.64578 1.5 0.862648 2.9973 1.6428 4.07694L5.05925 8.80491C5.45848 9.35739 5.67302 10.0188 5.67302 10.6971V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+				</div>
+				<ul class="dropdown-menu dropdown-menu-right wow_movie_filters" role="menu">
+					<?php echo Wo_LoadPage("movies/includes/header"); ?>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<?php if ($wo['config']['user_ads'] == 1): ?>
+				<div id="sidebar-sticky-movies">
+					<?php 
+					  $wo['sidebar-ad'] = Wo_GetAdsByType('movies');
+					  if (!empty($wo['sidebar-ad'])) {
+					  	echo Wo_LoadPage('ads/includes/movies-ad');
+					  }
+					?>
+					<div class="clear"></div>
+				</div>
+		    <?php endif; ?>
+	
+	
+	<div class="movies">
+		<div class="movies-inner">
+			<?php if (count($wo['movies']) > 0): ?>
+				<?php foreach ($wo['movies'] as $wo['film']): ?>
+					<?php echo Wo_LoadPage("movies/includes/films-list"); ?>
+				<?php endforeach ?>
+			<?php else: ?>
+				<?php echo '<div class="wow_content"><div class="empty_state"><svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5.5 3H2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+<path d="M5 9L3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+<path d="M4 6H1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+<path d="M11.0405 6.76489C11.4547 6.76489 11.7905 6.42911 11.7905 6.01489C11.7905 5.60068 11.4547 5.26489 11.0405 5.26489V6.76489ZM7.26758 6.76489H11.0405V5.26489H7.26758V6.76489Z" fill="currentColor"></path>
+<path d="M15.9565 4.31789L9.74062 1.20572C8.24481 0.4568 6.58475 1.87646 7.09377 3.46927L7.80822 5.70498C7.87161 5.90334 7.8715 6.11654 7.80789 6.31484L7.09769 8.52875C6.58704 10.1206 8.24472 11.5421 9.74133 10.7956L15.954 7.69688C17.3475 7.00183 17.349 5.01506 15.9565 4.31789Z" class="icon_main" stroke-width="1.5"></path>
+</svg>'. $wo['lang']['no_movies_found'] .' </div></div>';?>
+			<?php endif; ?>
+		</div>
+		<div class="posts_load">
+			<?php if (count($wo['movies']) >= 26): ?>
+				<div class="load-more">
+					<button class="btn btn-default text-center pointer load-more-movies" data-genre="<?php echo strtolower($wo['genre']); ?>" data-movies-type="genre"><i class="fa fa-arrow-down progress-icon" data-icon="arrow-down"></i> <?php echo $wo['lang']['load_more'] ?></button>
+				</div>
+			<?php endif ?>
+		</div>
+	</div>
+	<?php echo Wo_LoadPage("movies/includes/footer"); ?>
+</div>
+
+<script>
+$('.wow_main_blogs_bg').css('height', ($('.wow_main_float_head').height()) + 'px');
+
+$(document).on('click', '.wow_movie_filters', function (e) {
+  e.stopPropagation();
+});
+</script>

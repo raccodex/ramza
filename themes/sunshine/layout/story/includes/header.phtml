@@ -1,0 +1,1362 @@
+<?php 
+
+if (!empty($wo['story']['parent_id'])) {
+   $post_shared_from = $wo['post_shared_from'] = Wo_PostData($wo['story']['parent_id']);
+   
+   ?>
+<div class="post-heading">
+   <div class="<?php echo Wo_RightToLeft('pull-left');?> image">
+      <a href="<?php echo $wo['story']['publisher']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['story']['publisher']['username']?>" class="avatar wow_post_usr_ava <?php if($wo['story']['publisher']['verified'] == 1) { ?>wow_post_usr_ava_active<?php } ?>">
+			<img src="<?php echo $wo['story']['publisher']['avatar']; ?>" class="blur_img" alt="<?php echo $wo['story']['publisher']['name']; ?> profile picture">
+         <img src="<?php echo $wo['story']['publisher']['avatar']; ?>" id="updateImage-<?php echo $wo['story']['publisher']['user_id']?>" alt="<?php echo $wo['story']['publisher']['name']; ?> profile picture">
+         <?php if($wo['story']['publisher']['verified'] == 1) { ?>
+            <span class="verified-color">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather feather-check-circle" title="<?php echo ($wo['story']['page_id'] > 0 ? $wo['lang']['verified_page'] : $wo['lang']['verified_user']);?>" data-toggle="tooltip">
+                  <path d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" />
+               </svg>
+            </span>
+            <?php } ?>
+      </a>
+   </div>
+   <div class="<?php echo Wo_RightToLeft('pull-right');?>">
+      <?php  if ($wo['story']['admin'] === true || $wo['story']['group_admin'] === true) { ?>
+      <span class="dropdown">
+         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+			<svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 0.944336L8.5 3.44434L6 5.94434L1 0.944336" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 0.944336L6 5.94434L8.5 3.44434" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+         </a>
+         <ul class="dropdown-menu post-privacy-menu post-options" role="menu">
+            <?php if ($wo['story']['admin'] === true && empty($wo['story']['product_id']) && empty($wo['story']['shared_from'])) { ?>
+            <li>
+				<div class="pointer" onclick="Wo_OpenPostEditBox(<?php echo $wo['story']['id']; ?>);">
+					<svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.75 5.05741C9.23497 5.56243 7.21492 3.54238 7.71993 2.02734M8.34238 1.40489L5.07836 4.66891C3.65936 6.08791 2.65269 7.86589 2.16597 9.81274L2.00826 10.4436C1.95912 10.6402 2.13717 10.8182 2.33374 10.7691L2.9646 10.6114C4.91146 10.1247 6.68943 9.11798 8.10843 7.69898L11.3725 4.43496C11.7743 4.03315 12 3.48818 12 2.91993C12 1.73661 11.0407 0.777344 9.85742 0.777344C9.28917 0.777344 8.74419 1.00308 8.34238 1.40489Z" stroke="currentColor" stroke-width="1.5"/><path d="M8.34217 1.40489C8.74398 1.00308 9.28895 0.777344 9.8572 0.777344C11.0405 0.777344 11.9998 1.73661 11.9998 2.91993C11.9998 3.48818 11.7741 4.03315 11.3722 4.43496L10.7498 5.05741C9.23475 5.56243 7.21471 3.54238 7.71972 2.02734L8.34217 1.40489Z" class="icon_main" stroke-width="1.5"/><path d="M12.8332 14.1113H1.1665" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['edit_post'];?></b>
+						<p><?php echo $wo['lang']['edit_post_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <?php } else if (!empty($wo['story']['product_id'])) { 
+               if ($wo['story']['product']['status'] == 0) { ?>
+            <!-- <li>
+               <div class="pointer mark-as-sold-post" onclick="Wo_MarkAsSold(<?php echo $wo['story']['id']; ?>, <?php echo $wo['story']['product_id']; ?>);">
+               <?php echo $wo['lang']['mark_as_sold']?>
+               </div>
+               </li>
+               <li>
+               <a class="pointer" href="<?php echo Wo_SeoLink('index.php?link1=edit-product&id=' . $wo['story']['product_id']);?>">
+               <?php echo $wo['lang']['edit_product']?>
+               </a>
+               </li> -->
+            <?php } } ?>
+            <li>
+				<div class="pointer" onclick="Wo_OpenPostDeleteBox(<?php echo $wo['story']['id']; ?>);">
+					<svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.25 4.30483C5.25 3.86352 5.347 3.42654 5.53545 3.01882C5.72391 2.61111 6.00013 2.24065 6.34835 1.9286C6.69657 1.61655 7.10997 1.36902 7.56494 1.20014C8.01991 1.03126 8.50754 0.944336 9 0.944336C9.49246 0.944336 9.98009 1.03126 10.4351 1.20014C10.89 1.36902 11.3034 1.61655 11.6516 1.9286C11.9999 2.24065 12.2761 2.61111 12.4645 3.01883C12.653 3.42654 12.75 3.86352 12.75 4.30483" class="icon_main" stroke-width="1.5"/><path d="M1.5 4.30469H16.5M3.16667 4.30469V8.59074C3.16667 9.90327 3.35132 11.2092 3.71512 12.4694C4.21681 14.2073 5.66121 15.5022 7.43189 15.8014L7.56334 15.8236C8.51447 15.9844 9.4855 15.9844 10.4366 15.8236L10.5681 15.8014C12.3388 15.5022 13.7832 14.2073 14.2849 12.4694C14.6487 11.2092 14.8333 9.90326 14.8333 8.59071V4.30469H3.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7.3335 8.44434V11.7777M10.6668 8.44434V11.7777" class="icon_main" stroke-width="1.5" stroke-linecap="round"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['delete_post'];?></b>
+						<p><?php echo $wo['lang']['delete_post_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <li>
+				<div class="pointer disable-comments" onclick="Wo_DisableComment(<?php echo $wo['story']['id']; ?>, <?php echo $wo['story']['comments_status']; ?>);">
+					<svg viewBox="0 0 24 24"><path fill="currentColor" d="M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9M5,5V7H19V5H5M5,9V11H13V9H5M5,13V15H15V13H5Z" /></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo ($wo['story']['comments_status'] == 1) ? $wo['lang']['disable_comments'] : $wo['lang']['enable_comments'];?></b>
+						<p><?php echo $wo['lang']['comments_status_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <li>
+               <hr>
+            </li>
+            <li>
+				<a href="<?php echo $wo['story']['url'];?>" target="_blank">
+					<svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 0.944336C8.14723 0.944336 7.29445 1.04236 6.45869 1.2384C4.14417 1.78131 2.33698 3.58851 1.79406 5.90303C1.40198 7.57455 1.40198 9.31413 1.79406 10.9856C2.33698 13.3002 4.14418 15.1074 6.4587 15.6503C8.13021 16.0424 9.86979 16.0424 11.5413 15.6503C13.8558 15.1074 15.663 13.3002 16.2059 10.9856C16.402 10.1499 16.5 9.29709 16.5 8.44431" class="icon_main" stroke-width="1.5" stroke-linecap="round"/><path d="M1.79406 10.9856C1.40198 9.31413 1.40198 7.57455 1.79406 5.90303C2.33698 3.58851 4.14417 1.78131 6.45869 1.2384C7.29445 1.04236 8.14723 0.944336 9 0.944336M6.4587 15.6503C8.13021 16.0424 9.86979 16.0424 11.5413 15.6503C13.8558 15.1074 15.663 13.3002 16.2059 10.9856C16.402 10.1499 16.5 9.29709 16.5 8.44431" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16.5002 3.86068C16.5002 5.01127 15.5674 5.94401 14.4168 5.94401C13.2662 5.94401 12.3335 5.01127 12.3335 3.86068C12.3335 2.71008 13.2662 1.77734 14.4168 1.77734C15.5674 1.77734 16.5002 2.71008 16.5002 3.86068Z" class="icon_main" stroke-width="1.5"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['open_post_in_new_tab'];?></b>
+						<p><?php echo $wo['lang']['open_post_in_new_tab_tx'];?></p>
+					</div>
+				</a>
+            </li>
+    <?php if (empty($wo['story']['recipient']) && $wo['story']['admin'] === true) { ?>
+            <?php if ($wo['story']['is_group_post'] == false) { ?>
+            <!-- <li>
+               <?php
+                  $pin_post_id = $wo['story']['publisher']['id'];
+                  $pin_post_text = 'profile';
+                  if (!empty($wo['story']['page_id'])) {
+                    $pin_post_id = $wo['story']['page_id'];
+                    $pin_post_text = 'page';
+                  } else if (!empty($wo['story']['group_id'])) {
+                    $pin_post_id = $wo['story']['group_id'];
+                    $pin_post_text = 'group';
+                  }  else if (!empty($wo['story']['event_id'])) {
+                    $pin_post_id = $wo['story']['event_id'];
+                    $pin_post_text = 'event';
+                  }
+                  ?>
+                 <div class="pin-post pointer" onclick="Wo_PinPost(<?php echo $wo['story']['id']; ?>, <?php echo $pin_post_id;?>, '<?php echo $pin_post_text; ?>');">
+                 <?php if($wo['story']['is_post_pinned'] === true) { ?>
+               <?php echo $wo['lang']['unpin_post'];?>
+                 <?php } else { ?>
+               <?php echo $wo['lang']['pin_post'];?>
+                 <?php } ?>
+                 </div>
+               </li> -->
+            <?php } } ?>
+            <?php if (!empty($wo['story']['album_name']) && ($wo['story']['group_admin'] === false || $wo['story']['admin'] === true)) {?>
+            <!-- <li>
+               <a href="<?php echo Wo_SeoLink('index.php?link1=create-album&album=' . $wo['story']['id']);?>" >
+               <?php echo $wo['lang']['add_photos'];?>
+               </a>
+               </li> -->
+            <?php } ?>
+            <?php $hr = 0; if ($wo['config']['pro'] == 1 && ($wo['story']['group_admin'] === false || $wo['story']['admin'] === true)) { ?>
+            <!-- <li>
+               <?php if ($wo['user']['is_pro'] == 0) { ?>
+               <a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" data-ajax="?link1=go-pro">
+               <?php echo $wo['lang']['boost_post']; ?>
+               </a>
+               <?php } else if ($wo['user']['is_pro'] == 1 && $wo['user']['pro_type'] == 1) { $hr = 1;?>
+               
+               <?php } else if ($wo['user']['is_pro'] == 1 && $wo['user']['pro_type'] > 1) { ?>
+               <?php if ($wo['story']['is_post_boosted'] == 0) { ?>
+               <div class="boost-post pointer" onclick="Wo_BoostPost(<?php echo $wo['story']['id']; ?>)">
+               <?php echo $wo['lang']['boost_post']; ?>
+               </div>
+               <?php } else { ?>
+               <div class="boost-post pointer" onclick="Wo_BoostPost(<?php echo $wo['story']['id']; ?>)">
+               <?php echo $wo['lang']['unboost_post']; ?>
+               </div>
+               <?php } ?>
+               <?php } ?>
+               </li> -->
+            <?php if ($hr == 0) { ?>
+            <?php } } ?>
+         </ul>
+      </span>
+      <?php  } elseif ($wo['loggedin'] == true) { ?>
+      <span class="dropdown">
+         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+            <span class="pointer">
+               <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 0.944336L8.5 3.44434L6 5.94434L1 0.944336" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 0.944336L6 5.94434L8.5 3.44434" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+         </a>
+         <ul class="dropdown-menu post-privacy-menu post-options post-recipient" role="menu"  >
+            <?php if (Wo_IsAdmin()): ?>
+            <li>
+				<div class="pointer" onclick="Wo_OpenPostDeleteBox(<?php echo $wo['story']['id']; ?>);">
+					<svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.25 4.30483C5.25 3.86352 5.347 3.42654 5.53545 3.01882C5.72391 2.61111 6.00013 2.24065 6.34835 1.9286C6.69657 1.61655 7.10997 1.36902 7.56494 1.20014C8.01991 1.03126 8.50754 0.944336 9 0.944336C9.49246 0.944336 9.98009 1.03126 10.4351 1.20014C10.89 1.36902 11.3034 1.61655 11.6516 1.9286C11.9999 2.24065 12.2761 2.61111 12.4645 3.01883C12.653 3.42654 12.75 3.86352 12.75 4.30483" class="icon_main" stroke-width="1.5"/><path d="M1.5 4.30469H16.5M3.16667 4.30469V8.59074C3.16667 9.90327 3.35132 11.2092 3.71512 12.4694C4.21681 14.2073 5.66121 15.5022 7.43189 15.8014L7.56334 15.8236C8.51447 15.9844 9.4855 15.9844 10.4366 15.8236L10.5681 15.8014C12.3388 15.5022 13.7832 14.2073 14.2849 12.4694C14.6487 11.2092 14.8333 9.90326 14.8333 8.59071V4.30469H3.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7.3335 8.44434V11.7777M10.6668 8.44434V11.7777" class="icon_main" stroke-width="1.5" stroke-linecap="round"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['delete_post'];?></b>
+						<p><?php echo $wo['lang']['delete_post_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <?php endif; ?>
+            <!-- <li>
+               <div class="save-post pointer" class="save-post" onclick="Wo_SavePost(<?php echo $wo['story']['id']; ?>);">
+               <?php if($wo['story']['is_post_saved'] === true) { ?>
+               <?php echo $wo['lang']['unsave_post'];?>
+               <?php } else { ?>
+               <?php echo $wo['lang']['save_post'];?>
+               <?php } ?>
+               </div>
+               </li> -->
+            <li>
+				<div  class="report-post pointer" onclick="Wo_ReportPost(<?php echo $wo['story']['id']; ?>);">
+					<svg viewBox="0 0 24 24"><path fill="currentColor" d="M13 13H11V7H13M11 15H13V17H11M15.73 3H8.27L3 8.27V15.73L8.27 21H15.73L21 15.73V8.27L15.73 3Z" /></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b>
+							<?php if($wo['story']['is_post_reported'] === true) { ?>
+								<?php echo $wo['lang']['unreport_post'];?>
+							<?php } else { ?>
+								<?php echo $wo['lang']['report_post'];?>
+							<?php } ?>
+						</b>
+						<p><?php echo $wo['lang']['report_post_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <li>
+				<a href="<?php echo $wo['story']['url'];?>" target="_blank">
+					<svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 0.944336C8.14723 0.944336 7.29445 1.04236 6.45869 1.2384C4.14417 1.78131 2.33698 3.58851 1.79406 5.90303C1.40198 7.57455 1.40198 9.31413 1.79406 10.9856C2.33698 13.3002 4.14418 15.1074 6.4587 15.6503C8.13021 16.0424 9.86979 16.0424 11.5413 15.6503C13.8558 15.1074 15.663 13.3002 16.2059 10.9856C16.402 10.1499 16.5 9.29709 16.5 8.44431" class="icon_main" stroke-width="1.5" stroke-linecap="round"/><path d="M1.79406 10.9856C1.40198 9.31413 1.40198 7.57455 1.79406 5.90303C2.33698 3.58851 4.14417 1.78131 6.45869 1.2384C7.29445 1.04236 8.14723 0.944336 9 0.944336M6.4587 15.6503C8.13021 16.0424 9.86979 16.0424 11.5413 15.6503C13.8558 15.1074 15.663 13.3002 16.2059 10.9856C16.402 10.1499 16.5 9.29709 16.5 8.44431" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16.5002 3.86068C16.5002 5.01127 15.5674 5.94401 14.4168 5.94401C13.2662 5.94401 12.3335 5.01127 12.3335 3.86068C12.3335 2.71008 13.2662 1.77734 14.4168 1.77734C15.5674 1.77734 16.5002 2.71008 16.5002 3.86068Z" class="icon_main" stroke-width="1.5"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['open_post_in_new_tab'];?></b>
+						<p><?php echo $wo['lang']['open_post_in_new_tab_tx'];?></p>
+					</div>
+				</a>
+            </li>
+            <li>
+				<a class="pointer" onclick="Wo_HidePost(<?php echo $wo['story']['id'];?>);">
+					<svg viewBox="0 0 24 24"><path fill="currentColor" d="M11.83,9L15,12.16C15,12.11 15,12.05 15,12A3,3 0 0,0 12,9C11.94,9 11.89,9 11.83,9M7.53,9.8L9.08,11.35C9.03,11.56 9,11.77 9,12A3,3 0 0,0 12,15C12.22,15 12.44,14.97 12.65,14.92L14.2,16.47C13.53,16.8 12.79,17 12,17A5,5 0 0,1 7,12C7,11.21 7.2,10.47 7.53,9.8M2,4.27L4.28,6.55L4.73,7C3.08,8.3 1.78,10 1,12C2.73,16.39 7,19.5 12,19.5C13.55,19.5 15.03,19.2 16.38,18.66L16.81,19.08L19.73,22L21,20.73L3.27,3M12,7A5,5 0 0,1 17,12C17,12.64 16.87,13.26 16.64,13.82L19.57,16.75C21.07,15.5 22.27,13.86 23,12C21.27,7.61 17,4.5 12,4.5C10.6,4.5 9.26,4.75 8,5.2L10.17,7.35C10.74,7.13 11.35,7 12,7Z" /></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['hide_post'];?></b>
+						<p><?php echo $wo['lang']['hide_post_tx'];?></p>
+					</div>
+				</a>    
+            </li>
+         </ul>
+      </span>
+      <?php } ?>
+   </div>
+   <div class="meta">
+      <div class="title h5">
+         <span class="user-popover" data-type="<?php echo $wo['story']['publisher']['type']; ?>" data-id="<?php echo $wo['story']['publisher']['id']; ?>">
+            <a href="<?php echo $wo['story']['publisher']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['story']['publisher']['username']; ?>"><b><?php echo $wo['story']['publisher']['name']; ?></b></a>
+         </span>
+		 
+		 <?php if (!empty($wo['story']['publisher']['is_open_to_work']) && $wo['config']['website_mode'] == 'linkedin') { ?>
+			<span class="wo_open_job_badge" title="<?php echo($wo['lang']['open_to_work']); ?>" data-toggle="tooltip"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"><path fill="currentColor" d="M10,2H14A2,2 0 0,1 16,4V6H20A2,2 0 0,1 22,8V19A2,2 0 0,1 20,21H4C2.89,21 2,20.1 2,19V8C2,6.89 2.89,6 4,6H8V4C8,2.89 8.89,2 10,2M14,6V4H10V6H14Z"></path></svg></span>
+		<?php } ?>
+		 
+         <?php if (isset($wo['story']['publisher']['is_pro'])) { 
+            if(Wo_IsUserPro($wo['story']['publisher']['is_pro']) === true) { ?>
+         <?php 
+            $user_pro_type = Wo_GetUserProType($wo['story']['publisher']['pro_type']);
+            ?>
+         <span class="wo_post_pro_ico" style="background:<?php echo $user_pro_type['color_name'];?>">
+			 <!--<?php 
+				if (!empty(in_array($wo['story']['publisher']['pro_type'], array_keys($wo['pro_packages'])) && !empty($wo['pro_packages'][$wo['story']['publisher']['pro_type']]['image'])) && $_COOKIE['mode'] == 'day') { ?>
+			 <img src="<?php echo($wo['pro_packages'][$wo['story']['publisher']['pro_type']]['image']) ?>" class="pro_packages_icon_inline">
+			 <?php }
+			 elseif(!empty(in_array($wo['story']['publisher']['pro_type'], array_keys($wo['pro_packages'])) && !empty($wo['pro_packages'][$wo['story']['publisher']['pro_type']]['night_image'])) && $_COOKIE['mode'] == 'night'){ ?>
+				<img src="<?php echo($wo['pro_packages'][$wo['story']['publisher']['pro_type']]['night_image']) ?>" class="pro_packages_icon_inline">
+			 <?php }
+			 else{ ?>
+			 <i class="fa fa-<?php echo $user_pro_type['icon'];?> fa-fw" title="<?php echo $user_pro_type['type_name'];?>" data-toggle="tooltip"></i>
+			 <?php } ?>-->
+			 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="18" height="18" fill="url(#pattern0)"></rect><defs><pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1"><use xlink:href="#image0_4501_2628" transform="scale(0.0208333)"></use></pattern><image id="image0_4501_2628" width="48" height="48" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAB8UlEQVRoge2YMW/TQBiGnzMlvqp/oUKMWfobundhZILRYmAvWzuyInVoGKjgTxQmdBlAlfojkPgDtMoQCZqXxQlJY75znDou4h7JUmTf+d4n3+dLZEgkEolEItEdrq0b65QDYABARuEKzttYJ2vjpiUDYBfYZVKKtECbAhth6/aJOyt9RjH3zRdNA8byLAnwp/SUAR41WdgVnCv4d4B3++OPTe5RJ0+VwJ2g4I9BR+Vn3P74VRvrLD8DGQXwvTwalX4+fHnmUMG/bpiweR4N87f6xM5Kc4I/VshVfawmoS9sK+RvrDH2LiSe4PNLhd5erQWXvvmlEbUroc+9Pj/zC+CpNS62jV4BfXAXCt4sXzz8bGRUQsE/J3OXwF6Z4a9EBNx08jZooGHvQ1VL1Q8/m1EpUbbMAPQepuu4dQS0OFnu2e2WWj38bOaCxFzLLFbayRSIbaM/Ks71wX3V0L9EPG4WfooOFfwYxzekE6jYMGS3kC3gdI0q/+/tIJ2tkNRAR8i8vkYLye6/jRDJUPch7o7IM2ALOFU9AxvGmRlsgcl9qMA6LeQm3QtM7AwRgax7gUgGW+DmpnuBzM5gC2T3oAK/1qnA1sPuBR7YGWyBq1H3AqPRtXU5+l5Ip/YPfdu4F3bGf/61ShJIJBKJRCLxP/MbKMPVE5P9hlMAAAAASUVORK5CYII="></image></defs></svg> <?php echo $user_pro_type['type_name'];?>
+         </span>
+         <?php } } ?>
+         <span class="user-popover" data-type="<?php echo $wo['story']['shared_from']['type']; ?>" data-id="<?php echo $wo['story']['shared_from']['id']; ?>">         
+          <?php if ($wo['config']['website_mode'] != 'twitter') { ?>
+              <span><?php echo TextForMode('shared_a_post'); ?></span>
+          <?php } ?>
+         </span>
+         <span>  
+         <a href="<?php echo $post_shared_from['url']; ?>" class="pointer"><span style="color: #666; white-space: nowrap;"><?php echo $wo['config']['website_mode'] != 'twitter' ?  strtolower($wo['lang']['post']) : TextForMode('shared_a_post'); ?></span></a>
+         </span>
+         &nbsp;
+         <?php if (empty($wo['story']['parent_id'])) { ?>
+         <?php if ($wo['story']['recipient_exists'] == true) {  ?>
+         <?php echo $wo['lang']['to']; ?>
+         <span class="user-popover" data-type="<?php echo $wo['story']['recipient']['type']; ?>" data-id='<?php echo $wo['story']['recipient']['id']; ?>'>
+            <a href="<?php echo $wo['story']['recipient']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['story']['recipient']['username']; ?>">
+            <b>
+            <?php echo $wo['story']['recipient']['name']; ?>
+            </b>
+            </a>
+            <?php if($wo['story']['recipient']['verified'] == 1) { ?> 
+            <span class="verified-color">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather feather-check-circle" title="<?php echo ($wo['story']['page_id'] > 0 ? $wo['lang']['verified_page'] : $wo['lang']['verified_user']);?>" data-toggle="tooltip">
+                  <path d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" />
+               </svg>
+            </span>
+            <?php } ?>
+         </span>
+         <?php } ?>
+         <?php if (!empty($wo['story']['page_event_id'])) {?>
+         <small class="small-text"> <?php echo $wo['lang']['created_new_event'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['fund_id']) && empty($wo['story']['parent_id'])) {?>
+         <small class="small-text"> <?php echo $wo['lang']['created_donation_request'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['fund_raise_id']) && empty($wo['story']['parent_id'])) {?>
+         <small class="small-text"> <?php echo $wo['lang']['donated_to_request'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['offer_id']) && empty($wo['story']['parent_id'])) {?>
+         <small class="small-text"> <?php echo $wo['lang']['created_offer'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['event_id']) && $wo['page'] != 'events') {  ?>
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather"><path fill="currentColor" d="M14 16.94V12.94H5.08L5.05 10.93H14V6.94L19 11.94Z" /></svg> <a href="<?php echo $wo['story']['event']['url']; ?>" data-ajax="?link1=show-event&eid=<?php echo $wo['story']['event']['id']; ?>"><b><?php echo $wo['story']['event']['name']; ?></b></a>
+         <?php } ?>
+         <?php if ($wo['story']['group_recipient_exists'] == true && $wo['page'] != 'group') {  ?>
+         <?php echo $wo['lang']['to']; ?>
+         <span class="user-popover" data-type="<?php echo $wo['story']['group_recipient']['type']; ?>" data-id='<?php echo $wo['story']['group_recipient']['id']; ?>'>
+         <a href="<?php echo $wo['story']['group_recipient']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['story']['group_recipient']['username']; ?>">
+         <b><?php echo $wo['story']['group_recipient']['name']; ?></b>
+         </a>
+         </span>
+         <?php } ?>
+         
+         <?php if (!empty($wo['story']['album_name']) && empty($wo['story']['shared_from'])) {  ?>
+         <small class="small-text"><?php echo $wo['lang']['added_new_photos_to'];?> <b><a href="<?php echo $wo['story']['url']; ?>" data-ajax="?link1=post&id=<?php echo $wo['story']['id'];?>"><?php echo $wo['story']['album_name']; ?></a></b></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['product_id']) && empty($wo['story']['shared_from'])) {  ?>
+         <small class="small-text"><?php echo $wo['lang']['added_new_product_for_sell']; ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['blog_id'])  && empty($wo['story']['shared_from'])) {  ?>
+         <small class="small-text"><?php echo $wo['lang']['created_new_blog'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['forum_id'])  && empty($wo['story']['shared_from']) && !empty($wo['story']['forum'])) {  ?>
+         <small class="small-text"><?php echo $wo['lang']['shared_forum'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['thread_id'])  && empty($wo['story']['shared_from']) && !empty($wo['story']['thread'])) {  ?>
+         <small class="small-text"><?php echo $wo['lang']['shared_thread'] ?></small>
+         <?php } ?>
+         <?php if (empty($wo['story']['shared_from'])): ?>
+         <small class="small-text">
+         <?php 
+            if($wo['story']['postType'] == 'profile_picture') { 
+               $changed_profile_pic_lang = $wo['lang']['changed_profile_picture_male'];
+               if ($wo['story']['publisher']['gender'] == 'female') {
+                  $changed_profile_pic_lang = $wo['lang']['changed_profile_picture_female'];
+               } else {
+                  $changed_profile_pic_lang = $wo['lang']['changed_profile_picture_male'];
+               }
+               echo $changed_profile_pic_lang;
+            } 
+            if($wo['story']['postType'] == 'profile_cover_picture') { 
+               $changed_profile_cover_pic_lang = $wo['lang']['changed_profile_cover_picture_male'];
+               if ($wo['story']['publisher']['gender'] == 'female') {
+                  $changed_profile_cover_pic_lang = $wo['lang']['changed_profile_cover_picture_female'];
+               } else {
+                  $changed_profile_cover_pic_lang = $wo['lang']['changed_profile_cover_picture_male'];
+               }
+               echo $changed_profile_cover_pic_lang;
+            } 
+            ?>
+         </small>
+         <?php endif; ?>
+         <?php if($wo['story']['via_type'] == 'share') {  ?>
+         <small style="color:#a33e40;"><?php echo $wo['story']['via']['name'];?> <?php echo $wo['lang']['shared_this_post'];?></small>
+         <?php }  ?>
+         <?php 
+            $extra_exists = 0;
+            if (!empty($wo['story']['postFeeling'])) {
+              if (empty($changed_profile_pic_lang) 
+                && $wo['story']['via_type'] != 'share'
+                && $wo['story']['group_recipient_exists'] != true
+                && empty($wo['story']['album_name'])) {
+            ?>
+         <span class="feeling-text"> <?php echo $wo['lang']['is_feeling'];?> <i class="twa-lg twa twa-<?php echo $wo['story']['postFeelingIcon'];?>"></i> <?php echo $wo['lang'][$wo['story']['postFeeling']];?></span>
+         <?php
+            } else {
+              $extra_exists = 1;
+            }
+            }
+            if (!empty($wo['story']['postTraveling'])) {
+              if (empty($changed_profile_pic_lang) 
+                && $wo['story']['via_type'] != 'share'
+                && $wo['story']['group_recipient_exists'] != true
+                && empty($wo['story']['album_name'])) {
+            ?>
+         <span class="feeling-text"><i class="fa fa-plane"></i> <?php echo $wo['lang']['is_traveling'];?> <?php echo $wo['story']['postTraveling'];?></span>
+         <?php
+            } else {
+              $extra_exists = 1;
+            }
+            }
+            if (!empty($wo['story']['postListening'])) {
+              if (empty($changed_profile_pic_lang) 
+                && $wo['story']['via_type'] != 'share'
+                && $wo['story']['group_recipient_exists'] != true
+                && empty($wo['story']['album_name'])) {
+            ?>
+         <span class="feeling-text"><i class="fa fa-headphones"></i> <?php echo $wo['lang']['is_listening'];?> <?php echo $wo['story']['postListening'];?></span>
+         <?php
+            } else {
+              $extra_exists = 1;
+            }
+            }
+            if (!empty($wo['story']['postPlaying'])) {
+              if (empty($changed_profile_pic_lang) 
+                && $wo['story']['via_type'] != 'share'
+                && $wo['story']['group_recipient_exists'] != true
+                && empty($wo['story']['album_name'])) {
+            ?>
+         <span class="feeling-text"><i class="fa fa-gamepad"></i> <?php echo $wo['lang']['is_playing'];?> <?php echo $wo['story']['postPlaying'];?></span>
+         <?php
+            } else {
+              $extra_exists = 1;
+            }
+            }
+            if (!empty($wo['story']['postWatching'])) {
+              if (empty($changed_profile_pic_lang) 
+                && $wo['story']['via_type'] != 'share'
+                && $wo['story']['group_recipient_exists'] != true
+                && empty($wo['story']['album_name'])) {
+            ?>
+         <span class="feeling-text"><i class="fa fa-eye"></i> <?php echo $wo['lang']['is_watching'];?> <?php echo $wo['story']['postWatching'];?></span>
+         <?php
+            } else {
+              $extra_exists = 1;
+            }
+            }
+            ?>
+         <?php }else{$extra_exists = 1;} ?>
+      </div>
+      <h6>
+        <span class="time">
+         <a  style="color:#9197a3" class="ajax-time" href="<?php echo $wo['story']['url'];?>" title="<?php echo date('c',$wo['story']['time']); ?>" target="_blank"><?php echo Wo_Time_Elapsed_String($wo['story']['time']); ?></a>
+         </span>
+         <?php if ($wo['story']['ai_post'] == 1) { ?>
+              <span class="time" title="<?php echo $wo['lang']['content_generated_ai'];?>"> - <?php echo $wo['lang']['ai'];?></span>
+           <?php } ?>
+         <?php if (!empty($wo['story']['postText']) && strlen($wo['story']['postText']) >= 2 && ($wo['config']['google_translate'] == 1 || $wo['config']['yandex_translate'] == 1)): ?>
+         <span onclick="Wo_Translate($(this).attr('id'),$(this).attr('data-language'))" title="<?php echo $wo['lang']['translate'];?>" class="pointer time" id="<?php echo $wo['story']['id']; ?>" data-language="<?php echo DetermineUserLang(); ?>" data-trans-btn="<?php echo $wo['story']['id']; ?>">
+            - <?php echo $wo['lang']['translate'];?>
+            </span>
+         <?php endif ?>
+         <?php  if ($wo['story']['admin'] === true && $wo['story']['group_recipient_exists'] == false && empty($wo['story']['product_id'])) { ?>
+         <?php  if (empty($wo['story']['page_id'])) { ?>
+         <span class="dropdown wo_post_privacy_menu" style="color:#9197a3">
+            <span class="dropdown-toggle pointer" data-toggle="dropdown" role="button" aria-expanded="false">
+               <span class="pointer post-privacy" style="color:#9197a3">
+                  <?php  if($wo['story']['postPrivacy'] == 0) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe" data-toggle="tooltip" title="<?php echo $wo['lang']['everyone'];?>">
+                     <circle cx="12" cy="12" r="10"></circle>
+                     <line x1="2" y1="12" x2="22" y2="12"></line>
+                     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                  </svg>
+                  <?php  } ?>
+                  <?php  if($wo['story']['postPrivacy'] == 1) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users" data-toggle="tooltip" title="<?php echo ($wo['config']['connectivitySystem'] == 1) ? $wo['lang']['my_friends'] : $wo['lang']['people_i_follow'];?>">
+                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                     <circle cx="9" cy="7" r="4"></circle>
+                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                  <?php  }  ?>
+                  <?php  if($wo['story']['postPrivacy'] == 2) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user" data-toggle="tooltip" title="<?php echo ($wo['config']['connectivitySystem'] == 1) ? $wo['lang']['my_friends'] : $wo['lang']['people_follow_me'];?>">
+                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                     <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <?php  }  ?>
+                  <?php  if($wo['story']['postPrivacy'] == 3) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock" data-toggle="tooltip" title="<?php echo $wo['lang']['only_me'];?>">
+                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <?php  }  ?>
+                  <?php  if($wo['story']['postPrivacy'] == 6) { ?>
+				  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-credit-card" data-toggle="tooltip" title="<?php echo $wo['lang']['monetized'];?>"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                  <?php  }  ?>
+               </span>
+               <span class="caret" style="color:#9197a3"></span>
+            </span>
+            <ul class="dropdown-menu post-privacy-menu post-options priv" role="menu">
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,3,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['only_me'];?></b>
+							<p><?php echo $wo['lang']['only_me_tx'];?></p>
+						</div>
+					</div>
+               </li>
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,0,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['everyone'];?></b>
+							<p><?php echo $wo['lang']['everyone_tx'];?></p>
+						</div>
+					</div>
+               </li>
+                <li>
+					<div class="pointer" <?php if ($wo['have_monetization'] == 1) { ?> onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,6,event);"<?php }else{ ?>onclick="showMonetizationModel()"<?php } ?>>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-credit-card"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['monetized'];?></b>
+							<p><?php echo $wo['lang']['monetized_tx'];?></p>
+						</div>
+					</div>
+               </li>
+               <?php if ($wo['config']['connectivitySystem'] == 1) { ?>
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,1,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['my_friends'];?></b>
+							<p><?php echo $wo['lang']['my_friends_tx'];?></p>
+						</div>
+					</div>
+               </li>
+               <?php } else { ?>
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,2,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['people_i_follow'];?></b>
+							<p><?php echo $wo['lang']['people_i_follow_tx'];?></p>
+						</div>
+					</div>
+               </li>
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,1,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['people_follow_me'];?></b>
+							<p><?php echo $wo['lang']['people_follow_me_tx'];?></p>
+						</div>
+					</div>
+               </li>
+               <?php } ?>
+            </ul>
+         </span>
+         <?php } else { ?>
+         <span class="dropdown wo_post_privacy_menu">
+            <span class="dropdown-toggle pointer" data-toggle="dropdown" role="button" aria-expanded="false">
+               <span class="pointer post-privacy" style="color:#9197a3">
+                  <?php  if($wo['story']['postPrivacy'] == 0) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe" data-toggle="tooltip" title="<?php echo $wo['lang']['everyone'];?>">
+                     <circle cx="12" cy="12" r="10"></circle>
+                     <line x1="2" y1="12" x2="22" y2="12"></line>
+                     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                  </svg>
+                  <?php  } ?>
+                  <?php  if($wo['story']['postPrivacy'] == 2) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user" data-toggle="tooltip" title="Liked My Page">
+                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                     <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <?php  }  ?>
+               </span>
+               <span class="caret"></span>
+            </span>
+            <ul class="dropdown-menu post-privacy-menu post-options priv" role="menu">
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,0,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['everyone'];?></b>
+							<p><?php echo $wo['lang']['everyone_tx'];?></p>
+						</div>
+					</div>
+               </li>
+               <hr>
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,2,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['liked_my_page'];?></b>
+							<p><?php echo $wo['lang']['liked_my_page_tx'];?></p>
+						</div>
+                  </div>
+               </li>
+            </ul>
+         </span>
+         <?php } ?>
+         <?php }  ?>
+         <?php if(!empty($wo['story']['postMap'])) { ?>
+         <?php if(!empty($wo['story']['postSoundCloud']) || 
+            !empty($wo['story']['postVine']) || 
+            !empty($wo['story']['postYoutube']) || 
+            !empty($wo['story']['postPlaytube']) || 
+            !empty($wo['story']['postVimeo']) || 
+            !empty($wo['story']['postText']) || 
+            !empty($wo['story']['postFile']) || 
+            !empty($wo['story']['postLink']) || 
+            !empty($wo['story']['postFacebook']) || 
+            !empty($wo['story']['postDailymotion']) ||
+            !empty($wo['story']['album_name']) || ($wo['config']['google_map'] == 0 && $wo['config']['yandex_map'] == 0)) { ?>
+         <span style="color:#9197a3"> - <i class="fa fa-map-marker"></i> <?php echo $wo['story']['postMap'];?>.</span>
+         <?php } ?>
+         <?php } else { ?>
+         <?php
+            $small_icon = '';
+            $icon_type = '';
+            if(!empty($wo['story']['postVine'])) { 
+               $small_icon = 'vine';
+               $icon_type = 'Vine';
+            } else if (!empty($wo['story']['postVimeo'])) {
+               $small_icon = 'vimeo';
+               $icon_type = 'Vimeo';
+            } else if (!empty($wo['story']['postFacebook'])) {
+               $small_icon = 'facebook-official';
+               $icon_type = 'Facebook';
+            } else if (!empty($wo['story']['postDailymotion'])) {
+               $small_icon = 'film';
+               $icon_type = 'Dailymotion';
+            } else if (!empty($wo['story']['postYoutube'])) {
+               $small_icon = 'youtube-square';
+               $icon_type = 'Youtube';
+            } else if (!empty($wo['story']['postPlaytube'])) {
+              // $small_icon = 'play-circle';
+              // $icon_type = 'PlayTube';
+            } else if (!empty($wo['story']['postSoundCloud'])) {
+               $small_icon = 'soundcloud';
+               $icon_type = 'SoundCloud';
+            }
+            if (!empty($icon_type)) {
+            ?>
+         <span style="color:#9197a3; text-transform: capitalize;">
+         - <i class="fa fa-<?php echo $small_icon; ?>"></i> <?php echo $icon_type; ?>
+         </span>
+         <?php  } } ?>
+      </h6>
+   </div>
+</div>
+<?php }elseif (empty($wo['story']['parent_id'])) {
+   if ($wo['config']['shout_box_system'] == 1 && $wo['story']['postPrivacy'] == 4) {
+      $anonymous = true;
+   $wo['story']['publisher']['username'] = 'anonymous';
+   $wo['story']['publisher']['name'] = $wo['lang']['anonymous'];
+   $wo['story']['publisher']['avatar'] = Wo_GetMedia('upload/photos/incognito.png');
+   $wo['story']['publisher']['verified'] = 0;
+   $wo['story']['publisher']['type'] = '';
+   $wo['story']['publisher']['url'] = 'javascript:void(0)';
+}
+   ?>
+<div class="post-heading">
+   <div class="<?php echo Wo_RightToLeft('pull-left');?> image">
+      <?php if (!isset($anonymous)) { ?>
+      <a href="<?php echo $wo['story']['publisher']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['story']['publisher']['username']?>" class="avatar wow_post_usr_ava <?php if($wo['story']['publisher']['verified'] == 1) { ?>wow_post_usr_ava_active<?php } ?>">
+         <img src="<?php echo $wo['story']['publisher']['avatar']; ?>" class="blur_img" alt="<?php echo $wo['story']['publisher']['name']; ?> profile picture">
+		 <img src="<?php echo $wo['story']['publisher']['avatar']; ?>" id="updateImage-<?php echo $wo['story']['publisher']['user_id']?>" alt="<?php echo $wo['story']['publisher']['name']; ?> profile picture">
+         <?php if($wo['story']['publisher']['verified'] == 1) { ?>
+            <span class="verified-color">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather feather-check-circle" title="<?php echo ($wo['story']['page_id'] > 0 ? $wo['lang']['verified_page'] : $wo['lang']['verified_user']);?>" data-toggle="tooltip">
+                  <path d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" />
+               </svg>
+            </span>
+            <?php } ?>
+      </a>
+      <?php }else{ ?>
+      <img src="<?php echo $wo['story']['publisher']['avatar']; ?>" id="updateImage-<?php echo $wo['story']['publisher']['user_id']?>" alt="<?php echo $wo['story']['publisher']['name']; ?> profile picture" class="avatar ">
+      <?php } ?>
+   </div>
+   <!-- Hide dropdown -->
+   <?php //if (empty($current_post['parent_id'])) { ?>
+   <!-- Hide dropdown -->
+   <div class="<?php echo Wo_RightToLeft('pull-right');?>">
+      <?php  if ($wo['story']['admin'] === true || $wo['story']['group_admin'] === true) { ?>
+      <span class="dropdown">
+         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+            <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 0.944336L8.5 3.44434L6 5.94434L1 0.944336" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 0.944336L6 5.94434L8.5 3.44434" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+         </a>
+         <ul class="dropdown-menu post-privacy-menu post-options" role="menu">
+            <?php if ($wo['loggedin'] == true && !empty($wo['story']['offer_id']) && (Wo_IsModerator() || Wo_IsAdmin() || $wo['story']['offer']['user_id'] == $wo['user']['id'])) { ?>
+               <li>
+					<div class="pointer" onclick="Wo_OpenOfferEditBox(<?php echo $wo['story']['offer_id']; ?>);">
+						<svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.75 5.05741C9.23497 5.56243 7.21492 3.54238 7.71993 2.02734M8.34238 1.40489L5.07836 4.66891C3.65936 6.08791 2.65269 7.86589 2.16597 9.81274L2.00826 10.4436C1.95912 10.6402 2.13717 10.8182 2.33374 10.7691L2.9646 10.6114C4.91146 10.1247 6.68943 9.11798 8.10843 7.69898L11.3725 4.43496C11.7743 4.03315 12 3.48818 12 2.91993C12 1.73661 11.0407 0.777344 9.85742 0.777344C9.28917 0.777344 8.74419 1.00308 8.34238 1.40489Z" stroke="currentColor" stroke-width="1.5"/><path d="M8.34217 1.40489C8.74398 1.00308 9.28895 0.777344 9.8572 0.777344C11.0405 0.777344 11.9998 1.73661 11.9998 2.91993C11.9998 3.48818 11.7741 4.03315 11.3722 4.43496L10.7498 5.05741C9.23475 5.56243 7.21471 3.54238 7.71972 2.02734L8.34217 1.40489Z" class="icon_main" stroke-width="1.5"/><path d="M12.8332 14.1113H1.1665" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['edit_offer'];?></b>
+							<p><?php echo $wo['lang']['edit_offer_tx'];?></p>
+						</div>
+					</div>
+               </li>
+            <?php } ?>
+            <?php if ($wo['story']['admin'] === true && empty($wo['story']['product_id']) && empty($wo['story']['shared_from'])) { ?>
+            <li>
+				<div class="pointer" onclick="Wo_OpenPostEditBox(<?php echo $wo['story']['id']; ?>);">
+					<svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.75 5.05741C9.23497 5.56243 7.21492 3.54238 7.71993 2.02734M8.34238 1.40489L5.07836 4.66891C3.65936 6.08791 2.65269 7.86589 2.16597 9.81274L2.00826 10.4436C1.95912 10.6402 2.13717 10.8182 2.33374 10.7691L2.9646 10.6114C4.91146 10.1247 6.68943 9.11798 8.10843 7.69898L11.3725 4.43496C11.7743 4.03315 12 3.48818 12 2.91993C12 1.73661 11.0407 0.777344 9.85742 0.777344C9.28917 0.777344 8.74419 1.00308 8.34238 1.40489Z" stroke="currentColor" stroke-width="1.5"/><path d="M8.34217 1.40489C8.74398 1.00308 9.28895 0.777344 9.8572 0.777344C11.0405 0.777344 11.9998 1.73661 11.9998 2.91993C11.9998 3.48818 11.7741 4.03315 11.3722 4.43496L10.7498 5.05741C9.23475 5.56243 7.21471 3.54238 7.71972 2.02734L8.34217 1.40489Z" class="icon_main" stroke-width="1.5"/><path d="M12.8332 14.1113H1.1665" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['edit_post'];?></b>
+						<p><?php echo $wo['lang']['edit_post_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <?php } else if (!empty($wo['story']['product_id'])) { 
+               if ($wo['story']['product']['status'] == 0) { ?>
+            <li>
+				<div class="pointer mark-as-sold-post" onclick="Wo_MarkAsSold(<?php echo $wo['story']['id']; ?>, <?php echo $wo['story']['product_id']; ?>);">
+					<svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 13C19.34 13 19.67 13.04 20 13.09V8H4V21H13.35C13.13 20.37 13 19.7 13 19C13 15.69 15.69 13 19 13M9 13V11.5C9 11.22 9.22 11 9.5 11H14.5C14.78 11 15 11.22 15 11.5V13H9M21 7H3V3H21V7M22.5 17.25L17.75 22L15 19L16.16 17.84L17.75 19.43L21.34 15.84L22.5 17.25Z" /></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['mark_as_sold'];?></b>
+						<p><?php echo $wo['lang']['mark_as_sold_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <li>
+				<a class="pointer" href="<?php echo Wo_SeoLink('index.php?link1=edit-product&id=' . $wo['story']['product_id']);?>">
+					<svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.75 5.05741C9.23497 5.56243 7.21492 3.54238 7.71993 2.02734M8.34238 1.40489L5.07836 4.66891C3.65936 6.08791 2.65269 7.86589 2.16597 9.81274L2.00826 10.4436C1.95912 10.6402 2.13717 10.8182 2.33374 10.7691L2.9646 10.6114C4.91146 10.1247 6.68943 9.11798 8.10843 7.69898L11.3725 4.43496C11.7743 4.03315 12 3.48818 12 2.91993C12 1.73661 11.0407 0.777344 9.85742 0.777344C9.28917 0.777344 8.74419 1.00308 8.34238 1.40489Z" stroke="currentColor" stroke-width="1.5"/><path d="M8.34217 1.40489C8.74398 1.00308 9.28895 0.777344 9.8572 0.777344C11.0405 0.777344 11.9998 1.73661 11.9998 2.91993C11.9998 3.48818 11.7741 4.03315 11.3722 4.43496L10.7498 5.05741C9.23475 5.56243 7.21471 3.54238 7.71972 2.02734L8.34217 1.40489Z" class="icon_main" stroke-width="1.5"/><path d="M12.8332 14.1113H1.1665" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['edit_product'];?></b>
+						<p><?php echo $wo['lang']['edit_product_tx'];?></p>
+					</div>
+				</a>
+            </li>
+            <?php } } ?>
+            <li>
+				<div class="pointer" onclick="Wo_OpenPostDeleteBox(<?php echo $wo['story']['id']; ?>);">
+					<svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.25 4.30483C5.25 3.86352 5.347 3.42654 5.53545 3.01882C5.72391 2.61111 6.00013 2.24065 6.34835 1.9286C6.69657 1.61655 7.10997 1.36902 7.56494 1.20014C8.01991 1.03126 8.50754 0.944336 9 0.944336C9.49246 0.944336 9.98009 1.03126 10.4351 1.20014C10.89 1.36902 11.3034 1.61655 11.6516 1.9286C11.9999 2.24065 12.2761 2.61111 12.4645 3.01883C12.653 3.42654 12.75 3.86352 12.75 4.30483" class="icon_main" stroke-width="1.5"/><path d="M1.5 4.30469H16.5M3.16667 4.30469V8.59074C3.16667 9.90327 3.35132 11.2092 3.71512 12.4694C4.21681 14.2073 5.66121 15.5022 7.43189 15.8014L7.56334 15.8236C8.51447 15.9844 9.4855 15.9844 10.4366 15.8236L10.5681 15.8014C12.3388 15.5022 13.7832 14.2073 14.2849 12.4694C14.6487 11.2092 14.8333 9.90326 14.8333 8.59071V4.30469H3.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7.3335 8.44434V11.7777M10.6668 8.44434V11.7777" class="icon_main" stroke-width="1.5" stroke-linecap="round"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['delete_post'];?></b>
+						<p><?php echo $wo['lang']['delete_post_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <li>
+				<div class="pointer disable-comments" onclick="Wo_DisableComment(<?php echo $wo['story']['id']; ?>, <?php echo $wo['story']['comments_status']; ?>);">
+					<svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.90013 10.2304L3.63031 10.0591L2.90013 10.2304ZM2.90013 5.53007L3.63031 5.70135L2.90013 5.53007ZM16.2281 5.53008L15.4979 5.70136L16.2281 5.53008ZM16.2281 10.2304L15.4979 10.0591L16.2281 10.2304ZM11.9143 14.5442L11.743 13.814H11.743L11.9143 14.5442ZM7.21392 14.5442L7.3852 13.814L7.21392 14.5442ZM7.21392 1.21628L7.04264 0.486102L7.21392 1.21628ZM11.9143 1.21628L12.0855 0.486102L11.9143 1.21628ZM3.46761 11.7056L4.12422 11.3432L3.89235 10.9231L3.41378 10.9576L3.46761 11.7056ZM5.73872 13.9767L6.48678 14.0306L6.52122 13.552L6.10116 13.3201L5.73872 13.9767ZM3.63031 10.0591C3.29414 8.62599 3.29414 7.1345 3.63031 5.70135L2.16995 5.3588C1.78092 7.01726 1.78092 8.74324 2.16995 10.4017L3.63031 10.0591ZM15.4979 5.70136C15.834 7.1345 15.834 8.62599 15.4979 10.0591L16.9582 10.4017C17.3473 8.74324 17.3473 7.01726 16.9582 5.3588L15.4979 5.70136ZM11.743 13.814C10.3098 14.1502 8.81834 14.1502 7.3852 13.814L7.04265 15.2744C8.7011 15.6634 10.4271 15.6634 12.0855 15.2744L11.743 13.814ZM7.3852 1.94646C8.81834 1.61029 10.3098 1.61029 11.743 1.94646L12.0855 0.486102C10.4271 0.0970807 8.7011 0.0970808 7.04264 0.486102L7.3852 1.94646ZM7.3852 13.814C5.52208 13.377 4.06734 11.9223 3.63031 10.0591L2.16995 10.4017C2.73708 12.8195 4.62489 14.7073 7.04265 15.2744L7.3852 13.814ZM12.0855 15.2744C14.5033 14.7073 16.3911 12.8195 16.9582 10.4017L15.4979 10.0591C15.0608 11.9223 13.6061 13.377 11.743 13.814L12.0855 15.2744ZM11.743 1.94646C13.6061 2.38349 15.0608 3.83823 15.4979 5.70136L16.9582 5.3588C16.3911 2.94104 14.5033 1.05323 12.0855 0.486102L11.743 1.94646ZM7.04264 0.486102C4.62489 1.05323 2.73708 2.94104 2.16995 5.3588L3.63031 5.70135C4.06734 3.83823 5.52208 2.38349 7.3852 1.94646L7.04264 0.486102ZM3.41378 10.9576C1.92443 11.0647 0.75 12.306 0.75 13.8222H2.25C2.25 13.0983 2.81102 12.5048 3.52144 12.4537L3.41378 10.9576ZM0.75 13.8222C0.75 15.4084 2.0359 16.6943 3.62213 16.6943V15.1943C2.86432 15.1943 2.25 14.58 2.25 13.8222H0.75ZM3.62213 16.6943C5.13836 16.6943 6.37961 15.5199 6.48678 14.0306L4.99065 13.9229C4.93953 14.6333 4.34601 15.1943 3.62213 15.1943V16.6943ZM6.10116 13.3201C5.2695 12.861 4.58328 12.1748 4.12422 11.3432L2.811 12.0681C3.40677 13.1474 4.29695 14.0376 5.37628 14.6333L6.10116 13.3201Z" fill="currentColor"/><path d="M6.59326 5.85742C6.17905 5.85742 5.84326 6.19321 5.84326 6.60742C5.84326 7.02164 6.17905 7.35742 6.59326 7.35742V5.85742ZM9.13982 7.35742C9.55403 7.35742 9.88982 7.02164 9.88982 6.60742C9.88982 6.19321 9.55403 5.85742 9.13982 5.85742V7.35742ZM7.44211 8.40398C7.0279 8.40398 6.69211 8.73976 6.69211 9.15398C6.69211 9.56819 7.0279 9.90398 7.44211 9.90398V8.40398ZM11.6864 9.90398C12.1006 9.90398 12.4364 9.56819 12.4364 9.15398C12.4364 8.73976 12.1006 8.40398 11.6864 8.40398V9.90398ZM6.59326 7.35742H9.13982V5.85742H6.59326V7.35742ZM7.44211 9.90398H11.6864V8.40398H7.44211V9.90398Z" class="icon_main_fill"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo ($wo['story']['comments_status'] == 1) ? $wo['lang']['disable_comments'] : $wo['lang']['enable_comments'];?></b>
+						<p><?php echo $wo['lang']['comments_status_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <li>
+				<hr>
+            </li>
+
+            <li>
+				<a href="<?php echo $wo['story']['url'];?>" target="_blank">
+					<svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 0.944336C8.14723 0.944336 7.29445 1.04236 6.45869 1.2384C4.14417 1.78131 2.33698 3.58851 1.79406 5.90303C1.40198 7.57455 1.40198 9.31413 1.79406 10.9856C2.33698 13.3002 4.14418 15.1074 6.4587 15.6503C8.13021 16.0424 9.86979 16.0424 11.5413 15.6503C13.8558 15.1074 15.663 13.3002 16.2059 10.9856C16.402 10.1499 16.5 9.29709 16.5 8.44431" class="icon_main" stroke-width="1.5" stroke-linecap="round"/><path d="M1.79406 10.9856C1.40198 9.31413 1.40198 7.57455 1.79406 5.90303C2.33698 3.58851 4.14417 1.78131 6.45869 1.2384C7.29445 1.04236 8.14723 0.944336 9 0.944336M6.4587 15.6503C8.13021 16.0424 9.86979 16.0424 11.5413 15.6503C13.8558 15.1074 15.663 13.3002 16.2059 10.9856C16.402 10.1499 16.5 9.29709 16.5 8.44431" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16.5002 3.86068C16.5002 5.01127 15.5674 5.94401 14.4168 5.94401C13.2662 5.94401 12.3335 5.01127 12.3335 3.86068C12.3335 2.71008 13.2662 1.77734 14.4168 1.77734C15.5674 1.77734 16.5002 2.71008 16.5002 3.86068Z" class="icon_main" stroke-width="1.5"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['open_post_in_new_tab'];?></b>
+						<p><?php echo $wo['lang']['open_post_in_new_tab_tx'];?></p>
+					</div>
+				</a>
+            </li>
+            <li>
+               <hr>
+            </li>
+            <?php if (empty($wo['story']['recipient']) && $wo['story']['admin'] === true) { ?>
+            <?php if ($wo['story']['is_group_post'] == false) { ?>
+            <li>
+               <?php
+                  $pin_post_id = $wo['story']['publisher']['id'];
+                  $pin_post_text = 'profile';
+                  if (!empty($wo['story']['page_id'])) {
+                    $pin_post_id = $wo['story']['page_id'];
+                    $pin_post_text = 'page';
+                  } else if (!empty($wo['story']['group_id'])) {
+                    $pin_post_id = $wo['story']['group_id'];
+                    $pin_post_text = 'group';
+                  }  else if (!empty($wo['story']['event_id'])) {
+                    $pin_post_id = $wo['story']['event_id'];
+                    $pin_post_text = 'event';
+                  }
+                  ?>
+				<div class="pin-post pointer" onclick="Wo_PinPost(<?php echo $wo['story']['id']; ?>, <?php echo $pin_post_id;?>, '<?php echo $pin_post_text; ?>');">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 13.9999C20.2927 14.6903 22 16.1239 22 17.7806C22 20.1108 17.5228 21.9999 12 21.9999C6.47715 21.9999 2 20.1108 2 17.7806C2 16.1239 3.70729 14.6903 7 13.9999" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12ZM12 12L12 18" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b>
+							<?php if($wo['story']['is_post_pinned'] === true) { ?>
+								<?php echo $wo['lang']['unpin_post'];?>
+							<?php } else { ?>
+								<?php echo $wo['lang']['pin_post'];?>
+							<?php } ?>
+						</b>
+						<p><?php echo $wo['lang']['pin_post_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <?php } } ?>
+            <?php if (!empty($wo['story']['album_name']) && ($wo['story']['group_admin'] === false || $wo['story']['admin'] === true)) {?>
+            <li>
+				<a href="<?php echo Wo_SeoLink('index.php?link1=create-album&album=' . $wo['story']['id']);?>" >
+					<svg viewBox="0 0 24 24"><path fill="currentColor" d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z" /></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['add_photos'];?></b>
+						<p><?php echo $wo['lang']['add_photos_tx'];?></p>
+					</div>
+				</a>
+            </li>
+            <?php } ?>
+            <?php $hr = 0; if ($wo['config']['pro'] == 1 && ($wo['story']['group_admin'] === false || $wo['story']['admin'] === true)) { ?>
+            <li>
+				<?php if ($wo['user']['is_pro'] == 0) {  ?>
+					<a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" data-ajax="?link1=go-pro">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.15 1.053a2.25 2.25 0 012.011.706c.384.42.488 1.027.537 1.605.052.61.052 1.423.052 2.44V7.6c0 .432 0 .712.018.924.017.204.045.28.064.316a.75.75 0 00.327.328c.038.02.113.047.317.064.212.017.492.018.924.018h.644c.767 0 1.395 0 1.88.044.48.044.972.139 1.359.448a2.25 2.25 0 01.846 1.76c0 .495-.234.94-.5 1.34-.268.407-.66.897-1.14 1.496l-.023.03-.88 1.1a.75.75 0 11-1.172-.937l.88-1.1c.51-.636.858-1.073 1.084-1.415.235-.354.251-.485.251-.515a.75.75 0 00-.282-.587c-.024-.02-.136-.088-.559-.126-.409-.037-.967-.038-1.782-.038h-.635c-.395 0-.736 0-1.017-.023-.297-.024-.592-.078-.875-.222a2.25 2.25 0 01-.984-.984c-.144-.283-.198-.578-.222-.875-.023-.28-.023-.622-.023-1.017V5.842c0-1.064 0-1.812-.046-2.351a3.107 3.107 0 00-.09-.574.468.468 0 00-.06-.147.75.75 0 00-.67-.235s-.042.009-.14.078a3.104 3.104 0 00-.428.391c-.372.393-.84.977-1.504 1.807L8.986 6.47a.75.75 0 01-1.172-.938L9.14 3.874l.024-.03c.635-.794 1.143-1.428 1.565-1.872.399-.42.86-.83 1.421-.919z" class="icon_main_fill"/><path fill-rule="evenodd" d="M8.869 5.414a.75.75 0 01.117 1.055l-3.28 4.1c-.51.636-.858 1.073-1.084 1.415-.235.354-.251.485-.251.515a.75.75 0 00.282.587c.024.02.136.088.559.126.409.037.967.038 1.782.038h.635c.395 0 .736 0 1.017.023.297.024.592.078.876.222.423.216.767.56.983.984.144.283.198.578.222.875.023.28.023.622.023 1.017v1.787c0 1.064 0 1.812.046 2.351.023.267.054.449.09.574.032.11.059.145.06.147a.75.75 0 00.67.235c.003 0 .046-.012.14-.078a3.11 3.11 0 00.428-.391c.372-.392.84-.976 1.505-1.807l3.725-4.658a.75.75 0 011.172.938l-3.726 4.657-.024.03c-.635.794-1.143 1.428-1.565 1.872-.399.421-.86.83-1.421.919a2.25 2.25 0 01-2.011-.706c-.384-.42-.488-1.027-.537-1.605-.052-.61-.052-1.423-.052-2.44V16.4c0-.432 0-.712-.018-.924-.017-.204-.045-.28-.064-.317a.75.75 0 00-.327-.327c-.038-.02-.113-.047-.317-.064a12.724 12.724 0 00-.924-.018h-.644c-.767 0-1.395 0-1.88-.044-.48-.043-.972-.139-1.359-.447a2.25 2.25 0 01-.846-1.761c0-.495.234-.94.5-1.34.268-.407.66-.897 1.14-1.496l.023-.03 3.28-4.1a.75.75 0 011.055-.118z"/></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['boost_post'];?></b>
+							<p><?php echo $wo['lang']['boost_post_tx'];?></p>
+						</div>
+					</a>
+				<?php } else if ($wo['user']['is_pro'] == 1 && in_array($wo['user']['pro_type'], array_keys($wo['pro_packages'])) && $wo['pro_packages'][$wo['user']['pro_type']]['posts_promotion'] > 0) {?>
+					<?php if ($wo['story']['is_post_boosted'] == 0) { ?>
+						<div class="boost-post pointer" onclick="Wo_BoostPost(<?php echo $wo['story']['id']; ?>)">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.15 1.053a2.25 2.25 0 012.011.706c.384.42.488 1.027.537 1.605.052.61.052 1.423.052 2.44V7.6c0 .432 0 .712.018.924.017.204.045.28.064.316a.75.75 0 00.327.328c.038.02.113.047.317.064.212.017.492.018.924.018h.644c.767 0 1.395 0 1.88.044.48.044.972.139 1.359.448a2.25 2.25 0 01.846 1.76c0 .495-.234.94-.5 1.34-.268.407-.66.897-1.14 1.496l-.023.03-.88 1.1a.75.75 0 11-1.172-.937l.88-1.1c.51-.636.858-1.073 1.084-1.415.235-.354.251-.485.251-.515a.75.75 0 00-.282-.587c-.024-.02-.136-.088-.559-.126-.409-.037-.967-.038-1.782-.038h-.635c-.395 0-.736 0-1.017-.023-.297-.024-.592-.078-.875-.222a2.25 2.25 0 01-.984-.984c-.144-.283-.198-.578-.222-.875-.023-.28-.023-.622-.023-1.017V5.842c0-1.064 0-1.812-.046-2.351a3.107 3.107 0 00-.09-.574.468.468 0 00-.06-.147.75.75 0 00-.67-.235s-.042.009-.14.078a3.104 3.104 0 00-.428.391c-.372.393-.84.977-1.504 1.807L8.986 6.47a.75.75 0 01-1.172-.938L9.14 3.874l.024-.03c.635-.794 1.143-1.428 1.565-1.872.399-.42.86-.83 1.421-.919z" class="icon_main_fill"/><path fill-rule="evenodd" d="M8.869 5.414a.75.75 0 01.117 1.055l-3.28 4.1c-.51.636-.858 1.073-1.084 1.415-.235.354-.251.485-.251.515a.75.75 0 00.282.587c.024.02.136.088.559.126.409.037.967.038 1.782.038h.635c.395 0 .736 0 1.017.023.297.024.592.078.876.222.423.216.767.56.983.984.144.283.198.578.222.875.023.28.023.622.023 1.017v1.787c0 1.064 0 1.812.046 2.351.023.267.054.449.09.574.032.11.059.145.06.147a.75.75 0 00.67.235c.003 0 .046-.012.14-.078a3.11 3.11 0 00.428-.391c.372-.392.84-.976 1.505-1.807l3.725-4.658a.75.75 0 011.172.938l-3.726 4.657-.024.03c-.635.794-1.143 1.428-1.565 1.872-.399.421-.86.83-1.421.919a2.25 2.25 0 01-2.011-.706c-.384-.42-.488-1.027-.537-1.605-.052-.61-.052-1.423-.052-2.44V16.4c0-.432 0-.712-.018-.924-.017-.204-.045-.28-.064-.317a.75.75 0 00-.327-.327c-.038-.02-.113-.047-.317-.064a12.724 12.724 0 00-.924-.018h-.644c-.767 0-1.395 0-1.88-.044-.48-.043-.972-.139-1.359-.447a2.25 2.25 0 01-.846-1.761c0-.495.234-.94.5-1.34.268-.407.66-.897 1.14-1.496l.023-.03 3.28-4.1a.75.75 0 011.055-.118z"/></svg>
+							&nbsp;&nbsp;&nbsp;
+							<div>
+								<b><?php echo $wo['lang']['boost_post'];?></b>
+								<p><?php echo $wo['lang']['boost_post_tx'];?></p>
+							</div>
+						</div>
+					<?php } else { ?>
+						<div class="boost-post pointer" onclick="Wo_BoostPost(<?php echo $wo['story']['id']; ?>)">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.15 1.053a2.25 2.25 0 012.011.706c.384.42.488 1.027.537 1.605.052.61.052 1.423.052 2.44V7.6c0 .432 0 .712.018.924.017.204.045.28.064.316a.75.75 0 00.327.328c.038.02.113.047.317.064.212.017.492.018.924.018h.644c.767 0 1.395 0 1.88.044.48.044.972.139 1.359.448a2.25 2.25 0 01.846 1.76c0 .495-.234.94-.5 1.34-.268.407-.66.897-1.14 1.496l-.023.03-.88 1.1a.75.75 0 11-1.172-.937l.88-1.1c.51-.636.858-1.073 1.084-1.415.235-.354.251-.485.251-.515a.75.75 0 00-.282-.587c-.024-.02-.136-.088-.559-.126-.409-.037-.967-.038-1.782-.038h-.635c-.395 0-.736 0-1.017-.023-.297-.024-.592-.078-.875-.222a2.25 2.25 0 01-.984-.984c-.144-.283-.198-.578-.222-.875-.023-.28-.023-.622-.023-1.017V5.842c0-1.064 0-1.812-.046-2.351a3.107 3.107 0 00-.09-.574.468.468 0 00-.06-.147.75.75 0 00-.67-.235s-.042.009-.14.078a3.104 3.104 0 00-.428.391c-.372.393-.84.977-1.504 1.807L8.986 6.47a.75.75 0 01-1.172-.938L9.14 3.874l.024-.03c.635-.794 1.143-1.428 1.565-1.872.399-.42.86-.83 1.421-.919z" class="icon_main_fill"/><path fill-rule="evenodd" d="M8.869 5.414a.75.75 0 01.117 1.055l-3.28 4.1c-.51.636-.858 1.073-1.084 1.415-.235.354-.251.485-.251.515a.75.75 0 00.282.587c.024.02.136.088.559.126.409.037.967.038 1.782.038h.635c.395 0 .736 0 1.017.023.297.024.592.078.876.222.423.216.767.56.983.984.144.283.198.578.222.875.023.28.023.622.023 1.017v1.787c0 1.064 0 1.812.046 2.351.023.267.054.449.09.574.032.11.059.145.06.147a.75.75 0 00.67.235c.003 0 .046-.012.14-.078a3.11 3.11 0 00.428-.391c.372-.392.84-.976 1.505-1.807l3.725-4.658a.75.75 0 011.172.938l-3.726 4.657-.024.03c-.635.794-1.143 1.428-1.565 1.872-.399.421-.86.83-1.421.919a2.25 2.25 0 01-2.011-.706c-.384-.42-.488-1.027-.537-1.605-.052-.61-.052-1.423-.052-2.44V16.4c0-.432 0-.712-.018-.924-.017-.204-.045-.28-.064-.317a.75.75 0 00-.327-.327c-.038-.02-.113-.047-.317-.064a12.724 12.724 0 00-.924-.018h-.644c-.767 0-1.395 0-1.88-.044-.48-.043-.972-.139-1.359-.447a2.25 2.25 0 01-.846-1.761c0-.495.234-.94.5-1.34.268-.407.66-.897 1.14-1.496l.023-.03 3.28-4.1a.75.75 0 011.055-.118z"/></svg>
+							&nbsp;&nbsp;&nbsp;
+							<div>
+								<b><?php echo $wo['lang']['unboost_post'];?></b>
+								<p><?php echo $wo['lang']['unboost_post_tx'];?></p>
+							</div>
+						</div>
+					<?php } ?>
+				<?php } else if ($wo['user']['is_pro'] == 1 && $wo['user']['pro_type'] == 1) { $hr = 1; ?>
+               <?php } ?>
+            </li>
+            <?php if ($hr == 0) { ?>
+            <?php } } ?>
+         </ul>
+      </span>
+      <?php  } elseif ($wo['loggedin'] == true) { ?>
+      <span class="dropdown">
+         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+            <span class="pointer">
+               <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 0.944336L8.5 3.44434L6 5.94434L1 0.944336" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 0.944336L6 5.94434L8.5 3.44434" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+         </a>
+         <ul class="dropdown-menu post-privacy-menu post-options post-recipient" role="menu"  >
+            <?php if (Wo_IsAdmin()): ?>
+            <li>
+				<div class="pointer" onclick="Wo_OpenPostDeleteBox(<?php echo $wo['story']['id']; ?>);">
+					<svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.25 4.30483C5.25 3.86352 5.347 3.42654 5.53545 3.01882C5.72391 2.61111 6.00013 2.24065 6.34835 1.9286C6.69657 1.61655 7.10997 1.36902 7.56494 1.20014C8.01991 1.03126 8.50754 0.944336 9 0.944336C9.49246 0.944336 9.98009 1.03126 10.4351 1.20014C10.89 1.36902 11.3034 1.61655 11.6516 1.9286C11.9999 2.24065 12.2761 2.61111 12.4645 3.01883C12.653 3.42654 12.75 3.86352 12.75 4.30483" class="icon_main" stroke-width="1.5"/><path d="M1.5 4.30469H16.5M3.16667 4.30469V8.59074C3.16667 9.90327 3.35132 11.2092 3.71512 12.4694C4.21681 14.2073 5.66121 15.5022 7.43189 15.8014L7.56334 15.8236C8.51447 15.9844 9.4855 15.9844 10.4366 15.8236L10.5681 15.8014C12.3388 15.5022 13.7832 14.2073 14.2849 12.4694C14.6487 11.2092 14.8333 9.90326 14.8333 8.59071V4.30469H3.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7.3335 8.44434V11.7777M10.6668 8.44434V11.7777" class="icon_main" stroke-width="1.5" stroke-linecap="round"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['delete_post'];?></b>
+						<p><?php echo $wo['lang']['delete_post_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <?php endif; ?>
+            <li>
+				<div class="save-post pointer" class="save-post" onclick="Wo_SavePost(<?php echo $wo['story']['id']; ?>);">
+					<svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.4173 13.7197V4.72982C12.4173 2.99559 11.1988 1.50291 9.50711 1.16474C7.85233 0.833961 6.14897 0.833961 4.4942 1.16474C2.80248 1.50291 1.58398 2.99559 1.58398 4.72982V13.7197C1.58398 14.7715 2.71957 15.4261 3.62232 14.8947L6.08843 13.4431C6.65185 13.1114 7.34946 13.1114 7.91288 13.4431L10.379 14.8947C11.2817 15.4261 12.4173 14.7715 12.4173 13.7197Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M1.58398 13.7197C1.58398 14.7715 2.71957 15.4261 3.62232 14.8947L6.08843 13.4431C6.65185 13.1114 7.34946 13.1114 7.91288 13.4431L10.379 14.8947C11.2817 15.4261 12.4173 14.7715 12.4173 13.7197V4.72982C12.4173 2.99559 11.1988 1.50291 9.50711 1.16474C7.85233 0.833961 6.14897 0.833961 4.4942 1.16474" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b>
+							<?php if($wo['story']['is_post_saved'] === true) { ?>
+								<?php echo $wo['lang']['unsave_post'];?>
+							<?php } else { ?>
+								<?php echo $wo['lang']['save_post'];?>
+							<?php } ?>
+						</b>
+                  <?php if($wo['story']['is_post_saved'] != true) { ?>
+						<p><?php echo $wo['lang']['save_post_tx'];?></p>
+                  <?php }else{ ?>
+                  <p><?php echo $wo['lang']['unsave_post_tx'];?></p>
+                  <?php } ?>
+					</div>
+				</div>
+            </li>
+            <li>
+				<div  class="report-post pointer" onclick="Wo_ReportPost(<?php echo $wo['story']['id']; ?>);">
+					<svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.2297 14.6838L11.3801 14.5798C11.8509 14.2542 12.0864 14.0914 12.297 13.9169C13.4414 12.9684 14.21 11.6464 14.4658 10.1865C14.5129 9.91778 14.5373 9.63356 14.5863 9.06512L14.6116 8.77119C14.6926 7.8303 14.6845 6.88392 14.5875 5.94453L14.5574 5.65383C14.3876 4.00992 13.3784 2.5691 11.8872 1.84153C9.43528 0.645272 6.56504 0.645272 4.11315 1.84153C2.6219 2.5691 1.6127 4.00992 1.44289 5.65383L1.41286 5.94453C1.31583 6.88392 1.30775 7.8303 1.38874 8.77119L1.41404 9.06512C1.46297 9.63356 1.48744 9.91778 1.53452 10.1865C1.79034 11.6464 2.55896 12.9684 3.70333 13.9169C3.91393 14.0914 4.14941 14.2542 4.62022 14.5798L4.77067 14.6838C5.41077 15.1265 5.73085 15.3478 6.05162 15.5016C7.2829 16.0919 8.71742 16.0919 9.9487 15.5016C10.2695 15.3478 10.5895 15.1265 11.2297 14.6838Z" class="icon_main" stroke-width="1.5"></path><path d="M14.5863 9.06512L14.6116 8.77119C14.6926 7.8303 14.6845 6.88392 14.5875 5.94453L14.5574 5.65383C14.3876 4.00992 13.3784 2.5691 11.8872 1.84153C9.43529 0.645272 6.56504 0.645272 4.11315 1.84153C2.6219 2.5691 1.6127 4.00992 1.44289 5.65383L1.41286 5.94453C1.31583 6.88392 1.30775 7.8303 1.38874 8.77119L1.41404 9.06512C1.46297 9.63356 1.48744 9.91778 1.53452 10.1865C1.79034 11.6464 2.55896 12.9684 3.70333 13.9169C3.91393 14.0914 4.14941 14.2542 4.62022 14.5798L4.77067 14.6838C5.41077 15.1265 5.73085 15.3478 6.05162 15.5016" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M9.47313 6.97168L6.52686 9.91796M9.47313 9.91796L6.52686 6.97168" class="icon_main" stroke-width="1.5" stroke-linecap="round"></path></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b>
+							<?php if($wo['story']['is_post_reported'] === true) { ?>
+								<?php echo $wo['lang']['unreport_post'];?>
+							<?php } else { ?>
+								<?php echo $wo['lang']['report_post'];?>
+							<?php } ?>
+						</b>
+						<p><?php echo $wo['lang']['report_post_tx'];?></p>
+					</div>
+				</div>
+            </li>
+            <li>
+				<a href="<?php echo $wo['story']['url'];?>" target="_blank">
+					<svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 0.944336C8.14723 0.944336 7.29445 1.04236 6.45869 1.2384C4.14417 1.78131 2.33698 3.58851 1.79406 5.90303C1.40198 7.57455 1.40198 9.31413 1.79406 10.9856C2.33698 13.3002 4.14418 15.1074 6.4587 15.6503C8.13021 16.0424 9.86979 16.0424 11.5413 15.6503C13.8558 15.1074 15.663 13.3002 16.2059 10.9856C16.402 10.1499 16.5 9.29709 16.5 8.44431" class="icon_main" stroke-width="1.5" stroke-linecap="round"/><path d="M1.79406 10.9856C1.40198 9.31413 1.40198 7.57455 1.79406 5.90303C2.33698 3.58851 4.14417 1.78131 6.45869 1.2384C7.29445 1.04236 8.14723 0.944336 9 0.944336M6.4587 15.6503C8.13021 16.0424 9.86979 16.0424 11.5413 15.6503C13.8558 15.1074 15.663 13.3002 16.2059 10.9856C16.402 10.1499 16.5 9.29709 16.5 8.44431" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16.5002 3.86068C16.5002 5.01127 15.5674 5.94401 14.4168 5.94401C13.2662 5.94401 12.3335 5.01127 12.3335 3.86068C12.3335 2.71008 13.2662 1.77734 14.4168 1.77734C15.5674 1.77734 16.5002 2.71008 16.5002 3.86068Z" class="icon_main" stroke-width="1.5"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['open_post_in_new_tab'];?></b>
+						<p><?php echo $wo['lang']['open_post_in_new_tab_tx'];?></p>
+					</div>
+				</a>
+            </li>
+            <li>
+				<a class="pointer" onclick="Wo_HidePost(<?php echo $wo['story']['id'];?>);">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.5299 9.46992L9.46992 14.5299C8.81992 13.8799 8.41992 12.9899 8.41992 11.9999C8.41992 10.0199 10.0199 8.41992 11.9999 8.41992C12.9899 8.41992 13.8799 8.81992 14.5299 9.46992Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.8198 5.76998C16.0698 4.44998 14.0698 3.72998 11.9998 3.72998C8.46984 3.72998 5.17984 5.80998 2.88984 9.40998C1.98984 10.82 1.98984 13.19 2.88984 14.6C3.67984 15.84 4.59984 16.91 5.59984 17.77" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.41992 19.5302C9.55992 20.0102 10.7699 20.2702 11.9999 20.2702C15.5299 20.2702 18.8199 18.1902 21.1099 14.5902C22.0099 13.1802 22.0099 10.8102 21.1099 9.40018C20.7799 8.88018 20.4199 8.39018 20.0499 7.93018" class="icon_main" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5095 12.7002C15.2495 14.1102 14.0995 15.2602 12.6895 15.5202" class="icon_main" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.47 14.5298L2 21.9998" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.9993 2L14.5293 9.47" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					&nbsp;&nbsp;&nbsp;
+					<div>
+						<b><?php echo $wo['lang']['hide_post'];?></b>
+						<p><?php echo $wo['lang']['hide_post_tx'];?></p>
+					</div>
+				</a>    
+            </li>
+         </ul>
+      </span>
+      <?php } ?>
+   </div>
+   <!-- Hide dropdown -->
+   <?php //} ?>
+   <!-- Hide dropdown -->
+   <div class="meta">
+      <div class="title h5">
+         <?php if (!isset($anonymous)) { ?>
+         <span class="user-popover" data-type="<?php echo $wo['story']['publisher']['type']; ?>" data-id="<?php echo $wo['story']['publisher']['id']; ?>">
+            <a href="<?php echo $wo['story']['publisher']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['story']['publisher']['username']; ?>"><b><?php echo $wo['story']['publisher']['name']; ?></b></a>
+         </span>
+		 
+		 <?php if (!empty($wo['story']['publisher']['is_open_to_work']) && $wo['config']['website_mode'] == 'linkedin') { ?>
+			<span class="wo_open_job_badge" title="<?php echo($wo['lang']['open_to_work']); ?>" data-toggle="tooltip"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"><path fill="currentColor" d="M10,2H14A2,2 0 0,1 16,4V6H20A2,2 0 0,1 22,8V19A2,2 0 0,1 20,21H4C2.89,21 2,20.1 2,19V8C2,6.89 2.89,6 4,6H8V4C8,2.89 8.89,2 10,2M14,6V4H10V6H14Z"></path></svg></span>
+		<?php } ?>
+      <?php }else{ ?>
+         <b><?php echo $wo['story']['publisher']['name']; ?></b>
+         <?php } ?>
+         <?php 
+         if ($wo['config']['shout_box_system'] != 1 || $wo['story']['postPrivacy'] != 4) {
+         if (isset($wo['story']['publisher']['is_pro'])) { 
+            if(Wo_IsUserPro($wo['story']['publisher']['is_pro']) === true) { ?>
+         <?php 
+            $user_pro_type = Wo_GetUserProType($wo['story']['publisher']['pro_type']);
+            ?>
+         <span class="wo_post_pro_ico" style="background:<?php echo $wo['pro_packages'][$wo['story']['publisher']['pro_type']]['color'];?>">
+			 <!--<?php 
+				if (!empty(in_array($wo['story']['publisher']['pro_type'], array_keys($wo['pro_packages'])) && !empty($wo['pro_packages'][$wo['story']['publisher']['pro_type']]['image'])) && $_COOKIE['mode'] == 'day') { ?>
+			 <img src="<?php echo($wo['pro_packages'][$wo['story']['publisher']['pro_type']]['image']) ?>" class="pro_packages_icon_inline">
+			 <?php }
+			 elseif (!empty(in_array($wo['story']['publisher']['pro_type'], array_keys($wo['pro_packages'])) && !empty($wo['pro_packages'][$wo['story']['publisher']['pro_type']]['night_image'])) && $_COOKIE['mode'] == 'night') { ?>
+				<img src="<?php echo($wo['pro_packages'][$wo['story']['publisher']['pro_type']]['night_image']) ?>" class="pro_packages_icon_inline">
+			 <?php }
+			 else{ ?>
+			 <i class="fa fa-<?php echo $user_pro_type['icon'];?> fa-fw" title="<?php echo $user_pro_type['type_name'];?>" data-toggle="tooltip"></i>
+			 <?php } ?>-->
+			 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="18" height="18" fill="url(#pattern0)"></rect><defs><pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1"><use xlink:href="#image0_4501_2628" transform="scale(0.0208333)"></use></pattern><image id="image0_4501_2628" width="48" height="48" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAB8UlEQVRoge2YMW/TQBiGnzMlvqp/oUKMWfobundhZILRYmAvWzuyInVoGKjgTxQmdBlAlfojkPgDtMoQCZqXxQlJY75znDou4h7JUmTf+d4n3+dLZEgkEolEItEdrq0b65QDYABARuEKzttYJ2vjpiUDYBfYZVKKtECbAhth6/aJOyt9RjH3zRdNA8byLAnwp/SUAR41WdgVnCv4d4B3++OPTe5RJ0+VwJ2g4I9BR+Vn3P74VRvrLD8DGQXwvTwalX4+fHnmUMG/bpiweR4N87f6xM5Kc4I/VshVfawmoS9sK+RvrDH2LiSe4PNLhd5erQWXvvmlEbUroc+9Pj/zC+CpNS62jV4BfXAXCt4sXzz8bGRUQsE/J3OXwF6Z4a9EBNx08jZooGHvQ1VL1Q8/m1EpUbbMAPQepuu4dQS0OFnu2e2WWj38bOaCxFzLLFbayRSIbaM/Ks71wX3V0L9EPG4WfooOFfwYxzekE6jYMGS3kC3gdI0q/+/tIJ2tkNRAR8i8vkYLye6/jRDJUPch7o7IM2ALOFU9AxvGmRlsgcl9qMA6LeQm3QtM7AwRgax7gUgGW+DmpnuBzM5gC2T3oAK/1qnA1sPuBR7YGWyBq1H3AqPRtXU5+l5Ip/YPfdu4F3bGf/61ShJIJBKJRCLxP/MbKMPVE5P9hlMAAAAASUVORK5CYII="></image></defs></svg> <?php echo $user_pro_type['type_name'];?>
+         </span>
+         <?php } }
+         }
+          ?>
+         <?php if ($wo['story']['shared_from'] && is_array($wo['story']['shared_from'])): ?>
+         <span class="user-popover" data-type="<?php echo $wo['story']['shared_from']['type']; ?>" data-id="<?php echo $wo['story']['shared_from']['id']; ?>">
+            <span><?php echo $wo['lang']['shared']; ?></span> 
+            <a href="<?php echo $wo['story']['shared_from']['url']; ?>" class="pointer no_decor" data-ajax="?link1=timeline&u=<?php echo $wo['story']['shared_from']['username']; ?>"><b><?php echo $wo['story']['shared_from']['name']; ?></b></a>
+            <?php if($wo['story']['shared_from']['verified'] == 1) { ?>
+            <span class="verified-color">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather feather-check-circle" title="<?php echo ($wo['story']['page_id'] > 0 ? $wo['lang']['verified_page'] : $wo['lang']['verified_user']);?>" data-toggle="tooltip">
+                  <path d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" />
+               </svg>
+            </span>
+            <?php } ?>
+         </span>
+         <?php endif; ?>
+         <?php if ($wo['story']['is_monetized_post']) { ?>
+            <span class="wo_post_pro_ico monet">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-credit-card" data-toggle="tooltip" title="<?php echo $wo['lang']['monetized'];?>"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            </span>
+         <?php } ?>
+         <?php if ($wo['story']['shared_from'] && is_array($wo['story']['shared_from'])): ?>
+         <span>  
+         <a href="<?php echo $wo['story']['post_url']; ?>" class="pointer"><span style="color: #666;"><?php echo strtolower($wo['lang']['post']); ?></span></a>
+         </span>
+         <?php endif; ?>
+         <?php if ($wo['config']['live_video'] == 1 && !empty($wo['story']['stream_name'])) { ?>
+         <span><span style="color: #666;" class="was_live_text_<?php echo($wo['story']['id']) ?>"><?php echo ($wo['story']['is_still_live'] ? $wo['lang']['is_live'] : $wo['lang']['was_live']); ?></span></span>
+      <?php } ?>
+         <?php if ($wo['story']['recipient_exists'] == true) {  ?>
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather"><path fill="currentColor" d="M14 16.94V12.94H5.08L5.05 10.93H14V6.94L19 11.94Z" /></svg>
+         <span class="user-popover" data-type="<?php echo $wo['story']['recipient']['type']; ?>" data-id='<?php echo $wo['story']['recipient']['id']; ?>'>
+            <a href="<?php echo $wo['story']['recipient']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['story']['recipient']['username']; ?>">
+            <b>
+            <?php echo $wo['story']['recipient']['name']; ?>
+            </b>
+            </a>
+            <?php if($wo['story']['recipient']['verified'] == 1) { ?> 
+            <span class="verified-color">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather feather-check-circle" title="<?php echo ($wo['story']['page_id'] > 0 ? $wo['lang']['verified_page'] : $wo['lang']['verified_user']);?>" data-toggle="tooltip">
+                  <path d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" />
+               </svg>
+            </span>
+            <?php } ?>
+         </span>
+         <?php } ?>
+         <?php if (!empty($wo['story']['page_event_id'])) {?>
+         <small class="small-text"> <?php echo $wo['lang']['created_new_event'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['fund_id']) && empty($wo['story']['parent_id'])) {?>
+         <small class="small-text"> <?php echo $wo['lang']['created_donation_request'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['fund_raise_id']) && empty($wo['story']['parent_id'])) {?>
+         <small class="small-text"> <?php echo $wo['lang']['donated_to_request'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['offer_id']) && empty($wo['story']['parent_id'])) {?>
+         <small class="small-text"> <?php echo $wo['lang']['created_offer'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['event_id']) && $wo['page'] != 'events') {  ?>
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather"><path fill="currentColor" d="M14 16.94V12.94H5.08L5.05 10.93H14V6.94L19 11.94Z" /></svg> <a href="<?php echo $wo['story']['event']['url']; ?>" data-ajax="?link1=show-event&eid=<?php echo $wo['story']['event']['id']; ?>"><b><?php echo $wo['story']['event']['name']; ?></b></a>
+         <?php } ?>
+         <?php if ($wo['story']['group_recipient_exists'] == true && $wo['page'] != 'group') {  ?>
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather"><path fill="currentColor" d="M14 16.94V12.94H5.08L5.05 10.93H14V6.94L19 11.94Z" /></svg>
+         <span class="user-popover" data-type="<?php echo $wo['story']['group_recipient']['type']; ?>" data-id='<?php echo $wo['story']['group_recipient']['id']; ?>'>
+         <a href="<?php echo $wo['story']['group_recipient']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['story']['group_recipient']['username']; ?>">
+         <b><?php echo $wo['story']['group_recipient']['name']; ?></b>
+         </a>
+         </span>
+         <?php } ?>
+         <?php if (!empty($wo['story']['page_info']) && $wo['page'] != 'page') {  ?>
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather"><path fill="currentColor" d="M14 16.94V12.94H5.08L5.05 10.93H14V6.94L19 11.94Z" /></svg>
+         <span class="user-popover" data-type="<?php echo $wo['story']['page_info']['type']; ?>" data-id='<?php echo $wo['story']['page_info']['id']; ?>'>
+         <a href="<?php echo $wo['story']['page_info']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['story']['page_info']['username']; ?>">
+         <b><?php echo $wo['story']['page_info']['name']; ?></b>
+         </a>
+         </span>
+         <?php } ?>
+         <?php if (!empty($wo['story']['album_name']) && empty($wo['story']['shared_from'])) {  ?>
+         <small class="small-text"><?php echo $wo['lang']['added_new_photos_to'];?> <b><a href="<?php echo $wo['story']['url']; ?>" data-ajax="?link1=post&id=<?php echo $wo['story']['id'];?>"><?php echo $wo['story']['album_name']; ?></a></b></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['product_id']) && empty($wo['story']['shared_from'])) {  ?>
+         <small class="small-text"><?php echo $wo['lang']['added_new_product_for_sell']; ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['blog_id'])  && empty($wo['story']['shared_from'])) {  ?>
+         <small class="small-text"><?php echo $wo['lang']['created_new_blog'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['forum_id'])  && empty($wo['story']['shared_from']) && !empty($wo['story']['forum'])) {  ?>
+         <small class="small-text"><?php echo $wo['lang']['shared_forum'] ?></small>
+         <?php } ?>
+         <?php if (!empty($wo['story']['thread_id'])  && empty($wo['story']['shared_from']) && !empty($wo['story']['thread'])) {  ?>
+         <small class="small-text"><?php echo $wo['lang']['shared_thread'] ?></small>
+         <?php } ?>
+         <?php if (empty($wo['story']['shared_from'])): ?>
+         <small class="small-text">
+         <?php 
+            if($wo['story']['postType'] == 'profile_picture') { 
+               $changed_profile_pic_lang = $wo['lang']['changed_profile_picture_male'];
+               if ($wo['story']['publisher']['gender'] == 'female') {
+                  $changed_profile_pic_lang = $wo['lang']['changed_profile_picture_female'];
+               } else {
+                  $changed_profile_pic_lang = $wo['lang']['changed_profile_picture_male'];
+               }
+               echo $changed_profile_pic_lang;
+            } 
+            if($wo['story']['postType'] == 'profile_cover_picture') { 
+               $changed_profile_cover_pic_lang = $wo['lang']['changed_profile_cover_picture_male'];
+               if ($wo['story']['publisher']['gender'] == 'female') {
+                  $changed_profile_cover_pic_lang = $wo['lang']['changed_profile_cover_picture_female'];
+               } else {
+                  $changed_profile_cover_pic_lang = $wo['lang']['changed_profile_cover_picture_male'];
+               }
+               echo $changed_profile_cover_pic_lang;
+            } 
+            ?>
+         </small>
+         <?php endif; ?>
+         <?php if($wo['story']['via_type'] == 'share') {  ?>
+         <small style="color:#a33e40;"><?php echo $wo['story']['via']['name'];?> <?php echo $wo['lang']['shared_this_post'];?></small>
+         <?php }  ?>
+         <?php 
+            $extra_exists = 0;
+            if (!empty($wo['story']['postFeeling'])) {
+              if (empty($changed_profile_pic_lang) 
+                && $wo['story']['via_type'] != 'share'
+                && $wo['story']['group_recipient_exists'] != true
+                && empty($wo['story']['album_name'])) {
+            ?>
+         <span class="feeling-text"> <?php echo $wo['lang']['is_feeling'];?> <i class="twa-lg twa twa-<?php echo $wo['story']['postFeelingIcon'];?>"></i> <?php echo $wo['lang'][$wo['story']['postFeeling']];?></span>
+         <?php
+            } else {
+              $extra_exists = 1;
+            }
+            }
+            if (!empty($wo['story']['postTraveling'])) {
+              if (empty($changed_profile_pic_lang) 
+                && $wo['story']['via_type'] != 'share'
+                && $wo['story']['group_recipient_exists'] != true
+                && empty($wo['story']['album_name'])) {
+            ?>
+         <span class="feeling-text"><i class="fa fa-plane"></i> <?php echo $wo['lang']['is_traveling'];?> <?php echo $wo['story']['postTraveling'];?></span>
+         <?php
+            } else {
+              $extra_exists = 1;
+            }
+            }
+            if (!empty($wo['story']['postListening'])) {
+              if (empty($changed_profile_pic_lang) 
+                && $wo['story']['via_type'] != 'share'
+                && $wo['story']['group_recipient_exists'] != true
+                && empty($wo['story']['album_name'])) {
+            ?>
+         <span class="feeling-text"><i class="fa fa-headphones"></i> <?php echo $wo['lang']['is_listening'];?> <?php echo $wo['story']['postListening'];?></span>
+         <?php
+            } else {
+              $extra_exists = 1;
+            }
+            }
+            if (!empty($wo['story']['postPlaying'])) {
+              if (empty($changed_profile_pic_lang) 
+                && $wo['story']['via_type'] != 'share'
+                && $wo['story']['group_recipient_exists'] != true
+                && empty($wo['story']['album_name'])) {
+            ?>
+         <span class="feeling-text"><i class="fa fa-gamepad"></i> <?php echo $wo['lang']['is_playing'];?> <?php echo $wo['story']['postPlaying'];?></span>
+         <?php
+            } else {
+              $extra_exists = 1;
+            }
+            }
+            if (!empty($wo['story']['postWatching'])) {
+              if (empty($changed_profile_pic_lang) 
+                && $wo['story']['via_type'] != 'share'
+                && $wo['story']['group_recipient_exists'] != true
+                && empty($wo['story']['album_name'])) {
+            ?>
+         <span class="feeling-text"><i class="fa fa-eye"></i> <?php echo $wo['lang']['is_watching'];?> <?php echo $wo['story']['postWatching'];?></span>
+         <?php
+            } else {
+              $extra_exists = 1;
+            }
+            }
+            ?>
+      </div>
+      <h6>
+         <span class="time">
+         <a  style="color:#9197a3" class="ajax-time" href="<?php echo $wo['story']['url'];?>" title="<?php echo date('c',$wo['story']['time']); ?>" target="_blank"><?php echo Wo_Time_Elapsed_String($wo['story']['time']); ?></a>
+         </span>
+         <?php if ($wo['story']['ai_post'] == 1) { ?>
+              <span class="time" title="<?php echo $wo['lang']['content_generated_ai'];?>"> - <?php echo $wo['lang']['ai'];?></span>
+           <?php } ?>
+         <!-- Hide privacy -->
+         <?php //if (empty($current_post['parent_id'])) { ?>
+         <!-- Hide privacy -->
+         <?php if (!empty($wo['story']['postText']) && strlen($wo['story']['postText']) >= 2 && ($wo['config']['google_translate'] == 1 || $wo['config']['yandex_translate'] == 1)): ?>
+         <span onclick="Wo_Translate($(this).attr('id'),$(this).attr('data-language'))" title="<?php echo $wo['lang']['translate'];?>" class="pointer time" id="<?php echo $wo['story']['id']; ?>" data-language="<?php echo DetermineUserLang(); ?>" data-trans-btn="<?php echo $wo['story']['id']; ?>">
+         - <?php echo $wo['lang']['translate'];?>
+         </span>
+         <?php endif ?>
+         <?php  if ($wo['story']['admin'] === true && $wo['story']['group_recipient_exists'] == false && empty($wo['story']['product_id'])) { ?>
+         <?php  if (empty($wo['story']['page_id'])) { ?>
+         <span class="dropdown wo_post_privacy_menu" style="color:#9197a3">
+            <span class="dropdown-toggle pointer" data-toggle="dropdown" role="button" aria-expanded="false">
+               <span class="pointer post-privacy" style="color:#9197a3">
+                  <?php if ($wo['config']['shout_box_system'] == 1 && $wo['story']['postPrivacy'] == 4) { ?>
+				  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather" data-toggle="tooltip" title="<?php echo $wo['lang']['anonymous'];?>"><path fill="currentColor" d="M12,3C9.31,3 7.41,4.22 7.41,4.22L6,9H18L16.59,4.22C16.59,4.22 14.69,3 12,3M12,11C9.27,11 5.39,11.54 5.13,11.59C4.09,11.87 3.25,12.15 2.59,12.41C1.58,12.75 1,13 1,13H23C23,13 22.42,12.75 21.41,12.41C20.75,12.15 19.89,11.87 18.84,11.59C18.84,11.59 14.82,11 12,11M7.5,14A3.5,3.5 0 0,0 4,17.5A3.5,3.5 0 0,0 7.5,21A3.5,3.5 0 0,0 11,17.5C11,17.34 11,17.18 10.97,17.03C11.29,16.96 11.63,16.9 12,16.91C12.37,16.91 12.71,16.96 13.03,17.03C13,17.18 13,17.34 13,17.5A3.5,3.5 0 0,0 16.5,21A3.5,3.5 0 0,0 20,17.5A3.5,3.5 0 0,0 16.5,14C15.03,14 13.77,14.9 13.25,16.19C12.93,16.09 12.55,16 12,16C11.45,16 11.07,16.09 10.75,16.19C10.23,14.9 8.97,14 7.5,14M7.5,15A2.5,2.5 0 0,1 10,17.5A2.5,2.5 0 0,1 7.5,20A2.5,2.5 0 0,1 5,17.5A2.5,2.5 0 0,1 7.5,15M16.5,15A2.5,2.5 0 0,1 19,17.5A2.5,2.5 0 0,1 16.5,20A2.5,2.5 0 0,1 14,17.5A2.5,2.5 0 0,1 16.5,15Z"></path></svg>
+                  <?php } ?>
+
+                  <?php  if($wo['story']['postPrivacy'] == 0) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe" data-toggle="tooltip" title="<?php echo $wo['lang']['everyone'];?>">
+                     <circle cx="12" cy="12" r="10"></circle>
+                     <line x1="2" y1="12" x2="22" y2="12"></line>
+                     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                  </svg>
+                  <?php  } ?>
+                  <?php  if($wo['story']['postPrivacy'] == 1) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users" data-toggle="tooltip" title="<?php echo ($wo['config']['connectivitySystem'] == 1) ? $wo['lang']['my_friends'] : $wo['lang']['people_i_follow'];?>">
+                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                     <circle cx="9" cy="7" r="4"></circle>
+                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                  <?php  }  ?>
+                  <?php  if($wo['story']['postPrivacy'] == 2) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user" data-toggle="tooltip" title="<?php echo ($wo['config']['connectivitySystem'] == 1) ? $wo['lang']['my_friends'] : $wo['lang']['people_follow_me'];?>">
+                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                     <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <?php  }  ?>
+                  <?php  if($wo['story']['postPrivacy'] == 3) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock" data-toggle="tooltip" title="<?php echo $wo['lang']['only_me'];?>">
+                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <?php  }  ?>
+                  <?php  if($wo['story']['postPrivacy'] == 5 && $wo['config']['website_mode'] == 'linkedin') { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" title="<?php echo $wo['lang']['hiring'];?>" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="feather feather-dollar"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                  <?php  }  ?>
+                  <?php  if($wo['story']['postPrivacy'] == 6 && $wo['config']['monetization'] == 1) { ?>
+				  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-credit-card" data-toggle="tooltip" title="<?php echo $wo['lang']['monetized'];?>"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                  <?php  }  ?>
+               </span>
+               <span class="caret" style="color:#9197a3"></span>
+            </span>
+            <ul class="dropdown-menu post-privacy-menu post-options priv" role="menu">
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,3,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['only_me'];?></b>
+							<p><?php echo $wo['lang']['only_me_tx'];?></p>
+						</div>
+					</div>
+               </li>
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,0,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['everyone'];?></b>
+							<p><?php echo $wo['lang']['everyone_tx'];?></p>
+						</div>
+					</div>
+               </li>
+               <?php if ($wo['config']['connectivitySystem'] == 1) { ?>
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,1,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['my_friends'];?></b>
+							<p><?php echo $wo['lang']['my_friends_tx'];?></p>
+						</div>
+					</div>
+               </li>
+               <?php } else { ?>
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,2,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['people_i_follow'];?></b>
+							<p><?php echo $wo['lang']['people_i_follow_tx'];?></p>
+						</div>
+					</div>
+               </li>
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,1,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['people_follow_me'];?></b>
+							<p><?php echo $wo['lang']['people_follow_me_tx'];?></p>
+						</div>
+					</div>
+               </li>
+               <?php } ?>
+
+               <?php if($wo['config']['website_mode'] == 'linkedin') { ?>
+                  <li>
+						<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,5,event);">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="feather feather-dollar"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+							&nbsp;&nbsp;&nbsp;
+							<div>
+								<b><?php echo $wo['lang']['hiring'];?></b>
+								<p><?php echo $wo['lang']['hiring_tx'];?></p>
+							</div>
+						</div>
+                  </li>
+               <?php } ?>
+               <?php if ($wo['config']['shout_box_system'] == 1) { ?>
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,4,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather" data-toggle="tooltip" title="<?php echo $wo['lang']['anonymous'];?>"><path fill="currentColor" d="M12,3C9.31,3 7.41,4.22 7.41,4.22L6,9H18L16.59,4.22C16.59,4.22 14.69,3 12,3M12,11C9.27,11 5.39,11.54 5.13,11.59C4.09,11.87 3.25,12.15 2.59,12.41C1.58,12.75 1,13 1,13H23C23,13 22.42,12.75 21.41,12.41C20.75,12.15 19.89,11.87 18.84,11.59C18.84,11.59 14.82,11 12,11M7.5,14A3.5,3.5 0 0,0 4,17.5A3.5,3.5 0 0,0 7.5,21A3.5,3.5 0 0,0 11,17.5C11,17.34 11,17.18 10.97,17.03C11.29,16.96 11.63,16.9 12,16.91C12.37,16.91 12.71,16.96 13.03,17.03C13,17.18 13,17.34 13,17.5A3.5,3.5 0 0,0 16.5,21A3.5,3.5 0 0,0 20,17.5A3.5,3.5 0 0,0 16.5,14C15.03,14 13.77,14.9 13.25,16.19C12.93,16.09 12.55,16 12,16C11.45,16 11.07,16.09 10.75,16.19C10.23,14.9 8.97,14 7.5,14M7.5,15A2.5,2.5 0 0,1 10,17.5A2.5,2.5 0 0,1 7.5,20A2.5,2.5 0 0,1 5,17.5A2.5,2.5 0 0,1 7.5,15M16.5,15A2.5,2.5 0 0,1 19,17.5A2.5,2.5 0 0,1 16.5,20A2.5,2.5 0 0,1 14,17.5A2.5,2.5 0 0,1 16.5,15Z"></path></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['anonymous'];?></b>
+							<p><?php echo $wo['lang']['anonymous_tx'];?></p>
+						</div>
+					</div>
+               </li>
+            <?php } ?>
+                <li>
+					<div class="pointer" <?php if ($wo['have_monetization'] == 1) { ?> onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,6,event);"<?php }else{ ?>onclick="showMonetizationModel()"<?php } ?>>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-credit-card"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['monetized'];?></b>
+							<p><?php echo $wo['lang']['monetized_tx'];?></p>
+						</div>
+					</div>
+               </li>
+            </ul>
+         </span>
+         <?php } else { ?>
+         <span class="dropdown wo_post_privacy_menu">
+            <span class="dropdown-toggle pointer" data-toggle="dropdown" role="button" aria-expanded="false">
+               <span class="pointer post-privacy" style="color:#9197a3">
+                  <?php  if($wo['story']['postPrivacy'] == 0) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe" data-toggle="tooltip" title="<?php echo $wo['lang']['everyone'];?>">
+                     <circle cx="12" cy="12" r="10"></circle>
+                     <line x1="2" y1="12" x2="22" y2="12"></line>
+                     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                  </svg>
+                  <?php  } ?>
+                  <?php  if($wo['story']['postPrivacy'] == 2) { ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user" data-toggle="tooltip" title="Liked My Page">
+                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                     <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <?php  }  ?>
+               </span>
+               <span class="caret"></span>
+            </span>
+            <ul class="dropdown-menu post-privacy-menu post-options priv" role="menu">
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,0,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['everyone'];?></b>
+							<p><?php echo $wo['lang']['everyone_tx'];?></p>
+						</div>
+                  </div>
+               </li>
+               <hr>
+               <li>
+					<div class="pointer" onclick="Wo_UpdatePostPrivacy(<?php echo $wo['story']['id']; ?>,2,event);">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+						&nbsp;&nbsp;&nbsp;
+						<div>
+							<b><?php echo $wo['lang']['liked_my_page'];?></b>
+							<p><?php echo $wo['lang']['liked_my_page_tx'];?></p>
+						</div>
+                  </div>
+               </li>
+            </ul>
+         </span>
+         <?php } ?>
+         <?php }  ?>
+         <?php if(!empty($wo['story']['postMap'])) { ?>
+         <?php if(!empty($wo['story']['postSoundCloud']) || 
+            !empty($wo['story']['postVine']) || 
+            !empty($wo['story']['postYoutube']) || 
+            !empty($wo['story']['postPlaytube']) || 
+            !empty($wo['story']['postVimeo']) || 
+            !empty($wo['story']['postText']) || 
+            !empty($wo['story']['postFile']) || 
+            !empty($wo['story']['postLink']) || 
+            !empty($wo['story']['postFacebook']) || 
+            !empty($wo['story']['postDailymotion']) ||
+            !empty($wo['story']['album_name']) || ($wo['config']['google_map'] == 0 && $wo['config']['yandex_map'] == 0)) { ?>
+         <span style="color:#9197a3"> - <i class="fa fa-map-marker"></i> <?php echo $wo['story']['postMap'];?>.</span>
+         <?php } ?>
+         <?php } else { ?>
+         <?php
+            $small_icon = '';
+            $icon_type = '';
+            if(!empty($wo['story']['postVine'])) { 
+               $small_icon = 'vine';
+               $icon_type = 'Vine';
+            } else if (!empty($wo['story']['postVimeo'])) {
+               $small_icon = 'vimeo';
+               $icon_type = 'Vimeo';
+            } else if (!empty($wo['story']['postFacebook'])) {
+               $small_icon = 'facebook-official';
+               $icon_type = 'Facebook';
+            } else if (!empty($wo['story']['postDailymotion'])) {
+               $small_icon = 'film';
+               $icon_type = 'Dailymotion';
+            } else if (!empty($wo['story']['postYoutube'])) {
+               $small_icon = 'youtube-square';
+               $icon_type = 'Youtube';
+            } else if (!empty($wo['story']['postPlaytube'])) {
+              // $small_icon = 'play-circle';
+              // $icon_type = 'PlayTube';
+            } else if (!empty($wo['story']['postSoundCloud'])) {
+               $small_icon = 'soundcloud';
+               $icon_type = 'SoundCloud';
+            }
+            if (!empty($icon_type)) {
+            ?>
+         <span style="color:#9197a3; text-transform: capitalize;">
+         - <i class="fa fa-<?php echo $small_icon; ?>"></i> <?php echo $icon_type; ?>
+         </span>
+         <?php  } } ?>
+         <!-- Hide privacy -->
+         <?php //} ?>
+         <!-- Hide privacy -->
+      </h6>
+   </div>
+</div>
+<?php } ?>

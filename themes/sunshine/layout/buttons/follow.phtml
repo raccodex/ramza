@@ -1,0 +1,11 @@
+<span id="Follow-<?php echo $wo['follow']['user_id']?>">
+    <button type="button" onclick="Wo_RegisterFollow(<?php echo $wo['follow']['user_id'];?>, <?php echo ($wo['follow']['confirm_followers'] == 1) ? 1 : 0;?>)" class="btn btn-default btn-sm wo_follow_btn" id="wo_useract_btn">
+       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M14.75 8.44434H11.75M13.25 9.94434L13.25 6.94434" class="icon_main" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M1.25 13.7779C1.25 11.9681 2.52299 10.4266 4.25303 10.1413L4.40886 10.1156C5.79419 9.88724 7.20581 9.88724 8.59113 10.1156L8.74697 10.1413C10.477 10.4266 11.75 11.9681 11.75 13.7779C11.75 14.5602 11.1361 15.1943 10.3789 15.1943H2.6211C1.86386 15.1943 1.25 14.5602 1.25 13.7779Z" stroke="currentColor" stroke-width="1.5"/>
+<path d="M9.5625 4.64746C9.5625 6.27843 8.19137 7.60059 6.5 7.60059C4.80863 7.60059 3.4375 6.27843 3.4375 4.64746C3.4375 3.0165 4.80863 1.69434 6.5 1.69434C8.19137 1.69434 9.5625 3.0165 9.5625 4.64746Z" class="icon_main" stroke-width="1.5"/>
+</svg>
+
+       <span class="button-text"> <?php echo $wo['lang']['follow'];?></span>
+    </button>
+</span>

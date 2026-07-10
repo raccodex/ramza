@@ -1,0 +1,21 @@
+<div class="cool-style-album profi_groups user_list wo_comthing_usr col-xs-6 col-sm-6 col-lg-4" id="<?php echo $wo['UsersList']['user_data']['id']; ?>">
+	<div class="wow_content album_parent" onclick="Wo_ShowCommonUserProfile('<?php echo $wo['UsersList']['user_data']['user_id']?>');">
+		<div class="avatar">
+			<a><img src="<?php echo $wo['UsersList']['user_data']['avatar'];?>" alt="<?php echo $wo['UsersList']['user_data']['name']; ?> Profile Picture" /></a>
+		</div>
+		<div class="album-name">
+			<h4><?php echo $wo['UsersList']['user_data']['name']; ?></h4>
+			<p>
+				<span class="small-last-seen">
+					<?php
+						if ($wo['UsersList']['common_things'] == 1) {
+							echo $wo['UsersList']['common_things'] .' '. $wo['lang']['thing_in_common'];
+						}else{
+							echo $wo['UsersList']['common_things'] .' '. $wo['lang']['things_in_common'];
+						} 
+					?>
+				</span>
+			</p>
+		</div>
+	</div>
+</div>

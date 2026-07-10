@@ -1,0 +1,137 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-touch-events/2.0.0/jquery.mobile-events.min.js"></script>
+<div class="loading_reel"></div>
+<div class="hidden_reels">
+    {{html}}
+</div>
+<div class="modal fade" id="delete-reel-modal" role="dialog">
+    <div class="modal-dialog modal-md wow_mat_mdl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+                <h4 class="modal-title"><?php echo $wo['lang']['delete_post']; ?></h4>
+            </div>
+            <div class="modal-body">
+                <p><?php echo $wo['lang']['confirm_delete_post']; ?></p>
+            </div>
+            <div class="modal-footer">
+                <div class="ball-pulse"><div></div><div></div><div></div></div>
+                <button id="delete-all-post" type="button" class="btn main btn-mat"><?php echo $wo['lang']['delete']; ?></button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function Wo_OpenReelDeleteBox(post_id,type = 'hide') {
+        if (type == 'show') {
+            var delete_box = $('#delete-reel-modal');
+            delete_box.find('.btn-mat').attr('onclick', "Wo_OpenReelDeleteBox('"+post_id+"')");
+            delete_box.modal('show');
+          return false;
+        }
+        Wo_DeletePost(post_id);
+    }
+	$(document).ready(function() {
+		window.history.pushState({}, "", "<?php echo $wo['page_url']; ?>");
+        $($('video')[0]).get(0).play();
+	});
+
+    function playPauseVideos(nextElement) {
+        $('video').each(function(index) {
+            $(this).get(0).pause();
+        });
+        if ($(nextElement).find('video').length > 0) {
+            $(nextElement).find('video').get(0).play();
+        }
+    }
+
+    function Wo_NextReelVideo() {
+    
+        let currentId = parseInt($('.reels_list:not(.hidden)').data('id'));
+
+        $(".reels_list[data-id='" + currentId + "']").addClass('hidden');
+    
+        var currentIndex = $(".reels_list[data-id='" + currentId + "']").index();
+    
+        var nextIndex = currentIndex + 1;
+        var nextElement = $(".reels_list").eq(nextIndex);
+    
+        if (nextElement.length) {
+            playPauseVideos(nextElement);
+            $('.loading_reel').html('');
+            nextElement.removeClass('hidden');
+            window.history.pushState({}, "", $(nextElement).attr('data-reel-url'));
+            if ($(".reels_list[data-id='" + currentId + "']").length > 2) {
+            	return false;
+            }
+        }
+        else{
+            $('.loading_reel').html('');
+            $(".reels_list[data-id='" + currentId + "']").removeClass('hidden');
+        }
+
+	    $.get(Wo_Ajax_Requests_File(), {f:'get_next_reel_video'}, function(data) {
+		    if (data.status == 200) {
+                $('.story-img').unbind('swipeup', handler);
+                $('.story-img').unbind('swipedown', handler2);
+		    	$(".hidden_reels").append(data.html);
+                $('.story-img').bind('swipeup', handler);
+                $('.story-img').bind('swipedown', handler2);
+		    }
+	    });
+    }
+
+    function Wo_PreviousReelVideo() {
+    
+        let currentId = parseInt($('.reels_list:not(.hidden)').data('id'));
+
+        $(".reels_list[data-id='" + currentId + "']").addClass('hidden');
+    
+        var currentIndex = $(".reels_list[data-id='" + currentId + "']").index();
+        
+        var nextIndex = currentIndex;
+        if (currentIndex > 0) {
+            nextIndex = currentIndex - 1;
+        }
+        
+        var nextElement = $(".reels_list").eq(nextIndex);
+    
+        if (nextElement.length) {
+        	playPauseVideos(nextElement);
+
+            $('.loading_reel').html('');
+        	nextElement.removeClass('hidden');
+            window.history.pushState({}, "", $(nextElement).attr('data-reel-url'));
+        }
+        else{
+        	$('.loading_reel').html('');
+            $(".reels_list[data-id='" + currentId + "']").removeClass('hidden');
+        }
+    }
+    
+    $('.story-img').bind('swipeup', handler);
+    function handler(event) { 
+    	Wo_NextReelVideo();
+    }
+    
+    $('.story-img').bind('swipedown', handler2);
+    function handler2(event) { 
+    	Wo_PreviousReelVideo();
+    }
+    
+    function load_ajax_lightbox_emojii(path){
+       var emojjii = "😀*😁*😂*🤣*😃*😄*😅*😆*😉*😊*😋*😎*😍*😘*😗*😙*😚*🙂*🤗*🤩*🤔*🤨*😐*😑*😶*🙄*😏*😣*😥*😮*🤐*😯*😪*😫*😴*😌*😛*😜*😝*🤤*😒*😓*😔*😕*🙃*🤑*😲*☹️*🙁*😖*😞*😟*😤*😢*😭*😦*😧*😨*😩*🤯*😬*😰*😱*😳*🤪*😵*😡*😠*🤬*😷*🤒*🤕*🤢*🤮*🤧*😇*🤠*🤡*🤥*🤫*🤭*🧐*🤓*😈*👿*👹*👺*💀*👻*👽*🤖*💩*😺*😸*😹*😻*😼*😽*🙀*😿*😾*👶*👧*🧒*👦*👩*🧑*👨*👵*🧓*👴*👲*💅*🤳*💃*🕺*🕴*👫*👭*👬*💑*🤲*👐*🙌*👏*🤝*👍*👎*👊*✊*🤛*🤜*🤞*✌️*🤟*🤘*👌*👈*👉*👆*👇*☝️*✋*🤚*🖐*🖖*👋*🤙*💪*🖕*✍️*🙏*💍*💄*💋*👄*👅*👂*👃*👣*👁*👀*🧠*🗣*👤*👥";
+    
+    	$('.lightbox_real_emojiis').html("");
+    	$.each(emojjii.split('*'), function(key, value) {
+    		$('.lightbox_real_emojiis').append("<span class=\"emoji_holder\" onclick=\"Wo_AddEmo('"+ value +"', '.lighbox.comment-textarea.textarea');\"><span>"+ value + "</span>");
+    	});
+    }
+    
+      $(document).keydown(function(e) {
+        	$(".lighbox.textarea").triggeredAutocomplete({
+	            hidden: '#hidden_inputbox_comment_lighbox',
+	            source: Wo_Ajax_Requests_File() + "?f=mention",
+	            trigger: "@" 
+        	});
+      });
+</script>

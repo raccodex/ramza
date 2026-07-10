@@ -1,0 +1,17 @@
+<div class="modal fade" id="delete-post" role="dialog">
+	<div class="modal-dialog modal-md wow_mat_mdl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.25 4.30483C5.25 3.86352 5.347 3.42654 5.53545 3.01882C5.72391 2.61111 6.00013 2.24065 6.34835 1.9286C6.69657 1.61655 7.10997 1.36902 7.56494 1.20014C8.01991 1.03126 8.50754 0.944336 9 0.944336C9.49246 0.944336 9.98009 1.03126 10.4351 1.20014C10.89 1.36902 11.3034 1.61655 11.6516 1.9286C11.9999 2.24065 12.2761 2.61111 12.4645 3.01883C12.653 3.42654 12.75 3.86352 12.75 4.30483" class="icon_main" stroke-width="1.5"></path><path d="M1.5 4.30469H16.5M3.16667 4.30469V8.59074C3.16667 9.90327 3.35132 11.2092 3.71512 12.4694C4.21681 14.2073 5.66121 15.5022 7.43189 15.8014L7.56334 15.8236C8.51447 15.9844 9.4855 15.9844 10.4366 15.8236L10.5681 15.8014C12.3388 15.5022 13.7832 14.2073 14.2849 12.4694C14.6487 11.2092 14.8333 9.90326 14.8333 8.59071V4.30469H3.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M7.3335 8.44434V11.7777M10.6668 8.44434V11.7777" class="icon_main" stroke-width="1.5" stroke-linecap="round"></path></svg> <?php echo $wo['lang']['delete_post']; ?></h4>
+			</div>
+			<div class="modal-body">
+				<p><?php echo $wo['lang']['confirm_delete_post']; ?></p>
+			</div>
+			<div class="modal-footer">
+				<div class="ball-pulse"><div></div><div></div><div></div></div>
+				<button id="delete-all-post" type="button" onclick="Wo_DeletePost(<?php echo $wo['story']['id'];?>);" class="btn main btn-mat"><?php echo $wo['lang']['delete']; ?></button>
+			</div>
+		</div>
+	</div>
+</div>

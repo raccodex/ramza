@@ -1,0 +1,102 @@
+<div class="page-margin">
+	<div class="row">
+		<div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+		<div class="col-md-10 singlecol wo-create-forms">
+			<form class="form form-horizontal create-article-form" method="post" id="insert-funding" action="#">
+				<div class="page-margin mt-0">
+					<div class="wow_content popular_posts_hdr flex">
+						<h2><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.40515 6.37396C1.96569 4.11653 3.75566 2.37111 6.02612 1.86802L6.40434 1.78421C8.11449 1.40526 9.88682 1.40526 11.597 1.78421L11.9752 1.86802C14.2456 2.37111 16.0356 4.11653 16.5962 6.37396C17.0244 8.09846 17.0244 9.90154 16.5962 11.626C16.0356 13.8835 14.2456 15.6289 11.9752 16.132L11.597 16.2158C9.88682 16.5947 8.11448 16.5947 6.40434 16.2158L6.02611 16.132C3.75566 15.6289 1.96569 13.8835 1.40514 11.626C0.976931 9.90155 0.976931 8.09846 1.40515 6.37396Z" stroke="currentColor" stroke-width="1.5"></path><path d="M6.40434 1.78421C8.11449 1.40526 9.88682 1.40526 11.597 1.78421L11.9752 1.86802C14.2456 2.37111 16.0356 4.11653 16.5962 6.37396C17.0244 8.09846 17.0244 9.90154 16.5962 11.626C16.0356 13.8835 14.2456 15.6289 11.9752 16.132L11.597 16.2158C9.88682 16.5947 8.11448 16.5947 6.40434 16.2158L6.02611 16.132C3.75566 15.6289 1.96569 13.8835 1.40514 11.626C1.19104 10.7638 1.08398 9.8819 1.08398 9" class="icon_main" stroke-width="1.5" stroke-linecap="round"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M9.00021 4.83337C9.31883 4.83337 9.57713 5.0767 9.57713 5.37685V5.82149H9.64103C10.7139 5.82149 11.5 6.70017 11.5 7.68249C11.5 7.98264 11.2417 8.22596 10.9231 8.22596C10.6045 8.22596 10.3462 7.98264 10.3462 7.68249C10.3462 7.20951 9.98423 6.90844 9.64103 6.90844H9.57713V8.61941L10.3561 8.88624C11.0639 9.12872 11.5 9.78816 11.5 10.4866C11.5 11.3755 10.7876 12.1785 9.8055 12.1785H9.57713V12.6232C9.57713 12.9234 9.31883 13.1667 9.00021 13.1667C8.68158 13.1667 8.42328 12.9234 8.42328 12.6232V12.1785H8.35897C7.28606 12.1785 6.5 11.2999 6.5 10.3175C6.5 10.0174 6.7583 9.77405 7.07692 9.77405C7.39555 9.77405 7.65385 10.0174 7.65385 10.3175C7.65385 10.7905 8.01577 11.0916 8.35897 11.0916H8.42328V9.38075L7.64393 9.11377C6.93608 8.8713 6.5 8.21186 6.5 7.51346C6.5 6.62449 7.21243 5.82149 8.1945 5.82149H8.42328V5.37685C8.42328 5.0767 8.68158 4.83337 9.00021 4.83337ZM8.42328 6.90844H8.1945C7.94213 6.90844 7.65385 7.13384 7.65385 7.51346C7.65385 7.80376 7.83339 8.02208 8.03825 8.09226L8.42328 8.22416V6.90844ZM9.57713 9.776V11.0916H9.8055C10.0579 11.0916 10.3462 10.8662 10.3462 10.4866C10.3462 10.1963 10.1666 9.97793 9.96175 9.90776L9.57713 9.776Z" fill="currentColor"></path></svg>&nbsp;<?php echo $wo['lang']['edit_funding'];?></h2>
+						<div class="btnss">
+							<a class="btn btn-mat btn-default" data-ajax="?link1=my_funding" href="<?php echo Wo_SeoLink('index.php?link1=my_funding');?>"><?php echo $wo['lang']['cancel'];?></a>
+							<button class="btn btn-main btn-mat add_wow_loader" type="submit"><?php echo $wo['lang']['publish']; ?></button>
+						</div>
+					</div>
+				</div>
+			  
+				<div class="page-margin wow_content wow_sett_content">
+					<div class="setting-update-alert" id="funding-alert"></div>
+					
+					<div class="wow_form_fields">
+						<label for="title"><?php echo $wo['lang']['title']; ?></label>
+						<input id="title" name="title" type="text" value="<?php echo($wo['fund']['title']) ?>">
+					</div>
+					<div class="wow_form_fields">
+						<label for="amount"><?php echo $wo['lang']['fund_amount']; ?></label>
+						<input id="amount" name="amount" type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" value="<?php echo($wo['fund']['amount']) ?>">
+					</div>
+					<div class="wow_form_fields">
+						<label for="description"><?php echo $wo['lang']['description']; ?></label>
+						<textarea name="description" id="description" type="text" rows="6"><?php echo(br2nl($wo['fund']['description'])); ?></textarea>
+					</div>
+					<div class="wow_form_fields">
+						<label><?php echo $wo['lang']['image'];?></label>
+						<div class="wow_fcov_image" data-block="thumdrop-zone">
+							<div id="wow_fcov_img_holder">
+								<img src="<?php echo $wo['fund']['image'];?>">
+							</div>
+							<div class="upload_ad_image" onclick="document.getElementById('thumbnail').click(); return false">
+								<div class="upload_ad_image_content">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M8.5,13.5L11,16.5L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z"></path></svg> <?php echo $wo['lang']['drop_img_here'] ?> <?php echo $wo['lang']['or']; ?> <?php echo $wo['lang']['browse_to_upload']; ?>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+
+					<input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+					<input type="hidden" name="id" value="<?php echo($wo['fund']['id']) ?>">
+					<input type="file" class="hidden" id="thumbnail" name="image" accept="image/*">
+				
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- .row -->
+</div>
+<script>
+jQuery(document).ready(function($) {
+	var thumb_drop_block = $("[data-block='thumdrop-zone']");
+    if (typeof(window.FileReader) == 'undefined') {
+      thumb_drop_block.find('.thumbnail-rendderer div').text('Drag drop is not supported in your browser!');
+    }
+    else{
+      thumb_drop_block[0].ondragover = function() {
+          thumb_drop_block.addClass('hover');
+          return false;
+      };
+          
+      thumb_drop_block[0].ondragleave = function() {
+          thumb_drop_block.removeClass('hover');
+          return false;
+      };
+
+      thumb_drop_block[0].ondrop = function(event) {
+          event.preventDefault();
+          thumb_drop_block.removeClass('hover');
+          var file = event.dataTransfer.files;
+          $("#thumbnail").prop('files', file);
+          $("#wow_fcov_img_holder").html("<img src='" + window.URL.createObjectURL(event.dataTransfer.files[0]) + "' alt='Picture'>")
+      };
+    }
+
+    $("#thumbnail").change(function(event) {
+      $("#wow_fcov_img_holder").html("<img src='" + window.URL.createObjectURL(this.files[0]) + "' alt='Picture'>")
+    });
+
+    $('#insert-funding').ajaxForm({
+      url: Wo_Ajax_Requests_File() + '?f=funding&s=edit_funding',
+      beforeSend: function() {
+        $('.wo_settings_page').find('.add_wow_loader').addClass('btn-loading');
+      },
+      success: function(data) {
+        if (data['status'] == 200) {
+          $("#funding-alert").html('<div class="alert alert-success">'+ data['message'] +'</div>');
+          window.location = data.url;
+        } else if (data['message']) {
+          $("#funding-alert").html('<div class="alert alert-danger">' + data['message'] + '</div>');
+        } 
+        $('.wo_settings_page').find('.add_wow_loader').removeClass('btn-loading');
+      }});
+ });
+
+</script> 

@@ -1,0 +1,38 @@
+<div class="page-margin">
+	<div class="row">
+		<div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+		<div class="col-md-7 singlecol">
+			<div class="page-margin mt-0">
+				<div class="wow_content popular_posts_hdr">
+					<h2><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="9.83398" y="4.83334" width="3.33333" height="3.33333" rx="1.66667" stroke="currentColor" stroke-width="1.5"></rect><path d="M2.93174 13.3345L4.38082 11.8854C5.73499 10.5312 7.93054 10.5312 9.28471 11.8854L10.7338 13.3345M10.7338 13.3345L11.3207 12.7475C12.4021 11.6661 14.1786 11.7467 15.1576 12.9216L15.5017 13.3345M10.7338 13.3345L12.901 15.5017M1.79406 11.5413C1.40198 9.86979 1.40198 8.13021 1.79406 6.45869C2.33698 4.14417 4.14417 2.33698 6.45869 1.79406C8.13021 1.40198 9.86979 1.40198 11.5413 1.79406C13.8558 2.33698 15.663 4.14417 16.2059 6.4587C16.598 8.13021 16.598 9.86979 16.2059 11.5413C15.663 13.8558 13.8558 15.663 11.5413 16.2059C9.86979 16.598 8.13021 16.598 6.4587 16.2059C4.14418 15.663 2.33698 13.8558 1.79406 11.5413Z" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>&nbsp;<?php echo $wo['lang']['albums']; ?></h2>
+				</div>
+			</div>
+
+			<div class="page-margin wow_content wow_big_head_link">
+				<ul class="list-unstyled">
+					<li class="active"><a href="<?php echo Wo_SeoLink('index.php?link1=albums'); ?>" data-ajax="?link1=albums"><?php echo $wo['lang']['my_albums'] ?></a></li>
+				</ul>
+			</div>
+			<div class="wo_my_pages">
+				<div class="row cool-style-album-row real_album_row">
+					<div class="cool-style-album real_album col-xs-12 col-sm-12 col-lg-3">
+						<a class="btn btn-main btn-mat btn_create_big album" href="<?php echo Wo_SeoLink('index.php?link1=create-album');?>" data-ajax="?link1=create-album">
+							<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30.4119 21.0827C29.326 25.7117 25.7117 29.3261 21.0826 30.4119C17.7396 31.1961 14.2604 31.1961 10.9174 30.4119C6.28835 29.3261 2.67395 25.7117 1.58813 21.0827C0.803958 17.7396 0.803958 14.2605 1.58813 10.9175C2.67395 6.28841 6.28834 2.67402 10.9174 1.58819C14.2604 0.804021 17.7396 0.804021 21.0826 1.58819C25.7116 2.67401 29.326 6.2884 30.4119 10.9174C31.196 14.2605 31.196 17.7396 30.4119 21.0827Z" stroke="currentColor" stroke-width="2"/><path d="M30.4119 21.0827C31.196 17.7396 31.196 14.2605 30.4119 10.9174C29.326 6.2884 25.7116 2.67401 21.0826 1.58819C17.7396 0.804021 14.2604 0.804021 10.9174 1.58819C6.28834 2.67402 2.67395 6.28841 1.58812 10.9175C0.803957 14.2605 0.803957 17.7396 1.58813 21.0827C2.67395 25.7117 6.28834 29.3261 10.9174 30.4119" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20.1673 16H11.834M16.0007 20.1666L16.0007 11.8333" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> <?php echo $wo['lang']['create'] ?>
+						</a>
+					</div>
+					<?php
+						$albums = Wo_GetUserAlbums($wo['user_id']);
+						if (count($albums) > 0) {
+							foreach ($albums as $wo['album']) {
+								echo Wo_LoadPage('album/album-list');
+							}
+						} else {
+							echo '<div class="cool-style-album real_album col-xs-12 col-sm-12 col-lg-9"><div class="wow_content btn_create_big album"><div class="empty_state"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="9.83398" y="4.83334" width="3.33333" height="3.33333" rx="1.66667" stroke="currentColor" stroke-width="1.5"></rect><path d="M2.93174 13.3345L4.38082 11.8854C5.73499 10.5312 7.93054 10.5312 9.28471 11.8854L10.7338 13.3345M10.7338 13.3345L11.3207 12.7475C12.4021 11.6661 14.1786 11.7467 15.1576 12.9216L15.5017 13.3345M10.7338 13.3345L12.901 15.5017M1.79406 11.5413C1.40198 9.86979 1.40198 8.13021 1.79406 6.45869C2.33698 4.14417 4.14417 2.33698 6.45869 1.79406C8.13021 1.40198 9.86979 1.40198 11.5413 1.79406C13.8558 2.33698 15.663 4.14417 16.2059 6.4587C16.598 8.13021 16.598 9.86979 16.2059 11.5413C15.663 13.8558 13.8558 15.663 11.5413 16.2059C9.86979 16.598 8.13021 16.598 6.4587 16.2059C4.14418 15.663 2.33698 13.8558 1.79406 11.5413Z" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg> ' . $wo['lang']['no_albums_found'] . '</div></div></div>';
+						}
+					?>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

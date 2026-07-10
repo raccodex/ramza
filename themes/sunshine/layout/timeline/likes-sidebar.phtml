@@ -1,0 +1,16 @@
+<ul class="page-margin wow_content negg_padd list-unstyled event-options-list" id="sidebar-pages-list-container">
+	<div class="wo_page_hdng profile_hdng_side">
+		<div class="wo_page_hdng_innr">
+			<a href="<?php echo Wo_SeoLink('index.php?link1=timeline&u=' . $wo['user_profile']['username'] . '&type=likes');?>" data-ajax="?link1=timeline&u=<?php echo $wo['user_profile']['username']?>&type=likes"><?php echo $wo['lang']['likes'];?></a>&nbsp;<div style="font-weight: normal">(<?php echo number_format($wo['user_profile']['details']['likes_count']);?>)</div>
+		</div>
+	</div>
+	<li>
+		<div class="sidebar-likes-container profile_side_users"><?php 
+			foreach (Wo_GetLikes($wo['user_profile']['user_id'], 'profile', 5 , 0, array('in' => 'profile_sidebar', 'likes_data' => $wo['user_profile']['likes_data'])) as $wo['PageList']) {
+				$wo['PageList']['user_name'] = $wo['PageList']['name'];
+				echo Wo_LoadPage('sidebar/sidebar-page-list');
+			}
+			?></div>
+	</li>
+	<li><div class="clear"></div></li>
+</ul>

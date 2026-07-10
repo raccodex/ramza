@@ -1,0 +1,162 @@
+RACSOCIAL PHP 8.2 MODERNIZATION
+PHP 8.2 COMPATIBILITY MATRIX
+Generated: 2026-07-10 (Asia/Karachi)
+Runtime under test: PHP 8.2.30 CLI, error_reporting=E_ALL
+Report status: IN PROGRESS - initial static inventory complete; lint and runtime remediation are active.
+
+1. COMPATIBILITY GATE
+---------------------
+The minimum-version declarations remain at PHP 7.1 during the audit. They will
+not be raised to PHP 8.2 until executable first-party lint passes and available
+runtime probes no longer produce PHP 8.2 fatal/deprecation failures.
+
+Known minimum-version locations:
+  assets/init.php: version_compare(PHP_VERSION, '7.1.0', '>=')
+  install/index.php: requirements check and PHP 7.1+ requirement text
+  admin-panel/pages/changelog/content.phtml already claims PHP 8.2 support; this
+  claim is historical text and is not treated as test evidence.
+
+2. EXECUTABLE SCOPE
+-------------------
+First-party executable candidates: 2,029 PHP/PHTML files.
+Excluded from direct PHP lint: 28 Handlebars-style files under
+themes/*/layout/nodejs/. They require separate template validation after loader
+mapping, per the special linting rule.
+
+Vendor scope: 16 non-vendor Composer lock roots plus runtime libraries without
+lock files. Vendor code will be linted/reviewed separately so first-party and
+third-party failures remain distinguishable.
+
+3. INITIAL COMPATIBILITY MATRIX
+-------------------------------
+Category | Initial status | Evidence/action
+
+PHP 8.2 executable syntax
+  IN PROGRESS
+  Serial 2,029-file php -l baseline exceeded the 60-second command ceiling before
+  producing a complete aggregate. Bounded directory batches are being run next.
+
+Removed APIs: create_function/each/split/ereg/mysql/mcrypt/magic-quotes/money_format
+  NOT YET CLASSIFIED
+  Repository-wide first-party scans pending.
+
+Curly-brace offsets and deprecated ${var} interpolation
+  NOT YET CLASSIFIED
+  Token-aware/static scans pending; regex hits will be reviewed to avoid JS/CSS
+  template false positives.
+
+Required-after-optional parameters
+  NOT YET CLASSIFIED
+  PHP lint/runtime declarations and targeted function scan pending.
+
+Invalid callbacks/non-static calls
+  NOT YET CLASSIFIED
+  Requires call-site review and runtime paths.
+
+count()/sizeof() on null or non-countable values
+  NOT YET CLASSIFIED
+  High-risk in legacy request/data paths. Static candidates and runtime evidence pending.
+
+Null/scalar array access and undefined keys/properties
+  NOT YET CLASSIFIED
+  Requires E_ALL runtime testing; syntax lint cannot establish compatibility.
+
+Null passed to non-nullable internal functions
+  NOT YET CLASSIFIED
+  Requires targeted scan plus runtime testing.
+
+implode() argument order
+  NOT YET CLASSIFIED
+  Static scan pending.
+
+PHP 8 loose-comparison changes
+  NOT YET CLASSIFIED
+  Security-sensitive authentication/payment comparisons require manual review.
+
+Dynamic properties
+  NOT YET CLASSIFIED
+  First-party classes and database result object usage require separate review.
+  #[AllowDynamicProperties] will not be used as a blanket fix.
+
+Interface/inheritance signatures
+  NOT YET CLASSIFIED
+  Vendor and first-party class lint/review pending.
+
+FILTER_SANITIZE_STRING
+  NOT YET CLASSIFIED
+  Static scan pending; replacements must preserve payload contracts.
+
+utf8_encode()/utf8_decode()
+  NOT YET CLASSIFIED
+  Static scan pending.
+
+MySQLi exception behaviour
+  FAIL - INSTALLER DESIGN
+  install/index.php globally suppresses errors and directly calls mysqli_connect;
+  it exposes mysqli_connect_error() in UI and has no explicit exception boundary.
+  The bootstrap/runtime database layer still needs PHP 8.2 runtime testing.
+
+Extension resource-to-object changes
+  NOT YET CLASSIFIED
+  GD/cURL/OpenSSL/file handles and integration paths pending.
+
+Required PHP extensions
+  PASS - CLI PRESENCE ONLY
+  mysqli, mbstring, curl, gd, json, openssl, fileinfo, zip and exif are loaded.
+  Behaviour and web-SAPI availability are not yet tested.
+
+Session/cookie behaviour
+  PARTIAL / NEEDS HARDENING
+  assets/init.php enables HttpOnly and use_only_cookies before session_start(),
+  but uses broad @ini_set calls. Secure/SameSite flags and authentication session
+  regeneration require flow tracing.
+
+Installer compatibility
+  FAIL - PRE-EXISTING
+  It expects ../ramza.sql while only wowonder.sql exists, builds PHP/JSON through
+  string concatenation, uses a fragile line importer, inserts SHA-1 admin password,
+  prescribes chmod 0777 and has no CSRF/session state/install lock.
+
+Admin compatibility
+  NOT YET CLASSIFIED
+  admincp.php applies scalar string functions to every request value; array inputs
+  can cause PHP 8 TypeError. Loader/runtime requires a reachable database.
+
+API compatibility
+  NOT YET CLASSIFIED
+  Legacy, app and v2 routes are inventoried but not database-runtime tested.
+
+Cron compatibility
+  NOT RUN
+  cron-job.php is mutating and will only run against a cloned database.
+
+4. THIRD-PARTY PACKAGE MATRIX STATUS
+------------------------------------
+Package extraction/review is pending. Lock roots inventoried:
+  main assets/libraries, Apple, Braintree, cloud/Google Cloud, DB wrapper,
+  Faker, FTP, Google Auth, Google libraries, PayFast, PHPMailer, S3/AWS,
+  SimpleImage, social-login, Stripe and Twilio.
+
+No package has been updated. Local modifications must be identified before any
+vendor replacement. No mandatory root Composer production build will be added.
+
+5. TEST ENVIRONMENT LIMITATIONS
+-------------------------------
+  - Only PHP 8.2.30 is available; no legacy PHP baseline executable was found.
+  - Database credentials are present locally but have not been printed or copied.
+  - A database connectivity probe and safe HTTP bootstrap are still pending.
+  - No clean installer database, cloned upgrade database, test accounts, mail/payment
+    sandboxes or browser automation configuration has yet been established.
+  - A syntax pass is not sufficient evidence for functional PHP 8.2 compatibility.
+
+6. REMEDIATION POLICY
+---------------------
+  - Fix root causes in first-party code; do not broadly suppress E_ALL.
+  - Do not blanket-apply #[AllowDynamicProperties].
+  - Preserve routes, slugs, selectors, request fields and response formats.
+  - Review usages before changing shared helpers.
+  - Separate first-party fixes from vendor upgrades.
+  - Keep each compatibility batch backed up and independently testable.
+  - Raise runtime requirements to PHP 8.2 only after the compatibility gate passes.
+
+END OF INITIAL MATRIX

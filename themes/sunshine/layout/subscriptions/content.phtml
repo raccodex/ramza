@@ -1,0 +1,81 @@
+<div class="page-margin">
+    <div class="row">
+        <div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+        <div class="col-md-7 singlecol">
+			<div class="page-margin mt-0">
+				<div class="wow_content popular_posts_hdr">
+					<h2><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 8H21.5M5.99988 12H9.99988" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><rect x="2" y="3" width="20" height="18" rx="4" class="icon_main" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></rect></svg>&nbsp;<?php echo $wo['lang']['subscriptions'] ?></h2>
+				</div>
+			</div>
+			
+			<div class="subscription"></div>
+			
+            <?php if (!empty($wo['monetizations'])) { ?>
+				<div class="row wo_monetize_row">
+					<?php foreach ($wo['monetizations'] as $key => $wo['monetization']) { ?>
+						<?php $monetization_owner = Wo_UserData($wo['monetization']->user_id)?>
+						<div class="col-lg-4 col-md-6 address_<?php echo $wo['monetization']->id ?>">
+							<div class="wow_content wo_monetize_sub">
+								<div class="profile">
+									<img src="<?php echo $monetization_owner['avatar'] ?>">
+									<div>
+										<h6><?php echo $monetization_owner['name'] ?></h6>
+										<p>@<?php echo $monetization_owner['username'] ?></p>
+									</div>
+								</div>
+								<hr>
+								<div class="head nogap">
+									<p class="title"><?php echo $wo['monetization']->title ?></p>
+									<p class="price"><?php echo $wo['config']['currency_symbol_array'][$wo['currencies'][$wo['monetization']->currency]['text']] ?><?php echo  number_format($wo['monetization']->price, 2); ?><small>/ <?php echo $wo['lang'][$wo['monetization']->period]; ?></small></p>
+								</div>
+								<div class="foot">
+									<a href="javascript:void(0)" class="btn btn-block btn-mat btn-main" onclick="DeleteSubscription('<?php echo $key ?>','monetization', 'hide')"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg> <?php echo $wo['lang']['unsubscribe'] ?></a>
+								</div>
+							</div>
+						</div>
+					<?php } ?>
+				</div>
+            <?php } else { ?>
+                <div class="wow_content">
+                    <div class="search-filter-center-text empty_state">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20 22H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1zm-1-2V4H5v16h14zM7 6h4v4H7V6zm0 6h10v2H7v-2zm0 4h10v2H7v-2zm6-9h4v2h-4V7z" fill="currentColor"></path></svg> <?php echo $wo['lang']['subscribe_to_any_users_yet'];?>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
+</div>
+<script>
+    function DeleteSubscription(id,subscriptionType, type = 'show') {
+        if (type == 'hide') {
+            $('#unsubscribe-monetization').find('.btn-mat').attr('onclick', "DeleteSubscription('" + id + "', '" + subscriptionType + "')");
+            $('#unsubscribe-monetization').modal('show');
+            return false;
+        }
+        $('.address_' + id).slideUp();
+        $('.address_' + id).remove();
+        $('#edit_address_modal_' + id).remove();
+        $.ajax({
+            url: Wo_Ajax_Requests_File() + '?f=wallet&s=delete-subscription',
+            type: 'POST',
+            data: {id: id, type: subscriptionType},
+        })
+            .done(function(data) {
+                if (data.status == 200) {
+                    $('.subscription').html('<div class="alert alert-success"> ' +
+                        data.message
+                        + '</div>');
+                    setTimeout(function() {
+                        window.location.href = "<?php echo Wo_SeoLink('index.php?link1=subscriptions') ?>";
+                    }, 2000);
+                } else {
+                    $('.subscription').html('<div class="alert alert-danger"> ' +
+                        data.message
+                        + '</div>');
+                }
+            })
+            .fail(function() {
+                console.log("error");
+            })
+    }
+</script>

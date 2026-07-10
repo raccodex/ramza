@@ -1,0 +1,87 @@
+<div class="page-margin">
+    <div class="row">
+        <div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+        <div class="col-md-7 singlecol" data-page-type="watch">
+            <div class="page-margin wow_content mt-0">
+                <div class="wo_page_hdng pag_neg_padd pag_alone">
+                    <div class="wo_page_hdng_innr big_size">
+                        <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M22 4V13.81C21.12 13.3 20.1 13 19 13C15.69 13 13 15.69 13 19C13 19.34 13.04 19.67 13.09 20H4C2.9 20 2 19.11 2 18V6C2 4.89 2.9 4 4 4H5L7 8H10L8 4H10L12 8H15L13 4H15L17 8H20L18 4H22M17 22L22 19L17 16V22Z" /></svg></span> <?php echo $wo['lang']['watch']; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="watch_posts">
+                <?php
+                $stories = Wo_GetPosts(array('filter_by' => 'local_video','not_monetization' => true));
+                if (count($stories) <= 0) {
+                    echo Wo_LoadPage('watch/no-watch-videos');
+                } else {
+                    foreach ($stories as $wo['story']) {
+                        echo Wo_LoadPage('story/content');
+                    }
+                }
+                ?>
+            </div>
+            <?php if (count($stories) > 0) { ?>
+            <div class="load-more pointer" id="load-more-posts" onclick="Wo_GetMoreWatchPosts();">
+                <span class="btn btn-default">
+                    <i class="fa fa-chevron-circle-down progress-icon" data-icon="chevron-circle-down"></i> &nbsp;<?php echo $wo['lang']['load_more_posts'];?>
+                </span>
+            </div>
+            <?php } ?>
+        </div>
+    </div>
+</div>
+<script>
+    var scrolledW = 0;
+    $(function () {
+        $(window).scroll(function () {
+          var nearToBottom = 100;
+          if($('.watch_posts').length > 0) {
+              if ($(window).scrollTop() + $(window).height() > $(document).height() - nearToBottom) {
+                if (scrolledW == 0) {
+                   scrolledW = 1;
+                   Wo_GetMoreWatchPosts();
+                }
+              }
+          }
+        });
+    });
+
+
+    function Wo_GetMoreWatchPosts() {
+        var after_post_id = $('div.post:last').attr('data-post-id');
+        $('.watch_posts').append('<div class="hidden loading-status loading-single"></div>');
+          $('#load-more-posts').hide();
+          $('.loading-status').hide().html('<div class="wo_loading_post"><div class="wo_post_skel_head"><div class="skel skel_avatar"></div><div><div class="skel skel_noti_name"></div><div class="skel skel_noti_time"></div></div></div><div class="wo_post_skel_body"><div class="skel skel_desc"></div><div class="skel skel_desc"></div><div class="skel skel_desc"></div></div><div class="wo_post_skel_foot"><div class="skel skel_action"></div><div class="skel skel_action"></div><div class="skel skel_action"></div></div></div>').removeClass('hidden').show();
+          Wo_progressIconLoader($('#load-more-posts'));
+
+        $.get(Wo_Ajax_Requests_File(), {
+            f: 'watch',
+            s: 'load_more_posts',
+            after_post_id: after_post_id
+          }, function (data) {
+            if (data.length == 0) {
+              $('body').attr('no-more-posts', "true");
+              $('#load-more-posts').html('<div class="white-loading list-group"><div class="cs-loader"><div class="no-more-posts-to-show">' + $('#get_no_posts_name').val() + '</div></div>');
+              scrolledW = 1;
+            }
+            else{
+                $('body').removeAttr('no-more-posts');
+                $('.watch_posts').append(data);
+                scrolledW = 0;
+            }
+            $('#load-more-posts').show();
+            $('.loading-status').remove();
+            Wo_progressIconLoader($('#load-more-posts'));
+        });
+    }
+    <?php if(isset($wo['single_story'])) { ?>
+    var single_post_id = <?php echo $wo['single_story']->id;?>;
+    $('.lightbox-container').remove();
+    setTimeout(() => {
+        Wo_CloseLightbox()
+        Wo_OpenLightBox(single_post_id)}, 100)
+    <?php } ?>
+</script>
+

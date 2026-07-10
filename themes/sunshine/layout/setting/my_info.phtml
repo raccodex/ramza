@@ -1,0 +1,137 @@
+<form class="setting-general-form form-horizontal" method="post">
+	<div class="page-margin mt-0">
+		<div class="wow_content popular_posts_hdr flex">
+			<h2>&nbsp;<?php echo $wo['lang']['my_info']; ?></h2>
+			<div class="btnss hiddddddddd">
+				<button type="submit" class="btn btn-main btn-mat add_wow_loader"><?php echo $wo['lang']['generate_file']; ?></button>
+			</div>
+		</div>
+	</div>
+
+	<div class="">
+
+		<?php
+		if (!empty($wo['setting']['notification_settings'])) {
+			//$wo['setting']['notification_settings'] = unserialize(html_entity_decode($wo['setting']['notification_settings']));
+		}
+		?>
+	
+		<div class="setting-general-alert setting-update-alert"></div>
+
+		<div class="select_radio_btn small_rbtn setting_down_info_btns" id="download_steps_comp">
+			<h4><?php echo $wo['lang']['to_download']?></h4>
+			<div class="select_radio_btn_innr">
+				<label>
+					<input type="checkbox" name="my_information" id="my_information" value="1">
+					<div class="sr_btn_lab_innr">
+						<div class="sr_btn_img">
+							<svg width="59" height="59" viewBox="0 0 59 59" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.42379 22.9936C10.9364 16.394 15.9715 11.241 22.42 9.69298C27.077 8.575 31.9237 8.575 36.5807 9.69298C43.0292 11.241 48.0643 16.3941 49.5769 22.9936C50.6693 27.7598 50.6693 32.72 49.5769 37.4861C48.0643 44.0857 43.0292 49.2387 36.5807 50.7868C31.9237 51.9048 27.077 51.9048 22.42 50.7868C15.9715 49.2387 10.9364 44.0857 9.42379 37.4861C8.33139 32.72 8.33139 27.7598 9.42379 22.9936Z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M29.5 31.958H36.875M22.125 39.333H36.875" class="icon_main" stroke-width="3.5" stroke-linecap="round"/></svg>
+						</div>
+						<span><?php echo $wo['lang']['my_information'];?></span>
+					</div>
+				</label>
+				<label>
+					<input type="checkbox" name="posts" id="posts" value="1">
+					<div class="sr_btn_lab_innr">
+						<div class="sr_btn_img">
+							<svg width="59" height="59" viewBox="0 0 59 59" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.6523 22.9936C12.1649 16.394 17.2 11.241 23.6485 9.69298C28.3055 8.575 33.1522 8.575 37.8092 9.69298C44.2577 11.241 49.2928 16.3941 50.8054 22.9936C51.8978 27.7598 51.8978 32.72 50.8054 37.4861C49.2928 44.0857 44.2577 49.2387 37.8092 50.7868C33.1522 51.9048 28.3055 51.9048 23.6485 50.7868C17.2 49.2387 12.1649 44.0857 10.6523 37.4861C9.55991 32.72 9.55991 27.7598 10.6523 22.9936Z" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M21.0684 7.375V13.5546M40.3905 7.375V13.5546M23.4836 37.6552H30.7294M23.4836 30.2396H37.9752" class="icon_main" stroke-width="3.5" stroke-linecap="round"/></svg>
+						</div>
+						<span><?php echo $wo['lang']['posts'];?></span>
+					</div>
+				</label>
+				<?php if ($wo['config']['pages'] == 1) { ?>
+				<label>
+					<input type="checkbox" name="pages" id="pages" value="1">
+					<div class="sr_btn_lab_innr">
+						<div class="sr_btn_img">
+							<svg width="59" height="59" viewBox="0 0 59 59" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.75 35.5529H39.8027C43.2829 35.5529 45.4103 31.4022 43.5767 28.1896L42.373 26.0807C41.1885 24.0054 41.1885 21.3805 42.373 19.3052L43.5767 17.1963C45.4103 13.9837 43.2829 9.83301 39.8027 9.83301L14.75 9.83301L14.75 35.5529ZM14.75 35.5529L14.75 49.1663" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M39.8027 35.5529C43.2829 35.5529 45.4103 31.4022 43.5767 28.1896L42.373 26.0807C41.1885 24.0054 41.1885 21.3805 42.373 19.3052L43.5767 17.1963C45.4103 13.9837 43.2829 9.83301 39.8027 9.83301L14.75 9.83301L14.75 17.7763" class="icon_main" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+						</div>
+						<span><?php echo $wo['lang']['pages'];?></span>
+					</div>
+				</label>
+				<?php } ?>
+				<?php if ($wo['config']['groups'] == 1) { ?>
+				<label>
+					<input type="checkbox" name="groups" id="groups" value="1">
+					<div class="sr_btn_lab_innr">
+						<div class="sr_btn_img">
+							<svg width="45" height="39" viewBox="0 0 45 39" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 33.9743C1.5 29.4694 4.77341 25.6321 9.22208 24.9221L9.6228 24.8582C13.1851 24.2897 16.8149 24.2897 20.3772 24.8582L20.7779 24.9221C25.2266 25.6321 28.5 29.4694 28.5 33.9743C28.5 35.9215 26.9215 37.5 24.9743 37.5H5.02568C3.0785 37.5 1.5 35.9215 1.5 33.9743Z" stroke="currentColor" stroke-width="2.5"/><path d="M22.875 9.375C22.875 13.7242 19.3492 17.25 15 17.25C10.6508 17.25 7.125 13.7242 7.125 9.375C7.125 5.02576 10.6508 1.5 15 1.5C19.3492 1.5 22.875 5.02576 22.875 9.375Z" stroke="currentColor" stroke-width="2.5"/><path d="M28.5 17.25C33.3325 17.25 37.25 13.7242 37.25 9.375C37.25 5.02576 33.3325 1.5 28.5 1.5M34.4747 37.5H39.5826C41.7461 37.5 43.5 35.9215 43.5 33.9743C43.5 29.4694 39.8629 25.6321 34.9199 24.9221V24.9221C34.6235 24.8795 34.3238 24.8582 34.0243 24.8582C33.2241 24.8582 32.9762 24.8582 31.6029 24.8582" class="icon_main" stroke-width="2.5" stroke-linecap="round"/></svg>
+						</div>
+						<span><?php echo $wo['lang']['groups'];?></span>
+					</div>
+				</label>
+				<?php } ?>
+				<?php if ($wo['config']['connectivitySystem'] == 0) { ?>
+				<label>
+					<input type="checkbox" name="following" id="following" value="1">
+					<div class="sr_btn_lab_innr">
+						<div class="sr_btn_img">
+							<svg width="39" height="39" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 33.9743C1.5 29.4694 4.77341 25.6321 9.22208 24.9221L9.6228 24.8582C13.1851 24.2897 16.8149 24.2897 20.3772 24.8582L20.7779 24.9221C25.2266 25.6321 28.5 29.4694 28.5 33.9743C28.5 35.9215 26.9215 37.5 24.9743 37.5H5.02568C3.0785 37.5 1.5 35.9215 1.5 33.9743Z" stroke="currentColor" stroke-width="2.5"/><path d="M22.875 9.375C22.875 13.7242 19.3492 17.25 15 17.25C10.6508 17.25 7.125 13.7242 7.125 9.375C7.125 5.02576 10.6508 1.5 15 1.5C19.3492 1.5 22.875 5.02576 22.875 9.375Z" stroke="currentColor" stroke-width="2.5"/><path d="M37.5 19H24.5M31 25.5L31 12.5" class="icon_main" stroke-width="3" stroke-linecap="round"/></svg>
+						</div>
+						<span><?php echo $wo['lang']['following'];?></span>
+					</div>
+				</label>
+				<label>
+					<input type="checkbox" name="followers" id="followers" value="1">
+					<div class="sr_btn_lab_innr">
+						<div class="sr_btn_img">
+							<svg width="51" height="33" viewBox="0 0 51 33" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.4375 28.3609C14.4375 24.6693 17.1199 21.5249 20.7653 20.9431L21.0937 20.8907C24.0128 20.4249 26.9872 20.4249 29.9063 20.8907L30.2347 20.9431C33.8801 21.5249 36.5625 24.6693 36.5625 28.3609C36.5625 29.9565 35.269 31.25 33.6734 31.25H17.3266C15.731 31.25 14.4375 29.9565 14.4375 28.3609Z" stroke="currentColor" stroke-width="2.5"/><path d="M31.9531 8.20312C31.9531 11.7671 29.064 14.6562 25.5 14.6562C21.936 14.6562 19.0469 11.7671 19.0469 8.20312C19.0469 4.63916 21.936 1.75 25.5 1.75C29.064 1.75 31.9531 4.63916 31.9531 8.20312Z" stroke="currentColor" stroke-width="2.5"/><path d="M37.3818 17.4222C41.0778 17.4222 44.074 15.0146 44.074 12.0446C44.074 9.07463 41.0778 6.66699 37.3818 6.66699M41.9514 31.2503H45.858C47.5127 31.2503 48.8541 30.1724 48.8541 28.8427C48.8541 25.7664 46.0723 23.1461 42.2919 22.6613L41.9514 22.6176C41.034 22.6176 40.9791 22.6176 39.755 22.6176" class="icon_main" stroke-width="2.5" stroke-linecap="round"/><path d="M13.6182 17.4222C9.9222 17.4222 6.92603 15.0146 6.92603 12.0446C6.92603 9.07463 9.9222 6.66699 13.6182 6.66699M9.04865 31.2503H5.14204C3.48734 31.2503 2.14594 30.1724 2.14594 28.8427C2.14594 25.7664 4.92767 23.1461 8.70812 22.6613L9.04865 22.6176C9.96596 22.6176 10.0209 22.6176 11.245 22.6176" class="icon_main" stroke-width="2.5" stroke-linecap="round"/></svg>
+						</div>
+						<span><?php echo $wo['lang']['followers'];?></span>
+					</div>
+				</label>
+			<?php }else{ ?>
+				<label>
+					<input type="checkbox" name="friends" id="friends" value="1">
+					<div class="sr_btn_lab_innr">
+						<div class="sr_btn_img">
+							<svg width="51" height="33" viewBox="0 0 51 33" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.4375 28.3609C14.4375 24.6693 17.1199 21.5249 20.7653 20.9431L21.0937 20.8907C24.0128 20.4249 26.9872 20.4249 29.9063 20.8907L30.2347 20.9431C33.8801 21.5249 36.5625 24.6693 36.5625 28.3609C36.5625 29.9565 35.269 31.25 33.6734 31.25H17.3266C15.731 31.25 14.4375 29.9565 14.4375 28.3609Z" stroke="currentColor" stroke-width="2.5"/><path d="M31.9531 8.20312C31.9531 11.7671 29.064 14.6562 25.5 14.6562C21.936 14.6562 19.0469 11.7671 19.0469 8.20312C19.0469 4.63916 21.936 1.75 25.5 1.75C29.064 1.75 31.9531 4.63916 31.9531 8.20312Z" stroke="currentColor" stroke-width="2.5"/><path d="M37.3818 17.4222C41.0778 17.4222 44.074 15.0146 44.074 12.0446C44.074 9.07463 41.0778 6.66699 37.3818 6.66699M41.9514 31.2503H45.858C47.5127 31.2503 48.8541 30.1724 48.8541 28.8427C48.8541 25.7664 46.0723 23.1461 42.2919 22.6613L41.9514 22.6176C41.034 22.6176 40.9791 22.6176 39.755 22.6176" class="icon_main" stroke-width="2.5" stroke-linecap="round"/><path d="M13.6182 17.4222C9.9222 17.4222 6.92603 15.0146 6.92603 12.0446C6.92603 9.07463 9.9222 6.66699 13.6182 6.66699M9.04865 31.2503H5.14204C3.48734 31.2503 2.14594 30.1724 2.14594 28.8427C2.14594 25.7664 4.92767 23.1461 8.70812 22.6613L9.04865 22.6176C9.96596 22.6176 10.0209 22.6176 11.245 22.6176" class="icon_main" stroke-width="2.5" stroke-linecap="round"/></svg>
+						</div>
+						<span><?php echo $wo['lang']['friends_btn'];?></span>
+					</div>
+				</label>
+			<?php } ?>
+			</div>
+		</div>
+		
+		<div class="wo_settings_page wow_content ready_to_down_info">
+			<svg height="130px" viewBox="-8 0 480 480.00012" width="130px" xmlns="http://www.w3.org/2000/svg"><g fill="#9bc9ff"><path d="m56.011719 176v232l176 64v-232zm0 0"/><path d="m408.011719 176v232l-176 64v-232zm0 0"/><path d="m8.011719 216 176 64 48-40-176-64zm0 0"/><path d="m280.011719 280 176-64-48-40-176 64zm0 0"/><path d="m280.011719 72-48 40 176 64 48-40zm0 0"/><path d="m184.011719 72-176 64 48 40 176-64zm0 0"/></g><path d="m420.507812 176 40.621094-33.847656c2.199219-1.835938 3.25-4.707032 2.753906-7.527344-.492187-2.820312-2.460937-5.160156-5.152343-6.136719l-176-64c-2.675781-.976562-5.664063-.460937-7.855469 1.359375l-34.863281 29.074219v-22.921875h-16v22.921875l-34.882813-29.074219c-2.1875-1.820312-5.179687-2.335937-7.855468-1.359375l-176 64c-2.691407.976563-4.65625 3.316407-5.152344 6.136719s.554687 5.691406 2.753906 7.527344l40.640625 33.847656-40.625 33.847656c-2.199219 1.835938-3.25 4.707032-2.753906 7.527344.496093 2.820312 2.460937 5.160156 5.152343 6.136719l42.722657 15.542969v168.945312c0 3.359375 2.105469 6.363281 5.261719 7.511719l176 64c1.765624.652343 3.707031.652343 5.472656 0l176-64c3.160156-1.148438 5.261718-4.152344 5.265625-7.511719v-168.945312l42.734375-15.542969c2.695312-.976563 4.660156-3.316407 5.15625-6.136719.492187-2.820312-.554688-5.691406-2.753906-7.527344zm-138.898437-94.902344 158.59375 57.671875-33.792969 28.132813-158.582031-57.671875zm-57.597656 99.589844-20.289063-20.28125-11.3125 11.3125 39.601563 39.59375 39.597656-39.59375-11.3125-11.3125-20.285156 20.28125v-57.273438l144.597656 52.585938-152.597656 55.488281-152.601563-55.488281 144.601563-52.585938zm-41.601563-99.589844 33.777344 28.132813-158.578125 57.671875-33.78125-28.132813zm-124.800781 104 158.59375 57.671875-33.792969 28.132813-158.582031-57.671875zm6.402344 59.773438 117.261719 42.640625c.878906.324219 1.804687.488281 2.738281.488281 1.871093 0 3.679687-.652344 5.117187-1.847656l34.882813-29.074219v203.496094l-160-58.175781zm336 157.527344-160 58.175781v-203.496094l34.878906 29.074219c1.4375 1.195312 3.25 1.847656 5.121094 1.847656.933593 0 1.859375-.164062 2.734375-.488281l117.265625-42.640625zm-118.402344-131.496094-33.773437-28.132813 158.574218-57.671875 33.777344 28.132813zm0 0" fill="#1e81ce"/><path d="m248.011719 432c0 4.417969 3.582031 8 8 8 7.886719 0 75.574219-26.398438 130.976562-48.566406 4.101563-1.644532 6.097657-6.304688 4.453125-10.410156-1.640625-4.105469-6.300781-6.097657-10.40625-4.457032-55.136718 22.066406-117.601562 46.089844-125.488281 47.449219-4.230469.246094-7.535156 3.746094-7.535156 7.984375zm0 0" fill="#1e81ce"/><path d="m224.011719 0h16v16h-16zm0 0" fill="#1e81ce"/><path d="m224.011719 24h16v16h-16zm0 0" fill="#1e81ce"/><path d="m224.011719 48h16v16h-16zm0 0" fill="#1e81ce"/></svg>
+			<p></p>
+			<a href="<?php echo($wo['config']['site_url'].'/requests.php?f=download_user_info'); ?>" class="btn btn-main" id="download_file"  target="_blank" onclick="DeleteUserFile()"><?php echo  $wo['lang']['download_file']; ?></a>
+		</div>
+		
+		<input type="hidden" name="user_id" value="<?php echo $wo['setting']['user_id'];?>">
+		<input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+	</div>
+</form>
+
+<script type="text/javascript">
+	function DeleteUserFile(self) {
+		file = $(self).attr('data_link');
+		$('#download_steps_comp').fadeIn(500);
+		$('.ready_to_down_info').fadeOut(200);
+		$('.popular_posts_hdr .hiddddddddd').fadeIn(200);
+	}
+$(function() {
+  $('form.setting-general-form').ajaxForm({
+    url: Wo_Ajax_Requests_File() + '?f=download_info',
+    beforeSend: function() {
+      $('.setting-panel-mdbtn').attr('disabled', 'true');
+      $('.setting-panel-mdbtn').text("<?php echo $wo['lang']['please_wait']; ?>");
+      $('.wo_settings_page').find('.add_wow_loader').addClass('btn-loading');
+    },
+    success: function(data) {
+      scrollToTop();
+      $('.setting-panel-mdbtn').removeAttr('disabled');
+      $('.setting-panel-mdbtn').text("<?php echo $wo['lang']['generate_file']; ?>");
+      if (data.status == 200) {
+      	$('#download_steps_comp').slideUp(500);
+		$('.ready_to_down_info').fadeIn(200);
+		$('.ready_to_down_info p').html(data.message);
+		$('.popular_posts_hdr .hiddddddddd').fadeOut(200);
+      }
+      $('.wo_settings_page').find('.add_wow_loader').removeClass('btn-loading');
+    }
+  });
+});
+</script>

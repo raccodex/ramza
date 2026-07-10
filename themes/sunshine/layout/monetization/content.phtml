@@ -1,0 +1,74 @@
+<div class="page-margin">
+    <div class="row">
+        <div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+        <div class="col-md-7 singlecol">
+			<div class="wow_content wo_monetize_sub_profile">
+				<img src="<?php echo $wo['monetizations_user']['cover'];?>" alt="<?php echo $wo['monetizations_user']['name'];?>" class="cover">
+				<img src="<?php echo $wo['monetizations_user']['avatar'];?>" alt="<?php echo $wo['monetizations_user']['name'];?>" class="avatar">
+				<p><?php echo $wo['monetizations_user']['name'];?></p>
+				<b><?php echo $wo['monetizations_user']['about'];?></b>
+			</div>
+			
+			<div class="alert alert-info">
+				<?php echo $wo['lang']['choose_monetization_pack'] ; ?>
+			</div>
+			
+			<div class="wow_mone_alert"></div>
+
+			<?php if (count($wo['monetizations']) > 0) { ?>
+				<div class="row wo_monetize_row">
+					<?php foreach ($wo['monetizations'] as $wo['monetization']) { ?>
+						<div class="col-lg-4 col-md-6">
+							<div class="wow_content wo_monetize_sub">
+								<div class="head">
+									<p class="title"><?php echo $wo['monetization']->title ?></p>
+									<p class="price"><?php echo $wo['config']['currency_symbol_array'][$wo['currencies'][$wo['monetization']->currency]['text']] ?><?php echo  number_format($wo['monetization']->price, 2); ?> <small>/ <?php echo $wo['lang'][$wo['monetization']->period]; ?></small></p>
+								</div>
+								
+								<p class="desc"><?php echo $wo['monetization']->description; ?></p>
+								<div class="foot">
+									<a href="javascript:void(0)" class="btn btn-block btn-mat" onclick="SubscribeToMonetization('<?php echo $wo['monetization']->id ?>', this)" title=""><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M880-720v480q0 33-23.5 56.5T800-160H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-720 80h640v-80H160v80Zm0 160v240h640v-240H160Zm0 240v-480 480Z"></path></svg> <?php echo $wo['lang']['subscribe'] ?></a>
+								</div>
+							</div>
+						</div>
+					<?php } ?>
+				</div>
+			<?php } else {
+				echo '<div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M880-720v480q0 33-23.5 56.5T800-160H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-720 80h640v-80H160v80Zm0 160v240h640v-240H160Zm0 240v-480 480Z"></path></svg>' . $wo['lang']['no_monetization_found'] . '</div>';
+				}
+			?>
+        </div>
+    </div>
+    <!-- .row -->
+</div>
+<script>
+function SubscribeToMonetization(id, self) {
+	$(self).html('<svg class="btn_spinner" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle></svg>').attr('disabled', true);
+	
+    $.ajax({
+        url: Wo_Ajax_Requests_File() + '?f=wallet&s=monetization',
+        type: 'POST',
+        data: {
+            monetization_id: id,
+        },
+    })
+        .done(function(data) {
+			$(self).html('<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M880-720v480q0 33-23.5 56.5T800-160H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-720 80h640v-80H160v80Zm0 160v240h640v-240H160Zm0 240v-480 480Z"></path></svg> <?php echo $wo['lang']['subscribe'] ?>').removeAttr('disabled');
+            if (data.status == 200) {
+                $('.wow_mone_alert').html('<div class="alert alert-success">' +
+                    data.message
+                    + '</div>');
+                setTimeout(function() {
+                    window.location.href = data.redirect_after_subscription;
+                }, 2000);
+            } else {
+                $('.wow_mone_alert').html('<div class="alert alert-danger">' +
+                    data.message
+                    + '</div>');
+            }
+        })
+        .fail(function() {
+            console.log("error");
+        })
+}
+</script>

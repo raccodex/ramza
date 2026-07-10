@@ -1,0 +1,84 @@
+<?php 
+//$wo['trans'] = Wo_GetMytransactions();
+?>
+
+<div class="page-margin mt-0">
+	<div class="wow_content popular_posts_hdr">
+		<h2><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.18859 10.2235C5.88701 8.93782 5.88701 7.59978 6.18859 6.31409C6.60618 4.53383 7.99623 3.14378 9.7765 2.72619C11.0622 2.4246 12.4002 2.4246 13.6859 2.72619C15.4662 3.14378 16.8562 4.53383 17.2738 6.3141C17.5754 7.59978 17.5754 8.93782 17.2738 10.2235C16.8562 12.0038 15.4662 13.3938 13.6859 13.8114C12.4002 14.113 11.0622 14.113 9.7765 13.8114M6.18859 10.2235C6.60618 12.0038 7.99623 13.3938 9.7765 13.8114M6.18859 10.2235C5.9987 9.41398 5.92837 8.58371 5.97761 7.75881C5.90798 7.77302 5.83852 7.78825 5.76922 7.8045C4.24328 8.16244 3.05181 9.35391 2.69387 10.8799C2.43538 11.9819 2.43538 13.1288 2.69387 14.2308C3.05181 15.7567 4.24328 16.9482 5.76922 17.3061C6.87124 17.5646 8.01813 17.5646 9.12014 17.3061C10.6461 16.9482 11.8376 15.7567 12.1955 14.2308C12.2117 14.1615 12.227 14.092 12.2412 14.0224C11.4163 14.0716 10.586 14.0013 9.7765 13.8114" class="icon_main" stroke-width="1.5"/><path d="M6.1881 10.2235C5.88652 8.93782 5.88652 7.59978 6.1881 6.31409C6.6057 4.53383 7.99574 3.14378 9.77601 2.72619C11.0617 2.4246 12.3997 2.4246 13.6854 2.72619C15.4657 3.14378 16.8557 4.53383 17.2733 6.3141C17.5749 7.59978 17.5749 8.93782 17.2733 10.2235C16.8557 12.0038 15.4657 13.3938 13.6854 13.8114C12.3997 14.113 11.0617 14.113 9.77601 13.8114M6.1881 10.2235C6.60569 12.0038 7.99574 13.3938 9.77601 13.8114M6.1881 10.2235C5.99821 9.41398 5.92789 8.58371 5.97712 7.75881M9.77601 13.8114C10.5855 14.0013 11.4158 14.0716 12.2407 14.0224" stroke="currentColor" stroke-width="1.5"/></svg>&nbsp;<?php echo $wo['lang']['my_points']; ?></h2>
+	</div>
+</div>
+
+<div class="wo_settings_page wow_content">
+	<div class="earn_points wo_points_main">
+		<div class="row">
+			<div class="col-lg-9">
+				<div class="row ep_illus">
+					<?php if ($wo['config']['second_post_button'] == "dislike") {?>
+						<div class="col-md-6">
+							<div class="ep_how_many like_post">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z" /></svg>
+								<b><?php echo str_replace('%d', $wo['config']['likes_point'], $wo['lang']['earn_text_like']);?></b>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="ep_how_many wonder_post">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19,15H23V3H19M15,3H6C5.17,3 4.46,3.5 4.16,4.22L1.14,11.27C1.05,11.5 1,11.74 1,12V14A2,2 0 0,0 3,16H9.31L8.36,20.57C8.34,20.67 8.33,20.77 8.33,20.88C8.33,21.3 8.5,21.67 8.77,21.94L9.83,23L16.41,16.41C16.78,16.05 17,15.55 17,15V5C17,3.89 16.1,3 15,3Z" /></svg>
+								<b><?php echo str_replace('%d', $wo['config']['dislikes_point'], $wo['lang']['earn_text_dislike']);?></b>
+							</div>
+						</div>
+					<?php } ?>
+					<div class="col-md-6">
+						<div class="ep_how_many comment_post">
+							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.5 9V19C19.5 19.2 19.38 19.39 19.19 19.46C19.13 19.49 19.06 19.5 19 19.5C18.87 19.5 18.74 19.4501 18.64 19.3501L16.83 17.5H8C6.07 17.5 4.5 15.93 4.5 14H12C14.76 14 17 11.76 17 9V5.6499C18.44 6.0799 19.5 7.42 19.5 9ZM15.5 9V4C15.5 2.07 13.93 0.5 12 0.5H4C2.07 0.5 0.5 2.07 0.5 4V14C0.5 14.2 0.619998 14.39 0.809998 14.46C0.869998 14.49 0.94 14.5 1 14.5C1.13 14.5 1.25999 14.4501 1.35999 14.3501L3.17001 12.5H12C13.93 12.5 15.5 10.93 15.5 9Z" fill="#F96767"/></svg>
+							<b><?php echo str_replace('%d', $wo['config']['comments_point'], $wo['lang']['earn_text_comment']);?></b>
+						</div>
+					</div>
+					<?php if ($wo['config']['second_post_button'] == "wonder") {?>
+						<div class="col-md-6">
+							<div class="ep_how_many wonder_post">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" /></svg>
+								<b><?php echo str_replace('%d', $wo['config']['wonders_point'], $wo['lang']['earn_text_wonder']);?></b>
+							</div>
+						</div>
+					<?php } ?>
+					<div class="col-md-6">
+						<div class="ep_how_many create_post">
+							<svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.75 3.5V1.04004L14.96 5.25H12.5C11.54 5.25 10.75 4.46 10.75 3.5ZM12.5 6.75C10.71 6.75 9.25 5.29 9.25 3.5V0.5H5C2.52 0.5 0.5 2.52 0.5 5V15C0.5 17.48 2.52 19.5 5 19.5H11C13.48 19.5 15.5 17.48 15.5 15V6.75H12.5Z" fill="#F9B035"/></svg>
+							<b><?php echo str_replace('%d', $wo['config']['createpost_point'], $wo['lang']['earn_text_create_post']);?></b>
+						</div>
+					</div>
+					<?php if ($wo['config']['second_post_button'] == "reaction") {?>
+						<div class="col-md-6">
+							<div class="ep_how_many reaction_bg">
+								<svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.9342 8.62988L15.8202 11.6221L16.5552 15.843C16.6752 16.532 16.3972 17.219 15.8292 17.635C15.2502 18.058 14.4942 18.1161 13.8562 17.7871L10.0002 15.79L6.1442 17.7871C5.8702 17.9291 5.5732 17.999 5.2782 17.999C4.8882 17.999 4.50118 17.876 4.17118 17.635C3.60418 17.219 3.3252 16.532 3.4452 15.843L4.18018 11.6221L1.0662 8.62988C0.556199 8.13988 0.373178 7.41902 0.589178 6.74902C0.807178 6.07102 1.38517 5.58808 2.09717 5.48608L6.40619 4.8689L8.33219 1.02393C8.64819 0.391926 9.28819 0 10.0002 0C10.7122 0 11.3522 0.392926 11.6682 1.02393L13.5942 4.8689L17.9032 5.48608C18.6142 5.58808 19.1922 6.07102 19.4102 6.74902C19.6262 7.41902 19.4442 8.13988 18.9342 8.62988Z" fill="#FFD66C"/></svg>
+								<b><?php echo str_replace('%d', $wo['config']['reaction_point'], $wo['lang']['earn_text_reaction']);?></b>
+							</div>
+						</div>
+					<?php } ?>
+					<?php if ($wo['config']['blogs'] == 1 && $wo['config']['can_use_blog']) { ?>
+						<div class="col-md-6">
+							<div class="ep_how_many create_blog">
+								<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.421 3.66912L16.1411 16.7892C15.6711 18.6592 14.071 19.4992 12.671 19.4992C12.661 19.4992 12.6511 19.4992 12.6511 19.4992C11.2411 19.4892 9.63107 18.6292 9.19107 16.7392L8.33108 13.0893L13.7111 7.70916C14.1011 7.31916 14.1011 6.67924 13.7111 6.28924C13.3211 5.89924 12.681 5.89924 12.291 6.28924L6.91104 11.6691L3.26107 10.8093C1.37107 10.3693 0.511065 8.75931 0.501065 7.35931C0.491065 5.94931 1.33109 4.32931 3.21109 3.85931L16.3311 0.579279C17.2011 0.359279 18.1111 0.609201 18.7511 1.2492C19.3911 1.8892 19.641 2.79912 19.421 3.66912Z" fill="#7B61FF"/></svg>
+								<b><?php echo str_replace('%d', $wo['config']['createblog_point'], $wo['lang']['earn_text_create_blog']);?></b>
+							</div>
+						</div>
+					<?php } ?>
+				</div>
+			</div>
+			<div class="col-lg-3">
+				<div class="counter">
+					<p class="point-text"><?php echo $wo['lang']['points']; ?></p>
+					<h2 class="timer count-title count-number" data-to="<?php echo $wo['setting']['points'];?>" data-speed="1500"><?php echo $wo['setting']['points'];?></h2>
+					<?php if ($wo['config']['point_allow_withdrawal'] == 1) {?>
+						<p class="count-text"><?php echo $wo['config']['dollar_to_point_cost'] . " " . $wo['lang']['points'] . " = ".Wo_GetCurrency($wo['config']['ads_currency'])."1.00"; ?></p>
+					<?php } ?>
+					<?php if ($wo['config']['point_allow_withdrawal'] == 1) { ?>
+					<p class="count-text"><?php echo $wo['lang']['earned_points_goto'];?> <a href="<?php echo Wo_SeoLink('index.php?link1=setting&' . $wo['user_setting'] . 'page=payments');?>" data-ajax="?link1=setting&<?php echo $wo['user_setting'];?>page=payments"><?php echo $wo['lang']['my_earnings'];?></a></p>
+					<?php } else { ?>
+						<p class="count-text"><?php echo $wo['lang']['earned_points_goto'];?> <a href="<?php echo Wo_SeoLink('index.php?link1=wallet'); ?>"><?php echo $wo['lang']['wallet'];?></a></p>
+					<?php } ?>
+				</div>
+			</div>
+		</div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+<?php 
+	$group_privacy = $wo['lang']['public'];
+	if ($wo['group']['privacy'] == 2) {
+		$group_privacy = $wo['lang']['private'];
+	}
+?>
+
+<div class="cool-style-album col-xs-6 col-sm-6 col-lg-4">
+	<div class="wow_content album_parent">
+		<div class="avatar">
+			<a href="<?php echo $wo['group']['url'];?>" data-ajax="?link1=timeline&u=<?php echo $wo['group']['group_name'];?>">
+				<img src="<?php echo $wo['group']['avatar'];?>" alt="<?php echo $wo['group']['group_name']; ?> Profile Picture" />
+			</a>
+		</div>
+		<div class="album-name">
+			<a href="<?php echo $wo['group']['url'];?>" data-ajax="?link1=timeline&u=<?php echo $wo['group']['group_name'];?>"><h4><?php echo $wo['group']['group_title']; ?></h4></a>
+			<a href="<?php echo $wo['group']['url'];?>" data-ajax="?link1=timeline&u=<?php echo $wo['group']['group_name'];?>"><p><?php echo Wo_CountGroupMembers($wo['group']['id']);?> <?php echo $wo['lang']['members']; ?></p></a>
+		</div>
+	</div>
+</div>

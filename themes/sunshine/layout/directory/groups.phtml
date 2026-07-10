@@ -1,0 +1,118 @@
+<?php
+$not_found = '<div class="col-md-12"><div class="wow_content"><div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5,12C18,12 20,14 20,16.5C20,17.38 19.75,18.21 19.31,18.9L22.39,22L21,23.39L17.88,20.32C17.19,20.75 16.37,21 15.5,21C13,21 11,19 11,16.5C11,14 13,12 15.5,12M15.5,14A2.5,2.5 0 0,0 13,16.5A2.5,2.5 0 0,0 15.5,19A2.5,2.5 0 0,0 18,16.5A2.5,2.5 0 0,0 15.5,14M7,15V17H9C9.14,18.55 9.8,19.94 10.81,21H5C3.89,21 3,20.1 3,19V5C3,3.89 3.89,3 5,3H19A2,2 0 0,1 21,5V13.03C19.85,11.21 17.82,10 15.5,10C14.23,10 13.04,10.37 12.04,11H7V13H10C9.64,13.6 9.34,14.28 9.17,15H7M17,9V7H7V9H17Z" /></svg> ' . $wo["lang"]["no_result"] . '</div></div></div>';
+$type_to_find = '<div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9.62,12L12,5.67L14.37,12M11,3L5.5,17H7.75L8.87,14H15.12L16.25,17H18.5L13,3H11Z" /></svg> ' . $wo["lang"]["what_are_looking_for"] . '</div>';
+
+$page = isset($_GET['page-id']) ? $_GET['page-id'] : 1;
+$filter_keyword = (!empty($_GET['query'])) ? Wo_Secure($_GET['query']) : '';
+$db->pageLimit = 10;
+$link = '';
+
+$groups    = $db->objectbuilder()->orderBy('id', 'DESC')->paginate(T_GROUPS, $page);
+?>
+<div class="page-margin">
+	<div class="page-margin mt-0">
+		<div class="wow_content popular_posts_hdr">
+			<h2 class="flex">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" class="icon_main" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path><path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M17 10h2a2 2 0 0 1 2 2v1"></path><path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path></svg>&nbsp;
+				<p><?php echo $wo['lang']['welcome_discover'] ?> <?php echo $wo['lang']['groups'] ?><b><?php echo $wo['lang']['explore_diverse_communities'] ?></b></p>
+			</h2>
+		</div>
+	</div>
+	
+    <div class="row">
+		<div class="col-md-3 leftcol">
+			<div class="group_prnt"><?php echo Wo_LoadPage("directory/left-sidebar"); ?></div>
+		</div>
+    <div class="col-md-9 singlecol">
+        <div class="wo_search_page">
+            <div class="tab-content">
+                <div id="groups">
+                    <div id="groups-cont" class="row wo_my_pages directory">
+                        <?php
+                        if (count($groups) != 0) {
+                            foreach ($groups as $wo['result']) {
+                                $wo['result'] = (array) $wo['result'];
+                                $wo['result'] = Wo_GroupData($wo['result']["id"]);
+                                echo Wo_LoadPage('search/group-result');
+                            }
+                        } else {
+                            echo $not_found;
+                        }
+                        ?>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+                <?php if (!empty($groups)) { ?>
+                    <div class="wo-admincp-feturepager">
+                        <div class="">
+                        <span>
+                          <?php echo "Showing $page out of " . $db->totalPages; ?>
+                        </span>
+                        </div>
+                        <div class="">
+                            <nav>
+                                <ul class="pagination">
+                                    <li>
+                                        <a href="<?php echo Wo_Link('directory/groups?page-id=1').$link; ?>" data-ajax="?link1=directory-groups&page-id=1<?php echo($link); ?>" class="waves-effect" title='First Page'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M11 7l-5 5l5 5"></path><path d="M17 7l-5 5l5 5"></path></svg>
+                                        </a>
+                                    </li>
+                                    <?php if ($page > 1) {  ?>
+                                        <li>
+                                            <a href="<?php echo Wo_Link('directory/groups?page-id=' . ($page - 1)).$link; ?>"  data-ajax="?link1=directory-groups&page-id=<?php echo($page - 1).$link; ?>" class="waves-effect" title='Previous Page'>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 6l-6 6l6 6"></path></svg>
+                                            </a>
+                                        </li>
+                                    <?php  } ?>
+
+                                    <?php
+                                    $nums       = 0;
+                                    $nums_pages = ($page > 4) ? ($page - 4) : $page;
+
+                                    for ($i=$nums_pages; $i <= $db->totalPages; $i++) {
+                                        if ($nums < 20) {
+                                            ?>
+                                            <li class="<?php echo ($page == $i) ? 'active' : ''; ?>">
+                                                <a href="<?php echo Wo_Link('directory/groups?page-id=' . ($i)).$link; ?>"  data-ajax="?link1=directory-groups&page-id=<?php echo($i).$link; ?>" class="waves-effect">
+                                                    <?php echo $i ?>
+                                                </a>
+                                            </li>
+
+                                        <?php } $nums++; }?>
+
+                                    <?php if ($db->totalPages > $page) { ?>
+                                        <li>
+                                            <a href="<?php echo Wo_Link('directory/groups?page-id=' . ($page + 1)).$link; ?>" data-ajax="?link1=directory-groups&page-id=<?php echo($page + 1).$link; ?>"  class="waves-effect" title="Next Page">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M9 6l6 6l-6 6"></path></svg>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <li>
+                                        <a href="<?php echo Wo_Link('directory/groups?page-id=' . ($db->totalPages)).$link; ?>" data-ajax="?link1=directory-groups&page-id=<?php echo($db->totalPages) ?><?php echo($link); ?>" class="waves-effect" title='Last Page'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 7l5 5l-5 5"></path><path d="M13 7l5 5l-5 5"></path></svg>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                <?php } ?>
+
+
+
+
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+</div>
+</div>
+
+<script>
+
+
+    jQuery(document).ready(function($) {
+
+    });
+</script>

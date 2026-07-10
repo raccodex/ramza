@@ -1,0 +1,53 @@
+RACSocial Phase 1 - Changed Files And Rollback
+Generated: 2026-07-10
+PHP target used for checks: PHP 8.2.30 CLI
+
+Scope guard
+-----------
+Phase 1 is limited to PHP 8.2 compatibility inventory, linting, safe remediation,
+and reporting. Installer backend rebuild, installer UI redesign, password storage
+changes, vendor upgrades, and schema/data mutations are explicitly out of scope.
+
+Pre-change backup
+-----------------
+Phase 0 external archive:
+E:\RACSocial\Script\_modernization_backups\phase0-prechange-20260710-2255.tar.gz
+
+Archive SHA-256:
+99453671C499F65F17117E27E7F2ED2987FBC60466FA1B216DE7AEBD5BB749B0
+
+Initial Git checkpoint
+----------------------
+Status: pending commit hash capture.
+
+Checkpoint contents:
+- First local Git repository initialized for rollback safety.
+- .gitignore updated to keep environment config, uploads, cache, logs, backups,
+  temporary files, and local dependency folders out of version control.
+- Existing Phase 0 reports retained.
+- Root config.php, nodejs/config.json, upload, cache, backup, and logs are ignored.
+- Staged file count before initial commit: 16,140.
+- Staged secret-pattern audit found no root runtime config files. Config-like staged
+  paths are third-party samples/library classes. Token-pattern hits were in code,
+  dependency examples, or SQL reference content and require continued caution if the
+  archive is ever published outside the local machine.
+
+Rollback commands
+-----------------
+Use the external Phase 0 archive for full workspace restoration if needed.
+For Git-based rollback after the initial checkpoint exists:
+
+1. Review current changes:
+   git status --short
+
+2. Compare a changed file to the initial checkpoint:
+   git diff <checkpoint-hash> -- path/to/file.php
+
+3. Restore an individual file only after confirming it is one of Codex's Phase 1
+   changes:
+   git restore --source <checkpoint-hash> -- path/to/file.php
+
+Change batches
+--------------
+No PHP compatibility remediation batches have been applied yet.
+

@@ -1,0 +1,40 @@
+<div class="page-margin mt-0">
+	<div class="wow_content popular_posts_hdr">
+		<h2><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.6663 9.3129C16.6663 13.0756 13.6816 17.5 9.99967 17.5C6.31778 17.5 3.33301 13.0756 3.33301 9.3129C3.33301 5.55024 6.31778 2.5 9.99967 2.5C13.6816 2.5 16.6663 5.55024 16.6663 9.3129Z" stroke="currentColor" stroke-width="1.5"/><path d="M7.91699 8.75033C7.91699 7.59973 8.84973 6.66699 10.0003 6.66699C11.1509 6.66699 12.0837 7.59973 12.0837 8.75033C12.0837 9.90092 11.1509 10.8337 10.0003 10.8337C8.84973 10.8337 7.91699 9.90092 7.91699 8.75033Z" class="icon_main" stroke-width="1.5"/></svg>&nbsp;<?php echo $wo['lang']['my_addresses']; ?></h2>
+	</div>
+</div>
+
+<div class="">
+	<div class="row wo_address_row">
+		<?php 
+			if (!empty($wo['address_html'])) {
+				echo '<div class="col-xs-12 col-lg-4"><div class="address_book"><div class="address_book_innr"><a href="javascript:void(0)" class="btn-main add_new_addrs" onclick="NewAddress()"><svg width="57" height="58" viewBox="0 0 57 58" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M54.4414 38.1487C52.4869 46.481 45.981 52.9869 37.6487 54.9414C31.6312 56.3529 25.3688 56.3529 19.3513 54.9414C11.019 52.9869 4.51312 46.481 2.55863 38.1487C1.14713 32.1312 1.14713 25.8688 2.55863 19.8513C4.51311 11.519 11.019 5.01312 19.3513 3.05863C25.3688 1.64713 31.6312 1.64713 37.6487 3.05863C45.981 5.01311 52.4869 11.519 54.4414 19.8513C55.8529 25.8688 55.8529 32.1312 54.4414 38.1487Z" stroke="currentColor" stroke-width="3"/><path d="M36 28.999H21M28.5 36.499L28.5 21.499" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>' . $wo['lang']['add_new'] . '</a></div></div></div>';
+				echo $wo['address_html'];
+			}
+			else{
+				echo '<div class="col-xs-12 col-lg-4"><div class="address_book"><div class="address_book_innr"><a href="javascript:void(0)" class="btn-main add_new_addrs" onclick="NewAddress()"><svg width="57" height="58" viewBox="0 0 57 58" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M54.4414 38.1487C52.4869 46.481 45.981 52.9869 37.6487 54.9414C31.6312 56.3529 25.3688 56.3529 19.3513 54.9414C11.019 52.9869 4.51312 46.481 2.55863 38.1487C1.14713 32.1312 1.14713 25.8688 2.55863 19.8513C4.51311 11.519 11.019 5.01312 19.3513 3.05863C25.3688 1.64713 31.6312 1.64713 37.6487 3.05863C45.981 5.01311 52.4869 11.519 54.4414 19.8513C55.8529 25.8688 55.8529 32.1312 54.4414 38.1487Z" stroke="currentColor" stroke-width="3"/><path d="M36 28.999H21M28.5 36.499L28.5 21.499" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>' . $wo['lang']['add_new'] . '</a></div></div></div>';
+			}
+		?>
+	</div>
+	<input type="hidden" id="setting_address_page">
+</div>
+
+<script type="text/javascript">
+  function EditAddress(id) {
+		$('.modal_edit_address_modal_alert_'+id).empty();
+		$("#edit_address_modal_"+id).find('.btn-mat').removeAttr('disabled')
+		$("#edit_address_modal_"+id).find('.btn-mat').text("<?php echo $wo['lang']['edit']; ?>");
+		$('#edit_address_modal_'+id).modal('show');
+	}
+	function DeleteAddress(id,type = 'show') {
+		if (type == 'hide') {
+	      $('#delete-address').find('.btn-mat').attr('onclick', "DeleteAddress('"+id+"')");
+	      $('#delete-address').modal('show');
+	      return false;
+	    }
+	    $('.address_'+id).slideUp();
+		$('.address_'+id).remove();
+		$('#edit_address_modal_'+id).remove();
+		$.post(Wo_Ajax_Requests_File() + '?f=address&s=delete&hash=' + $('.main_session').val(), {id: id}, function(data, textStatus, xhr) {});
+	}
+</script>

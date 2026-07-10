@@ -1,0 +1,15 @@
+User-agent: *
+Disallow: /assets
+Disallow: /cache
+Disallow: /sources
+Disallow: /api
+Disallow: /script_backups
+Disallow: /updates
+Disallow: /install
+Disallow: /admincp
+Disallow: /admin-panel
+Disallow: /ajax_loading.php
+Disallow: /api.php
+Disallow: /xml
+Disallow: /system_status.php
+Disallow: /nodejs

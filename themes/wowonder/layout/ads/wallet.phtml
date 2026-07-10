@@ -1,0 +1,1211 @@
+<!-- <script src="https://checkout.stripe.com/checkout.js"></script> -->
+<?php if ($wo['config']['credit_card'] == 'yes') { ?>
+<script src="https://js.stripe.com/v3/"></script>
+<?php } ?>
+<?php if ($wo['config']['securionpay_payment'] == '1') { ?>
+    <script src="https://securionpay.com/checkout.js"></script>
+<?php } ?>
+<?php $loadPage = Wo_LoadPage('thirdparty/paypal-demo'); echo (!empty($loadPage)) ? $loadPage : '';?>
+<div class="row">
+	<div class="col-md-12 ads_col_12">
+		<div class="page-margin ramza-well">
+			<div class="wo_page_hdng pag_neg_padd pag_alone wo_page_hdng_menu">
+				<div class="wo_page_hdng_innr">
+					<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M21,18V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H19A2,2 0 0,1 21,5V6H12C10.89,6 10,6.9 10,8V16A2,2 0 0,0 12,18M12,16H22V8H12M16,13.5A1.5,1.5 0 0,1 14.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,12A1.5,1.5 0 0,1 16,13.5Z"></path></svg></span> <?php echo $wo['lang']['my_wallet']; ?>
+				</div>
+				<?php if ($wo['config']['affiliate_system'] == 1 || $wo['config']['point_allow_withdrawal'] == 1 || $wo['config']['funding_system'] == 1 || $wo['config']['store_system'] == 'on') { ?>
+					<a href="<?php echo Wo_SeoLink('index.php?link1=setting&page=payments');?>" data-ajax="?link1=setting&page=payments" class="btn btn-main btn-mat btn-mat-raised">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M15,14V11H18V9L22,12.5L18,16V14H15M14,7.7V9H2V7.7L8,4L14,7.7M7,10H9V15H7V10M3,10H5V15H3V10M13,10V12.5L11,14.3V10H13M9.1,16L8.5,16.5L10.2,18H2V16H9.1M17,15V18H14V20L10,16.5L14,13V15H17Z"></path></svg> <?php echo($wo['lang']['withdrawal']) ?>
+					</a>
+				<?php } ?>
+			</div>
+		</div>
+		<div class="page-margin ramza-well wo_new_wallet">
+			<svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" viewBox="0 0 1422 800"><circle r="13.5" cx="484" cy="529" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.71"></circle><circle r="15.5" cx="1065" cy="723" stroke-width="2" stroke="hsl(300, 50%, 50%)" fill="none" opacity="0.28"></circle><circle r="14" cx="407" cy="467" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.56"></circle><circle r="12" cx="526" cy="23" stroke-width="2" stroke="hsl(199, 50%, 50%)" fill="none" opacity="0.81"></circle><circle r="13.5" cx="239" cy="361" fill="hsl(218, 50%, 50%)" opacity="0.90"></circle><circle r="10.5" cx="25" cy="132" fill="hsl(116, 50%, 50%)" opacity="0.50"></circle><circle r="16" cx="1207" cy="247" fill="hsl(261, 50%, 50%)" opacity="0.90"></circle><circle r="16" cx="968" cy="282" fill="hsl(295, 50%, 50%)" opacity="0.20"></circle><circle r="16.5" cx="978" cy="65" fill="hsl(339, 50%, 50%)" opacity="0.33"></circle><circle r="15.5" cx="569" cy="202" stroke-width="2" stroke="hsl(269, 50%, 50%)" fill="none" opacity="0.78"></circle><circle r="9.5" cx="24" cy="632" fill="hsl(86, 50%, 50%)" opacity="0.75"></circle><circle r="15.5" cx="718" cy="666" fill="hsl(270, 50%, 50%)" opacity="0.89"></circle><circle r="15.5" cx="1251" cy="566" stroke-width="2" stroke="hsl(239, 50%, 50%)" fill="none" opacity="0.58"></circle><circle r="17" cx="807" cy="236" fill="hsl(273, 50%, 50%)" opacity="0.54"></circle><circle r="16.5" cx="808" cy="182" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.28"></circle><circle r="13.5" cx="480" cy="741" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.67"></circle><circle r="15.5" cx="425" cy="299" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.38"></circle><circle r="12" cx="159" cy="555" fill="hsl(177, 50%, 50%)" opacity="0.98"></circle><circle r="10.5" cx="69" cy="539" fill="hsl(115, 50%, 50%)" opacity="0.97"></circle><circle r="12.5" cx="447" cy="67" stroke-width="2" stroke="hsl(221, 50%, 50%)" fill="none" opacity="0.68"></circle><circle r="14" cx="1200" cy="694" fill="hsl(270, 50%, 50%)" opacity="0.17"></circle><circle r="16.5" cx="1057" cy="376" stroke-width="2" stroke="hsl(300, 50%, 50%)" fill="none" opacity="0.49"></circle><circle r="17" cx="822" cy="394" fill="hsl(275, 50%, 50%)" opacity="0.46"></circle><circle r="11.5" cx="182" cy="268" fill="hsl(192, 50%, 50%)" opacity="0.98"></circle><circle r="12.5" cx="208" cy="690" fill="hsl(205, 50%, 50%)" opacity="0.63"></circle><circle r="10" cx="1363" cy="775" fill="hsl(177, 50%, 50%)" opacity="0.48"></circle><circle r="11.5" cx="1398" cy="550" stroke-width="2" stroke="hsl(164, 50%, 50%)" fill="none" opacity="0.33"></circle><circle r="13.5" cx="1354" cy="234" fill="hsl(190, 50%, 50%)" opacity="0.84"></circle><circle r="14" cx="315" cy="564" stroke-width="2" stroke="hsl(257, 50%, 50%)" fill="none" opacity="0.76"></circle><circle r="13.5" cx="1303" cy="209" fill="hsl(216, 50%, 50%)" opacity="0.59"></circle><circle r="17" cx="873" cy="412" stroke-width="2" stroke="hsl(281, 50%, 50%)" fill="none" opacity="0.84"></circle><circle r="15.5" cx="727" cy="118" stroke-width="2" stroke="hsl(274, 50%, 50%)" fill="none" opacity="0.24"></circle><circle r="8.5" cx="20" cy="769" fill="hsl(72, 50%, 50%)" opacity="0.83"></circle><circle r="16" cx="512" cy="442" fill="hsl(271, 50%, 50%)" opacity="0.27"></circle><circle r="14" cx="889" cy="778" stroke-width="2" stroke="hsl(285, 50%, 50%)" fill="none" opacity="0.95"></circle><circle r="15.5" cx="773" cy="586" fill="hsl(271, 50%, 50%)" opacity="0.86"></circle><circle r="15" cx="1115" cy="691" stroke-width="2" stroke="hsl(291, 50%, 50%)" fill="none" opacity="0.68"></circle><circle r="8.5" cx="22" cy="290" stroke-width="2" stroke="hsl(72, 50%, 50%)" fill="none" opacity="0.42"></circle><circle r="13" cx="268" cy="103" stroke-width="2" stroke="hsl(257, 50%, 50%)" fill="none" opacity="0.57"></circle><circle r="16.5" cx="1020" cy="300" stroke-width="2" stroke="hsl(300, 50%, 50%)" fill="none" opacity="0.78"></circle><circle r="14.5" cx="550" cy="776" stroke-width="2" stroke="hsl(270, 50%, 50%)" fill="none" opacity="0.46"></circle><circle r="14" cx="407" cy="422" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.98"></circle><circle r="7.5" cx="17" cy="696" fill="hsl(72, 50%, 50%)" opacity="0.53"></circle><circle r="13" cx="1200" cy="739" stroke-width="2" stroke="hsl(261, 50%, 50%)" fill="none" opacity="0.63"></circle><circle r="11" cx="140" cy="733" fill="hsl(162, 50%, 50%)" opacity="0.49"></circle><circle r="15.5" cx="822" cy="448" fill="hsl(273, 50%, 50%)" opacity="0.94"></circle><circle r="17" cx="728" cy="454" fill="hsl(270, 50%, 50%)" opacity="0.75"></circle><circle r="8" cx="20" cy="348" fill="hsl(72, 50%, 50%)" opacity="0.41"></circle><circle r="13.5" cx="1231" cy="662" fill="hsl(250, 50%, 50%)" opacity="0.40"></circle><circle r="15.5" cx="685" cy="531" stroke-width="2" stroke="hsl(270, 50%, 50%)" fill="none" opacity="0.67"></circle><circle r="14" cx="676" cy="24" fill="hsl(239, 50%, 50%)" opacity="0.15"></circle><circle r="13.5" cx="202" cy="321" stroke-width="2" stroke="hsl(205, 50%, 50%)" fill="none" opacity="0.68"></circle><circle r="14" cx="1262" cy="120" fill="hsl(233, 50%, 50%)" opacity="0.60"></circle><circle r="14.5" cx="1049" cy="428" fill="hsl(300, 50%, 50%)" opacity="0.12"></circle><circle r="14" cx="1264" cy="257" stroke-width="2" stroke="hsl(239, 50%, 50%)" fill="none" opacity="0.21"></circle><circle r="16" cx="969" cy="379" stroke-width="2" stroke="hsl(295, 50%, 50%)" fill="none" opacity="0.64"></circle><circle r="16" cx="1167" cy="142" stroke-width="2" stroke="hsl(276, 50%, 50%)" fill="none" opacity="0.58"></circle><circle r="17" cx="912" cy="26" fill="hsl(341, 50%, 50%)" opacity="0.48"></circle><circle r="15" cx="504" cy="572" fill="hsl(272, 50%, 50%)" opacity="0.52"></circle><circle r="16.5" cx="916" cy="133" fill="hsl(316, 50%, 50%)" opacity="0.77"></circle><circle r="12" cx="1335" cy="682" stroke-width="2" stroke="hsl(190, 50%, 50%)" fill="none" opacity="0.55"></circle><circle r="15.5" cx="1211" cy="376" fill="hsl(261, 50%, 50%)" opacity="0.78"></circle><circle r="13" cx="1355" cy="453" stroke-width="2" stroke="hsl(190, 50%, 50%)" fill="none" opacity="0.55"></circle><circle r="14.5" cx="520" cy="112" stroke-width="2" stroke="hsl(240, 50%, 50%)" fill="none" opacity="0.95"></circle><circle r="13" cx="258" cy="238" stroke-width="2" stroke="hsl(230, 50%, 50%)" fill="none" opacity="0.99"></circle><circle r="15.5" cx="637" cy="521" fill="hsl(269, 50%, 50%)" opacity="0.62"></circle><circle r="14" cx="1109" cy="738" stroke-width="2" stroke="hsl(295, 50%, 50%)" fill="none" opacity="0.66"></circle><circle r="13.5" cx="306" cy="226" fill="hsl(250, 50%, 50%)" opacity="0.80"></circle><circle r="14" cx="470" cy="213" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.87"></circle><circle r="11" cx="220" cy="158" stroke-width="2" stroke="hsl(211, 50%, 50%)" fill="none" opacity="0.94"></circle><circle r="16.5" cx="1066" cy="624" fill="hsl(300, 50%, 50%)" opacity="0.92"></circle><circle r="14.5" cx="524" cy="673" fill="hsl(271, 50%, 50%)" opacity="0.59"></circle><circle r="17.5" cx="918" cy="76" fill="hsl(331, 50%, 50%)" opacity="0.29"></circle><circle r="15.5" cx="1169" cy="514" stroke-width="2" stroke="hsl(278, 50%, 50%)" fill="none" opacity="0.95"></circle><circle r="14.5" cx="758" cy="201" stroke-width="2" stroke="hsl(271, 50%, 50%)" fill="none" opacity="0.87"></circle><circle r="15" cx="929" cy="637" fill="hsl(288, 50%, 50%)" opacity="0.42"></circle><circle r="9" cx="1403" cy="774" fill="hsl(151, 50%, 50%)" opacity="0.79"></circle><circle r="15" cx="306" cy="438" fill="hsl(250, 50%, 50%)" opacity="0.49"></circle><circle r="14" cx="1303" cy="366" stroke-width="2" stroke="hsl(216, 50%, 50%)" fill="none" opacity="0.39"></circle><circle r="11" cx="1354" cy="595" fill="hsl(190, 50%, 50%)" opacity="0.73"></circle><circle r="9.5" cx="24" cy="184" fill="hsl(86, 50%, 50%)" opacity="0.86"></circle><circle r="14" cx="1307" cy="87" stroke-width="2" stroke="hsl(214, 50%, 50%)" fill="none" opacity="0.63"></circle><circle r="13" cx="231" cy="649" fill="hsl(218, 50%, 50%)" opacity="0.62"></circle><circle r="14.5" cx="638" cy="771" stroke-width="2" stroke="hsl(269, 50%, 50%)" fill="none" opacity="0.45"></circle><circle r="13.5" cx="1202" cy="65" fill="hsl(255, 50%, 50%)" opacity="0.33"></circle><circle r="16" cx="511" cy="624" stroke-width="2" stroke="hsl(271, 50%, 50%)" fill="none" opacity="0.97"></circle><circle r="10.5" cx="116" cy="445" stroke-width="2" stroke="hsl(146, 50%, 50%)" fill="none" opacity="0.70"></circle><circle r="13" cx="273" cy="530" stroke-width="2" stroke="hsl(241, 50%, 50%)" fill="none" opacity="0.69"></circle><circle r="15.5" cx="782" cy="645" fill="hsl(272, 50%, 50%)" opacity="0.47"></circle><circle r="14" cx="292" cy="66" stroke-width="2" stroke="hsl(270, 50%, 50%)" fill="none" opacity="0.44"></circle><circle r="14" cx="1301" cy="583" fill="hsl(216, 50%, 50%)" opacity="0.19"></circle><circle r="17.5" cx="999" cy="197" fill="hsl(298, 50%, 50%)" opacity="0.69"></circle><circle r="12.5" cx="1206" cy="21" stroke-width="2" stroke="hsl(258, 50%, 50%)" fill="none" opacity="0.13"></circle><circle r="15.5" cx="403" cy="342" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.51"></circle><circle r="16" cx="1077" cy="471" fill="hsl(298, 50%, 50%)" opacity="0.12"></circle><circle r="12.5" cx="1239" cy="773" stroke-width="2" stroke="hsl(250, 50%, 50%)" fill="none" opacity="0.68"></circle><circle r="13.5" cx="1263" cy="508" fill="hsl(239, 50%, 50%)" opacity="0.21"></circle><circle r="14" cx="666" cy="725" fill="hsl(269, 50%, 50%)" opacity="0.57"></circle><circle r="13.5" cx="310" cy="609" fill="hsl(250, 50%, 50%)" opacity="0.39"></circle><circle r="15.5" cx="969" cy="530" stroke-width="2" stroke="hsl(295, 50%, 50%)" fill="none" opacity="0.94"></circle><circle r="17" cx="1064" cy="24" stroke-width="2" stroke="hsl(329, 50%, 50%)" fill="none" opacity="0.59"></circle><circle r="13" cx="340" cy="146" stroke-width="2" stroke="hsl(257, 50%, 50%)" fill="none" opacity="0.65"></circle><circle r="17.5" cx="1062" cy="266" stroke-width="2" stroke="hsl(300, 50%, 50%)" fill="none" opacity="0.42"></circle><circle r="11" cx="1399" cy="206" fill="hsl(164, 50%, 50%)" opacity="0.53"></circle><circle r="14.5" cx="1243" cy="210" stroke-width="2" stroke="hsl(250, 50%, 50%)" fill="none" opacity="0.27"></circle><circle r="14.5" cx="672" cy="205" fill="hsl(270, 50%, 50%)" opacity="0.74"></circle><circle r="15" cx="1018" cy="740" stroke-width="2" stroke="hsl(300, 50%, 50%)" fill="none" opacity="0.76"></circle><circle r="15.5" cx="926" cy="689" stroke-width="2" stroke="hsl(288, 50%, 50%)" fill="none" opacity="0.96"></circle><circle r="15" cx="1231" cy="296" fill="hsl(250, 50%, 50%)" opacity="0.20"></circle><circle r="14.5" cx="378" cy="505" fill="hsl(268, 50%, 50%)" opacity="0.18"></circle><circle r="14.5" cx="755" cy="737" fill="hsl(270, 50%, 50%)" opacity="0.84"></circle><circle r="16.5" cx="823" cy="505" fill="hsl(275, 50%, 50%)" opacity="0.25"></circle><circle r="12.5" cx="456" cy="780" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.81"></circle><circle r="17" cx="1105" cy="367" fill="hsl(295, 50%, 50%)" opacity="0.17"></circle><circle r="14" cx="288" cy="484" fill="hsl(241, 50%, 50%)" opacity="0.37"></circle><circle r="14.5" cx="597" cy="155" fill="hsl(253, 50%, 50%)" opacity="0.81"></circle><circle r="11.5" cx="174" cy="128" stroke-width="2" stroke="hsl(207, 50%, 50%)" fill="none" opacity="0.17"></circle><circle r="15.5" cx="738" cy="620" fill="hsl(270, 50%, 50%)" opacity="0.60"></circle><circle r="14.5" cx="641" cy="242" fill="hsl(269, 50%, 50%)" opacity="0.27"></circle><circle r="14.5" cx="499" cy="159" fill="hsl(261, 50%, 50%)" opacity="0.12"></circle><circle r="15" cx="626" cy="114" stroke-width="2" stroke="hsl(252, 50%, 50%)" fill="none" opacity="0.82"></circle><circle r="16.5" cx="673" cy="322" stroke-width="2" stroke="hsl(270, 50%, 50%)" fill="none" opacity="0.23"></circle><circle r="11.5" cx="169" cy="427" stroke-width="2" stroke="hsl(177, 50%, 50%)" fill="none" opacity="0.21"></circle><circle r="14.5" cx="333" cy="650" fill="hsl(263, 50%, 50%)" opacity="0.45"></circle><circle r="16" cx="1132" cy="323" fill="hsl(291, 50%, 50%)" opacity="0.54"></circle><circle r="14" cx="435" cy="509" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.54"></circle><circle r="15.5" cx="601" cy="561" fill="hsl(269, 50%, 50%)" opacity="0.77"></circle><circle r="15" cx="356" cy="601" fill="hsl(268, 50%, 50%)" opacity="0.65"></circle><circle r="15.5" cx="912" cy="735" fill="hsl(288, 50%, 50%)" opacity="0.17"></circle><circle r="14" cx="455" cy="432" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.40"></circle><circle r="16" cx="1187" cy="196" stroke-width="2" stroke="hsl(270, 50%, 50%)" fill="none" opacity="0.35"></circle><circle r="16.5" cx="959" cy="232" stroke-width="2" stroke="hsl(295, 50%, 50%)" fill="none" opacity="0.50"></circle><circle r="15.5" cx="446" cy="255" fill="hsl(273, 50%, 50%)" opacity="0.48"></circle><circle r="15" cx="1158" cy="29" stroke-width="2" stroke="hsl(279, 50%, 50%)" fill="none" opacity="0.25"></circle><circle r="11" cx="1400" cy="90" fill="hsl(173, 50%, 50%)" opacity="0.59"></circle><circle r="12" cx="1280" cy="773" fill="hsl(228, 50%, 50%)" opacity="0.46"></circle><circle r="13" cx="163" cy="22" fill="hsl(266, 50%, 50%)" opacity="0.66"></circle><circle r="14.5" cx="1262" cy="396" stroke-width="2" stroke="hsl(239, 50%, 50%)" fill="none" opacity="0.11"></circle><circle r="14.5" cx="430" cy="742" fill="hsl(273, 50%, 50%)" opacity="0.23"></circle><circle r="14" cx="872" cy="696" stroke-width="2" stroke="hsl(281, 50%, 50%)" fill="none" opacity="0.26"></circle><circle r="13.5" cx="1302" cy="30" stroke-width="2" stroke="hsl(220, 50%, 50%)" fill="none" opacity="0.49"></circle><circle r="15.5" cx="1261" cy="619" fill="hsl(239, 50%, 50%)" opacity="0.97"></circle><circle r="13" cx="423" cy="105" stroke-width="2" stroke="hsl(241, 50%, 50%)" fill="none" opacity="0.64"></circle><circle r="11" cx="1399" cy="430" fill="hsl(164, 50%, 50%)" opacity="0.47"></circle><circle r="14.5" cx="572" cy="111" stroke-width="2" stroke="hsl(231, 50%, 50%)" fill="none" opacity="0.58"></circle><circle r="13.5" cx="392" cy="68" stroke-width="2" stroke="hsl(247, 50%, 50%)" fill="none" opacity="0.69"></circle><circle r="15.5" cx="1009" cy="405" stroke-width="2" stroke="hsl(300, 50%, 50%)" fill="none" opacity="0.15"></circle><circle r="13.5" cx="235" cy="500" fill="hsl(218, 50%, 50%)" opacity="0.64"></circle><circle r="13" cx="626" cy="24" stroke-width="2" stroke="hsl(218, 50%, 50%)" fill="none" opacity="0.29"></circle><circle r="15.5" cx="680" cy="481" stroke-width="2" stroke="hsl(270, 50%, 50%)" fill="none" opacity="0.82"></circle><circle r="12.5" cx="226" cy="600" stroke-width="2" stroke="hsl(218, 50%, 50%)" fill="none" opacity="0.74"></circle><circle r="14.5" cx="433" cy="384" stroke-width="2" stroke="hsl(273, 50%, 50%)" fill="none" opacity="0.61"></circle><circle r="18.5" cx="1073" cy="321" fill="hsl(298, 50%, 50%)" opacity="0.54"></circle><circle r="14" cx="505" cy="778" fill="hsl(272, 50%, 50%)" opacity="0.26"></circle><circle r="14" cx="359" cy="217" stroke-width="2" stroke="hsl(268, 50%, 50%)" fill="none" opacity="0.39"></circle><circle r="11" cx="1322" cy="773" stroke-width="2" stroke="hsl(203, 50%, 50%)" fill="none" opacity="0.15"></circle><circle r="15.5" cx="863" cy="256" stroke-width="2" stroke="hsl(278, 50%, 50%)" fill="none" opacity="0.85"></circle><circle r="16.5" cx="1157" cy="369" fill="hsl(278, 50%, 50%)" opacity="0.19"></circle><circle r="11" cx="79" cy="486" fill="hsl(115, 50%, 50%)" opacity="0.95"></circle><circle r="16" cx="1155" cy="718" fill="hsl(285, 50%, 50%)" opacity="0.70"></circle><circle r="12" cx="1354" cy="506" fill="hsl(190, 50%, 50%)" opacity="0.20"></circle><circle r="18" cx="1065" cy="114" fill="hsl(313, 50%, 50%)" opacity="0.24"></circle><circle r="10" cx="108" cy="571" stroke-width="2" stroke="hsl(131, 50%, 50%)" fill="none" opacity="0.19"></circle><circle r="9.5" cx="1401" cy="609" fill="hsl(151, 50%, 50%)" opacity="0.64"></circle><circle r="13.5" cx="1272" cy="171" stroke-width="2" stroke="hsl(225, 50%, 50%)" fill="none" opacity="0.40"></circle><circle r="15" cx="1197" cy="570" stroke-width="2" stroke="hsl(270, 50%, 50%)" fill="none" opacity="0.41"></circle><circle r="16.5" cx="1151" cy="235" stroke-width="2" stroke="hsl(285, 50%, 50%)" fill="none" opacity="0.93"></circle><circle r="9" cx="25" cy="516" fill="hsl(86, 50%, 50%)" opacity="0.28"></circle><circle r="13.5" cx="316" cy="182" fill="hsl(257, 50%, 50%)" opacity="0.11"></circle><circle r="15" cx="920" cy="317" stroke-width="2" stroke="hsl(288, 50%, 50%)" fill="none" opacity="0.51"></circle><circle r="15.5" cx="590" cy="506" stroke-width="2" stroke="hsl(269, 50%, 50%)" fill="none" opacity="0.68"></circle><circle r="12.5" cx="596" cy="780" fill="hsl(269, 50%, 50%)" opacity="0.87"></circle><circle r="16" cx="1160" cy="611" stroke-width="2" stroke="hsl(278, 50%, 50%)" fill="none" opacity="0.62"></circle><circle r="16" cx="630" cy="412" stroke-width="2" stroke="hsl(269, 50%, 50%)" fill="none" opacity="0.12"></circle><circle r="14" cx="376" cy="176" stroke-width="2" stroke="hsl(263, 50%, 50%)" fill="none" opacity="0.85"></circle><circle r="13.5" cx="513" cy="495" fill="hsl(271, 50%, 50%)" opacity="0.12"></circle><circle r="13.5" cx="311" cy="694" fill="hsl(250, 50%, 50%)" opacity="0.35"></circle><circle r="14.5" cx="679" cy="119" stroke-width="2" stroke="hsl(263, 50%, 50%)" fill="none" opacity="0.79"></circle><circle r="11.5" cx="1398" cy="374" fill="hsl(164, 50%, 50%)" opacity="0.38"></circle><circle r="15" cx="340" cy="263" fill="hsl(263, 50%, 50%)" opacity="0.98"></circle><circle r="14.5" cx="995" cy="778" stroke-width="2" stroke="hsl(298, 50%, 50%)" fill="none" opacity="0.47"></circle><circle r="15.5" cx="680" cy="269" fill="hsl(270, 50%, 50%)" opacity="0.51"></circle><circle r="15.5" cx="532" cy="729" fill="hsl(271, 50%, 50%)" opacity="0.68"></circle><circle r="16" cx="612" cy="662" stroke-width="2" stroke="hsl(269, 50%, 50%)" fill="none" opacity="0.28"></circle><circle r="14.5" cx="724" cy="24" fill="hsl(263, 50%, 50%)" opacity="0.92"></circle><circle r="14.5" cx="1294" cy="311" fill="hsl(216, 50%, 50%)" opacity="0.43"></circle><circle r="11.5" cx="148" cy="477" stroke-width="2" stroke="hsl(162, 50%, 50%)" fill="none" opacity="0.29"></circle><circle r="16" cx="979" cy="148" stroke-width="2" stroke="hsl(313, 50%, 50%)" fill="none" opacity="0.32"></circle><circle r="15" cx="1210" cy="618" fill="hsl(261, 50%, 50%)" opacity="0.52"></circle><circle r="13" cx="190" cy="374" fill="hsl(192, 50%, 50%)" opacity="0.68"></circle><circle r="17.5" cx="967" cy="727" stroke-width="2" stroke="hsl(295, 50%, 50%)" fill="none" opacity="0.36"></circle><circle r="14" cx="334" cy="735" stroke-width="2" stroke="hsl(263, 50%, 50%)" fill="none" opacity="0.14"></circle><circle r="13.5" cx="1355" cy="121" fill="hsl(192, 50%, 50%)" opacity="0.45"></circle><circle r="10" cx="118" cy="778" stroke-width="2" stroke="hsl(146, 50%, 50%)" fill="none" opacity="0.34"></circle><circle r="15.5" cx="499" cy="255" stroke-width="2" stroke="hsl(272, 50%, 50%)" fill="none" opacity="0.73"></circle><circle r="11" cx="152" cy="339" fill="hsl(162, 50%, 50%)" opacity="0.20"></circle><circle r="15" cx="922" cy="494" fill="hsl(288, 50%, 50%)" opacity="0.12"></circle><circle r="15.5" cx="551" cy="588" stroke-width="2" stroke="hsl(270, 50%, 50%)" fill="none" opacity="0.69"></circle><circle r="17" cx="1133" cy="182" fill="hsl(291, 50%, 50%)" opacity="0.74"></circle><circle r="17.5" cx="1153" cy="85" stroke-width="2" stroke="hsl(288, 50%, 50%)" fill="none" opacity="0.41"></circle><circle r="15.5" cx="372" cy="301" stroke-width="2" stroke="hsl(268, 50%, 50%)" fill="none" opacity="0.52"></circle><circle r="15.5" cx="581" cy="300" fill="hsl(269, 50%, 50%)" opacity="0.20"></circle><circle r="14.5" cx="580" cy="440" stroke-width="2" stroke="hsl(269, 50%, 50%)" fill="none" opacity="0.84"></circle><circle r="13.5" cx="835" cy="779" stroke-width="2" stroke="hsl(275, 50%, 50%)" fill="none" opacity="0.82"></circle><circle r="14.5" cx="917" cy="363" fill="hsl(288, 50%, 50%)" opacity="0.41"></circle><circle r="12" cx="339" cy="59" stroke-width="2" stroke="hsl(259, 50%, 50%)" fill="none" opacity="0.65"></circle><circle r="13" cx="221" cy="413" stroke-width="2" stroke="hsl(205, 50%, 50%)" fill="none" opacity="0.30"></circle><circle r="14" cx="317" cy="309" fill="hsl(257, 50%, 50%)" opacity="0.27"></circle><circle r="14" cx="362" cy="553" stroke-width="2" stroke="hsl(268, 50%, 50%)" fill="none" opacity="0.22"></circle><circle r="11.5" cx="1398" cy="722" stroke-width="2" stroke="hsl(164, 50%, 50%)" fill="none" opacity="0.10"></circle><circle r="16" cx="678" cy="430" fill="hsl(270, 50%, 50%)" opacity="0.50"></circle><circle r="12.5" cx="181" cy="644" fill="hsl(192, 50%, 50%)" opacity="0.86"></circle><circle r="15" cx="874" cy="514" fill="hsl(281, 50%, 50%)" opacity="0.32"></circle><circle r="10.5" cx="1400" cy="489" fill="hsl(164, 50%, 50%)" opacity="0.58"></circle><circle r="12.5" cx="433" cy="23" stroke-width="2" stroke="hsl(223, 50%, 50%)" fill="none" opacity="0.62"></circle><circle r="14" cx="595" cy="610" fill="hsl(269, 50%, 50%)" opacity="0.73"></circle><circle r="16" cx="969" cy="330" fill="hsl(295, 50%, 50%)" opacity="0.45"></circle><circle r="15" cx="1113" cy="25" stroke-width="2" stroke="hsl(301, 50%, 50%)" fill="none" opacity="0.18"></circle><circle r="14.5" cx="1100" cy="551" fill="hsl(295, 50%, 50%)" opacity="0.25"></circle><circle r="12" cx="350" cy="97" fill="hsl(256, 50%, 50%)" opacity="0.68"></circle><circle r="14" cx="865" cy="20" fill="hsl(326, 50%, 50%)" opacity="0.64"></circle><circle r="14" cx="360" cy="432" stroke-width="2" stroke="hsl(268, 50%, 50%)" fill="none" opacity="0.36"></circle><circle r="12.5" cx="189" cy="734" fill="hsl(192, 50%, 50%)" opacity="0.83"></circle><circle r="9" cx="24" cy="465" fill="hsl(86, 50%, 50%)" opacity="0.75"></circle><circle r="16.5" cx="710" cy="170" fill="hsl(271, 50%, 50%)" opacity="0.24"></circle><circle r="12" cx="1194" cy="781" stroke-width="2" stroke="hsl(270, 50%, 50%)" fill="none" opacity="0.47"></circle><circle r="14.5" cx="240" cy="66" stroke-width="2" stroke="hsl(271, 50%, 50%)" fill="none" opacity="0.43"></circle><circle r="14.5" cx="1217" cy="527" stroke-width="2" stroke="hsl(261, 50%, 50%)" fill="none" opacity="0.23"></circle><circle r="14.5" cx="466" cy="605" fill="hsl(273, 50%, 50%)" opacity="0.37"></circle><circle r="13.5" cx="287" cy="273" stroke-width="2" stroke="hsl(241, 50%, 50%)" fill="none" opacity="0.14"></circle><circle r="12.5" cx="493" cy="699" fill="hsl(272, 50%, 50%)" opacity="0.87"></circle><circle r="11" cx="184" cy="595" stroke-width="2" stroke="hsl(192, 50%, 50%)" fill="none" opacity="0.28"></circle><circle r="16.5" cx="669" cy="375" fill="hsl(270, 50%, 50%)" opacity="0.34"></circle><circle r="14.5" cx="1280" cy="673" fill="hsl(228, 50%, 50%)" opacity="0.71"></circle><circle r="12.5" cx="419" cy="153" fill="hsl(257, 50%, 50%)" opacity="1.00"></circle><circle r="14" cx="285" cy="735" fill="hsl(241, 50%, 50%)" opacity="0.16"></circle><circle r="14.5" cx="1299" cy="724" fill="hsl(216, 50%, 50%)" opacity="0.15"></circle><circle r="14.5" cx="774" cy="107" stroke-width="2" stroke="hsl(288, 50%, 50%)" fill="none" opacity="0.94"></circle><circle r="16.5" cx="666" cy="671" stroke-width="2" stroke="hsl(269, 50%, 50%)" fill="none" opacity="0.98"></circle><circle r="10" cx="24" cy="236" stroke-width="2" stroke="hsl(86, 50%, 50%)" fill="none" opacity="0.62"></circle><circle r="14" cx="779" cy="284" stroke-width="2" stroke="hsl(272, 50%, 50%)" fill="none" opacity="0.11"></circle><circle r="15.5" cx="970" cy="576" stroke-width="2" stroke="hsl(295, 50%, 50%)" fill="none" opacity="0.62"></circle><circle r="16" cx="730" cy="509" stroke-width="2" stroke="hsl(270, 50%, 50%)" fill="none" opacity="0.65"></circle><circle r="15" cx="1116" cy="645" stroke-width="2" stroke="hsl(291, 50%, 50%)" fill="none" opacity="0.18"></circle><circle r="13.5" cx="584" cy="738" fill="hsl(269, 50%, 50%)" opacity="0.41"></circle><circle r="12.5" cx="260" cy="193" stroke-width="2" stroke="hsl(230, 50%, 50%)" fill="none" opacity="0.41"></circle></svg>
+			<?php if (isset($wo['replenishment_notif'])): ?>
+				<div id="replenish-user-account-alert">
+					<div class="alert alert-success"><?php echo $wo['replenishment_notif'];?></div>
+				</div>
+			<?php endif; ?>
+			<div id="replenish-user-account-alert-warning"></div>
+			<div class="alert alert-danger hidden please-check"><?php echo $wo['lang']['please_check_details'];?></div>
+
+			<p class="bold"><?php echo $wo['lang']['my_balance'];?></p>
+			<div class="my_wallet wow_mini_wallets">
+				<div>
+					<h5><?php echo Wo_GetCurrency($wo['config']['ads_currency']); ?><?php echo number_format($wo['user']['wallet'],2);?></h5>
+				</div>
+				<div class="wow_mini_wallets_btns">
+					<button data-toggle="modal" data-target="#send_money_modal" class="btn btn-default btn-mat">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M2,21L23,12L2,3V10L17,12L2,14V21Z"></path></svg> <?php echo $wo['lang']['send_money'];?>
+					</button>
+					<button class="btn btn-main btn-mat btn-mat-raised" onclick="$('.wow_add_money_hid_form').slideToggle();">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M3 0V3H0V5H3V8H5V5H8V3H5V0H3M9 3V6H6V9H3V19C3 20.1 3.89 21 5 21H19C20.11 21 21 20.11 21 19V18H12C10.9 18 10 17.11 10 16V8C10 6.9 10.89 6 12 6H21V5C21 3.9 20.11 3 19 3H9M12 8V16H22V8H12M16 10.5C16.83 10.5 17.5 11.17 17.5 12C17.5 12.83 16.83 13.5 16 13.5C15.17 13.5 14.5 12.83 14.5 12C14.5 11.17 15.17 10.5 16 10.5Z"></path></svg> <?php echo $wo['lang']['add_funds'];?>
+					</button>
+				</div>
+			</div>
+			<div class="wow_add_money_hid_form text-center">
+				<form class="form" id="replenish-user-account">
+					<p class="bold"><?php echo $wo['lang']['replenish_my_balance'];?></p>
+					<div class="add-amount">
+						<h5><?php echo Wo_GetCurrency($wo['config']['ads_currency']); ?><input type="number" placeholder="0.00" min="1.00" name="amount" id="amount" /></h5>
+					</div>
+					<button type="submit" class="btn btn-main btn-mat btn-mat-raised">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M0.41,13.41L6,19L7.41,17.58L1.83,12M22.24,5.58L11.66,16.17L7.5,12L6.07,13.41L11.66,19L23.66,7M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7Z"></path></svg> <?php echo $wo['lang']['continue'];?>
+					</button>
+				</form>
+			</div>
+		</div>
+
+		<div class="page-margin ramza-well">
+			<?php
+				$wo['trans'] = Wo_GetMytransactions();
+			?>
+			<div class="wallet_transactions">
+				<p class="bold">
+					<?php echo $wo['lang']['transaction_log']; ?>
+				</p>
+				<div class="tabbable">
+					<?php echo Wo_LoadPage('ads/includes/latest_activities');?>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php echo Wo_LoadPage('ads/send_money'); ?>
+
+<div id="pay-modal"></div>
+<div class="modal fade" id="paystack_wallet_modal" role="dialog" data-keyboard="false" style="overflow-y: auto;">
+	<div class="modal-dialog modal-md wow_mat_mdl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><?php echo $wo['lang']['paystack'] ?></h4>
+			</div>
+			<form class="form form-horizontal" method="post" id="paystack_wallet_form" action="#">
+				<div class="modal-body twocheckout_modal">
+					<div id="paystack_wallet_alert"></div>
+					<div class="clear"></div>
+					<div class="wow_form_fields">
+						<label for="paystack_wallet_email"><?php echo $wo['lang']['email']; ?></label>
+						<input id="paystack_wallet_email" type="text" autocomplete="off" placeholder="<?php echo $wo['lang']['email']; ?>" value="<?php echo($wo['user']['email']) ?>">
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+				<div class="modal-footer">
+					<div class="ball-pulse"><div></div><div></div><div></div></div>
+					<button type="button" class="btn btn-main btn-mat" id="paystack_btn" onclick="InitializeWalletPaystack()"><?php echo $wo['lang']['pay']; ?></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="cashfree_wallet_modal" role="dialog" data-keyboard="false" style="overflow-y: auto;">
+	<div class="modal-dialog modal-md wow_mat_mdl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><?php echo $wo['lang']['cashfree'] ?></h4>
+			</div>
+			<form class="form form-horizontal" method="post" id="cashfree_form" action="#">
+				<div class="modal-body twocheckout_modal">
+					<div id="cashfree_wallet_alert"></div>
+					<div class="clear"></div>
+					<div class="wow_form_fields">
+						<label for="cashfree_name"><?php echo $wo['lang']['name']; ?></label>
+						<input id="cashfree_name" type="text" autocomplete="off" placeholder="<?php echo $wo['lang']['name']; ?>" value="<?php echo($wo['user']['name']) ?>">
+
+					</div>
+					<div class="wow_form_fields">
+						<label for="cashfree_email"><?php echo $wo['lang']['email']; ?></label>
+						<input id="cashfree_email" type="text" autocomplete="off" placeholder="<?php echo $wo['lang']['email']; ?>" value="<?php echo($wo['user']['email']) ?>">
+
+					</div>
+					<div class="wow_form_fields">
+						<label for="cashfree_phone"><?php echo $wo['lang']['phone_number']; ?></label>
+						<input id="cashfree_phone" type="text" autocomplete="off" placeholder="<?php echo $wo['lang']['phone_number']; ?>" value="<?php echo($wo['user']['phone_number']) ?>">
+
+					</div>
+					<input type="hidden" name="cashfree_type" id="cashfree_type">
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+				<div class="modal-footer">
+					<div class="ball-pulse"><div></div><div></div><div></div></div>
+					<button type="button" class="btn btn-main btn-mat" id="cashfree_btn" onclick="SignatureWalletCashfree()"><?php echo $wo['lang']['pay']; ?></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<style type="text/css">
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {-webkit-appearance: none;margin: 0;}
+</style>
+
+<?php if ($wo['config']['razorpay_payment'] == 'yes' && !empty($wo['config']['razorpay_key_id']) && !empty($wo['config']['razorpay_key_secret'])) { ?>
+<div class="modal fade" id="razorpay_modal" role="dialog" data-keyboard="false" style="overflow-y: auto;">
+	<div class="modal-dialog modal-md wow_mat_mdl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><?php echo $wo['lang']['razorpay'] ?></h4>
+			</div>
+			<form class="form form-horizontal" method="post" id="razorpay_form" action="#">
+				<div class="modal-body twocheckout_modal">
+					<div id="razorpay_alert"></div>
+					<div class="clear"></div>
+					<div class="wow_form_fields">
+						<label for="razorpay_name"><?php echo $wo['lang']['name']; ?></label>
+						<input id="razorpay_name" type="text" autocomplete="off" placeholder="<?php echo $wo['lang']['name']; ?>" value="<?php echo($wo['user']['name']) ?>">
+					</div>
+					<div class="wow_form_fields">
+						<label for="razorpay_email"><?php echo $wo['lang']['email']; ?></label>
+						<input id="razorpay_email" type="text" autocomplete="off" placeholder="<?php echo $wo['lang']['email']; ?>" value="<?php echo($wo['user']['email']) ?>">
+					</div>
+					<div class="wow_form_fields">
+						<label for="razorpay_phone"><?php echo $wo['lang']['phone_number']; ?></label>
+						<input id="razorpay_phone" type="text" autocomplete="off" placeholder="<?php echo $wo['lang']['phone_number']; ?>" value="<?php echo($wo['user']['phone_number']) ?>">
+					</div>
+					<input type="hidden" name="razorpay_type" id="razorpay_type">
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+				<div class="modal-footer">
+					<div class="ball-pulse"><div></div><div></div><div></div></div>
+					<button type="button" class="btn btn-main btn-mat" id="razorpay_btn" onclick="SignatureRazorpay()"><?php echo $wo['lang']['pay']; ?></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<?php } ?>
+<?php if ($wo['config']['fluttewave_payment'] == 1) { ?>
+<div class="modal fade" id="fluttewave_modal" role="dialog" data-keyboard="false" style="overflow-y: auto;">
+	<div class="modal-dialog modal-md wow_mat_mdl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><?php echo $wo['lang']['fluttewave'] ?></h4>
+			</div>
+			<form class="form form-horizontal" method="post" id="fluttewave_form" action="#">
+				<div class="modal-body twocheckout_modal">
+					<div id="fluttewave_alert"></div>
+					<div class="clear"></div>
+					<div class="wow_form_fields">
+						<label for="fluttewave_email"><?php echo $wo['lang']['email']; ?></label>
+						<input id="fluttewave_email" type="text" autocomplete="off" placeholder="<?php echo $wo['lang']['email']; ?>" value="<?php echo($wo['user']['email']) ?>">
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+				<div class="modal-footer">
+					<div class="ball-pulse"><div></div><div></div><div></div></div>
+					<button type="button" class="btn btn-main btn-mat" id="fluttewave_btn" onclick="SignatureFluttewave()"><?php echo $wo['lang']['pay']; ?></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<?php } ?>
+<?php if ($wo['config']['aamarpay_payment'] == 1) { ?>
+<div class="modal fade" id="aamarpay_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md wow_mat_mdl" role="document">
+        <div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><?php echo $wo['lang']['aamarpay']; ?></h4>
+			</div>
+			<form id="aamarpay_form" method="post">
+				<div class="modal-body">
+                <div id="aamarpay_alert" style="    color: red;"></div>
+                    <div class="wow_form_fields">
+						<label for="aamarpay_name"><?php echo $wo['lang']['name']; ?></label>
+                        <input type="text" placeholder="<?php echo $wo['lang']['name']; ?>"  value="<?php echo($wo['user']['name']) ?>" id="aamarpay_name">
+                    </div>
+                    <div class="wow_form_fields">
+						<label for="aamarpay_email"><?php echo $wo['lang']['email']; ?></label>
+                        <input type="email" placeholder="<?php echo $wo['lang']['email']; ?>" value="<?php echo($wo['user']['email']) ?>" id="aamarpay_email">
+                    </div>
+                    <div class="wow_form_fields">
+						<label for="aamarpay_number"><?php echo $wo['lang']['phone_number']; ?></label>
+                        <input id="aamarpay_number" type="text" placeholder="<?php echo $wo['lang']['phone_number']; ?>" value="<?php echo($wo['user']['phone_number']) ?>">
+                    </div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-main btn-mat" onclick="AamarpayRequest()" id="aamarpay_button"><?php echo $wo['lang']['pay']; ?></button>
+				</div>
+			</form>
+        </div>
+    </div>
+</div>
+<?php } ?>
+<?php if ($wo['config']['braintree_payment'] == 1) { ?>
+<div class="modal fade" id="braintree_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md wow_mat_mdl" role="document">
+        <div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><?php echo $wo['lang']['braintree']; ?></h4>
+			</div>
+			<form id="braintree_form" method="post">
+				<div class="modal-body">
+                	<div id="braintree_alert" style="color: red;"></div>
+                    <div id="braintree_content"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-main btn-mat" id="braintree_button"><?php echo $wo['lang']['pay']; ?></button>
+				</div>
+			</form>
+        </div>
+    </div>
+</div>
+<?php } ?>
+<script>
+	<?php if ($wo['config']['payfast_payment'] == 1) { ?>
+		function pay_using_payfast() {
+			$('#pay-go-pro').modal('hide');
+			$('.btn-payfast').attr('disabled', true);
+			amount = $("#amount").val();
+			$.post(Wo_Ajax_Requests_File() + '?f=payfast&s=load',{amount:amount}, function (data) {
+				if (data.status == 200) {
+		        	$('body').append(data.html);
+					document.getElementById("redirectForm").submit();
+		        }
+		        else{
+		        	$('.pay-go-pro-alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+					setTimeout(function () {
+						$('.pay-go-pro-alert').html("");
+					},3000);
+		        }
+		        $('.btn-payfast').removeAttr('disabled');
+			});
+
+		}
+	<?php } ?>
+	<?php if ($wo['config']['braintree_payment'] == 1) { ?>
+	function braintreeCheckout(payload) {
+		$('#braintree_button').attr('disabled', true).text("<?php echo $wo["lang"]["please_wait"]?>");
+		amount = $("#amount").val();
+		$.post(Wo_Ajax_Requests_File() + '?f=braintree&s=checkout',{amount:amount,nonce:payload.nonce}, function (data) {
+			if (data.status == 200) {
+	        	location.href = data.url;
+	        }
+	        else{
+	        	$('.pay-go-pro-alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+				setTimeout(function () {
+					$('.pay-go-pro-alert').html("");
+				},3000);
+	        }
+	        $('#braintree_button').removeAttr('disabled');
+	        $('#braintree_button').text("<?php echo($wo['lang']['pay']) ?>");
+		});
+	}
+	function pay_using_braintree() {
+		$('#pay-go-pro').modal('hide');
+		$('#braintree_modal').modal({
+             show: true
+            });
+
+		braintree.dropin.create({
+		  authorization: "<?php echo $wo['config']['braintree_token']; ?>",
+		  selector: '#braintree_content'
+		}, function (err, instance) {
+			$('#braintree_button').on('click',() => {
+				instance.requestPaymentMethod(function (err, payload) {
+			      braintreeCheckout(payload);
+			    });
+			});
+		});
+	}
+	<?php } ?>
+<?php if ($wo['config']['ngenius_payment'] == '1') { ?>
+	function pay_using_ngenius() {
+		amount = $("#amount").val();
+		$.post(Wo_Ajax_Requests_File() + '?f=ngenius&s=pay',{amount:amount}, function (data) {
+	        if (data.status == 200) {
+	        	location.href = data.url;
+	        }
+	        else{
+	        	$('.pay-go-pro-alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+				setTimeout(function () {
+					$('.pay-go-pro-alert').html("");
+				},3000);
+	        }
+	    }).fail(function(data) {
+	    	$('.pay-go-pro-alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+			setTimeout(function () {
+				$('.pay-go-pro-alert').html("");
+			},3000);
+		});
+	}
+<?php } ?>
+<?php if ($wo['config']['aamarpay_payment'] == '1') { ?>
+	function pay_using_aamarpay() {
+		$('#pay-go-pro').modal('hide');
+		$('#aamarpay_modal').modal({
+             show: true
+            });
+	}
+	function AamarpayRequest() {
+		$('#aamarpay_button').attr('disabled', true).text("<?php echo $wo["lang"]["please_wait"]?>");
+		amount = $("#amount").val();
+		$.post(Wo_Ajax_Requests_File() + '?f=aamarpay&s=pay',{amount:amount,name:$('#aamarpay_name').val(),email:$('#aamarpay_email').val(),phone:$('#aamarpay_number').val()}, function (data) {
+			$('#aamarpay_button').removeAttr('disabled');
+	        $('#aamarpay_button').text("<?php echo($wo['lang']['pay']) ?>");
+	        if (data.status == 200) {
+	        	location.href = data.url;
+	        }
+	    }).fail(function(data) {
+	    	// $('#aamarpay_button').removeAttr('disabled');
+	     //    $('#aamarpay_button').text("<?php echo($wo['lang']['pay']) ?>");
+    		// M.toast({html: data.responseJSON.message});
+		});
+
+	}
+<?php } ?>
+<?php if ($wo['config']['fortumo_payment'] == '1') { ?>
+	function pay_using_fortumo() {
+		$.post(Wo_Ajax_Requests_File() + '?f=fortumo&s=pay', function (data) {
+	        if (data.status == 200) {
+	        	location.href = data.url;
+	        }
+	    }).fail(function(data) {
+    		// M.toast({html: data.responseJSON.message});
+		});
+	}
+<?php } ?>
+<?php if ($wo['config']['fluttewave_payment'] == 1) { ?>
+	function open_fluttewave() {
+		$('#pay-go-pro').modal('hide');
+		$('#fluttewave_modal').modal({
+	        show: true
+	    });
+	}
+	function SignatureFluttewave() {
+		$('#fluttewave_btn').attr('disabled', true).text("<?php echo $wo["lang"]["please_wait"]?>");
+		amount = $('#amount').val();
+		email = $('#fluttewave_email').val();
+	    $.post(Wo_Ajax_Requests_File() + '?f=fluttewave&s=pay', {amount:amount,email:email}, function(data) {
+	    	$('#fluttewave_btn').html("<?php echo($wo['lang']['pay']) ?>");
+		    $('#fluttewave_btn').removeAttr('disabled');
+	        if (data.status == 200) {
+	            window.location.href = data.url;
+	        } else {
+	         	$('#fluttewave_alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+				setTimeout(function () {
+					$('#fluttewave_alert').html("");
+				},3000);
+	        }
+	    });
+	}
+<?php } ?>
+<?php if ($wo['config']['razorpay_payment'] == 'yes' && !empty($wo['config']['razorpay_key_id']) && !empty($wo['config']['razorpay_key_secret'])) { ?>
+function pay_using_razorpay(type) {
+	$("#razorpay_alert").html('');
+	$('#razorpay_type').val(type)
+	$('#pay-go-pro').modal('hide');
+	$('#razorpay_modal').modal({
+        show: true
+    });
+}
+
+function SignatureRazorpay() {
+	$('#razorpay_btn').html("<?php echo($wo['lang']['please_wait']) ?>");
+	$('#razorpay_btn').attr('disabled','true');
+    var merchant_order_id = "<?php echo(round(111111,9999999)) ?>";
+    var card_holder_name_id = $('#razorpay_name').val();
+    var type = $('#razorpay_type').val();
+    var email = $('#razorpay_email').val();
+    var phone = $('#razorpay_phone').val();
+    //var currency_code_id = "<?php echo($wo['config']['currency']) ?>";
+    var currency_code_id = "INR";
+
+    if (!email || !phone || !card_holder_name_id) {
+    	$('#razorpay_alert').html("<div class='alert alert-danger'><?php echo($wo['lang']['please_check_details']) ?></div>");
+		setTimeout(function () {
+			$('#razorpay_alert').html("");
+		},3000);
+		$('#razorpay_btn').html("<?php echo($wo['lang']['pay']) ?>");
+		$('#razorpay_btn').removeAttr('disabled');
+		return false;
+    }
+
+
+    var merchant_total = Number($('#amount').val()) * 100;
+
+    var razorpay_options = {
+        key: "<?php echo $wo['config']['razorpay_key_id']; ?>",
+        amount: merchant_total,
+        name: "<?php echo $wo['config']['siteName']; ?>",
+        description: "Top up wallet",
+        image: '<?php echo $wo['config']['theme_url'];?>/img/logo.<?php echo $wo['config']['logo_extension'];?>',
+        netbanking: true,
+        currency: currency_code_id,
+        prefill: {
+            name: card_holder_name_id,
+            email: email,
+            contact: phone
+        },
+        notes: {
+            soolegal_order_id: merchant_order_id,
+        },
+        handler: function (transaction) {
+            jQuery.ajax({
+                url:Wo_Ajax_Requests_File() + '?f=razorpay&s=wallet',
+                type: 'post',
+                data: {payment_id: transaction.razorpay_payment_id, order_id: merchant_order_id, card_holder_name_id: card_holder_name_id,  merchant_amount: merchant_total, currency: currency_code_id, type: 'wallet'},
+                dataType: 'json',
+                success: function (data) {
+                	if (data.status == 200) {
+                		<?php if (!empty($_COOKIE['redirect_page'])) {
+                			$redirect_page = preg_replace('/on[^<>=]+=[^<>]*/m', '', $_COOKIE['redirect_page']);
+					        $redirect_page = preg_replace('/\((.*?)\)/m', '', $redirect_page);
+                			?>
+                			window.location = "<?php echo($redirect_page); ?>";
+                		<?php }else{ ?>
+	                		window.location = data.url;
+                	    <?php } ?>
+                	}
+                	else{
+                		if (data.url != '') {
+                			window.location = data.url;
+                		}
+                		else{
+                			$('#razorpay_alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+							setTimeout(function () {
+								$('#razorpay_alert').html("");
+							},3000);
+							$('#razorpay_btn').html("<?php echo($wo['lang']['pay']) ?>");
+							$('#razorpay_btn').removeAttr('disabled');
+
+                		}
+                	}
+                }
+            });
+        },
+        "modal": {
+            "ondismiss": function () {
+                // code here
+            }
+        }
+    };
+    // obj
+    var objrzpv1 = new Razorpay(razorpay_options);
+    objrzpv1.open();
+    e.preventDefault();
+}
+<?php } ?>
+
+<?php if ($wo['config']['paysera_payment'] == 'yes' && !empty($wo['config']['paysera_project_id']) && !empty($wo['config']['paysera_sign_password'])) { ?>
+	function pay_using_paysera(type) {
+		$('.btn-paysera').attr('disabled', true).text("<?php echo $wo["lang"]["please_wait"]?>");
+		amount = $('#amount').val();
+	    $.post(Wo_Ajax_Requests_File() + '?f=paysera&s=get_url', {type:'wallet',amount:amount}, function(data) {
+	        if (data.status == 200) {
+	            window.location.href = data.url;
+	        } else {
+	         	$('.btn-paysera').attr('disabled', false).html("Paysera App not set yet.");
+	        }
+	    });
+	}
+<?php } ?>
+
+
+
+
+	function pay_using_cashfree(type) {
+		$("#cashfree_wallet_alert").html('');
+		$('#pay-go-pro').modal('hide');
+		$('#cashfree_wallet_modal').modal({
+	        show: true
+	    });
+	}
+	function SignatureWalletCashfree() {
+		$('#cashfree_btn').html("<?php echo($wo['lang']['please_wait']) ?>");
+		$('#cashfree_btn').attr('disabled','true');
+		type = $('#cashfree_type').val();
+		email = $('#cashfree_email').val();
+		name = $('#cashfree_name').val();
+		phone = $('#cashfree_phone').val();
+		amount = $('#amount').val();
+		$.post(Wo_Ajax_Requests_File() + '?f=cashfree&s=initialize', {type:'wallet',email:email,name:name,phone:phone,amount:amount}, function(data) {
+			if (data.status == 200) {
+				$('body').append(data.html);
+				document.getElementById("redirectForm").submit();
+			} else {
+				$('#cashfree_wallet_alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+				setTimeout(function () {
+					$('#cashfree_wallet_alert').html("");
+				},3000);
+			}
+			$('#cashfree_btn').html("<?php echo($wo['lang']['pay']) ?>");
+			$('#cashfree_btn').removeAttr('disabled');
+		});
+	}
+
+
+
+	function pay_using_paystack(type) {
+		$("#paystack_wallet_alert").html('');
+		$('#pay-go-pro').modal('hide');
+		$('#paystack_wallet_modal').modal({
+	        show: true
+	    });
+	}
+
+	function InitializeWalletPaystack() {
+		$('#paystack_btn').html("<?php echo($wo['lang']['please_wait']) ?>");
+	    $('#paystack_btn').attr('disabled','true');
+		email = $('#paystack_wallet_email').val();
+		amount = $('#amount').val();
+		$.post(Wo_Ajax_Requests_File() + '?f=paystack&s=initialize', {type:'wallet',email:email,amount:amount}, function(data) {
+			if (data.status == 200) {
+				window.location.href = data.url;
+			} else {
+				$('#paystack_wallet_alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+				setTimeout(function () {
+					$('#paystack_wallet_alert').html("");
+				},3000);
+			}
+			$('#paystack_btn').html("<?php echo($wo['lang']['pay']) ?>");
+		    $('#paystack_btn').removeAttr('disabled');
+		});
+	}
+
+	function Wo_GetPayPalLink(type) {
+		$('.btn-paypal').attr('disabled', true).text("<?php echo $wo["lang"]["please_wait"]?>");
+		$.get(Wo_Ajax_Requests_File() + '?f=wallet&s=replenish-user-account', {amount:$('#amount').val(), desc: '<?php echo $wo['lang']['replenish_my_balance'];?>'}, function(data) {
+			if (data.status == 200) {
+				window.location.href = data.url;
+			} else {
+				$('.btn-paypal').attr('disabled', false).html("PayPal App not set yet.");
+			}
+		});
+	}
+
+    function Wo_QiwiPay(type) {
+        $('.btn-qiwi').attr('disabled', true).text("<?php echo $wo["lang"]["please_wait"]?>");
+        $.post(Wo_Ajax_Requests_File() + '?f=wallet&s=pay_with_qiwi', {amount:$('#amount').val(), desc: '<?php echo $wo['lang']['replenish_my_balance'];?>'}, function(data) {
+            if (data.status == 200) {
+                window.location.href = data.url;
+            } else {
+                $('.btn-qiwi').attr('disabled', false).html("Qiwi App not set yet.");
+            }
+        });
+    }
+	function Wo_CheckOutCard(type, description, amount, payment_type) {
+		description = "Wallet replenishment";
+		amount = $('#amount').val() * 100;
+
+		if (payment_type == 'bitcoin') {
+			$('.btn-bitcoin').attr('disabled', true).text("<?php echo $wo["lang"]["please_wait"]?>");
+			$('#pay-go-pro').modal({
+				show: false
+			});
+		} else if (payment_type == 'credit_card') {
+			$('.btn-cart').attr('disabled', true);
+		} else if (payment_type == 'alipay') {
+			$('.btn-alipay').attr('disabled', true);
+		}
+		var img = 'star';
+		if (type == 1) {
+			img = 'star';
+		} else if (type == 2) {
+			img = 'hot';
+		} else if (type == 3) {
+			img = 'ultima';
+		} else if (type == 4) {
+			img = 'vip';
+		}
+		if (payment_type != 'bank_payment' && payment_type != 'checkout' && payment_type != 'bitcoin') {
+			var stripe = Stripe('<?php echo $wo['config']['stripe_id'];?>');
+			$.post(Wo_Ajax_Requests_File() + '?f=stripe&s=session', {amount: $('#amount').val(),type:'wallet',payment_type:payment_type}, function(data, textStatus, xhr) {
+				if (data.status == 200) {
+					return stripe.redirectToCheckout({ sessionId: data.sessionId });
+				}
+				else{
+			    	$('.pay-go-pro-alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+					setTimeout(function () {
+						$('.pay-go-pro-alert').html("");
+					},3000);
+			    }
+			    if (payment_type == 'credit_card') {
+			    	$('.btn-cart').removeAttr('disabled');
+			    }
+			    if (payment_type == 'alipay') {
+				    $('.btn-alipay').removeAttr('disabled');
+				}
+			});
+		}
+		if (payment_type == 'bitcoin') {
+			if( $('#amount').val() <= 0 ){
+				$('#pay-go-pro').modal('hide');
+				alert('You must enter value greater than ZERO');
+				return false;
+			}else{
+				$.get(Wo_Ajax_Requests_File() + '?f=pay_with_bitcoin&s=pay&amount=' + $('#amount').val(), function (data) {
+					if (data.status == 200) {
+						$(data.html).appendTo('body').submit();
+					}
+					else{
+			        	$('.pay-go-pro-alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+						setTimeout(function () {
+							$('.pay-go-pro-alert').html("");
+						},3000);
+			        }
+				});
+			}
+
+		} else if (payment_type == 'bank_payment') {
+	    	$('#configreset').click();
+	    	$(".prv-img").html('<div class="thumbnail-rendderer"><div><h4 class="bold"><?php echo $wo['lang']['drop_img_here']; ?></h4><div class="error-text-renderer"></div><div><span><?php echo $wo['lang']['or']; ?></span><p><?php echo $wo['lang']['browse_to_upload']; ?></p></div></div> </div>');
+			$("#blog-alert").html('');
+	    	$('#bank_transfer_des').val('Add to balance');
+	    	$('#bank_transfer_price').val($('#amount').val());
+	    	$('#pay-go-pro').modal('hide');
+	    	$('#bank_transfer_modal').modal({
+	             show: true
+	            });
+
+
+		} else if (payment_type == 'checkout') {
+			$("#2checkout_alert_wallet").html('');
+			$('#pay-go-pro').modal('hide');
+	    	$('#2checkout_wallet_modal').modal({
+	            show: true
+	        });
+		}
+		$(window).on('popstate', function() {
+		handler.close();
+		});
+	}
+
+	jQuery(document).ready(function($) {
+
+		$("#replenish-user-account").submit(function(e) {
+			e.preventDefault();
+			var string = $('#amount').val();
+			if (string.indexOf(',') > -1 || string < 0 || string == 0) {
+				$('.please-check').removeClass("hidden");
+				return false;
+			}
+			$('.please-check').addClass("hidden");
+			var type = 1;
+			$.get(Wo_Ajax_Requests_File() + '?f=get_payment_method&type=' + type, function (data) {
+				if (data.status == 200) {
+					$('#pay-modal').html(data.html);
+					$('#pay-go-pro').modal({
+						show: true
+					});
+				}
+			});
+		});
+		$('#bank_transfer_form_wallet').ajaxForm({
+		  url: Wo_Ajax_Requests_File() + '?f=bank_transfer_wallet',
+		  beforeSend: function() {
+	    $('#bank_transfer_form_wallet').find('.ball-pulse').fadeIn(100);
+	  },
+	  success: function(data) {
+	    if (data['status'] == 200) {
+	    	$("#blog-alert").html('<div class="alert alert-success">'+ data['message'] +'</div>');
+	    	setTimeout(function () {
+	    		window.location = "<?php echo $wo['config']['site_url'];?>";
+	    		$(".prv-img").html('<div class="thumbnail-rendderer"><div><h4 class="bold"><?php echo $wo['lang']['drop_img_here']; ?></h4><div class="error-text-renderer"></div><div><span><?php echo $wo['lang']['or']; ?></span><p><?php echo $wo['lang']['browse_to_upload']; ?></p></div></div> </div>');
+	    		$("#blog-alert").html('');
+	    		$('#configreset').click();
+
+	    	},3000)
+	    } else if (data['message']) {
+	      $("#blog-alert").html('<div class="alert alert-danger">' + data['message'] + '</div>');
+	    }
+	    $('#bank_transfer_form_wallet').find('.ball-pulse').fadeOut(100);
+		}});
+	});
+	$(document).on('change', '#upload', function(event) {
+	let imgPath = $(this)[0].files[0].name;
+    if (typeof(FileReader) != "undefined") {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+			$('#receipt_img_preview').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(this.files[0]);
+    }
+	$('#bank_transfer_modal').addClass('up_rec_img_ready');
+});
+
+
+
+
+
+// Called when token created successfully.
+var successCallback = function(data) {
+	console.log(data);
+    var myForm = document.getElementById('2checkout_form_wallet');
+    $.post(Wo_Ajax_Requests_File() + '?f=2checkout_wallet', {card_number: $("#card_number").val(),card_cvc: $("#card_cvc").val(),card_month: $("#card_month").val(),card_year: $("#card_year").val(),card_name: $("#card_name").val(),card_address: $("#card_address").val(),card_city: $("#card_city").val(),card_state: $("#card_state").val(),card_zip: $("#card_zip").val(),card_country: $("#card_country").val(),card_email: $("#card_email").val(),card_phone: $("#card_phone").val(),amount: $('#amount').val(),token: data.response.token.token}, function(data, textStatus, xhr) {
+    	$('#2checkout_btn_wallet').html("<?php echo($wo['lang']['pay']) ?>");
+    	$('#2checkout_btn_wallet').attr('disabled');
+    	$('#2checkout_btn_wallet').removeAttr('disabled');
+    	$('#2checkout_form_wallet').find('.ball-pulse').fadeOut(100);
+    	if (data.status == 200) {
+    		<?php if (!empty($_COOKIE['redirect_page'])) {
+    			$redirect_page = preg_replace('/on[^<>=]+=[^<>]*/m', '', $_COOKIE['redirect_page']);
+		        $redirect_page = preg_replace('/\((.*?)\)/m', '', $redirect_page);
+    			?>
+    			window.location = "<?php echo($redirect_page); ?>";
+    		<?php }else{ ?>
+        		window.location.href = data.location;
+    	    <?php } ?>
+      	} else {
+      	 	$('#2checkout_alert_wallet').html("<div class='alert alert-danger'>"+data.error+"</div>");
+			setTimeout(function () {
+				$('#2checkout_alert_wallet').html("");
+			},3000);
+      	}
+    	/*optional stuff to do after success */
+    });
+};
+
+// Called when token creation fails.
+var errorCallback = function(data) {
+	$('#2checkout_btn_wallet').html("<?php echo($wo['lang']['pay']) ?>");
+	$('#2checkout_btn_wallet').removeAttr('disabled');
+	$('#2checkout_form_wallet').find('.ball-pulse').fadeOut(100);
+    if (data.errorCode === 200) {
+        tokenRequest();
+    } else {
+    	$('#2checkout_alert_wallet').html("<div class='alert alert-danger'>"+data.errorMsg+"</div>");
+		setTimeout(function () {
+			$('#2checkout_alert_wallet').html("");
+		},3000);
+    }
+};
+
+var tokenRequest = function() {
+	$('#card_number').val($('#_number_').val());
+	$('#2checkout_btn_wallet').html("<?php echo($wo['lang']['please_wait']) ?>");
+	$('#2checkout_btn_wallet').attr('disabled','true');
+	if ($("#card_number").val() != '' && $("#card_cvc").val() != '' && $("#card_month").val() != '' && $("#card_year").val() != '' && $("#card_name").val() != '' && $("#card_address").val() != '' && $("#card_city").val() != '' && $("#card_state").val() != '' && $("#card_zip").val() != '' && $("#card_country").val() != 0 && $("#card_email").val() != '' && $("#card_phone").val() != '') {
+		$('#2checkout_form_wallet').find('.ball-pulse').fadeIn(100);
+		// Setup token request arguments
+	    var args = {
+	        sellerId: "<?php echo($wo['config']['checkout_seller_id']) ?>",
+	        publishableKey: "<?php echo($wo['config']['checkout_publishable_key']) ?>",
+	        ccNo: $("#card_number").val(),
+	        cvv: $("#card_cvc").val(),
+	        expMonth: $("#card_month").val(),
+	        expYear: $("#card_year").val()
+	    };
+
+	    // Make the token request
+	    TCO.requestToken(successCallback, errorCallback, args);
+	}
+	else{
+		$('#2checkout_btn_wallet').html("<?php echo($wo['lang']['pay']) ?>");
+		$('#2checkout_btn_wallet').removeAttr('disabled');
+		$('#2checkout_alert_wallet').html("<div class='alert alert-danger'><?php echo($wo['lang']['please_check_details']) ?></div>");
+		setTimeout(function () {
+			$('#2checkout_alert_wallet').html("");
+		},3000);
+
+	}
+
+
+};
+
+<?php if ($wo['config']['checkout_payment'] == 'yes') { ?>
+$(function() {
+    // Pull in the public encryption key for our environment
+    TCO.loadPubKey("<?php echo($wo['config']['checkout_mode']) ?>");
+});
+<?php } ?>
+<?php if ($wo['config']['coinbase_payment'] == '1' && !empty($wo['config']['coinbase_key'])) { ?>
+function pay_using_coinbase() {
+    amount = $('#amount').val();
+    $.get(Wo_Ajax_Requests_File() + '?f=coinbase&s=create',{amount:amount}, function (data) {
+	    if (data.status == 200) {
+	    	$('#pay-go-pro').modal('hide');
+	        window.location.href = data.url;
+	    }
+	    else{
+	    	$('.pay-go-pro-alert').html("<div class='alert alert-danger'>"+data.error+"</div>");
+			setTimeout(function () {
+				$('.pay-go-pro-alert').html("");
+			},3000);
+	    }
+    });
+}
+<?php } ?>
+<?php if ($wo['config']['yoomoney_payment'] == '1' && !empty($wo['config']['yoomoney_wallet_id']) && !empty($wo['config']['yoomoney_notifications_secret'])) { ?>
+function pay_using_yoomoney() {
+    amount = $('#amount').val();
+    $.get(Wo_Ajax_Requests_File() + '?f=yoomoney&s=create',{amount:amount}, function (data) {
+	    if (data.status == 200) {
+	    	$('#pay-go-pro').modal('hide');
+	    	$('body').append(data.html);
+			document.getElementById("yoomoney_form").submit();
+			$("#yoomoney_form").remove();
+	    }
+	    else{
+	    	$('.pay-go-pro-alert').html("<div class='alert alert-danger'>"+data.error+"</div>");
+			setTimeout(function () {
+				$('.pay-go-pro-alert').html("");
+			},3000);
+	    }
+    });
+}
+<?php } ?>
+<?php if ($wo['config']['iyzipay_payment'] == '1' && !empty($wo['config']['iyzipay_key']) && !empty($wo['config']['iyzipay_secret_key'])) { ?>
+function pay_using_iyzipay() {
+    amount = $('#amount').val();
+    $.get(Wo_Ajax_Requests_File() + '?f=iyzipay&s=create',{amount:amount}, function (data) {
+	    if (data.status == 200) {
+	    	$('#pay-go-pro').modal('hide');
+	    	$('#iyzipay_content').html('');
+			$('#iyzipay_content').html(data.html);
+	    }
+	    else{
+	    	$('.pay-go-pro-alert').html("<div class='alert alert-danger'>"+data.error+"</div>");
+			setTimeout(function () {
+				$('.pay-go-pro-alert').html("");
+			},3000);
+	    }
+    });
+}
+<?php } ?>
+<?php if ($wo['config']['securionpay_payment'] == '1' && !empty($wo['config']['securionpay_public_key']) && !empty($wo['config']['securionpay_secret_key'])) { ?>
+$(function () {
+    SecurionpayCheckout.key = '<?php echo($wo['config']['securionpay_public_key']); ?>';
+    SecurionpayCheckout.success = function (result) {
+        $.post(Wo_Ajax_Requests_File() + '?f=securionpay&s=handle', result, function(data, textStatus, xhr) {
+            if (data.status == 200) {
+                window.location.href = data.url;
+            }
+        }).fail(function(data) {
+                  M.toast({html: data.responseJSON.message});
+        });
+    };
+    SecurionpayCheckout.error = function (errorMessage) {
+              M.toast({html: errorMessage});
+    };
+});
+function securionpay_pay(){
+	amount = $('#amount').val();
+	$.post(Wo_Ajax_Requests_File() + '?f=securionpay&s=create',{amount:amount}, function (data) {
+	    if (data.status == 200) {
+	    	$('#pay-go-pro').modal('hide');
+	    	SecurionpayCheckout.open({
+	            checkoutRequest: data.token,
+	            name: 'Top Up Wallet',
+	            description: 'Top Up Wallet'
+            });
+	    }
+	    else{
+	    	$('.pay-go-pro-alert').html("<div class='alert alert-danger'>"+data.error+"</div>");
+			setTimeout(function () {
+				$('.pay-go-pro-alert').html("");
+			},3000);
+	    }
+    });
+}
+<?php } ?>
+<?php if ($wo['config']['authorize_payment'] == '1' && !empty($wo['config']['authorize_login_id']) && !empty($wo['config']['authorize_transaction_key'])) { ?>
+	function open_authorize() {
+		$('#pay-go-pro').modal('hide');
+		$('#authorize_modal').modal({
+	     	show: true
+	    });
+	}
+	function AuthorizeRequest(self) {
+	  $('#authorize_btn').html("<?php echo($wo['lang']['please_wait']) ?>");
+	  $('#authorize_btn').attr('disabled','true');
+	  amount = $('#amount').val();
+	  authorize_number = $('#authorize_number').val();
+	  authorize_month = $('#authorize_month').val();
+	  authorize_year = $('#authorize_year').val();
+	  authorize_cvc = $('#authorize_cvc').val();
+	  $.post(Wo_Ajax_Requests_File() + '?f=authorize&s=pay', {card_number:authorize_number,card_month:authorize_month,card_year:authorize_year,card_cvc:authorize_cvc,amount:amount}, function(data) {
+	    if (data.status == 200) {
+	      window.location.href = data.url;
+	    } else {
+	      $('#authorize_alert').html("<div class='alert alert-danger'>"+data.error+"</div>");
+	      setTimeout(function () {
+	        $('#authorize_alert').html("");
+	      },3000);
+	    }
+	    $('#authorize_btn').html("<?php echo $wo['lang']['pay']; ?>");
+	      $('#authorize_btn').removeAttr('disabled');
+	  }).fail(function(data) {
+	      $('#authorize_alert').html("<div class='alert alert-danger'>"+data.responseJSON.error+"</div>");
+	    setTimeout(function () {
+	      $('#authorize_alert').html("");
+	    },3000);
+	    $('#authorize_btn').html("<?php echo $wo['lang']['pay']; ?>");
+	    $('#authorize_btn').removeAttr('disabled');
+	  });
+	}
+<?php } ?>
+</script>
+
+<div id="iyzipay_content"></div>
+<div class="modal fade" id="authorize_modal" role="dialog" data-keyboard="false" >
+    <div class="modal-dialog mat_box">
+        <div class="modal-content">
+		    <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><?php echo $wo['lang']['authorize'] ?></h4>
+		    </div>
+            <form class="form form-horizontal" method="post" id="authorize_form" action="#">
+            	<div id="authorize_alert"></div>
+                <div class="modal-body authorize_modal">
+                	<div class="row two_check_card">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20,8H4V6H20M20,18H4V12H20M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" /></svg>
+						<div class="sun_input col-lg-12">
+							<input id="authorize_number" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['card_number']; ?>">
+						</div>
+						<div class="sun_input col-xs-4">
+							<select id="authorize_month" name="card_month" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['month']; ?> (01)">
+								<option value="01">01</option>
+								<option value="02">02</option>
+								<option value="03">03</option>
+								<option value="04">04</option>
+								<option value="05">05</option>
+								<option value="06">06</option>
+								<option value="07">07</option>
+								<option value="08">08</option>
+								<option value="09">09</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+							</select>
+							<!-- <input id="card_month" name="card_month" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['month']; ?> (01)"> -->
+						</div>
+						<div class="sun_input col-xs-4 no-padding-both">
+							<select id="authorize_year" name="card_year" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['year']; ?> (2019)">
+								<?php for ($i=date('Y'); $i <= date('Y')+15; $i++) {  ?>
+									<option value="<?php echo($i) ?>"><?php echo($i) ?></option>
+								<?php } ?>
+							</select>
+							<!-- <input id="card_year" name="card_year" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['year']; ?> (2019)"> -->
+						</div>
+						<div class="sun_input col-xs-4">
+							<input id="authorize_cvc" name="card_cvc" type="text" class="form-control input-md" autocomplete="off" placeholder="CVC" maxlength="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+						</div>
+					</div>
+                </div>
+                <div class="clear"></div>
+                <div class="modal-footer">
+                    <div class="ball-pulse"><div></div><div></div><div></div></div>
+                    <button type="button" class="btn btn-primary btn-mat" id="authorize_btn" onclick="AuthorizeRequest($(this))"><?php echo $wo['lang']['pay']; ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="payu_modal" role="dialog" data-keyboard="false" >
+    <div class="modal-dialog mat_box">
+        <div class="modal-content">
+		    <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><?php echo $wo['lang']['payu'] ?></h4>
+		    </div>
+            <form class="form form-horizontal" method="post" id="payu_form" action="#">
+            	<div id="payu_alert"></div>
+                <div class="modal-body payu_modal">
+                	<div class="row two_check_card">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20,8H4V6H20M20,18H4V12H20M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" /></svg>
+						<div class="sun_input col-lg-12">
+							<input id="payu_card_number" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['card_number']; ?>">
+						</div>
+						<div class="sun_input col-xs-4">
+							<select id="payu_card_month" name="card_month" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['month']; ?> (01)">
+								<option value="01">01</option>
+								<option value="02">02</option>
+								<option value="03">03</option>
+								<option value="04">04</option>
+								<option value="05">05</option>
+								<option value="06">06</option>
+								<option value="07">07</option>
+								<option value="08">08</option>
+								<option value="09">09</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+							</select>
+							<!-- <input id="card_month" name="card_month" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['month']; ?> (01)"> -->
+						</div>
+						<div class="sun_input col-xs-4 no-padding-both">
+							<select id="payu_card_year" name="card_year" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['year']; ?> (2019)">
+								<?php for ($i=date('Y'); $i <= date('Y')+15; $i++) {  ?>
+									<option value="<?php echo($i) ?>"><?php echo($i) ?></option>
+								<?php } ?>
+							</select>
+							<!-- <input id="card_year" name="card_year" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['year']; ?> (2019)"> -->
+						</div>
+						<div class="sun_input col-xs-4">
+							<input id="payu_card_cvc" name="card_cvc" type="text" class="form-control input-md" autocomplete="off" placeholder="CVC" maxlength="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+						</div>
+					</div>
+                </div>
+                <div class="clear"></div>
+                <input id="payu_type" type="hidden">
+                <div class="modal-footer">
+                    <div class="ball-pulse"><div></div><div></div><div></div></div>
+                    <button type="button" class="btn btn-primary btn-mat" id="payu_btn" onclick="pay_using_payu($(this))"><?php echo $wo['lang']['pay']; ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="2checkout_wallet_modal" role="dialog" data-keyboard="false" style="overflow-y: auto;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><?php echo $wo['lang']['2checkout'] ?></h4>
+			</div>
+			<form class="form form-horizontal" method="post" id="2checkout_form_wallet" action="#">
+				<div class="modal-body twocheckout_modal">
+					<div id="2checkout_alert_wallet"></div>
+					<div class="clear"></div>
+					<div class="sun_input col-md-6">
+						<input id="card_name" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['name']; ?>" value="<?php echo($wo['user']['name']) ?>">
+					</div>
+					<div class="sun_input col-md-6">
+						<input id="card_address" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['address']; ?>" value="<?php echo($wo['user']['address']) ?>">
+					</div>
+					<div class="sun_input col-md-6">
+						<input id="card_city" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['city']; ?>" value="<?php echo($wo['user']['city']) ?>">
+					</div>
+					<div class="sun_input col-md-6">
+						<input id="card_state" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['state']; ?>" value="<?php echo($wo['user']['state']) ?>">
+					</div>
+					<div class="sun_input col-md-6">
+						<input id="card_zip" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['zip']; ?>" value="<?php echo($wo['user']['zip']) ?>">
+					</div>
+					<div class="sun_input col-md-6">
+						<select id="card_country" name="card_country" class="form-control">
+							<?php
+								foreach ($wo['countries_name'] as $country_ids => $country) {
+									$country_id = $wo['user']['country_id'];
+									$selected_contry = ($country_ids == $country_id) ? ' selected' : '' ;
+							?>
+								<option value="<?php echo $country_ids;?>" <?php echo $selected_contry;?> ><?php echo $country;?></option>
+							<?php } ?>
+						</select>
+					</div>
+					<div class="sun_input col-md-6">
+						<input id="card_email" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['email']; ?>" value="<?php echo($wo['user']['email']) ?>">
+					</div>
+					<div class="sun_input col-md-6">
+						<input id="card_phone" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['phone_number']; ?>" value="<?php echo($wo['user']['phone_number']) ?>">
+					</div>
+					<div class="clear"></div>
+					<hr>
+					<div class="row two_check_card">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20,8H4V6H20M20,18H4V12H20M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" /></svg>
+						<div class="sun_input col-lg-12">
+							<input id="_number_" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['card_number']; ?>">
+							<input id="card_number" name="card_number" type="hidden" class="form-control input-md" autocomplete="off">
+						</div>
+						<div class="sun_input col-xs-4">
+							<select id="card_month" name="card_month" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['month']; ?> (01)">
+								<option value="01">01</option>
+								<option value="02">02</option>
+								<option value="03">03</option>
+								<option value="04">04</option>
+								<option value="05">05</option>
+								<option value="06">06</option>
+								<option value="07">07</option>
+								<option value="08">08</option>
+								<option value="09">09</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+							</select>
+							<!-- <input id="card_month" name="card_month" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['month']; ?> (01)"> -->
+						</div>
+						<div class="sun_input col-xs-4 no-padding-both">
+							<select id="card_year" name="card_year" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['year']; ?> (2019)">
+								<?php for ($i=date('Y'); $i <= date('Y')+15; $i++) {  ?>
+									<option value="<?php echo($i) ?>"><?php echo($i) ?></option>
+								<?php } ?>
+							</select>
+							<!-- <input id="card_year" name="card_year" type="text" class="form-control input-md" autocomplete="off" placeholder="<?php echo $wo['lang']['year']; ?> (2019)"> -->
+						</div>
+						<div class="sun_input col-xs-4">
+							<input id="card_cvc" name="card_cvc" type="text" class="form-control input-md" autocomplete="off" placeholder="CVC" maxlength="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+						</div>
+					</div>
+					<div class="clear"></div>
+					<input id="card_token" name="token" type="hidden" value="">
+				</div>
+				<div class="clear"></div>
+				<div class="modal-footer">
+					<div class="ball-pulse"><div></div><div></div><div></div></div>
+					<button type="button" class="btn btn-main btn-mat" onclick="tokenRequest()" id="2checkout_btn_wallet"><?php echo $wo['lang']['pay']; ?></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div class="modal fade" id="bank_transfer_modal" role="dialog" data-keyboard="false" style="overflow-y: auto;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+				<h4 class="modal-title"><i class="fa fa-money"></i> <?php echo $wo['lang']['bank_transfer'] ?></h4>
+			</div>
+			<form class="form form-horizontal" method="post" id="bank_transfer_form_wallet" action="#">
+			<div class="modal-body dt_bank_trans_modal">
+				<div id="blog-alert"></div>
+				<p><?php echo $wo['config']['bank_description'];?></p>
+				<?php if (!empty($wo['config']['bank_transfer_note'])) { ?>
+					<div class="dt_user_profile hide_alert_info_bank_trans">
+							<span class="valign-wrapper">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"></path></svg> Note:
+							</span>
+							<ul class="dt_prof_vrfy">
+								<li><?php echo $wo['config']['bank_transfer_note'];?></li>
+							</ul>
+						</div>
+				<?php } ?>
+				<p class="dt_bank_trans_upl_rec"><a href="javascript:void(0);" onclick="$('#bank_transfer_modal').addClass('up_rec_active'); return false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M13.5,16V19H10.5V16H8L12,12L16,16H13.5M13,9V3.5L18.5,9H13Z"></path></svg> <?php echo $wo['lang']['upload'] ?></a></p>
+					<div class="upload_bank_receipts">
+						<div onclick="document.getElementById('upload').click(); return false">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M13.5,16V19H10.5V16H8L12,12L16,16H13.5M13,9V3.5L18.5,9H13Z"></path></svg>
+							<p><?php echo $wo['lang']['browse_to_upload']; ?></p>
+							<img id="receipt_img_preview" src="">
+						</div>
+					</div>
+					<input name="price" type="hidden" id="bank_transfer_price" class="hidden">
+					<input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+					<input name="thumbnail" type="file" id="upload" class="hidden" accept="image/*">
+					<input name="type" type="hidden" id="bank_transfer_type" class="hidden">
+					<input name="description" type="hidden" id="bank_transfer_des" class="hidden">
+					<input type="reset" id="configreset" value="Reset" class="hidden">
+			</div>
+			<div class="modal-footer">
+					<div class="ball-pulse"><div></div><div></div><div></div></div>
+					<button type="submit" class="btn btn-main btn-mat"><?php echo $wo['lang']['publish']; ?></button>
+				</div>
+				</form>
+		</div>
+	</div>
+</div>

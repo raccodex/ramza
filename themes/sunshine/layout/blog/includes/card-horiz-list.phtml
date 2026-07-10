@@ -1,0 +1,22 @@
+<div class="col-lg-4 col-md-6" data-rm-blog="<?php echo $wo['blog']['id']; ?>">
+	<div class="wow_main_blogs">
+		<div class="avatar">
+			<a href="<?php echo $wo['blog']['url']; ?>"><img src="<?php echo $wo['blog']['thumbnail']; ?>" alt="<?php echo $wo['blog']['title']; ?>"></a>
+			<a class="postCategory" href="<?php echo $wo['blog']['category_link']; ?>" data-ajax="?link1=blog-category&id=<?php echo $wo['blog']['category']; ?>"><?php echo $wo['blog_categories'][$wo['blog']['category']]; ?></a>
+		</div>
+		<div class="wow_main_blogs_info">
+			<div>
+				<a class="user_avatar" href="<?php echo $wo['blog']['author']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['blog']['author']['username']; ?>"><img src="<?php echo $wo['blog']['author']['avatar']; ?>"></a>
+				<div>
+					<h2 class="art-title"><a href="<?php echo $wo['blog']['url']; ?>"><?php echo $wo['blog']['title']; ?></a></h2>
+					<div class="postMeta--author-text">
+						<div><a href="<?php echo $wo['blog']['author']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['blog']['author']['username']; ?>"><?php echo $wo['blog']['author']['name']; ?></a>
+						</div>
+						<div><time><?php echo date("d M Y",$wo['blog']['posted']); ?></time></div>
+					</div>
+				</div>
+			</div>
+			<a href="<?php echo $wo['blog']['url']; ?>" class="btn btn-main btn-block btn-mat"><?php echo $wo['lang']['read_more'] ?></a>
+		</div>
+	</div>
+</div>

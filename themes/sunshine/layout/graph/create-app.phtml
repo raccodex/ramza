@@ -1,0 +1,92 @@
+<div class="page-margin">
+	<div class="row">
+		<div class="col-md-2 "><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+		<div class="col-md-10 ">
+			<form class="app-general-form form-horizontal" method="post">
+				<div class="page-margin mt-0">
+					<div class="wow_content popular_posts_hdr flex">
+						<h2>&nbsp;Create new App</h2>
+						<div class="btnss">
+							<a class="btn btn-mat btn-default" data-ajax="?link1=apps" href="<?php echo Wo_SeoLink('index.php?link1=apps');?>">My Apps</a>
+							<button class="btn btn-main btn-mat add_wow_loader" type="submit"><?php echo $wo['lang']['create']; ?></button>
+						</div>
+					</div>
+				</div>
+
+				<div class="page-margin wow_content wow_sett_content">
+					<div class="app-general-alert setting-update-alert"></div>
+					
+					<div class="wow_form_fields">
+						<label for="app_name"><?php echo $wo['lang']['name']; ?></label>
+						<input id="app_name" name="app_name" type="text" max="32">
+						<span class="help-block">Your application name. This is used to attribute the source user-facing authorization screens. 32 characters max.</span>
+					</div>
+					<div class="wow_form_fields">
+						<label for="app_website_url">Domain</label>
+						<input id="app_website_url" name="app_website_url" type="url">
+						<span class="help-block">Your application's publicly accessible home page.</span>
+					</div>
+					<div class="wow_form_fields">
+						<label for="app_callback_url">Redirect URI</label>
+						<input id="app_callback_url" name="app_callback_url" type="url">
+						<span class="help-block">Where should we return after successfully authenticating?</span>
+					</div>
+					<div class="wow_form_fields">
+						<label for="app_description">Description</label>
+						<textarea name="app_description" id="app_description" rows="4"></textarea>
+						<span class="help-block">Your application description, which will be shown in user-facing authorization screens. Between 10 and 200 characters max.</span>
+					</div>
+					<div class="wow_form_fields mb-0">
+						<label><?php echo $wo['lang']['image'];?></label>
+						<span class="help-block">Your application thumbnail</span>
+						<div class="wow_fcov_image">
+							<div id="wow_fcov_img_holder">
+								
+							</div>
+							<div class="upload_ad_image" onclick="document.getElementById('app_avatar').click(); return false">
+								<div class="upload_ad_image_content">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M8.5,13.5L11,16.5L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z"></path></svg> <?php echo $wo['lang']['choose_image'] ?>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="hidden">
+						<input name="app_avatar" id="app_avatar" type="file" accept="image/x-png, image/gif, image/jpeg">
+					</div>
+					
+
+					<input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+				</div>
+			</form>
+		</div>
+		<!-- .col-md-8 -->
+	</div>
+	<!-- .row -->
+</div>
+<!-- .page-margin -->
+<script>
+$("#app_avatar").change(function(event) {
+	$("#wow_fcov_img_holder").html("<img src='" + window.URL.createObjectURL(this.files[0]) + "' alt='Picture'>")
+});
+
+$(function() {
+  $('form.app-general-form').ajaxForm({
+    url: Wo_Ajax_Requests_File() + '?f=apps&s=create_app',
+    beforeSend: function() {
+      $('.app-general-form').find('.add_wow_loader').addClass('btn-loading');
+    },
+    success: function(data) {
+      scrollToTop();
+      if (data.status == 200) {
+        window.location.href = data.location;
+      } else {
+          var errors = data.errors.join("<br>");
+          $('.app-general-alert').html('<div class="alert alert-danger">' + errors + '</div>');
+          $('.alert-danger').fadeIn(300);
+      }
+      $('.app-general-form').find('.add_wow_loader').removeClass('btn-loading');
+    }
+  });
+});
+</script>

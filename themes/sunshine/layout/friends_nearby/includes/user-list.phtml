@@ -1,0 +1,23 @@
+<div class="cool-style-album profi_groups user_list col-xs-6 col-sm-6 col-lg-4" id="<?php echo $wo['UsersList']['user_data']['id']; ?>">
+	<div class="wow_content album_parent">
+		<div class="avatar">
+			<a href="<?php echo $wo['UsersList']['user_data']['url'];?>" data-ajax="?link1=timeline&u=<?php echo $wo['UsersList']['user_data']['username'];?>">
+				<img src="<?php echo $wo['UsersList']['user_data']['avatar'];?>" alt="<?php echo $wo['UsersList']['user_data']['name']; ?>" />
+			</a>
+		</div>
+		<div class="album-name">
+			<a href="<?php echo $wo['UsersList']['user_data']['url'];?>" data-ajax="?link1=timeline&u=<?php echo $wo['UsersList']['user_data']['username'];?>"><h4><?php echo $wo['UsersList']['user_data']['name']; ?></h4></a>
+			<p>
+				<span class="small-last-seen"><?php echo $wo['UsersList']['user_data']['details']['followers_count'];?> <?php echo $wo['lang']['followers']; ?></span>
+			</p>
+			<?php if (!empty($wo['UsersList']['user_geoinfo']) && (!empty($wo['user']['lat']) && !empty($wo['user']['lng'])) && ($wo['UsersList']['distance'] > 0)): ?>
+				<p title="<?php echo $wo['lang']['show_location']; ?>" onclick="Wo_ShowUserLocationMap('<?php echo $wo['UsersList']['user_geoinfo']?>');">
+					<span class="small-last-seen"><?php echo $wo['lang']['close_to_u']; ?> <?php echo number_format($wo['UsersList']['distance'],3); ?>/k</span>
+				</p>
+			<?php endif; ?>
+		</div>
+		<div class="user-follow-button">
+			<?php echo Wo_GetFollowButton($wo['UsersList']['user_data']['user_id']);?>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,62 @@
+<div class="page-margin mt-0">
+	<div class="wow_content popular_posts_hdr">
+		<h2><svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.83327 7.85308C2.44858 5.1685 4.49673 3.07236 7.11985 2.44264C9.01424 1.98787 10.9858 1.98787 12.8801 2.44264C15.5033 3.07236 17.5514 5.1685 18.1667 7.85308C18.6111 9.79185 18.6111 11.8096 18.1667 13.7483C17.5514 16.4329 15.5033 18.5291 12.8801 19.1588C10.9858 19.6135 9.01424 19.6135 7.11986 19.1588C4.49673 18.5291 2.44858 16.4329 1.83327 13.7483C1.38891 11.8096 1.38891 9.79185 1.83327 7.85308Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.07031 1.5V4.01375M13.9302 1.5V4.01375" class="icon_main" stroke-width="1.5" stroke-linecap="round"/><path d="M10 11.5H13M7 14.5H13" class="icon_main" stroke-width="1.5" stroke-linecap="round"/></svg>&nbsp;<?php echo $wo['lang']['activities']; ?></h2>
+	</div>
+</div>
+
+<div class="list-group profile-lists">
+
+    <div id="following-list" class="row" style="margin: 0;">
+        <?php $activities = Wo_GetActivities(array('me' => true, 'limit' => 20));?>
+        <ul class="activity-container no-padding-left-list">
+            <li >
+                <?php
+                    if (count($activities) == 0) {
+                        echo '<h2><div class="no-activities-profile text-center">' . $wo['lang']['no_activities'] . '</div><h2>';
+                    } else {
+                        foreach ($activities as $wo['activity']) {
+                            echo Wo_LoadPage('sidebar/activities-list');
+                        }
+                    }
+                    ?>
+            </li>
+            <li>
+                <div class="no-activities center-text"></div>
+            </li>
+        </ul>
+        
+    </div>
+    <div class="clear"></div>
+</div>
+<?php
+        if (count($activities) > 19) {
+         	?>
+         	<div class="load-more">
+    				<button class="btn btn-default text-center pointer" onclick="Wo_GetMoreActivities(<?php echo $wo['user_profile']['user_id'];?>);">
+    				<i class="fa fa-arrow-down progress-icon" data-icon="arrow-down"></i> <?php echo $wo['lang']['load_more_activities']; ?></button>
+    			</div>
+         	<?php
+        } 
+        ?>
+<script>
+function Wo_GetMoreActivities(user_id) {
+      var activity_container = $('.activity-container');
+      var after_activity_id = $('.activity-container .activity:last').attr('data-activity-id');
+      $.post(Wo_Ajax_Requests_File() + '?f=activities&s=get_more_activities', {
+        after_activity_id: after_activity_id,
+        user_id: user_id
+      }, function (data) {
+        if(data.status == 200) {
+          if(data.html.length == 0) {
+            $('.load-more').hide();
+          } else {
+            $('.activity-container').append(data.html);
+          }
+          $(".activity-container").animate({
+            scrollTop: $('.activity-container')[0].scrollHeight
+          }, 100);
+          Wo_progressIconLoader(activity_container);
+        }
+      });
+    }
+</script>

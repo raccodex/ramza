@@ -1,0 +1,42 @@
+<div class="page-margin mt-0">
+	<div class="wow_content popular_posts_hdr">
+		<h2><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 8H21.5M5.99988 12H9.99988" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><rect x="2" y="3" width="20" height="18" rx="4" class="icon_main" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></rect></svg>&nbsp;<?php echo $wo['lang']['monetization']; ?></h2>
+	</div>
+</div>
+
+<div class="">
+    <div class="row wo_address_row">
+        <?php
+        if (!empty($wo['monetization_html'])) {
+            echo '<div class="col-xs-12"><div class="address_book pb20"><div class="address_book_innr"><a href="javascript:void(0)" class="add_new_addrs main add_new_mon" onclick="NewMonetization()"><svg width="57" height="58" viewBox="0 0 57 58" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M54.4414 38.1487C52.4869 46.481 45.981 52.9869 37.6487 54.9414C31.6312 56.3529 25.3688 56.3529 19.3513 54.9414C11.019 52.9869 4.51312 46.481 2.55863 38.1487C1.14713 32.1312 1.14713 25.8688 2.55863 19.8513C4.51311 11.519 11.019 5.01312 19.3513 3.05863C25.3688 1.64713 31.6312 1.64713 37.6487 3.05863C45.981 5.01311 52.4869 11.519 54.4414 19.8513C55.8529 25.8688 55.8529 32.1312 54.4414 38.1487Z" stroke="currentColor" stroke-width="3"/><path d="M36 28.999H21M28.5 36.499L28.5 21.499" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>' . $wo['lang']['add_new'] . '</a></div></div></div>';
+            echo $wo['monetization_html'];
+        }
+        else{
+            echo '<div class="col-xs-12"><div class="address_book pb20"><div class="address_book_innr"><a href="javascript:void(0)" class="add_new_addrs main add_new_mon" onclick="NewMonetization()"><svg width="57" height="58" viewBox="0 0 57 58" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M54.4414 38.1487C52.4869 46.481 45.981 52.9869 37.6487 54.9414C31.6312 56.3529 25.3688 56.3529 19.3513 54.9414C11.019 52.9869 4.51312 46.481 2.55863 38.1487C1.14713 32.1312 1.14713 25.8688 2.55863 19.8513C4.51311 11.519 11.019 5.01312 19.3513 3.05863C25.3688 1.64713 31.6312 1.64713 37.6487 3.05863C45.981 5.01311 52.4869 11.519 54.4414 19.8513C55.8529 25.8688 55.8529 32.1312 54.4414 38.1487Z" stroke="currentColor" stroke-width="3"/><path d="M36 28.999H21M28.5 36.499L28.5 21.499" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>' . $wo['lang']['add_new'] . '</a></div></div></div>
+            <div class="col-xs-12"><div class="wow_content"><div class="empty_state"><svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.38539 7.4923C2.05805 4.78339 4.20602 2.68889 6.93056 2.08517L7.38443 1.9846C9.4366 1.52987 11.5634 1.52987 13.6156 1.9846L14.0694 2.08517C16.794 2.68889 18.942 4.78339 19.6146 7.49231C20.1285 9.56171 20.1285 11.7254 19.6146 13.7948C18.942 16.5037 16.794 18.5982 14.0694 19.2019L13.6156 19.3025C11.5634 19.7572 9.4366 19.7572 7.38443 19.3025L6.93056 19.2019C4.20601 18.5982 2.05805 16.5037 1.38539 13.7948C0.871536 11.7254 0.871536 9.5617 1.38539 7.4923Z" class="icon_main" stroke-width="1.5"></path><path d="M7.38443 1.9846C9.4366 1.52987 11.5634 1.52987 13.6156 1.9846L14.0694 2.08517C16.794 2.68889 18.942 4.78339 19.6146 7.49231C20.1285 9.56171 20.1285 11.7254 19.6146 13.7948C18.942 16.5037 16.794 18.5982 14.0694 19.2019L13.6156 19.3025C11.5634 19.7572 9.4366 19.7572 7.38443 19.3025L6.93056 19.2019C4.20601 18.5982 2.05805 16.5037 1.38539 13.7948C1.12846 12.7601 1 11.7018 1 10.6436" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M10.5002 5.64355C10.8826 5.64355 11.1926 5.93554 11.1926 6.29573V6.82929H11.2692C12.5567 6.82929 13.5 7.8837 13.5 9.06249C13.5 9.42268 13.19 9.71466 12.8077 9.71466C12.4253 9.71466 12.1154 9.42268 12.1154 9.06249C12.1154 8.49492 11.6811 8.13364 11.2692 8.13364H11.1926V10.1868L12.1273 10.507C12.9767 10.798 13.5 11.5893 13.5 12.4274C13.5 13.4941 12.6451 14.4577 11.4666 14.4577H11.1926V14.9914C11.1926 15.3516 10.8826 15.6436 10.5002 15.6436C10.1179 15.6436 9.80794 15.3516 9.80794 14.9914V14.4577H9.73077C8.44328 14.4577 7.5 13.4033 7.5 12.2245C7.5 11.8644 7.80996 11.5724 8.19231 11.5724C8.57466 11.5724 8.88462 11.8644 8.88462 12.2245C8.88462 12.7921 9.31892 13.1534 9.73077 13.1534H9.80794V11.1004L8.87272 10.78C8.0233 10.4891 7.5 9.69773 7.5 8.85966C7.5 7.79289 8.35491 6.82929 9.5334 6.82929H9.80794V6.29573C9.80794 5.93554 10.1179 5.64355 10.5002 5.64355ZM9.80794 8.13364H9.5334C9.23056 8.13364 8.88462 8.40411 8.88462 8.85966C8.88462 9.20801 9.10007 9.47001 9.3459 9.55422L9.80794 9.71249V8.13364ZM11.1926 11.5747V13.1534H11.4666C11.7694 13.1534 12.1154 12.8829 12.1154 12.4274C12.1154 12.079 11.8999 11.817 11.6541 11.7328L11.1926 11.5747Z" class="icon_main_fill"></path></svg>' . $wo['lang']['unlock_your_earning_potential'] . '</div></div></div>
+            ';
+        }
+        ?>
+    </div>
+    <input type="hidden" id="setting_address_page">
+</div>
+
+<script type="text/javascript">
+    function EditMonetization(id) {
+        $('.modal_edit_monetization_modal_alert_'+id).empty();
+        $("#edit_monetization_modal_"+id).find('.btn-mat').removeAttr('disabled')
+        $("#edit_monetization_modal_"+id).find('.btn-mat').text("<?php echo $wo['lang']['edit']; ?>");
+        $('#edit_monetization_modal_'+id).modal('show');
+    }
+    function DeleteMonetization(id,type = 'show') {
+        if (type == 'hide') {
+            $('#delete-monetization').find('.btn-mat').attr('onclick', "DeleteMonetization('"+id+"')");
+            $('#delete-monetization').modal('show');
+            return false;
+        }
+        $('.address_'+id).slideUp();
+        $('.address_'+id).remove();
+        $('#edit_address_modal_'+id).remove();
+        $.post(Wo_Ajax_Requests_File() + '?f=monetization&s=delete&hash=' + $('.main_session').val(), {id: id}, function(data, textStatus, xhr) {});
+    }
+</script>

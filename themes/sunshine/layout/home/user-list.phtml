@@ -1,0 +1,23 @@
+<?php
+$online = '';
+$time     = time() - 60;
+if ($wo['user-list']['lastseen'] > $time) {
+	$online = 'online';
+}
+?>
+<li>
+	<a class="user" href="<?php echo $wo['user-list']['url'];?>" data-ajax="?link1=timeline&u=<?php echo $wo['user-list']['username'];?>" title="<?php echo $wo['user-list']['name'];?>">
+		<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect width="18" height="18" fill="url(#pattern0)"/>
+<defs>
+<pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use xlink:href="#image0_4501_2628" transform="scale(0.0208333)"/>
+</pattern>
+<image id="image0_4501_2628" width="48" height="48" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAB8UlEQVRoge2YMW/TQBiGnzMlvqp/oUKMWfobundhZILRYmAvWzuyInVoGKjgTxQmdBlAlfojkPgDtMoQCZqXxQlJY75znDou4h7JUmTf+d4n3+dLZEgkEolEItEdrq0b65QDYABARuEKzttYJ2vjpiUDYBfYZVKKtECbAhth6/aJOyt9RjH3zRdNA8byLAnwp/SUAR41WdgVnCv4d4B3++OPTe5RJ0+VwJ2g4I9BR+Vn3P74VRvrLD8DGQXwvTwalX4+fHnmUMG/bpiweR4N87f6xM5Kc4I/VshVfawmoS9sK+RvrDH2LiSe4PNLhd5erQWXvvmlEbUroc+9Pj/zC+CpNS62jV4BfXAXCt4sXzz8bGRUQsE/J3OXwF6Z4a9EBNx08jZooGHvQ1VL1Q8/m1EpUbbMAPQepuu4dQS0OFnu2e2WWj38bOaCxFzLLFbayRSIbaM/Ks71wX3V0L9EPG4WfooOFfwYxzekE6jYMGS3kC3gdI0q/+/tIJ2tkNRAR8i8vkYLye6/jRDJUPch7o7IM2ALOFU9AxvGmRlsgcl9qMA6LeQm3QtM7AwRgax7gUgGW+DmpnuBzM5gC2T3oAK/1qnA1sPuBR7YGWyBq1H3AqPRtXU5+l5Ip/YPfdu4F3bGf/61ShJIJBKJRCLxP/MbKMPVE5P9hlMAAAAASUVORK5CYII="/>
+</defs>
+</svg>
+
+		<img alt="<?php echo $wo['user-list']['name'];?>" src="<?php echo $wo['user-list']['avatar'];?>" />
+		<span><?php echo $wo['user-list']['name'];?></span>
+	</a>
+</li> 

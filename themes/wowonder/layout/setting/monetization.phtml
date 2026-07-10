@@ -1,0 +1,45 @@
+<div class="wo_settings_page wow_content">
+    <div class="avatar-holder monetization">
+        <img src="<?php echo $wo['setting']['avatar']?>" alt="<?php echo $wo['setting']['name']?> Profile Picture" class="avatar">
+        <div class="infoz">
+            <h5 title="<?php echo $wo['setting']['name']?>"><a href="<?php echo Wo_SeoLink('index.php?link1=timeline&u=' . $wo['setting']['username'] . '');?>" data-ajax="?link1=timeline&u=<?php echo $wo['setting']['username'] ?>"><?php echo $wo['setting']['name']?></a></h5>
+            <p><?php echo $wo['lang']['monetization']; ?></p>
+        </div>
+    </div>
+    <hr>
+
+    <div class="row wo_address_row">
+        <?php
+        if (!empty($wo['monetization_html'])) {
+            echo '<div class="col-md-12"><div class="address_book"><div class="address_book_innr"><a href="javascript:void(0)" class="add_new_addrs" onclick="NewMonetization()"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v240H160v240h400v80H160Zm0-480h640v-80H160v80ZM760-80v-120H640v-80h120v-120h80v120h120v80H840v120h-80ZM160-240v-480 480Z"/></svg>' . $wo['lang']['add_new'] . '</a></div></div></div>';
+            echo $wo['monetization_html'];
+        }
+        else{
+            echo '<div class="col-md-12"><div class="address_book"><div class="address_book_innr"><a href="javascript:void(0)" class="add_new_addrs" onclick="NewMonetization()"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v240H160v240h400v80H160Zm0-480h640v-80H160v80ZM760-80v-120H640v-80h120v-120h80v120h120v80H840v120h-80ZM160-240v-480 480Z"/></svg>' . $wo['lang']['add_new'] . '</a></div></div></div>
+            <div class="col-xs-12"><div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>' . $wo['lang']['unlock_your_earning_potential'] . '</div></div>
+            ';
+        }
+        ?>
+    </div>
+    <input type="hidden" id="setting_address_page">
+</div>
+
+<script type="text/javascript">
+    function EditMonetization(id) {
+        $('.modal_edit_monetization_modal_alert_'+id).empty();
+        $("#edit_monetization_modal_"+id).find('.btn-mat').removeAttr('disabled')
+        $("#edit_monetization_modal_"+id).find('.btn-mat').text("<?php echo $wo['lang']['edit']; ?>");
+        $('#edit_monetization_modal_'+id).modal('show');
+    }
+    function DeleteMonetization(id,type = 'show') {
+        if (type == 'hide') {
+            $('#delete-monetization').find('.btn-mat').attr('onclick', "DeleteMonetization('"+id+"')");
+            $('#delete-monetization').modal('show');
+            return false;
+        }
+        $('.address_'+id).slideUp();
+        $('.address_'+id).remove();
+        $('#edit_address_modal_'+id).remove();
+        $.post(Wo_Ajax_Requests_File() + '?f=monetization&s=delete&hash=' + $('.main_session').val(), {id: id}, function(data, textStatus, xhr) {});
+    }
+</script>

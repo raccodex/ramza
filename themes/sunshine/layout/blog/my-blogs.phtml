@@ -1,0 +1,87 @@
+<div class="page-margin">
+	<div class="row">
+		<div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+		<div class="col-md-7 profile-lists singlecol">
+			<div class="page-margin mt-0">
+				<div class="wow_content popular_posts_hdr movie">
+					<img src="<?php echo $wo['config']['theme_url'];?>/img/blog.png" class="bg_trail">
+					<h2><svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.61171 6.79433C2.12446 4.55719 3.83126 2.8104 6.0172 2.28564C7.59585 1.90666 9.23879 1.90666 10.8174 2.28564C13.0034 2.8104 14.7102 4.55719 15.2229 6.79434C15.5932 8.40998 15.5932 10.0914 15.2229 11.707C14.7102 13.9442 13.0034 15.691 10.8174 16.2157C9.23878 16.5947 7.59585 16.5947 6.0172 16.2157C3.83126 15.691 2.12446 13.9442 1.61171 11.707C1.24141 10.0914 1.24141 8.40998 1.61171 6.79433Z" class="icon_main" stroke-width="1.5" stroke-linecap="round"></path><path d="M5.14258 1.5V3.59479M11.6924 1.5V3.59479M5.96131 11.7645H8.41751M5.96131 9.25071H10.8737" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>&nbsp;<?php echo $wo['lang']['blog']; ?></h2>
+				</div>
+			</div>
+			
+			<div class="page-margin wow_content wow_big_head_link">
+				<ul class="list-unstyled">
+					<li class="active"><a href="<?php echo Wo_SeoLink('index.php?link1=my-blogs'); ?>" data-ajax="?link1=my-blogs"><?php echo $wo['lang']['my_articles'] ?></a></li>
+					<li><a href="<?php echo Wo_SeoLink('index.php?link1=blogs'); ?>" data-ajax="?link1=blogs"><?php echo $wo['lang']['browse_articles'] ?></a></li>
+				</ul>
+			</div>
+			
+			<div class="wo_my_pages">
+				<div class="row cool-style-album-row" id="blog-list">
+					<div class="blog_list cool-style-album col-xs-12 col-sm-12 col-lg-4">
+						<a class="btn btn-main btn-mat btn_create_big blog" href="<?php echo Wo_SeoLink('index.php?link1=create-blog');?>">
+							<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30.4119 21.0827C29.326 25.7117 25.7117 29.3261 21.0826 30.4119C17.7396 31.1961 14.2604 31.1961 10.9174 30.4119C6.28835 29.3261 2.67395 25.7117 1.58813 21.0827C0.803958 17.7396 0.803958 14.2605 1.58813 10.9175C2.67395 6.28841 6.28834 2.67402 10.9174 1.58819C14.2604 0.804021 17.7396 0.804021 21.0826 1.58819C25.7116 2.67401 29.326 6.2884 30.4119 10.9174C31.196 14.2605 31.196 17.7396 30.4119 21.0827Z" stroke="currentColor" stroke-width="2"/><path d="M30.4119 21.0827C31.196 17.7396 31.196 14.2605 30.4119 10.9174C29.326 6.2884 25.7116 2.67401 21.0826 1.58819C17.7396 0.804021 14.2604 0.804021 10.9174 1.58819C6.28834 2.67402 2.67395 6.28841 1.58812 10.9175C0.803957 14.2605 0.803957 17.7396 1.58813 21.0827C2.67395 25.7117 6.28834 29.3261 10.9174 30.4119" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20.1673 16H11.834M16.0007 20.1666L16.0007 11.8333" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> <?php echo $wo['lang']['create'] ?>
+						</a>
+					</div>
+
+					<?php  
+						$pages          = Wo_GetMyBlogs($wo["user"]['id']); 
+						$no_blogs_found = $wo['lang']['no_blogs_created'];
+					?>
+
+					<?php if ($pages && count($pages) > 0): ?>
+						<?php foreach ($pages as $wo['blog']): ?>
+							<?php echo Wo_LoadPage('blog/includes/card-lg-list'); ?>
+						<?php endforeach ?>
+					<?php else: ?> 
+						<?php 
+							echo '<div class="cool-style-album col-xs-6 col-sm-6 col-lg-4 empty blog"><div class="wow_content btn_create_big blog"><div class="empty_state"><svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.61171 6.79433C2.12446 4.55719 3.83126 2.8104 6.0172 2.28564C7.59585 1.90666 9.23879 1.90666 10.8174 2.28564C13.0034 2.8104 14.7102 4.55719 15.2229 6.79434C15.5932 8.40998 15.5932 10.0914 15.2229 11.707C14.7102 13.9442 13.0034 15.691 10.8174 16.2157C9.23878 16.5947 7.59585 16.5947 6.0172 16.2157C3.83126 15.691 2.12446 13.9442 1.61171 11.707C1.24141 10.0914 1.24141 8.40998 1.61171 6.79433Z" class="icon_main" stroke-width="1.5" stroke-linecap="round"></path><path d="M5.14258 1.5V3.59479M11.6924 1.5V3.59479M5.96131 11.7645H8.41751M5.96131 9.25071H10.8737" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>' . $no_blogs_found . '</div></div></div>'; 
+						?>
+					<?php endif; ?> 
+				</div>
+				
+				<div class="loading-alert"></div>
+            
+				<div class="posts_load">
+					<?php if (count($pages) >= 10): ?>
+					<div class="load-more">
+                        <button class="btn btn-default text-center pointer load-more-my-blogs">
+                          <i class="fa fa-arrow-down progress-icon" data-icon="arrow-down"></i> 
+                          <?php echo $wo['lang']['load_more'] ?>
+                        </button>
+					</div>
+					<?php endif; ?>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php echo Wo_LoadPage('blog/delete-blog');?>
+
+<script>
+$(document).ready(function() {
+  $(".delete-blog").on("click", function() {
+    $("#delete-blog").attr('data-blog-id', $(this).attr("id")).modal();      
+  });
+
+  $(".load-more-my-blogs").click(function () {
+      let offset = (($(".view-blog").length > 0) ? $(".view-blog:last").attr('id') : 0);
+
+      $.ajax({
+         url: Wo_Ajax_Requests_File(),
+         type: 'GET',
+         dataType: 'json',
+         data: {f:"load-my-blogs",offset:offset},
+         success:function(data){
+            if (data['status'] == 200) {
+              $("#blog-list").append(data['html']);
+            }
+
+            else{
+              $(".posts_load").remove();
+            }
+         }
+      });
+   });
+});
+</script>

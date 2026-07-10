@@ -1,0 +1,103 @@
+<div class="page-margin">
+	<div class="row">
+		<div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+		<div class="col-md-7 middlecol">
+			<?php if ($wo['is_requested'] == true) { ?>
+				<div class="page-margin wow_content wow_sett_content mt-0">
+            		<div class="alert alert-warning"><?php echo $wo['lang']['request_review_text']; ?></div>
+				</div>
+            <?php }else{ ?>
+
+				<form class="create-refund-form form-horizontal" method="post">
+					<div class="page-margin mt-0">
+						<div class="wow_content popular_posts_hdr flex">
+							<h2>&nbsp;<?php echo $wo['lang']['request_refund'];?></h2>
+							<div class="btnss">
+								<button class="btn btn-main btn-mat add_wow_loader" type="submit"><?php echo $wo['lang']['request_refund']; ?></button>
+							</div>
+						</div>
+					</div>
+
+					<div class="page-margin wow_content wow_sett_content">
+						<?php if ($wo['config']['pro'] == 1) { ?>
+							<div class="wow_form_fields">
+								<label for="pro_type"><?php echo $wo['lang']['member_type'];?></label>
+								<select id="pro_type" name="pro_type">
+									<?php $pros = Wo_GetProPackages();
+									unset($pros['free']);
+									?>
+									<?php foreach ($pros as $key => $pro) {?>
+										<option value="<?php echo $key;?>" <?php echo ($pro['id'] == $wo['user']['pro_type']) ? 'selected' : ''; ?>><?php echo $pro['name'];?></option>
+									<?php } ?>
+								</select>
+							</div>
+						<?php } ?>
+
+						<div class="wow_form_fields">
+							<label for="description"><?php echo $wo['lang']['reason']; ?></label>
+							<textarea name="description" id="description" rows="3"></textarea>
+						</div>
+						<p><?php echo $wo['lang']['business_days'];?></p>
+						<div class="publisher-hidden-option">
+							<div id="progress">
+								<span id="percent">0%</span>
+								<div class="progress">
+									<div id="bar" class="progress-bar progress-bar-striped active"></div> 
+								</div>
+								<div class="clear"></div>
+							</div>
+						</div>
+						<div class="app-general-alert setting-update-alert"></div>
+						<input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+					</div>
+				</form>
+			<?php } ?>
+		</div>
+		<?php echo Wo_LoadPage('sidebar/content');?>
+	</div>
+</div>
+<?php if ($wo['is_requested'] == false) { ?>
+<script type="text/javascript">
+
+   $(function() {
+    var bar = $('#bar');
+    var percent = $('#percent');
+    var status = $('#status');
+    var publisher_button = $('#publisher-button');
+   
+     $('form.create-refund-form').ajaxForm({
+       url: Wo_Ajax_Requests_File() + '?f=refund_pro',
+       beforeSend: function() {
+         var percentVal = '0%';
+         bar.width(percentVal);
+         percent.html(percentVal);
+         $('form.create-refund-form').find('.add_wow_loader').addClass('btn-loading');
+   
+       },
+       uploadProgress: function (event, position, total, percentComplete) {
+           var percentVal = percentComplete + '%';
+           bar.width(percentVal);
+           $('#progress').slideDown(200);
+           if(percentComplete > 50) {
+             percent.addClass('white');
+           }
+           percent.html(percentVal);
+      },
+       success: function(data) {
+         if (data.status == 200) {
+         	$(".app-general-alert").html('<div class="alert alert-success">'+ data['message'] +'</div>');
+         	Wo_Delay(function(){
+	            window.location.href = data.url;
+	        },3000);
+            
+         } else {
+             $('.app-general-alert').html('<div class="alert alert-danger">' + data['message'] + '</div>');
+             $('.alert-danger').fadeIn(300);
+         }
+         $('form.create-refund-form').find('.add_wow_loader').removeClass('btn-loading');
+         $('#progress').slideUp(200);
+       }
+     });
+   });
+</script>
+<?php } ?>

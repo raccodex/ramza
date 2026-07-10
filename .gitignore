@@ -1,0 +1,41 @@
+# Environment-specific configuration and secrets
+/config.php
+/nodejs/config.json
+.env
+.env.*
+!.env.example
+auth.json
+credentials.json
+service-account*.json
+*.pem
+*.key
+*.p12
+*.pfx
+
+# User uploads and generated language/configuration data
+/upload/
+/nodejs/models/wo_langs.js
+
+# Runtime cache, logs, backups, and temporary files
+/cache/
+/changes/
+/backup/
+/backups/
+/logs/
+*.log
+*.bak
+*.backup
+*.tmp
+*.temp
+*.swp
+*~
+/*_updated.php
+
+# Local dependencies and IDE/OS metadata
+node_modules/
+.idea/
+.vscode/
+.vs/
+.DS_Store
+Thumbs.db
+Desktop.ini

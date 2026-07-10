@@ -1,0 +1,37 @@
+<div class="wow_content section-list" data-forum="<?php echo $wo['thread']['id']; ?>">
+	<div class="topic_icon">
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M6,9H18V11H6M14,14H6V12H14M18,8H6V6H18" /></svg>
+	</div>
+	<div class="forum-meta-d titles">
+		<div>
+			<a href="<?php echo $wo['thread']['url'];?>" data-ajax="?link1=showthread&tid=<?php echo $wo['thread']['id'];?>" class="ftitle">
+				<?php 
+					if(strlen($wo['thread']['headline']) > 55){
+						echo Wo_GetShortTitle($wo['thread']['headline'], false, 50);
+					}
+					else {
+						echo $wo['thread']['headline'];
+					}
+				?>
+			</a>
+		</div>
+		<div class="small fdesc">
+			<i><?php echo $wo['lang']['by']; ?></i> <a href="<?php echo $wo['thread']['author_url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['thread']['user_data']['username']; ?>"><?php echo $wo['thread']['user_data']['name']; ?></a> <?php echo Wo_Time_Elapsed_String($wo['thread']['posted']); ?>
+		</div>
+	</div>
+	<div class="forum-meta-d small">
+		<div>
+			<?php if ($wo['thread']['last_post'] > 0): ?>
+				<time><?php echo Wo_Time_Elapsed_String($wo['thread']['last_post']); ?></time>
+			<?php else: ?>	
+				<time><?php echo $wo['lang']['never']; ?></time>
+			<?php endif; ?>	
+		</div>
+	</div>
+	<div class="forum-meta-d topics">
+		<div>
+			<span><b><?php echo $wo['lang']['replies']; ?></b> <?php echo $wo['thread']['replies']; ?></span>
+			<span><b><?php echo $wo['lang']['views']; ?></b> <?php echo $wo['thread']['views']; ?></span>
+		</div>
+	</div>
+</div>

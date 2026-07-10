@@ -1,0 +1,43 @@
+<div class="page-margin">
+	<div class="row">
+		<div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+		<div class="col-md-7 singlecol profile-lists ">
+			<div class="page-margin mt-0">
+				<div class="wow_content popular_posts_hdr">
+					<img src="<?php echo $wo['config']['theme_url'];?>/img/pages.png" class="bg_trail">
+					<h2><svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 10.0519H9.49245C10.6722 10.0519 11.3933 8.6449 10.7718 7.55588L10.3637 6.84101C9.96221 6.13751 9.96222 5.24772 10.3637 4.54422L10.7718 3.82935C11.3933 2.74033 10.6722 1.33331 9.49245 1.33331L1 1.33331L1 10.0519ZM1 10.0519L1 14.6666" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.49245 10.0519C10.6722 10.0519 11.3933 8.6449 10.7718 7.55588L10.3637 6.84101C9.96221 6.13751 9.96222 5.24772 10.3637 4.54422L10.7718 3.82935C11.3933 2.74033 10.6722 1.33331 9.49245 1.33331L1 1.33331L1 4.02595" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>&nbsp;<?php echo TextForMode('pages'); ?></h2>
+				</div>
+			</div>
+			<div class="page-margin wow_content wow_big_head_link">
+				<ul class="list-unstyled">
+					<li class="active"><a href="<?php echo Wo_SeoLink('index.php?link1=pages'); ?>" data-ajax="?link1=pages"><?php echo $wo['lang']['my_pages'] ?></a></li>
+					<li><a href="<?php echo Wo_SeoLink('index.php?link1=suggested-pages'); ?>" data-ajax="?link1=suggested-pages"><?php echo $wo['lang']['suggested_pages'] ?></a></li>
+					<li><a href="<?php echo Wo_SeoLink('index.php?link1=liked-pages'); ?>" data-ajax="?link1=liked-pages"><?php echo $wo['lang']['liked_pages'] ?></a></li>
+				</ul>
+			</div>
+			<div class="wo_my_pages">
+				<div class="row cool-style-album-row">
+					<?php if ($wo['config']['can_use_pages']) { ?>
+						<div class="cool-style-album col-xs-12 col-sm-12 col-lg-4">
+							<a class="btn btn-main btn-mat btn_create_big page" href="<?php echo Wo_SeoLink('index.php?link1=create-page');?>" data-ajax="?link1=create-page">
+								<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30.4119 21.0827C29.326 25.7117 25.7117 29.3261 21.0826 30.4119C17.7396 31.1961 14.2604 31.1961 10.9174 30.4119C6.28835 29.3261 2.67395 25.7117 1.58813 21.0827C0.803958 17.7396 0.803958 14.2605 1.58813 10.9175C2.67395 6.28841 6.28834 2.67402 10.9174 1.58819C14.2604 0.804021 17.7396 0.804021 21.0826 1.58819C25.7116 2.67401 29.326 6.2884 30.4119 10.9174C31.196 14.2605 31.196 17.7396 30.4119 21.0827Z" stroke="currentColor" stroke-width="2"/><path d="M30.4119 21.0827C31.196 17.7396 31.196 14.2605 30.4119 10.9174C29.326 6.2884 25.7116 2.67401 21.0826 1.58819C17.7396 0.804021 14.2604 0.804021 10.9174 1.58819C6.28834 2.67402 2.67395 6.28841 1.58812 10.9175C0.803957 14.2605 0.803957 17.7396 1.58813 21.0827C2.67395 25.7117 6.28834 29.3261 10.9174 30.4119" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20.1673 16H11.834M16.0007 20.1666L16.0007 11.8333" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> <?php echo $wo['lang']['create'] ?>
+							</a>
+						</div>
+					<?php } ?>
+					<?php
+						$pages = Wo_GetMyPages();
+						if (count($pages) > 0) {
+							foreach ($pages as $wo['page']) {
+								echo Wo_LoadPage('page/pages-list');
+							}
+						} else {
+							echo '<div class="cool-style-album col-xs-6 col-sm-6 col-lg-4 empty"><div class="wow_content btn_create_big page"><div class="empty_state"><svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 10.0519H9.49245C10.6722 10.0519 11.3933 8.6449 10.7718 7.55588L10.3637 6.84101C9.96221 6.13751 9.96222 5.24772 10.3637 4.54422L10.7718 3.82935C11.3933 2.74033 10.6722 1.33331 9.49245 1.33331L1 1.33331L1 10.0519ZM1 10.0519L1 14.6666" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.49245 10.0519C10.6722 10.0519 11.3933 8.6449 10.7718 7.55588L10.3637 6.84101C9.96221 6.13751 9.96222 5.24772 10.3637 4.54422L10.7718 3.82935C11.3933 2.74033 10.6722 1.33331 9.49245 1.33331L1 1.33331L1 4.02595" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>' . $wo['lang']['no_pages_found'] . '</div></div></div>';
+						}
+					?>
+				<div class="clear"></div>
+				</div>
+			</div>
+		</div>
+		<?php //echo Wo_LoadPage('sidebar/content');?>
+	</div>
+</div>

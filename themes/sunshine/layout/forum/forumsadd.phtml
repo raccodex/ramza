@@ -1,0 +1,60 @@
+<?php echo Wo_LoadPage('forum/headers/header'); ?>
+<div class="" id="forumsadd">
+	<form action="#" class="form" id="newtopic" method="post">
+		<div class="page-margin mt-0">
+			<div class="wow_content popular_posts_hdr flex">
+				<h2 class="flex">&nbsp;<p><?php echo $wo['lang']['create_new_topic'];?><b><?php echo $wo['forum_data']['name_lang']; ?></b></p></h2>
+
+				<div class="btnss">
+					<button class="btn btn-main btn-mat add_wow_loader" type="submit"><?php echo $wo['lang']['publish']; ?></button>
+				</div>
+			</div>
+		</div>
+
+		<div class="page-margin wow_content wow_sett_content">
+			<div id="newpost-alert"></div>
+			<div class="wow_form_fields">
+				<label for="headline"><?php echo $wo['lang']['headline']; ?></label>
+				<input type="text" name="headline" id="headline">
+			</div>
+			<div class="wow_form_fields mb-0">
+				<label for="topicpost"><?php echo $wo['lang']['your_post']; ?></label>
+				<textarea rows="7" id="topicpost" name="topicpost"></textarea>
+			</div>
+		</div>
+	</form>
+	<div class="clear"></div>
+</div>
+
+<div class="clear"></div>
+<script>
+jQuery(document).ready(function($) {
+
+	$('#newtopic').ajaxForm({
+
+	      url: Wo_Ajax_Requests_File()  +  '?f=addtopic&fid=<?php echo $wo['forum_data']['id']; ?>&hash=' + $('.main_session').val(),
+	      beforeSend: function() {
+	        Wo_progressIconLoader($('#newtopic').find('button'));
+	      },
+	      success: function(data) {
+	        scrollToTop();
+	        if (data['status'] == 200) {
+	        	
+	         	$("#newpost-alert").html('<div class="alert page-margin alert-success">'+ data['message'] +'</div>');
+	          	window.location = data['url'];
+	        } else {
+	        	
+	         	$("#newpost-alert").html('<div class="alert page-margin alert-danger">' + data['message'] + '</div>');
+	        } 
+	        Wo_progressIconLoader($('#newtopic').find('button'));
+	      }
+	});
+
+	$("#topicpost").bbcode()
+	$("#topicpost").autogrow({vertical: true, horizontal: false});
+
+	
+});
+</script>
+
+<?php echo Wo_LoadPage('forum/headers/footer'); ?>

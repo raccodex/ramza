@@ -1,0 +1,17 @@
+<tr class="setting-banlist" id="currency_<?php echo $wo['country_id']?>" >
+   <td><?php echo $wo['country_id']?></td>
+   <td>
+      <div>
+         <?php echo $wo['value']->name;?>
+      </div>
+   </td>
+   <td>
+      <?php echo $wo['value']->view_cost;?>
+   </td>
+   <td>
+      <?php echo $wo['value']->click_cost;?>
+   </td>
+   <td>
+      <a href="javascript:void()" onclick="getCountryAds(<?php echo $wo['country_id']?>)" class="btn bg-info admn_table_btn">Edit</a>
+   </td>
+</tr>

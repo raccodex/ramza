@@ -1,0 +1,40 @@
+<div class="product col-proxs-12 col-xs-6 col-sm-4 col-md-4" data-fund-id="<?php echo $wo['fund']['id']; ?>">
+	<div class="fundings">
+		<div class="avatar">
+			<a href="<?php echo $wo['config']['site_url'].'/show_fund/'. $wo['fund']['hashed_id']; ?>" data-ajax="?link1=show_fund&id=<?php echo $wo['fund']['hashed_id']; ?>">
+				<img src="<?php echo $wo['fund']['image']; ?>" alt="<?php echo $wo['fund']['title']; ?>">
+			</a>
+			<time><?php echo date("d M Y",$wo['fund']['time']); ?></time>
+		</div>
+		<div class="fundings_desc">
+		 	<div class="fundings_desc_meta">
+			 	<div class="postMeta--author-avatar">
+				 	<a href="<?php echo $wo['fund']['user_data']['url']?>">
+						<img src="<?php echo $wo['fund']['user_data']['avatar']?>" alt="User Image">
+					</a>
+				</div>
+				<div class="postMeta--author-text">
+					<h3><a href="<?php echo $wo['config']['site_url'].'/show_fund/'. $wo['fund']['hashed_id']; ?>" data-ajax="?link1=show_fund&id=<?php echo($wo['fund']['hashed_id']) ?>"><?php echo $wo['fund']['title']; ?></a></h3>
+					<a href="<?php echo $wo['fund']['user_data']['url']; ?>" data-ajax="?link1=timeline&u=<?php echo $wo['fund']['user_data']['username']; ?>"><?php echo $wo['fund']['user_data']['name']; ?></a>
+				</div>
+		 	</div>
+			<!--<p class="desc">
+				<?php 
+				$desc = str_replace('<br>', '', $wo['fund']['description']);
+				echo $desc = mb_substr($desc, 0, 190, "UTF-8") . ".."; ?>
+			</p>-->
+		</div>
+		<div class="fundings_footer">
+			<p><?php echo $wo['config']['currency_symbol_array'][$wo['config']['currency']].$wo['fund']['raised']; ?>  <?php echo $wo['lang']['raised_of']; ?> <?php echo $wo['config']['currency_symbol_array'][$wo['config']['currency']].$wo['fund']['amount']; ?></p>
+			<div class="progress">
+				<div class="progress-bar" role="progressbar" style="width: <?php echo $wo['fund']['bar']; ?>%" aria-valuenow="<?php echo $wo['fund']['bar']; ?>" aria-valuemin="0" aria-valuemax="<?php echo($wo['fund']['amount']) ?>"></div>
+			</div>
+		</div>
+		<div class="wow_main_fund_foot">
+			<a href="<?php echo $wo['config']['site_url'].'/show_fund/'. $wo['fund']['hashed_id']; ?>" data-ajax="?link1=show_fund&id=<?php echo $wo['fund']['hashed_id']; ?>" class="contact btn btn-main btn-mat"><?php echo $wo['lang']['donate']; ?></a>&nbsp;&nbsp;&nbsp;
+			<a href="<?php echo $wo['config']['site_url'].'/show_fund/'. $wo['fund']['hashed_id']; ?>" target="_blank" class="contact btn btn-default btn-mat">
+				<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0283 1.5C9.00499 1.5 7.98166 1.61763 6.97875 1.85288C4.20133 2.50437 2.03269 4.67301 1.3812 7.45043C0.910694 9.45626 0.910694 11.5437 1.3812 13.5496C2.03269 16.327 4.20133 18.4956 6.97876 19.1471C8.98458 19.6176 11.0721 19.6176 13.0779 19.1471C15.8553 18.4956 18.024 16.327 18.6754 13.5496C18.9107 12.5466 19.0283 11.5233 19.0283 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15.0283 1.5H19.0283M19.0283 1.5V6.16667M19.0283 1.5L13.0283 8.5" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+			</a>
+		</div>
+	</div>
+</div>

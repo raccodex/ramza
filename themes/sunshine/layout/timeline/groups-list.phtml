@@ -1,0 +1,16 @@
+<div class="cool-style-album profi_groups col-xs-6 col-sm-6 col-lg-4" data-page-id="<?php echo $wo['GroupList']['id'];?>">
+	<div class="wow_content album_parent">
+		<div class="avatar">
+			<a href="<?php echo $wo['GroupList']['url'];?>" data-ajax="?link1=timeline&u=<?php echo $wo['GroupList']['username']?>">
+				<img src="<?php echo $wo['GroupList']['avatar'];?>" alt="<?php echo $wo['GroupList']['name']; ?> Profile Picture" />
+			</a>
+		</div>
+		<div class="album-name">
+			<a href="<?php echo $wo['GroupList']['url'];?>" data-ajax="?link1=timeline&u=<?php echo $wo['GroupList']['username']?>"><h4><?php echo $wo['GroupList']['name']; ?></h4></a>
+			<a href="<?php echo $wo['GroupList']['url'];?>" data-ajax="?link1=timeline&u=<?php echo $wo['GroupList']['username']?>"><p><?php echo Wo_CountGroupMembers($wo['GroupList']['id']); ?> <?php echo $wo['lang']['members'];?></p></a>
+		</div>
+		<div class="user-follow-button">
+			<?php echo Wo_GetJoinButton($wo['GroupList']['id']);?>
+		</div>
+	</div>
+</div>

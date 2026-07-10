@@ -1,0 +1,24 @@
+<div class="cool-style-album profi_groups user_list col-xs-6 col-sm-6 col-lg-4">
+	<div class="wow_content album_parent startup_follow_usrs">
+		<div class="avatar">
+			<a href="<?php echo $wo['result']['url']. $wo['marker'];?>ref=se" data-ajax="?link1=timeline&u=<?php echo $wo['result']['username']?>&ref=se">
+				<img src="<?php echo $wo['result']['avatar'];?>" alt="<?php echo $wo['result']['name']; ?> Profile Picture" />
+			</a>
+		</div>
+		<div class="album-name">
+			<a href="<?php echo $wo['result']['url']. $wo['marker'];?>ref=se" data-ajax="?link1=timeline&u=<?php echo $wo['result']['username']?>&ref=se"><h4><?php echo $wo['result']['name']; ?></h4></a>
+			
+			<p>
+				<span class="small-last-seen"><?php echo Wo_CountFollowers($wo['result']['user_id']);?> <?php if ($wo['config']['connectivitySystem'] == 1) { echo $wo['lang']['friends_btn'];} else { echo $wo['lang']['followers'];} ?></span>
+			</p>
+			<p>
+				<span class="small-last-seen"><?php echo $wo['result']['details']['post_count'];?> <?php echo $wo['lang']['posts']; ?></span>
+			</p>
+		</div>
+		<?php if (!isset($wo['result']['no_btn'])) { ?>
+			<div class="user-follow-button">
+				<?php echo Wo_GetFollowButton($wo['result']['user_id']);?>
+			</div>
+		<?php } ?>
+	</div>
+</div>

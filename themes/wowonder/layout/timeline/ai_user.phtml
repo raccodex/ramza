@@ -1,0 +1,164 @@
+<div class="modal fade" id="AI-user-modal" role="dialog">
+	<div class="modal-dialog modal-md wow_mat_mdl">
+		<form method="post">
+			<div class="modal-content">
+				<img class="ai_alert_img" src="<?php echo $wo['config']['theme_url'];?>/img/robot.png">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span></button>
+					<h4 class="modal-title"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="512" height="512" x="0" y="0" viewBox="0 0 512 512" xml:space="preserve" class=""><g><path fill="#4fcde1" d="M391 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM331 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM271 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15z" data-original="#39326c" class=""></path><path fill="#4fcde1" d="M211 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM151 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM91 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15z" data-original="#5f55af" class=""></path><path fill="#4fcde1" d="M406 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM346 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM286 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15z" data-original="#39326c" class=""></path><g fill="#5f55af"><path d="M226 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM166 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM106 512c8.284 0 15-6.716 15-15v-66H91v66c0 8.284 6.716 15 15 15zM15 121h66V91H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 181h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 241h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 301h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 361h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 421h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15z" fill="#4fcde1" data-original="#5f55af" class=""></path></g><path fill="#4fcde1" d="M431 91v30h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15zM431 181h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 241h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 301h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 361h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 421h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66z" data-original="#39326c" class=""></path><path fill="#e8fcff" d="M446 51H66c-8.284 0-15 6.716-15 15v380c0 8.284 6.716 15 15 15h380c8.284 0 15-6.716 15-15V66c0-8.284-6.716-15-15-15z" data-original="#aed0ff" class=""></path><path fill="#e8fcff" d="M461 446V66c0-8.284-6.716-15-15-15H256v410h190c8.284 0 15-6.716 15-15z" data-original="#7c84e8" class=""></path><path fill="#4fcde1" d="M386 111H126c-8.284 0-15 6.716-15 15v260c0 8.284 6.716 15 15 15h260c8.284 0 15-6.716 15-15V126c0-8.284-6.716-15-15-15z" data-original="#5f55af" class=""></path><path fill="#4fcde1" d="M401 386V126c0-8.284-6.716-15-15-15H256v290h130c8.284 0 15-6.716 15-15z" data-original="#39326c" class=""></path><path fill="#ffffff" d="M247.626 192.389A17.657 17.657 0 0 0 231.077 181h-.018a17.658 17.658 0 0 0-16.517 11.351l-45.06 118.31c-2.949 7.742.937 16.408 8.679 19.356 7.742 2.95 16.408-.937 19.356-8.679l7.543-19.804h51.691l7.458 19.762c2.267 6.007 7.974 9.708 14.036 9.708 1.76 0 3.55-.312 5.294-.97 7.75-2.925 11.663-11.579 8.737-19.33zm-31.14 79.146 14.538-38.171 14.406 38.171z" data-original="#f9f9f9" class=""></path><g fill="#e2dff4"><path d="M264.209 321.296c2.267 6.007 7.974 9.708 14.036 9.708 1.76 0 3.55-.312 5.294-.97 7.75-2.925 11.663-11.579 8.737-19.33L256 214.578v86.956h.751zM328.5 181c-8.284 0-15 6.716-15 15v120c0 8.284 6.716 15 15 15s15-6.716 15-15V196c0-8.284-6.716-15-15-15z" fill="#ffffff" data-original="#e2dff4" class=""></path></g></g></svg> <?php echo $wo['lang']['convert_avatar_image']; ?></h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-lg-12">
+							<?php if ($wo['config']['images_credit_system'] == 1 && $wo['config']['generated_image_price'] > 0) { ?>
+								<div class="ai_alert_balance less_margin">
+									<p><?php echo $wo['lang']['available_balance']?></p>
+									<b id="creditTU"><?php echo getAvailableImageBalance() ?></b>
+									<p><?php echo $wo['lang']['images']?></p>
+
+									<button type="button" class="btn btn-mat" id="buy-ai-image-button" onclick="openAICredit('AI-user-modal')"><?php echo $wo['lang']['buy_credit']; ?></button>
+								</div>
+							<?php } ?>
+						</div>
+						<div class="col-lg-12">
+							<div class="ai_user_alert"></div>
+							<div class="wow_form_fields">
+								<textarea placeholder="<?php echo $wo['lang']['enter_prompt']?>" dir="auto" rows="5" name="text" id="aiUserText"></textarea>
+							</div>
+							<div id="productimage-holder" class="ai_alert_images"></div>
+						</div>
+					</div>
+					
+					<input type="hidden" name="user" value="<?php echo $wo['user']['user_id'];?>">
+					<input type="hidden" value="avatar" id="ai-user-model-type">
+				</div>
+				<div class="modal-footer" style="border: none">
+					<div class="ball-pulse"><div></div><div></div><div></div></div>
+					<button type="button" class="btn main btn-mat" id="ai-user-button" onclick="generateUserImages()"><?php echo $wo['lang']['generate']; ?></button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	var aiUserImage = [];
+	function addAIUserImages(type = 'avatar') {
+		$('#AI-user-modal').modal('hide');
+		if (type == 'avatar') {
+			$('.profile_avatar input')[0].files = new FileListItems(aiUserImage);
+			$('#isAiAvatar').val('on');
+			Wo_UpdateProfileAvatar();
+		}
+		else{
+			$('.profile_cover input')[0].files = new FileListItems(aiUserImage);
+			$('#isAiCover').val('on');
+			Wo_UpdateProfileCover();
+		}
+		$("#AI-user-modal #productimage-holder").html('');
+		$('#ai-selected-user-button').remove();
+		$('#aiUserText').val('');
+		aiUserImage = [];
+	}
+	function checkAIUser(id,type = 'avatar') {
+		$.post(Wo_Ajax_Requests_File()+'?f=ai&s=check', {id: id}, function(data, textStatus, xhr) {
+			if (data.status == 200) {
+				if (data.output == null) {
+					$("#AI-user-modal .ball-pulse").fadeIn();
+					$("#ai-user-button").html(data.status_text);
+				}
+				else{
+					clearInterval(window.checkAI);
+					<?php if ($wo['config']['images_credit_system'] == 1 && $wo['config']['generated_image_price'] > 0) { ?>
+						$('#current_user_credits').val(data.credits);
+						var text = "<?php echo($wo['lang']['available_images_credits']); ?>";
+						$('#creditTU').text( getAvailableByType('image'));
+					<?php } ?>
+					
+					$("#ai-user-button").text("<?php echo($wo['lang']['regenerate']) ?>");
+					$("#AI-user-modal .ball-pulse").fadeOut();
+					$("#ai-user-button").removeAttr('disabled');
+					
+					var ii = 0;
+					for (var i = 0; i < data.output.length; i++) {
+						loadImageFromUrl(data.output[i]).then(async dataUrl => {
+					     var fileData = await imageDataToFile(dataUrl, "Ai_image_"+ii+".jpg");
+					     aiUserImage.push(fileData);
+					     name = "'"+data.output[ii]+"'";
+						 $("#AI-user-modal #productimage-holder").append('<div class="thumb-image-delete" id="image_to_'+ii+'"><label><input type="checkbox" id="check-data-'+ii+'" class="pointer thumb-image-delete-btn delete-checkbox" data-image-id="'+ii+'"><span class="pointer ai_image_abs"></span></label><span data-href="'+dataUrl+'" onclick="Wo_OpenLighteBox(this,event);" ><img src="'+dataUrl+'" class="thumb-image"></span></div>')
+					     
+					     if (ii == data.output.length - 1) {
+					     	$("#AI-user-modal .modal-footer").prepend(`<button type="button" class="btn main btn-mat" id="ai-selected-user-button" onclick="addAIUserImages('${type}')"><?php echo $wo['lang']['select']; ?></button>`);
+					     }
+					     ii = ii + 1;
+					   })
+					}
+
+					$('#generatedAiPostText').val(data.output);
+				}
+			}
+			else{
+				$("#ai-user-button").text("<?php echo($wo['lang']['generate']) ?>");
+				$("#ai-user-button").removeAttr('disabled');
+		    	$('.ai_user_alert').html('<div class="alert alert-danger">' + data.message + '</div>');
+		    	setTimeout(() => {
+			  		$('.ai_user_alert').html('');
+			  	},3000);
+			  	clearInterval(window.checkAI);
+			}
+		});
+	}
+	function generateUserImages(type = 'avatar') {
+		clearInterval(window.checkAI);
+		$("#AI-user-modal #productimage-holder").html('');
+		$('#ai-selected-user-button').remove();
+		$("#AI-user-modal .ball-pulse").fadeIn();
+		$("#ai-user-button").text("<?php echo($wo['lang']['please_wait']) ?>");
+		$("#ai-user-button").attr("disabled","true");
+		$('#ai-selected-user-button').remove();
+		$.post(Wo_Ajax_Requests_File()+'?f=ai&s=convert', {text: $('#aiUserText').val(),type: type}, function(data, textStatus, xhr) {
+			if (data.status == 200) {
+				$("#ai-user-button").text(data.status_text);
+				window.checkAI = setInterval(() => {checkAIUser(data.id,type)} , 3000);
+			}
+			else{
+				$("#ai-user-button").removeAttr('disabled');
+				$("#AI-user-modal .ball-pulse").fadeOut();
+				$("#ai-user-button").text("<?php echo($wo['lang']['generate']) ?>");
+		    	$('.ai_user_alert').html('<div class="alert alert-danger">' + data.message + '</div>');
+		    	setTimeout(() => {
+			  		$('.ai_user_alert').html('');
+			  	},3000);
+			}
+		});
+	}
+	function openAiUserModel(type = 'avatar') {
+		
+		$("#AI-user-modal #productimage-holder").html('');
+		$('#ai-selected-user-button').remove();
+		$('#aiUserText').val('');
+		aiUserImage = [];
+		$('#ai-user-model-type').val(type);
+		$("#ai-user-button").removeAttr('disabled');
+		$('.ai_user_alert').html("");
+		<?php if ($wo['config']['images_credit_system'] == 1 && $wo['config']['generated_image_price'] > 0) { ?>
+			var text = "<?php echo($wo['lang']['available_images_credits']); ?>";
+			$('#creditTU').text( getAvailableByType('image'));
+			if ($('#current_user_credits').val() < <?php echo($wo['config']['generated_image_price']) ?>) {
+				$('#ai-user-button').attr('disabled',true);
+				$('.ai_user_alert').html("<div class='alert alert-danger'><?php echo $wo["lang"]["you_dont_have_enough_credits"]?></div>");
+			}
+		<?php } ?>
+		if (type == 'avatar') {
+			$('#AI-user-modal .modal-title').html('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="30" height="30" x="0" y="0" viewBox="0 0 512 512" xml:space="preserve" class=""><g><path fill="#4fcde1" d="M391 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM331 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM271 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15z" data-original="#39326c" class=""></path><path fill="#4fcde1" d="M211 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM151 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM91 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15z" data-original="#5f55af" class=""></path><path fill="#4fcde1" d="M406 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM346 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM286 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15z" data-original="#39326c" class=""></path><g fill="#5f55af"><path d="M226 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM166 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM106 512c8.284 0 15-6.716 15-15v-66H91v66c0 8.284 6.716 15 15 15zM15 121h66V91H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 181h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 241h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 301h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 361h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 421h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15z" fill="#4fcde1" data-original="#5f55af" class=""></path></g><path fill="#4fcde1" d="M431 91v30h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15zM431 181h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 241h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 301h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 361h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 421h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66z" data-original="#39326c" class=""></path><path fill="#e8fcff" d="M446 51H66c-8.284 0-15 6.716-15 15v380c0 8.284 6.716 15 15 15h380c8.284 0 15-6.716 15-15V66c0-8.284-6.716-15-15-15z" data-original="#aed0ff" class=""></path><path fill="#e8fcff" d="M461 446V66c0-8.284-6.716-15-15-15H256v410h190c8.284 0 15-6.716 15-15z" data-original="#7c84e8" class=""></path><path fill="#4fcde1" d="M386 111H126c-8.284 0-15 6.716-15 15v260c0 8.284 6.716 15 15 15h260c8.284 0 15-6.716 15-15V126c0-8.284-6.716-15-15-15z" data-original="#5f55af" class=""></path><path fill="#4fcde1" d="M401 386V126c0-8.284-6.716-15-15-15H256v290h130c8.284 0 15-6.716 15-15z" data-original="#39326c" class=""></path><path fill="#ffffff" d="M247.626 192.389A17.657 17.657 0 0 0 231.077 181h-.018a17.658 17.658 0 0 0-16.517 11.351l-45.06 118.31c-2.949 7.742.937 16.408 8.679 19.356 7.742 2.95 16.408-.937 19.356-8.679l7.543-19.804h51.691l7.458 19.762c2.267 6.007 7.974 9.708 14.036 9.708 1.76 0 3.55-.312 5.294-.97 7.75-2.925 11.663-11.579 8.737-19.33zm-31.14 79.146 14.538-38.171 14.406 38.171z" data-original="#f9f9f9" class=""></path><g fill="#e2dff4"><path d="M264.209 321.296c2.267 6.007 7.974 9.708 14.036 9.708 1.76 0 3.55-.312 5.294-.97 7.75-2.925 11.663-11.579 8.737-19.33L256 214.578v86.956h.751zM328.5 181c-8.284 0-15 6.716-15 15v120c0 8.284 6.716 15 15 15s15-6.716 15-15V196c0-8.284-6.716-15-15-15z" fill="#ffffff" data-original="#e2dff4" class=""></path></g></g></svg> <?php echo $wo['lang']['convert_avatar_image']; ?>');
+		}
+		else{
+			$('#AI-user-modal .modal-title').html('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="30" height="30" x="0" y="0" viewBox="0 0 512 512" xml:space="preserve" class=""><g><path fill="#4fcde1" d="M391 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM331 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM271 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15z" data-original="#39326c" class=""></path><path fill="#4fcde1" d="M211 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM151 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15zM91 81h30V15c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15z" data-original="#5f55af" class=""></path><path fill="#4fcde1" d="M406 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM346 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM286 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15z" data-original="#39326c" class=""></path><g fill="#5f55af"><path d="M226 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM166 512c8.284 0 15-6.716 15-15v-66h-30v66c0 8.284 6.716 15 15 15zM106 512c8.284 0 15-6.716 15-15v-66H91v66c0 8.284 6.716 15 15 15zM15 121h66V91H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 181h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 241h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 301h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 361h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zM15 421h66v-30H15c-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15z" fill="#4fcde1" data-original="#5f55af" class=""></path></g><path fill="#4fcde1" d="M431 91v30h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15zM431 181h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 241h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 301h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 361h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66zM431 421h66c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15h-66z" data-original="#39326c" class=""></path><path fill="#e8fcff" d="M446 51H66c-8.284 0-15 6.716-15 15v380c0 8.284 6.716 15 15 15h380c8.284 0 15-6.716 15-15V66c0-8.284-6.716-15-15-15z" data-original="#aed0ff" class=""></path><path fill="#e8fcff" d="M461 446V66c0-8.284-6.716-15-15-15H256v410h190c8.284 0 15-6.716 15-15z" data-original="#7c84e8" class=""></path><path fill="#4fcde1" d="M386 111H126c-8.284 0-15 6.716-15 15v260c0 8.284 6.716 15 15 15h260c8.284 0 15-6.716 15-15V126c0-8.284-6.716-15-15-15z" data-original="#5f55af" class=""></path><path fill="#4fcde1" d="M401 386V126c0-8.284-6.716-15-15-15H256v290h130c8.284 0 15-6.716 15-15z" data-original="#39326c" class=""></path><path fill="#ffffff" d="M247.626 192.389A17.657 17.657 0 0 0 231.077 181h-.018a17.658 17.658 0 0 0-16.517 11.351l-45.06 118.31c-2.949 7.742.937 16.408 8.679 19.356 7.742 2.95 16.408-.937 19.356-8.679l7.543-19.804h51.691l7.458 19.762c2.267 6.007 7.974 9.708 14.036 9.708 1.76 0 3.55-.312 5.294-.97 7.75-2.925 11.663-11.579 8.737-19.33zm-31.14 79.146 14.538-38.171 14.406 38.171z" data-original="#f9f9f9" class=""></path><g fill="#e2dff4"><path d="M264.209 321.296c2.267 6.007 7.974 9.708 14.036 9.708 1.76 0 3.55-.312 5.294-.97 7.75-2.925 11.663-11.579 8.737-19.33L256 214.578v86.956h.751zM328.5 181c-8.284 0-15 6.716-15 15v120c0 8.284 6.716 15 15 15s15-6.716 15-15V196c0-8.284-6.716-15-15-15z" fill="#ffffff" data-original="#e2dff4" class=""></path></g></g></svg> <?php echo $wo['lang']['convert_cover_image']; ?>');
+		}
+		$('#ai-user-button').attr('onclick',`generateUserImages("${type}")`);
+		$("#AI-user-modal #productimage-holder").html('');
+		$('#ai-selected-user-button').remove();
+		$('#aiUserText').val('');
+		aiUserImage = [];
+		$('#AI-user-modal').modal('show');
+	}
+</script>

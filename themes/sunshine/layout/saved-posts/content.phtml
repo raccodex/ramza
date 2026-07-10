@@ -1,0 +1,26 @@
+<div class="page-margin">
+	<div class="row">
+		<div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+		<div class="col-md-7 middlecol">
+			<div class="page-margin mt-0">
+				<div class="wow_content popular_posts_hdr">
+					<h2><svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.4173 13.7197V4.72982C12.4173 2.99559 11.1988 1.50291 9.50711 1.16474C7.85233 0.833961 6.14897 0.833961 4.4942 1.16474C2.80248 1.50291 1.58398 2.99559 1.58398 4.72982V13.7197C1.58398 14.7715 2.71957 15.4261 3.62232 14.8947L6.08843 13.4431C6.65185 13.1114 7.34946 13.1114 7.91288 13.4431L10.379 14.8947C11.2817 15.4261 12.4173 14.7715 12.4173 13.7197Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M1.58398 13.7197C1.58398 14.7715 2.71957 15.4261 3.62232 14.8947L6.08843 13.4431C6.65185 13.1114 7.34946 13.1114 7.91288 13.4431L10.379 14.8947C11.2817 15.4261 12.4173 14.7715 12.4173 13.7197V4.72982C12.4173 2.99559 11.1988 1.50291 9.50711 1.16474C7.85233 0.833961 6.14897 0.833961 4.4942 1.16474" class="icon_main" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>&nbsp;<?php echo TextForMode('saved_posts'); ?></h2>
+				</div>
+			</div>
+			
+			<div class="saved-posts">
+				<?php
+					$stories = Wo_GetSavedPosts($wo['user']['user_id']);
+					if (count($stories) <= 0) {
+						echo Wo_LoadPage('saved-posts/no-posts');
+					} else {
+						foreach ($stories as $wo['story']) {
+							echo Wo_LoadPage('story/content');
+						}
+					}
+				?>
+			</div>
+		</div>
+		<?php echo Wo_LoadPage('sidebar/content');?>
+	</div>
+</div>

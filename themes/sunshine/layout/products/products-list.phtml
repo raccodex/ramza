@@ -1,0 +1,49 @@
+<div class="product col-proxs-12 col-xs-6 col-sm-4 col-md-4" id="product-<?php echo $wo['product']['id']?>" data-id="<?php echo $wo['product']['id']?>">
+	<div class="product_info wow_main_mkt_prod">
+		<div class="product-image">
+			<a href="<?php echo $wo['product']['url']?>" data-ajax="?link1=post&id=<?php echo $wo['product']['seo_id'];?>"><img src="<?php echo $wo['product']['images'][0]['image_org'];?>"></a>
+			<div class="product-by">
+				<?php
+				    $product_by_ = $wo['product']['category'];
+				    $product_by_ = str_replace('{product_category_name}', $wo['products_categories'][$wo['product']['category']], $product_by_);
+				?>
+				<a href="<?php echo Wo_SeoLink('index.php?link1=products&c_id=' . $wo['product']['category']);?>"><?php echo $wo['products_categories'][$wo['product']['category']];?></a>
+				<?php if (!empty($wo['product']['product_sub_category'])) { ?>
+				<div>
+					<a href="<?php echo Wo_SeoLink('index.php?link1=products&c_id=' . $wo['product']['category']);?>"><?php echo $wo['product']['product_sub_category'];?></a>
+				</div>
+				<?php } ?>
+			</div>
+		</div>
+		<div class="produc_info">
+			<div class="product-title">
+				<a href="<?php echo $wo['product']['url']?>" data-ajax="?link1=post&id=<?php echo $wo['product']['seo_id'];?>" title="<?php echo $wo['product']['name']?>"><?php echo $wo['product']['name']?></a>
+			</div>
+			<div class="product-price">
+				<?php echo (!empty($wo['currencies'][$wo['product']['currency']]['symbol'])) ? $wo['currencies'][$wo['product']['currency']]['symbol'] : $wo['config']['classified_currency_s'];?><?php echo $wo['product']['price_format']?>
+			</div>
+			<div class="wow_main_prod_foot" style="<?php echo(empty($wo['product']['units']) && $wo['product']['units'] < 1 ? 'padding-bottom: 5px;' : '') ?>">
+				<?php if ($wo['loggedin']) { if (!empty($wo['product']['seller']) && $wo['product']['seller']['id'] != $wo['user']['user_id']) { ?>
+					<?php if ($wo['config']['store_system'] == 'on') { ?>
+					<?php if (!empty($wo['product']['units']) && $wo['product']['units'] > 0) { ?>
+						<button class="contact btn btn-main btn-mat" onclick="AddProductToCart(this,'<?php echo($wo['product']['id']); ?>','add')">
+							<?php echo $wo['lang']['buy_now'] ?>
+						</button>&nbsp;&nbsp;&nbsp;
+					<?php }else{ ?>
+						
+					<?php } ?> 
+					<?php } ?>
+					<button class="contact btn btn-default btn-mat" onclick="Wo_OpenChatTab(<?php echo $wo['product']['seller']['id']?>,0,<?php echo $wo['product']['id']?>)" data-toggle="tooltip" title="<?php echo $wo['lang']['contact_seller'] ?>">
+						<svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.71867 8.53303C2.56417 4.85464 5.31998 1.99673 8.83213 1.15601L9.11094 1.08927C11.0007 0.636911 12.9631 0.636911 14.8528 1.08927L15.3292 1.2033C18.7203 2.01505 21.3811 4.77448 22.1975 8.3261L22.3086 8.80926C22.7292 10.6391 22.7292 12.5478 22.3086 14.3776C21.4616 18.0624 18.3226 20.6585 14.7142 20.6585H13.3874C12.9517 20.6585 12.5574 20.9393 12.3918 21.3627C11.7901 22.901 10.1103 23.6561 8.64394 23.0291L8.49624 22.966C5.10763 21.5173 2.58162 18.4081 1.72289 14.6722C1.26056 12.6608 1.25634 10.5444 1.71867 8.53303Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M7.86914 8.32251H15.4087M7.86914 12.6427H12.6671" class="icon_main" stroke-width="1.5" stroke-linecap="round"></path></svg>
+					</button>
+				<?php } else { ?>
+					<a class="btn btn-block btn-default btn-mat" href="<?php echo $wo['product']['url']?>" data-ajax="?link1=post&id=<?php echo $wo['product']['seo_id'];?>">
+						<?php echo $wo['lang']['more_info'] ?>
+					</a>
+				<?php } ?>
+				<?php } ?>
+			</div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>

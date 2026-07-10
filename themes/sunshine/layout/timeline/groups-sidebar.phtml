@@ -1,0 +1,16 @@
+<ul class="page-margin wow_content negg_padd list-unstyled event-options-list" id="sidebar-pages-list-container">
+	<div class="wo_page_hdng profile_hdng_side">
+		<div class="wo_page_hdng_innr">
+			<a href="<?php echo Wo_SeoLink('index.php?link1=timeline&u=' . $wo['user_profile']['username'] . '&type=groups');?>" data-ajax="?link1=timeline&u=<?php echo $wo['user_profile']['username']?>&type=groups"><?php echo $wo['lang']['groups'];?></a>&nbsp;<div style="font-weight: normal">(<?php echo number_format($wo['user_profile']['details']['groups_count']);?>)</div>
+		</div>
+	</div>
+	<li>
+		<div class="sidebar-groups-container profile_side_users"><?php 
+			foreach (Wo_GetUsersGroups($wo['user_profile']['user_id'], 5, array('in' => 'profile_sidebar', 'groups_data' => $wo['user_profile']['groups_data'])) as $wo['GroupList']) {
+				$wo['GroupList']['name'] = $wo['GroupList']['name'];
+				echo Wo_LoadPage('sidebar/sidebar-groups-list');
+			}
+			?></div>
+	</li>
+	<li><div class="clear"></div></li>
+</ul>

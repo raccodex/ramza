@@ -1,0 +1,68 @@
+<?php echo Wo_LoadPage('forum/headers/header'); ?>
+<div class="" id="search">
+	<form id="forum-search" action="<?php echo Wo_SeoLink('index.php?link1=forum-search-result');?>" method="get" class="forum form-horizontal">
+		<div class="page-margin mt-0">
+			<div class="wow_content popular_posts_hdr flex">
+				<h2>&nbsp;<?php echo $wo['lang']['search'];?></h2>
+				<div class="btnss">
+					<button class="btn btn-main btn-mat add_wow_loader" id="forum-search-btn" type="submit"><?php echo $wo['lang']['search']; ?></button>
+				</div>
+			</div>
+		</div>
+
+		<div id="forum-search-container" class="page-margin wow_content wow_sett_content">
+			<input type="hidden" name="mode" value="search">
+			<div class="wow_form_fields">
+				<label for="search-subject"><?php echo $wo['lang']['search_for_term']; ?></label>
+				<textarea rows="4" name="search-terms" id="search-subject"></textarea>
+				<span class="help-block"><?php echo $wo['lang']['search_terms_more4']; ?></span>
+			</div>
+			<div class="wow_form_fields">
+				<label for="search-only"><?php echo $wo['lang']['search_type']; ?></label>
+				<select id="search-only" name="search-only">
+					<option value="0" ><?php echo $wo['lang']['search_subject_only']; ?></option>
+					<option value="1" ><?php echo $wo['lang']['search']; ?> <?php echo $wo['lang']['post']; ?></option>
+				</select>
+			</div>
+			<div class="wow_form_fields">
+				<label for="search-in"><?php echo $wo['lang']['search_in']; ?></label>
+				<select id="search-in" name="search-in">
+					<option value="forums"><?php echo $wo['lang']['search_in_forums']; ?></option>
+					<option value="messages"><?php echo $wo['lang']['search_in_messages']; ?></option>
+					<option value="threads" selected><?php echo $wo['lang']['search_in_threads']; ?></option>
+				</select>
+			</div>
+			<div class="wow_form_fields">
+				<label for="section"><?php echo $wo['lang']['search_section']; ?></label>
+				<select id="section" name="section">
+					<?php foreach ($wo['sections'] as $wo['section']): ?>
+						<option value="<?php echo $wo['section']['id']; ?>"><?php echo $wo['section']['section_name_lang']; ?></option>
+					<?php endforeach; ?>
+				</select>
+			</div>
+		</div>
+	</form>
+	<div class="clear"></div>
+</div>
+
+
+<?php echo Wo_LoadPage('forum/headers/footer'); ?>
+<script>
+	jQuery(document).ready(function($) {
+		//Toggle search panel
+		$("#togg-search-cont").click(function(){
+          $("#forum-search-container").slideToggle();
+        });
+
+
+        $("#forum-search").submit(function(event) {
+	        var empty = $("#search-subject").val();
+            if ($("#search-subject").val().length < 4) {
+            	event.preventDefault();
+            	$("#search-terms").addClass('alert alert-danger');
+            	scrollToTop();
+            	$("#search-subject").focus();
+            }
+        });
+	});
+</script>
