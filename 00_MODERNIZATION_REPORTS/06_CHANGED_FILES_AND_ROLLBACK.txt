@@ -147,3 +147,58 @@ Additional verification:
 - 18/18 web-SAPI probes pass against disposable DB.
 - final clean web-SAPI run created no PHP warning/deprecation/fatal logs.
 - 18 vendor runtime autoloads pass, 0 fail.
+
+Phase 2 safety checkpoint
+-------------------------
+Generated: 2026-07-11 (Asia/Karachi)
+
+Pre-Phase-2 Git state before code changes:
+- git status --short: clean
+- current HEAD: 2286a531 docs: record Phase 1 runtime checkpoint
+- git log --oneline -10 confirmed the Phase 1 checkpoint chain:
+  2286a531, db76c33f, 92fdf143, 24e1bcf6, 20bc41b2
+
+Reachability checks:
+- 20bc41b2346eaf987e4f7b92d9ed985229c6eb7b is reachable from HEAD.
+- 24e1bcf6b2a8bbdd5e99280887dc2ccc99c944c7 is reachable from HEAD.
+
+Phase 2 external archive:
+E:\RACSocial\Script\_modernization_backups\phase2-prechange-20260711-010136.tar.gz
+
+Archive size:
+94,719,513 bytes
+
+Archive SHA-256:
+21AA4ADF3F9ED97E7C5B41012C748E87DA197F60A78C95B0EF2026E8F1621CA4
+
+Archive note:
+- The archive was created outside the web root.
+- Active local config/secret/runtime paths were excluded, including config.php,
+  nodejs/config.json, upload/Uploads, cache/Cache, logs/Logs, backup/backups,
+  changes, runtime logs, Phase 2 temporary test workspaces/configs, install lock
+  state, and common private-key/env file patterns.
+
+Git ignore guardrail confirmed:
+- config.php
+- nodejs/config.json
+- upload/ and Uploads/
+- cache/ and Cache/
+- logs/ and Logs/
+- backup/, backups/, and Backups/
+- 00_MODERNIZATION_REPORTS/runtime_logs/
+- 00_MODERNIZATION_REPORTS/phase2_test_workspaces/
+- 00_MODERNIZATION_REPORTS/phase2_test_configs/
+- install/install.lock
+- install/storage/
+
+Phase 2 safety/report checkpoint files:
+- .gitignore
+- 00_MODERNIZATION_REPORTS/06_CHANGED_FILES_AND_ROLLBACK.txt
+
+Rollback for this safety checkpoint:
+1. Review current changes:
+   git status --short
+2. Restore only the safety-report/ignore edits if needed:
+   git restore --source 2286a531 -- .gitignore 00_MODERNIZATION_REPORTS/06_CHANGED_FILES_AND_ROLLBACK.txt
+3. Use the Phase 2 external archive above only if full pre-Phase-2 workspace
+   restoration is required.

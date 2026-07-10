@@ -14,15 +14,23 @@ service-account*.json
 
 # User uploads and generated language/configuration data
 /upload/
+/Uploads/
 /nodejs/models/wo_langs.js
 
 # Runtime cache, logs, backups, and temporary files
 /cache/
+/Cache/
 /changes/
 /backup/
 /backups/
+/Backups/
 /logs/
+/Logs/
 /00_MODERNIZATION_REPORTS/runtime_logs/
+/00_MODERNIZATION_REPORTS/phase2_test_workspaces/
+/00_MODERNIZATION_REPORTS/phase2_test_configs/
+/install/install.lock
+/install/storage/
 *.log
 *.bak
 *.backup
