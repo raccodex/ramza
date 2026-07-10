@@ -10275,6 +10275,10 @@ function getStatus($config = array())
 
     $errors = [];
 
+    if (!version_compare(PHP_VERSION, '8.2.0', '>=')) {
+        $errors[] = ["type" => "error", "message" => "RACSocial requires PHP <strong>8.2.0</strong> or newer. Current PHP runtime: <strong>" . htmlspecialchars(PHP_VERSION, ENT_QUOTES, 'UTF-8') . "</strong>."];
+    }
+
     if (!is_writable('./nodejs/models/wo_langs.js')) {
         $errors[] = ["type" => "error", "message" => "The file: <strong>nodejs/models/wo_langs.js</strong> is not writable, file permission should be <strong>777</strong>."];
     }

@@ -232,7 +232,7 @@ if (file_exists('../htaccess.txt')) {
             $gd = false;
             $disabled = true;
             }
-            if (!version_compare(PHP_VERSION, '7.1.0', '>=')) {
+            if (!version_compare(PHP_VERSION, '8.2.0', '>=')) {
             $php = false;
             $disabled = true;
             }
@@ -329,8 +329,8 @@ if (file_exists('../htaccess.txt')) {
                     </thead>
                     <tbody>
                       <tr>
-                        <td>PHP 7.1+</td>
-                        <td>Required PHP version 7.1 or more</td>
+                        <td>PHP 8.2+</td>
+                        <td>Required PHP version 8.2.0 or newer</td>
                         <td><?php echo ($php == true) ? '<font color="green"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M9.707 17.707l10-10-1.414-1.414L9 15.586l-4.293-4.293-1.414 1.414 5 5a.997.997 0 0 0 1.414 0z"/></svg> Installed</font>' : '<font color="red"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6.707 18.707L12 13.414l5.293 5.293 1.414-1.414L13.414 12l5.293-5.293-1.414-1.414L12 10.586 6.707 5.293 5.293 6.707 10.586 12l-5.293 5.293z"/></svg> Not installed</font>'?></td>
                       </tr>
                       <tr>
