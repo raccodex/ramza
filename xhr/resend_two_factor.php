@@ -2,19 +2,11 @@
 if ($f == 'resend_two_factor') {
 	$hash = '';
 	if (!empty($_SESSION) && !empty($_SESSION['two_factor_hash'])) {
-		if (version_compare(PHP_VERSION, '8.0.0', '>=')) {
-		    $hash = filter_var($_SESSION['two_factor_hash'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-		} else {
-		    $hash = filter_var($_SESSION['two_factor_hash'], FILTER_SANITIZE_STRING);
-		}
+		$hash = filter_var((string) $_SESSION['two_factor_hash'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$hash = Wo_Secure($hash);
 	}
 	if (!empty($_COOKIE) && !empty($_COOKIE['two_factor_hash'])) {
-		if (version_compare(PHP_VERSION, '8.0.0', '>=')) {
-		    $hash = filter_var($_COOKIE['two_factor_hash'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-		} else {
-		    $hash = filter_var($_COOKIE['two_factor_hash'], FILTER_SANITIZE_STRING);
-		}
+		$hash = filter_var((string) $_COOKIE['two_factor_hash'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$hash = Wo_Secure($hash);
 	}
 	if (empty($hash)) {

@@ -1,0 +1,67 @@
+lock_path,package,version,php_requirement,type,abandoned,phase1_action
+assets/libraries/apple/composer.lock,griffinledingham/php-apple-signin,1.1,,library,false,locked-no-upgrade
+assets/libraries/braintree/composer.lock,braintree/braintree_php,6.11.1,>=7.3.0,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,firebase/php-jwt,v5.1.0,>=5.3.0,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,google/auth,v1.7.1,>=5.4,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,google/cloud-core,v1.35.0,>=5.5,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,google/cloud-storage,v1.18.0,,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,google/crc32,v0.1.0,>=5.4,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,guzzlehttp/guzzle,6.5.2,>=5.5,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,guzzlehttp/promises,v1.3.1,>=5.5.0,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,guzzlehttp/psr7,1.6.1,>=5.4.0,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,monolog/monolog,2.0.2,^7.2,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,psr/cache,1.0.1,>=5.3.0,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,psr/http-message,1.0.1,>=5.3.0,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,psr/log,1.1.3,>=5.3.0,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,ralouphie/getallheaders,3.0.3,>=5.6,library,false,locked-no-upgrade
+assets/libraries/cloud/composer.lock,rize/uri-template,0.3.2,>=5.3.0,library,false,locked-no-upgrade
+assets/libraries/composer.lock,nicolab/php-ftp-client,v1.4.1,>=5.4,library,false,locked-no-upgrade
+assets/libraries/DB/composer.lock,joshcam/mysqli-database-class,dev-master,>=5.3.0,library,false,locked-no-upgrade
+assets/libraries/fake-users/composer.lock,fzaninotto/faker,v1.9.0,"^5.3.3 || ^7.0",library,false,locked-no-upgrade
+assets/libraries/ftp/composer.lock,nicolab/php-ftp-client,v1.5.1,>=5.4,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,firebase/php-jwt,v6.3.0,^7.1||^8.0,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,google/auth,v1.21.1,^7.1||^8.0,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,google/cloud-core,v1.47.2,>=5.6,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,google/cloud-storage,v1.28.1,,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,google/crc32,v0.1.0,>=5.4,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,guzzlehttp/guzzle,7.4.5,"^7.2.5 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,guzzlehttp/promises,1.5.1,>=5.5,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,guzzlehttp/psr7,2.4.0,"^7.2.5 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,monolog/monolog,2.8.0,>=7.2,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,psr/cache,3.0.0,>=8.0.0,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,psr/http-client,1.0.1,"^7.0 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,psr/http-factory,1.0.1,>=7.0.0,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,psr/http-message,1.0.1,>=5.3.0,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,psr/log,3.0.0,>=8.0.0,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,ralouphie/getallheaders,3.0.3,>=5.6,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,rize/uri-template,0.3.4,>=5.3.0,library,false,locked-no-upgrade
+assets/libraries/google-lib/composer.lock,symfony/deprecation-contracts,v3.0.2,>=8.0.2,library,false,locked-no-upgrade
+assets/libraries/google_auth/composer.lock,paragonie/constant_time_encoding,v2.6.3,^7|^8,library,false,locked-no-upgrade
+assets/libraries/google_auth/composer.lock,pragmarx/google2fa,v8.0.1,^7.1|^8.0,library,false,locked-no-upgrade
+assets/libraries/payfastSDK/composer.lock,guzzlehttp/guzzle,7.8.0,"^7.2.5 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/payfastSDK/composer.lock,guzzlehttp/promises,2.0.1,"^7.2.5 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/payfastSDK/composer.lock,guzzlehttp/psr7,2.6.1,"^7.2.5 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/payfastSDK/composer.lock,payfast/payfast-php-sdk,v1.1.4,>=7.2.5,library,true,locked-no-upgrade
+assets/libraries/payfastSDK/composer.lock,psr/http-client,1.0.3,"^7.0 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/payfastSDK/composer.lock,psr/http-factory,1.0.2,>=7.0.0,library,false,locked-no-upgrade
+assets/libraries/payfastSDK/composer.lock,psr/http-message,2.0,"^7.2 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/payfastSDK/composer.lock,ralouphie/getallheaders,3.0.3,>=5.6,library,false,locked-no-upgrade
+assets/libraries/payfastSDK/composer.lock,symfony/deprecation-contracts,v3.3.0,>=8.1,library,false,locked-no-upgrade
+assets/libraries/PHPMailer-Master/composer.lock,phpmailer/phpmailer,v6.1.3,>=5.5.0,library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,aws/aws-crt-php,v1.0.2,>=5.5,library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,aws/aws-sdk-php,3.232.2,>=5.5,library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,guzzlehttp/guzzle,7.4.5,"^7.2.5 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,guzzlehttp/promises,1.5.1,>=5.5,library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,guzzlehttp/psr7,2.4.0,"^7.2.5 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,mtdowling/jmespath.php,2.6.1,"^5.4 || ^7.0 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,psr/http-client,1.0.1,"^7.0 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,psr/http-factory,1.0.1,>=7.0.0,library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,psr/http-message,1.0.1,>=5.3.0,library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,ralouphie/getallheaders,3.0.3,>=5.6,library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,symfony/deprecation-contracts,v2.5.2,>=7.1,library,false,locked-no-upgrade
+assets/libraries/s3-lib/composer.lock,symfony/polyfill-mbstring,v1.26.0,>=7.1,library,false,locked-no-upgrade
+assets/libraries/SimpleImage-master/composer.lock,claviska/simpleimage,3.6.3,>=5.6.0,library,false,locked-no-upgrade
+assets/libraries/SimpleImage-master/composer.lock,league/color-extractor,0.3.2,>=5.4.0,library,false,locked-no-upgrade
+assets/libraries/social-login/composer.lock,hybridauth/hybridauth,v3.10.0,"^5.4 || ^7.0 || ^8.0",library,false,locked-no-upgrade
+assets/libraries/stripe/composer.lock,stripe/stripe-php,v9.3.0,>=5.6.0,library,false,locked-no-upgrade
+assets/libraries/twilio/composer.lock,twilio/sdk,6.41.0,>=7.1.0,library,false,locked-no-upgrade

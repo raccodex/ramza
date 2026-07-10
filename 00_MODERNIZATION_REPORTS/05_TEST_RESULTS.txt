@@ -1,0 +1,101 @@
+RACSocial Phase 1 - PHP 8.2 Test Results
+Generated: 2026-07-10 (Asia/Karachi)
+PHP under test: PHP 8.2.30 CLI
+
+1. LINT INVENTORY
+-----------------
+Tool:
+php 00_MODERNIZATION_REPORTS\tools\phase1_php82_lint.php inventory
+
+Result:
+- First-party executable PHP/PHTML candidates: 2,029
+- Excluded themes/*/layout/nodejs template files: 28
+- Excluded third-party assets/libraries dependency files: 8,184
+
+Machine-readable files:
+- 00_MODERNIZATION_REPORTS/03_PHP82_LINT_INVENTORY.csv
+- 00_MODERNIZATION_REPORTS/03_PHP82_LINT_EXCLUSIONS.csv
+
+2. PHP 8.2 LINT
+---------------
+Tool:
+php 00_MODERNIZATION_REPORTS\tools\phase1_php82_lint.php lint
+
+Initial finding:
+- updater.php failed with "Unmatched '}'" on line 3.
+
+Fix applied:
+- Removed the unmatched closing brace from updater.php.
+
+Final aggregate result:
+- PASS: 2,029
+- FAIL: 0
+
+Machine-readable result:
+- 00_MODERNIZATION_REPORTS/03_PHP82_LINT_RESULTS.csv
+
+Targeted post-change lint:
+- php -l updater.php: pass
+- php -l xhr/resend_two_factor.php: pass
+- php -l assets/includes/functions_one.php: pass
+- php -l admincp.php: pass
+
+3. STATIC COMPATIBILITY SCAN
+----------------------------
+Tool:
+php 00_MODERNIZATION_REPORTS\tools\phase1_php82_scan.php
+
+Result:
+- Total token-aware candidates: 89,326
+- Confirmed FILTER_SANITIZE_STRING candidates after remediation: 0
+- Confirmed removed PHP API function calls after scanner refinement: 0
+- Deprecated ${...} interpolation candidates: 23 false-positive literal
+  placeholders in single-quoted PHP strings.
+
+Machine-readable files:
+- 00_MODERNIZATION_REPORTS/04_PHP82_STATIC_SCAN_CANDIDATES.csv
+- 00_MODERNIZATION_REPORTS/04_PHP82_STATIC_SCAN_SUMMARY.csv
+
+4. DATABASE / HTTP RUNTIME PROBES
+---------------------------------
+Local config.php exists and contains database credential variables, but the
+environment could not be safely classified as dev/test.
+
+No database connection was attempted.
+No HTTP bootstrap probe was attempted.
+No cron job was executed.
+No installer action was executed.
+No mutating endpoint was called.
+
+Reason:
+The local database target is unknown, and Phase 1 rules prohibit mutating or
+database-backed probes unless the database is known safe.
+
+5. VENDOR INVENTORY
+-------------------
+Tool:
+php 00_MODERNIZATION_REPORTS\tools\phase1_vendor_inventory.php
+
+Result:
+- Composer lock roots: 16
+- Locked packages: 66
+- Vendor upgrades performed: 0
+
+Machine-readable files:
+- 00_MODERNIZATION_REPORTS/08_VENDOR_INVENTORY.csv
+- 00_MODERNIZATION_REPORTS/08_VENDOR_INVENTORY_SUMMARY.csv
+
+Notable result:
+- assets/libraries/payfastSDK/composer.lock marks payfast/payfast-php-sdk v1.1.4
+  as abandoned.
+
+6. TEST GAPS
+------------
+Still required before claiming full PHP 8.2 runtime compatibility:
+- Safe cloned database or explicit dev/test confirmation.
+- HTTP probes for index.php, requests.php, admincp.php, api.php, login/register,
+  two-factor, password recovery/reset, upload, payment callback, and cron surfaces.
+- Error-log capture under E_ALL in web SAPI.
+- Manual review/remediation of large static categories by route and risk.
+
+END OF TEST RESULTS

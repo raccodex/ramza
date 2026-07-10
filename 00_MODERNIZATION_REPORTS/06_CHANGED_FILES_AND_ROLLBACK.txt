@@ -18,7 +18,8 @@ Archive SHA-256:
 
 Initial Git checkpoint
 ----------------------
-Status: pending commit hash capture.
+Commit: 20bc41b2
+Full hash: 20bc41b2346eaf987e4f7b92d9ed985229c6eb7b
 
 Checkpoint contents:
 - First local Git repository initialized for rollback safety.
@@ -47,7 +48,63 @@ For Git-based rollback after the initial checkpoint exists:
    changes:
    git restore --source <checkpoint-hash> -- path/to/file.php
 
+Phase 1 remediation checkpoint
+------------------------------
+Status: pending Git commit after report review/update in this working batch.
+
+Changed first-party code files:
+- updater.php
+- xhr/resend_two_factor.php
+- assets/includes/functions_one.php
+- admincp.php
+
+Generated/updated report and tooling files:
+- 00_MODERNIZATION_REPORTS/02_PHP82_COMPATIBILITY_MATRIX.txt
+- 00_MODERNIZATION_REPORTS/03_PHP82_LINT_INVENTORY.csv
+- 00_MODERNIZATION_REPORTS/03_PHP82_LINT_EXCLUSIONS.csv
+- 00_MODERNIZATION_REPORTS/03_PHP82_LINT_RESULTS.csv
+- 00_MODERNIZATION_REPORTS/04_PHP82_STATIC_SCAN_CANDIDATES.csv
+- 00_MODERNIZATION_REPORTS/04_PHP82_STATIC_SCAN_SUMMARY.csv
+- 00_MODERNIZATION_REPORTS/05_TEST_RESULTS.txt
+- 00_MODERNIZATION_REPORTS/06_CHANGED_FILES_AND_ROLLBACK.txt
+- 00_MODERNIZATION_REPORTS/07_PHASE1_PHP82_REMEDIATION.txt
+- 00_MODERNIZATION_REPORTS/08_VENDOR_INVENTORY.csv
+- 00_MODERNIZATION_REPORTS/08_VENDOR_INVENTORY_SUMMARY.csv
+- 00_MODERNIZATION_REPORTS/tools/phase1_php82_lint.php
+- 00_MODERNIZATION_REPORTS/tools/phase1_php82_scan.php
+- 00_MODERNIZATION_REPORTS/tools/phase1_vendor_inventory.php
+
 Change batches
 --------------
-No PHP compatibility remediation batches have been applied yet.
+Batch 1 - executable lint repair:
+- updater.php had a stray unmatched closing brace in a no-op updater placeholder.
+- Removed the stray brace.
+- Verification: php -l updater.php passes.
 
+Batch 2 - FILTER_SANITIZE_STRING removal:
+- xhr/resend_two_factor.php no longer references FILTER_SANITIZE_STRING and now
+  casts session/cookie hash values to string before FILTER_SANITIZE_FULL_SPECIAL_CHARS.
+- assets/includes/functions_one.php no longer references FILTER_SANITIZE_STRING;
+  FilterStripTags() now casts to string, strips tags, and uses
+  FILTER_SANITIZE_FULL_SPECIAL_CHARS.
+- Verification: targeted php -l passes; static scan has zero
+  FILTER_SANITIZE_STRING candidates.
+
+Batch 3 - shared admin request guard:
+- admincp.php now skips array-valued GET/POST/REQUEST values before applying
+  preg_replace() and strip_tags(), matching the defensive shape already present
+  in index.php.
+- Verification: php -l admincp.php passes.
+
+Aggregate verification:
+- 2,029 first-party executable candidates pass PHP 8.2 lint.
+- Static scan files regenerated after remediation.
+- Database/HTTP runtime probes were not run because the environment is not safely
+  proven dev/test.
+
+Rollback notes:
+- To undo all Phase 1 remediation changes, compare against initial checkpoint
+  20bc41b2346eaf987e4f7b92d9ed985229c6eb7b and restore only the files listed
+  above after review.
+- Full pre-change restoration remains available through the Phase 0 external
+  archive listed at the top of this report.

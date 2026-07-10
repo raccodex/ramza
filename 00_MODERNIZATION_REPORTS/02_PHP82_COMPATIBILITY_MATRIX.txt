@@ -2,161 +2,164 @@ RACSOCIAL PHP 8.2 MODERNIZATION
 PHP 8.2 COMPATIBILITY MATRIX
 Generated: 2026-07-10 (Asia/Karachi)
 Runtime under test: PHP 8.2.30 CLI, error_reporting=E_ALL
-Report status: IN PROGRESS - initial static inventory complete; lint and runtime remediation are active.
+Report status: PHASE 1A/1B COMPLETE, FIRST REMEDIATION BATCH COMPLETE
 
 1. COMPATIBILITY GATE
 ---------------------
-The minimum-version declarations remain at PHP 7.1 during the audit. They will
-not be raised to PHP 8.2 until executable first-party lint passes and available
-runtime probes no longer produce PHP 8.2 fatal/deprecation failures.
+The minimum-version declarations remain at PHP 7.1 during this audit.
+
+Reason PHP minimum was not raised:
+- PHP 8.2 executable syntax now passes for first-party candidates, but database
+  runtime and HTTP bootstrap probes were not safe to execute because the local
+  configuration could not be proven dev/test.
+- Broad runtime categories still require manual review and database-backed test
+  evidence before production requirements should be changed.
+- Installer rebuild and installer UI/backend redesign are explicitly out of scope
+  for Phase 1 and were not started.
 
 Known minimum-version locations:
-  assets/init.php: version_compare(PHP_VERSION, '7.1.0', '>=')
-  install/index.php: requirements check and PHP 7.1+ requirement text
-  admin-panel/pages/changelog/content.phtml already claims PHP 8.2 support; this
-  claim is historical text and is not treated as test evidence.
+- assets/init.php: version_compare(PHP_VERSION, '7.1.0', '>=')
+- install/index.php: PHP 7.1+ installer requirement text/check
+- admin-panel/pages/changelog/content.phtml: historical PHP 8.2 support text only
 
-2. EXECUTABLE SCOPE
--------------------
+2. EXECUTABLE LINT SCOPE
+------------------------
 First-party executable candidates: 2,029 PHP/PHTML files.
-Excluded from direct PHP lint: 28 Handlebars-style files under
-themes/*/layout/nodejs/. They require separate template validation after loader
-mapping, per the special linting rule.
+Machine-readable inventory: 00_MODERNIZATION_REPORTS/03_PHP82_LINT_INVENTORY.csv
+Machine-readable lint results: 00_MODERNIZATION_REPORTS/03_PHP82_LINT_RESULTS.csv
 
-Vendor scope: 16 non-vendor Composer lock roots plus runtime libraries without
-lock files. Vendor code will be linted/reviewed separately so first-party and
-third-party failures remain distinguishable.
+Final lint result:
+- PASS: 2,029
+- FAIL: 0
 
-3. INITIAL COMPATIBILITY MATRIX
--------------------------------
-Category | Initial status | Evidence/action
+Lint batches:
+- admin-panel: 186
+- api: 281
+- assets-first-party: 41
+- cron-updater: 3
+- installer: 1
+- root: 12
+- sources: 157
+- themes-sunshine: 543
+- themes-wowonder: 535
+- xhr: 270
 
-PHP 8.2 executable syntax
-  IN PROGRESS
-  Serial 2,029-file php -l baseline exceeded the 60-second command ceiling before
-  producing a complete aggregate. Bounded directory batches are being run next.
+Documented exclusions:
+- 28 themes/*/layout/nodejs files excluded as Handlebars/nodejs templates not
+  proven PHP-executable.
+- 8,184 assets/libraries dependency files excluded from first-party lint and
+  tracked separately through vendor lock-file inventory.
 
-Removed APIs: create_function/each/split/ereg/mysql/mcrypt/magic-quotes/money_format
-  NOT YET CLASSIFIED
-  Repository-wide first-party scans pending.
+3. STATIC COMPATIBILITY CLASSIFICATION
+--------------------------------------
+Machine-readable candidate scan:
+00_MODERNIZATION_REPORTS/04_PHP82_STATIC_SCAN_CANDIDATES.csv
 
-Curly-brace offsets and deprecated ${var} interpolation
-  NOT YET CLASSIFIED
-  Token-aware/static scans pending; regex hits will be reviewed to avoid JS/CSS
-  template false positives.
+Machine-readable summary:
+00_MODERNIZATION_REPORTS/04_PHP82_STATIC_SCAN_SUMMARY.csv
 
-Required-after-optional parameters
-  NOT YET CLASSIFIED
-  PHP lint/runtime declarations and targeted function scan pending.
+Category | Classification | Count
+- callback_signature | needs-review | 38
+- count_nullable | needs-review | 938
+- deprecated_dollar_brace_interpolation | false-positive-literal-placeholder | 23
+- direct_request_array | needs-review | 9,931
+- dynamic_property_write | needs-review | 280
+- error_suppression | needs-review | 568
+- interface_or_signature | needs-review | 1,329
+- loose_comparison_security | needs-review | 13,501
+- null_internal_function_argument | needs-review | 1,012
+- null_scalar_array_access | needs-review | 58,788
+- raw_mysqli | needs-review | 2,704
+- request_value_string_function | needs-review | 142
+- static_call | needs-review | 72
 
-Invalid callbacks/non-static calls
-  NOT YET CLASSIFIED
-  Requires call-site review and runtime paths.
+No confirmed first-party removed PHP API function calls remain in the token-aware
+scan. No confirmed FILTER_SANITIZE_STRING usage remains after remediation.
 
-count()/sizeof() on null or non-countable values
-  NOT YET CLASSIFIED
-  High-risk in legacy request/data paths. Static candidates and runtime evidence pending.
+The 23 ${...} rows are literal placeholder strings such as '${amount}' and
+'${{PRICE}}' in single-quoted PHP strings; they are documented false positives,
+not deprecated PHP interpolation.
 
-Null/scalar array access and undefined keys/properties
-  NOT YET CLASSIFIED
-  Requires E_ALL runtime testing; syntax lint cannot establish compatibility.
-
-Null passed to non-nullable internal functions
-  NOT YET CLASSIFIED
-  Requires targeted scan plus runtime testing.
-
-implode() argument order
-  NOT YET CLASSIFIED
-  Static scan pending.
-
-PHP 8 loose-comparison changes
-  NOT YET CLASSIFIED
-  Security-sensitive authentication/payment comparisons require manual review.
-
-Dynamic properties
-  NOT YET CLASSIFIED
-  First-party classes and database result object usage require separate review.
-  #[AllowDynamicProperties] will not be used as a blanket fix.
-
-Interface/inheritance signatures
-  NOT YET CLASSIFIED
-  Vendor and first-party class lint/review pending.
-
-FILTER_SANITIZE_STRING
-  NOT YET CLASSIFIED
-  Static scan pending; replacements must preserve payload contracts.
-
-utf8_encode()/utf8_decode()
-  NOT YET CLASSIFIED
-  Static scan pending.
-
-MySQLi exception behaviour
-  FAIL - INSTALLER DESIGN
-  install/index.php globally suppresses errors and directly calls mysqli_connect;
-  it exposes mysqli_connect_error() in UI and has no explicit exception boundary.
-  The bootstrap/runtime database layer still needs PHP 8.2 runtime testing.
-
-Extension resource-to-object changes
-  NOT YET CLASSIFIED
-  GD/cURL/OpenSSL/file handles and integration paths pending.
-
-Required PHP extensions
-  PASS - CLI PRESENCE ONLY
-  mysqli, mbstring, curl, gd, json, openssl, fileinfo, zip and exif are loaded.
-  Behaviour and web-SAPI availability are not yet tested.
-
-Session/cookie behaviour
-  PARTIAL / NEEDS HARDENING
-  assets/init.php enables HttpOnly and use_only_cookies before session_start(),
-  but uses broad @ini_set calls. Secure/SameSite flags and authentication session
-  regeneration require flow tracing.
-
-Installer compatibility
-  FAIL - PRE-EXISTING
-  It expects ../ramza.sql while only wowonder.sql exists, builds PHP/JSON through
-  string concatenation, uses a fragile line importer, inserts SHA-1 admin password,
-  prescribes chmod 0777 and has no CSRF/session state/install lock.
-
-Admin compatibility
-  NOT YET CLASSIFIED
-  admincp.php applies scalar string functions to every request value; array inputs
-  can cause PHP 8 TypeError. Loader/runtime requires a reachable database.
-
-API compatibility
-  NOT YET CLASSIFIED
-  Legacy, app and v2 routes are inventoried but not database-runtime tested.
-
-Cron compatibility
-  NOT RUN
-  cron-job.php is mutating and will only run against a cloned database.
-
-4. THIRD-PARTY PACKAGE MATRIX STATUS
-------------------------------------
-Package extraction/review is pending. Lock roots inventoried:
-  main assets/libraries, Apple, Braintree, cloud/Google Cloud, DB wrapper,
-  Faker, FTP, Google Auth, Google libraries, PayFast, PHPMailer, S3/AWS,
-  SimpleImage, social-login, Stripe and Twilio.
-
-No package has been updated. Local modifications must be identified before any
-vendor replacement. No mandatory root Composer production build will be added.
-
-5. TEST ENVIRONMENT LIMITATIONS
--------------------------------
-  - Only PHP 8.2.30 is available; no legacy PHP baseline executable was found.
-  - Database credentials are present locally but have not been printed or copied.
-  - A database connectivity probe and safe HTTP bootstrap are still pending.
-  - No clean installer database, cloned upgrade database, test accounts, mail/payment
-    sandboxes or browser automation configuration has yet been established.
-  - A syntax pass is not sufficient evidence for functional PHP 8.2 compatibility.
-
-6. REMEDIATION POLICY
+4. REMEDIATION STATUS
 ---------------------
-  - Fix root causes in first-party code; do not broadly suppress E_ALL.
-  - Do not blanket-apply #[AllowDynamicProperties].
-  - Preserve routes, slugs, selectors, request fields and response formats.
-  - Review usages before changing shared helpers.
-  - Separate first-party fixes from vendor upgrades.
-  - Keep each compatibility batch backed up and independently testable.
-  - Raise runtime requirements to PHP 8.2 only after the compatibility gate passes.
+Applied Phase 1 compatibility fixes:
+- updater.php: removed a stray unmatched closing brace from a no-op updater
+  placeholder, restoring PHP 8.2 syntax.
+- xhr/resend_two_factor.php: removed FILTER_SANITIZE_STRING fallback branches and
+  cast session/cookie hash input to string before FILTER_SANITIZE_FULL_SPECIAL_CHARS.
+- assets/includes/functions_one.php: replaced FILTER_SANITIZE_STRING in
+  FilterStripTags() with strip_tags((string) ...) plus
+  FILTER_SANITIZE_FULL_SPECIAL_CHARS.
+- admincp.php: matched index.php request sanitization behavior by skipping
+  array-valued GET/POST/REQUEST inputs before preg_replace()/strip_tags().
 
-END OF INITIAL MATRIX
+No password storage change was made. No blanket #[AllowDynamicProperties] change
+was made. No broad error suppression or reporting downgrade was added.
+
+5. AUTH PATH TRACE
+------------------
+Primary auth and session paths identified for later runtime testing:
+- xhr/login.php
+- xhr/register.php
+- xhr/recover.php
+- xhr/recoversms.php
+- xhr/reset_password.php
+- xhr/resend_two_factor.php
+- xhr/update_two_factor.php
+- xhr/update_user_password.php
+- xhr/update_new_logged_user_details.php
+- xhr/confirm_user.php
+- xhr/confirm_user_unusal_login.php
+- sources/logout.php
+- sources/forgot_password.php
+- sources/reset_password.php
+- sources/confirm_sms_password.php
+- sources/unusual-login.php
+- api/phone/core/functions.php
+- api/v2/functions.php
+
+Password hashing/storage remains mixed legacy/new behavior and is intentionally
+unchanged in Phase 1. It requires a dedicated migration design later.
+
+6. DATABASE AND RUNTIME STATUS
+------------------------------
+Local config.php exists and contains database credential variables, but the
+environment could not be safely identified as dev/test.
+
+Classification result:
+- host class: database reference present
+- environment marker: unknown
+- DB probe allowed: no
+
+Because the environment is unknown, no database connection, HTTP bootstrap probe,
+cron execution, installer execution, or mutating runtime action was performed.
+
+7. THIRD-PARTY PACKAGE MATRIX
+-----------------------------
+Vendor inventory:
+- lock roots: 16
+- locked packages: 66
+- inventory file: 00_MODERNIZATION_REPORTS/08_VENDOR_INVENTORY.csv
+- summary file: 00_MODERNIZATION_REPORTS/08_VENDOR_INVENTORY_SUMMARY.csv
+
+No vendor package was updated.
+
+Notable vendor status:
+- payfast/payfast-php-sdk v1.1.4 is marked abandoned in its composer.lock.
+- Several locked packages have older PHP constraints that do not explicitly state
+  PHP 8 support. They are inventory risks only; no replacement was attempted.
+- Some locked packages require PHP 8.0+ or 8.1+, which is compatible with the
+  PHP 8.2 CLI used here but may affect any future attempt to keep PHP 7.1 support.
+
+8. REMAINING PHASE 1 REVIEW BACKLOG
+-----------------------------------
+The large static categories are classified but not blindly remediated. The next
+safe step is to review them by runtime surface:
+- request/default handling in shared entry points and high-traffic xhr routes
+- auth and two-factor flows
+- payment callbacks and webhook comparisons
+- raw mysqli calls and database exception boundaries
+- count()/array-offset/null-internal-function candidates with runtime evidence
+- dynamic property writes on first-party classes only where confirmed
+
+END OF CURRENT MATRIX

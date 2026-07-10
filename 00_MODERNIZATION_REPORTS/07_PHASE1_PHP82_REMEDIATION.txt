@@ -1,0 +1,177 @@
+RACSocial Phase 1 - PHP 8.2 Remediation Report
+Generated: 2026-07-10 (Asia/Karachi)
+Status: READY FOR REVIEW BEFORE INSTALLER REBUILD
+
+1. Scope
+--------
+This phase continued from the Phase 0 reports and did not restart baseline work.
+
+Completed in this batch:
+- Established a local Git rollback checkpoint.
+- Inventoried and linted first-party executable PHP/PHTML files.
+- Classified PHP 8.2 static compatibility candidates.
+- Applied a small first remediation batch.
+- Traced auth-related paths for later runtime testing.
+- Performed read-only database safety classification.
+- Inventoried Composer lock roots and package constraints.
+- Updated required reports.
+
+Not performed:
+- No installer backend rebuild.
+- No installer UI redesign.
+- No vendor upgrades.
+- No password storage migration.
+- No database mutation.
+- No HTTP/database runtime probe against an unknown environment.
+
+2. Lint Results
+---------------
+Executable first-party PHP/PHTML candidates: 2,029
+Final PHP 8.2 lint result: 2,029 pass, 0 fail
+
+Machine-readable files:
+- 00_MODERNIZATION_REPORTS/03_PHP82_LINT_INVENTORY.csv
+- 00_MODERNIZATION_REPORTS/03_PHP82_LINT_EXCLUSIONS.csv
+- 00_MODERNIZATION_REPORTS/03_PHP82_LINT_RESULTS.csv
+
+Documented exclusions:
+- 28 themes/*/layout/nodejs files excluded as Handlebars/nodejs templates not
+  proven PHP-executable.
+- assets/libraries dependency code excluded from first-party lint and handled
+  through lock-file vendor inventory.
+
+Initial lint failure:
+- updater.php failed on an unmatched closing brace.
+
+Resolution:
+- Removed the stray brace from updater.php.
+
+3. Static Scan Results
+----------------------
+Tool:
+00_MODERNIZATION_REPORTS/tools/phase1_php82_scan.php
+
+Machine-readable files:
+- 00_MODERNIZATION_REPORTS/04_PHP82_STATIC_SCAN_CANDIDATES.csv
+- 00_MODERNIZATION_REPORTS/04_PHP82_STATIC_SCAN_SUMMARY.csv
+
+Final classified candidate counts:
+- callback_signature: 38 needs-review
+- count_nullable: 938 needs-review
+- deprecated_dollar_brace_interpolation: 23 false-positive-literal-placeholder
+- direct_request_array: 9,931 needs-review
+- dynamic_property_write: 280 needs-review
+- error_suppression: 568 needs-review
+- interface_or_signature: 1,329 needs-review
+- loose_comparison_security: 13,501 needs-review
+- null_internal_function_argument: 1,012 needs-review
+- null_scalar_array_access: 58,788 needs-review
+- raw_mysqli: 2,704 needs-review
+- request_value_string_function: 142 needs-review
+- static_call: 72 needs-review
+
+Confirmed fixes from static scan:
+- FILTER_SANITIZE_STRING candidates reduced to zero.
+- Removed PHP API function-call candidates reduced to zero.
+
+False positives:
+- 23 ${...} candidates are literal placeholders in single-quoted PHP strings,
+  not deprecated PHP string interpolation.
+
+4. Code Changes
+---------------
+updater.php
+- Removed unmatched closing brace from a no-op updater placeholder.
+
+xhr/resend_two_factor.php
+- Removed FILTER_SANITIZE_STRING fallback branches.
+- Cast session/cookie two_factor_hash values to string before filtering.
+- Preserved Wo_Secure() handling and two-factor flow shape.
+
+assets/includes/functions_one.php
+- Replaced FILTER_SANITIZE_STRING in FilterStripTags().
+- Added string cast before strip_tags().
+
+admincp.php
+- Added array-value guards to GET/POST/REQUEST sanitization loops.
+- Brought admin entry-point request handling in line with the existing index.php
+  scalar guard.
+
+5. Auth Path Trace
+------------------
+Primary auth/password/two-factor/session files identified:
+- xhr/login.php
+- xhr/register.php
+- xhr/recover.php
+- xhr/recoversms.php
+- xhr/reset_password.php
+- xhr/resend_two_factor.php
+- xhr/update_two_factor.php
+- xhr/update_user_password.php
+- xhr/update_new_logged_user_details.php
+- xhr/confirm_user.php
+- xhr/confirm_user_unusal_login.php
+- sources/logout.php
+- sources/forgot_password.php
+- sources/reset_password.php
+- sources/confirm_sms_password.php
+- sources/unusual-login.php
+- api/phone/core/functions.php
+- api/v2/functions.php
+
+Password storage was not changed. The repository contains legacy md5()/sha1()
+usage and newer password_hash() usage; that needs a dedicated migration plan.
+
+6. Database And Runtime
+-----------------------
+config.php exists and contains database credential variables, but the environment
+could not be proven dev/test.
+
+Decision:
+- Do not connect to the database.
+- Do not run HTTP probes.
+- Do not run cron jobs.
+- Do not run installer actions.
+
+Reason:
+Phase 1 rules prohibit database-backed or mutating probes unless the database is
+known safe.
+
+7. Vendor Inventory
+-------------------
+Composer lock roots: 16
+Locked packages: 66
+Vendor upgrades: 0
+
+Machine-readable files:
+- 00_MODERNIZATION_REPORTS/08_VENDOR_INVENTORY.csv
+- 00_MODERNIZATION_REPORTS/08_VENDOR_INVENTORY_SUMMARY.csv
+
+Notable:
+- payfast/payfast-php-sdk v1.1.4 is marked abandoned in its lock file.
+- Legacy package constraints remain inventory risks only; no replacements were
+  attempted in Phase 1.
+
+8. Blockers / Next Gates
+------------------------
+Before claiming full runtime PHP 8.2 compatibility:
+- Provide or confirm a safe dev/test database.
+- Run HTTP probes under PHP 8.2 web SAPI with E_ALL logging.
+- Exercise auth, register, recover/reset, two-factor, admin, API, uploads,
+  payment callback, and cron surfaces.
+- Review the large static buckets by route and risk before mechanical changes.
+- Continue small remediation batches with lint, scans, runtime evidence, changed
+  files, rollback notes, and commits after each batch.
+
+9. PHP Minimum
+--------------
+The PHP minimum stays at PHP 7.1 for now. It should not be raised to PHP 8.2
+until database-backed runtime probes pass and the remaining review buckets are
+closed or explicitly accepted.
+
+10. Stop Point
+--------------
+Stop before installer backend rebuild or installer UI redesign. Phase 1 reports
+are prepared for review first.
+
+END OF PHASE 1 REMEDIATION REPORT

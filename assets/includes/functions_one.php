@@ -10111,7 +10111,7 @@ function coinpayments_api_call($req = array())
 
 function FilterStripTags($string = '')
 {
-    return filter_var(strip_tags($string), FILTER_SANITIZE_STRING);
+    return filter_var(strip_tags((string) $string), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 }
 
 function GetIso()
