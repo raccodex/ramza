@@ -29,6 +29,9 @@ $credentials = (static function (string $path): array {
 })($credentialFile);
 
 $results = [];
+$testPurchaseCode = 'TEST-' . bin2hex(random_bytes(16));
+$authHandoff = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'racsocial-phase2-auth-' . bin2hex(random_bytes(8)) . '.json';
+$testSucceeded = false;
 $record = static function (string $gate, bool $pass, string $evidence) use (&$results): void {
     $results[] = ['gate' => $gate, 'status' => $pass ? 'PASS' : 'FAIL', 'evidence' => $evidence];
     if (!$pass) {
@@ -86,15 +89,15 @@ try {
     ]);
     $record('empty-database-guard', true, 'validator accepted newly created zero-table database');
 
-    $missingContract = (new RACInstallerLicenseVerifier($logger))->verify('TEST-CODE-NEVER-LOG', 'https://installer.test.local');
+    $missingContract = (new RACInstallerLicenseVerifier($logger))->verify($testPurchaseCode, 'https://installer.test.local');
     $database = $connectTarget($credentials, $databaseName);
     $preLicenseTables = (int) ($database->query("SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = DATABASE() AND table_type = 'BASE TABLE'")->fetch_assoc()['c'] ?? -1);
     $record('production-license-fail-closed', !$missingContract['ok'] && $missingContract['type'] === 'contract-missing' && $preLicenseTables === 0, 'missing contract stopped before database import; table count remained 0');
 
     $controlledClient = new RACPhase2ControlledLicenseClient();
     $controlledVerifier = new RACInstallerLicenseVerifier($logger, $controlledClient, 'https://license.test.invalid/verify');
-    $controlledResult = $controlledVerifier->verify('TEST-CODE-NEVER-LOG', 'https://installer.test.local');
-    $record('controlled-license-adapter', $controlledResult['ok'] && !str_contains($controlledClient->lastRequest['url'], 'TEST-CODE') && in_array('purchase_code', $controlledClient->lastRequest['field_names'], true), 'controlled HTTPS adapter passed code in POST body field, not URL');
+    $controlledResult = $controlledVerifier->verify($testPurchaseCode, 'https://installer.test.local');
+    $record('controlled-license-adapter', $controlledResult['ok'] && !str_contains($controlledClient->lastRequest['url'], $testPurchaseCode) && in_array('purchase_code', $controlledClient->lastRequest['field_names'], true), 'controlled HTTPS adapter passed code in POST body field, not URL');
 
     $requirements = (new RACInstallerRequirements($paths))->evaluate();
     $record('fresh-clone-preflight', $requirements['required_pass'], 'all required checks passed in isolated clone');
@@ -106,7 +109,7 @@ try {
         'title' => 'PHP 8.2 Installer Verification',
         'email' => 'site-admin@example.test',
     ]);
-    $adminPassword = 'RAC-Phase2-Admin-82941';
+    $adminPassword = 'RAC-' . bin2hex(random_bytes(16)) . '-9';
     $admin = $postInstall->validateAdmin([
         'username' => 'phase2admin',
         'email' => 'phase2-admin@example.test',
@@ -114,8 +117,8 @@ try {
     ]);
     $configWriter = new RACInstallerConfigWriter($paths);
     $nodeWriter = new RACInstallerNodeConfigWriter($paths);
-    $configWriter->prepare($databaseConfig, $site, 'TEST-CODE-NEVER-LOG');
-    $nodeWriter->prepare($databaseConfig, $site, 'TEST-CODE-NEVER-LOG');
+    $configWriter->prepare($databaseConfig, $site, $testPurchaseCode);
+    $nodeWriter->prepare($databaseConfig, $site, $testPurchaseCode);
 
     $import = (new RACInstallerSqlImporter($logger))->import($database, $paths->sqlDump);
     $record('sql-import', $import['tables'] >= 100 && $import['statements'] > $import['tables'], $import['tables'] . ' tables created from wowonder.sql');
@@ -147,7 +150,7 @@ try {
     $nodeData = json_decode((string) file_get_contents($paths->nodeConfigFile), true);
     $configContent = (string) file_get_contents($paths->configFile);
     $lockContent = (string) file_get_contents($paths->lockFile);
-    $record('generated-config-shape', is_array($nodeData) && isset($nodeData['sql_db_host'], $nodeData['sql_db_name'], $nodeData['site_url'], $nodeData['purchase_code']) && str_contains($configContent, '$siteEncryptKey') && !str_contains($lockContent, 'TEST-CODE-NEVER-LOG'), 'generated configs contain required keys; lock contains no purchase code');
+    $record('generated-config-shape', is_array($nodeData) && isset($nodeData['sql_db_host'], $nodeData['sql_db_name'], $nodeData['site_url'], $nodeData['purchase_code']) && str_contains($configContent, '$siteEncryptKey') && !str_contains($lockContent, $testPurchaseCode), 'generated configs contain required keys; lock contains no purchase code');
 
     try {
         $validator->validate($databaseConfig);
@@ -158,7 +161,14 @@ try {
     $record('rerun-protection', $nonEmptyRefused && $lock->exists() && !RACInstallerConfigWriter::canWriteFreshConfig($paths->configFile) && !RACInstallerNodeConfigWriter::canWriteFreshNodeConfig($paths->nodeConfigFile), 'non-empty database, populated configs, and install lock prevent rerun');
 
     $logContent = is_file($logger->path()) ? (string) file_get_contents($logger->path()) : '';
-    $record('secret-redaction', !str_contains($logContent, 'TEST-CODE-NEVER-LOG') && !str_contains($logContent, $adminPassword) && ($credentials['pass'] === '' || !str_contains($logContent, $credentials['pass'])), 'protected installer log contains none of the test secrets');
+    $record('secret-redaction', !str_contains($logContent, $testPurchaseCode) && !str_contains($logContent, $adminPassword) && ($credentials['pass'] === '' || !str_contains($logContent, $credentials['pass'])), 'protected installer log contains none of the test secrets');
+
+    $authPayload = json_encode(['username' => $admin['username'], 'password' => $adminPassword], JSON_THROW_ON_ERROR);
+    if (file_put_contents($authHandoff, $authPayload, LOCK_EX) !== strlen($authPayload)) {
+        throw new RuntimeException('Unable to create protected authentication-test handoff.');
+    }
+    @chmod($authHandoff, 0600);
+    $testSucceeded = true;
 
     echo json_encode([
         'status' => 'PASS',
@@ -167,6 +177,7 @@ try {
         'clone_root' => $cloneRoot,
         'table_count' => $import['tables'],
         'statement_count' => $import['statements'],
+        'auth_handoff' => $authHandoff,
         'results' => $results,
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
 } catch (Throwable $error) {
@@ -179,6 +190,9 @@ try {
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
     exit(1);
 } finally {
+    if (!$testSucceeded && is_file($authHandoff)) {
+        @unlink($authHandoff);
+    }
     if ($database instanceof mysqli) {
         $database->close();
     }

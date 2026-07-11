@@ -241,3 +241,51 @@ Rollback for this commit:
    git show --stat 2fafef3e
 3. Restore only the PHP floor files if rollback is approved:
    git restore --source 47134455 -- assets/init.php assets/includes/functions_one.php install/index.php
+
+Phase 2 installer rebuild checkpoints
+--------------------------------------
+Backend/security commit:
+- d229c799faa3cf5106606f1488e4f6e74e27c794
+- Purpose: session/CSRF/requirements/database/license/import/config/admin/lock/log
+  architecture and replacement of the legacy monolithic installer.
+- Test status: installer PHP lint pass; isolated component/web/security gates pass.
+- Review: git show --stat d229c799
+- Rollback after approval: git revert d229c799
+
+Installer UI/UX commit:
+- 8b1f44e91e17ff848aa74ff05b69fd227bbec305
+- Purpose: responsive local-only RACSocial installer UI, forms, states, focus,
+  reduced motion, dark mode, password controls, and aria-live pending state.
+- Test status: static responsive/accessibility inspection and web rendering pass;
+  cross-browser assistive runtime remains blocked.
+- Review: git show --stat 8b1f44e9
+- Rollback after approval: git revert 8b1f44e9
+
+Installer test/evidence commit:
+- 8929e98a416520137825c6b5d9479743944044a7
+- Purpose: CLI-only isolated component/security/web probes plus refreshed lint and
+  web-SAPI evidence.
+- Test status: 12/12 security unit, 5/5 actual web flow, 13/13 component install,
+  4/4 installed web/auth, 18/18 application regression.
+- Review: git show --stat 8929e98a
+- Rollback after approval: git revert 8929e98a
+
+Final isolated state and cleanup:
+- The unknown existing database was never selected for installer mutation.
+- Active config.php and nodejs/config.json were never overwritten.
+- Generated test clones under 00_MODERNIZATION_REPORTS/phase2_test_workspaces were
+  verified inside the intended workspace and removed after testing.
+- Clearly named disposable databases were retained and documented in
+  19_INSTALLER_REBUILD_REPORT.txt; none was automatically dropped.
+- External pre-Phase-2 archive remains:
+  E:\RACSocial\Script\_modernization_backups\phase2-prechange-20260711-010136.tar.gz
+- Archive SHA-256 remains:
+  21AA4ADF3F9ED97E7C5B41012C748E87DA197F60A78C95B0EF2026E8F1621CA4
+
+Rollback order for installer-only Phase 2 commits, newest first:
+1. git revert 8929e98a
+2. git revert 8b1f44e9
+3. git revert d229c799
+
+Do not run these rollback commands without first reviewing current user changes and
+the worktree status. Do not use git reset --hard for this rollback.

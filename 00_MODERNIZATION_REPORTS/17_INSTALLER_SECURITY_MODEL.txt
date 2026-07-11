@@ -1,0 +1,172 @@
+RACSocial Phase 2 - Installer Security Model
+Generated: 2026-07-11 (Asia/Karachi)
+
+Status: IMPLEMENTED AND TESTED, WITH PRODUCTION LICENSE CONTRACT BLOCKER
+
+1. Trust Boundaries
+-------------------
+- install/index.php is the only public installer entry point.
+- All installer state is server-side in the RACSocialInstaller session.
+- Browser fields are untrusted and are validated as scalar values.
+- Database and filesystem mutations are permitted only after requirements,
+  empty-database validation, site validation, license verification, administrator
+  validation, and explicit review confirmation.
+- The production license adapter fails closed because this repository contains no
+  legitimate production verification contract or authorized endpoint.
+- Controlled test clients are CLI-only test dependencies and are not reachable by
+  the production installer.
+
+2. Installation And Reinstallation Detection
+---------------------------------------------
+Protection is layered:
+- install/install.lock blocks before normal steps render.
+- A populated non-template config.php blocks before normal steps render.
+- A populated non-template nodejs/config.json blocks before normal steps render.
+- Database validation refuses any selected database containing a base table.
+- Direct step skipping is redirected to the latest server-approved step.
+- Duplicate installation submissions are guarded by session state and the final
+  lock/config/non-empty-database layers.
+
+There is no query-string unlock, web unlock action, or local license bypass.
+
+The lock is written only after import, post-import writes, generated configuration,
+and rewrite handling succeed. It contains only:
+- installation timestamp
+- installer version
+- PHP version
+- deterministic SHA-256 schema fingerprint from sorted table names
+- SHA-256 site-host fingerprint
+
+It contains no credentials, purchase code, password, session identifier, CSRF
+token, or generated encryption key. The requested mode is 0640.
+
+3. Session, CSRF, And Browser Controls
+--------------------------------------
+- Installer-specific session cookie.
+- Secure cookie when HTTPS is detected.
+- HttpOnly and SameSite=Lax.
+- Server-side maximum-step state.
+- Session ID regeneration after database, license, and administrator trust
+  transitions.
+- 32-byte random CSRF token with hash_equals verification.
+- POST/Redirect/GET for successful normal steps.
+- Cache-Control no-store/no-cache.
+- Content-Security-Policy limited to local script/style/image resources.
+- X-Content-Type-Options nosniff, Referrer-Policy no-referrer, and frame denial.
+- Passwords and purchase codes are never repopulated into HTML.
+- Sensitive database, administrator, purchase-code, and verification session state
+  is cleared after success.
+
+4. Input Validation
+-------------------
+Database:
+- scalar host/name/user/password requirement
+- legitimately empty password allowed
+- host:port and localhost:socket parsing
+- MySQLi strict exception mode and utf8mb4
+- safe distinction for authentication, unknown database, connection, permission,
+  unsupported version, and non-empty-database failures
+- SQL mode, database charset, and collation read without changing global modes
+
+Site:
+- http/https URL with host required
+- credentials, query, fragment, markup, quotes, backticks, and control characters
+  rejected
+- alternate ports and subfolders accepted
+- trailing slash normalized
+- site email validated
+- name/title length checked; markup/control characters rejected
+- every redisplayed value HTML escaped
+
+Administrator:
+- username limited to 5-32 ASCII letters, numbers, or underscores
+- independent email validation
+- password is not trimmed
+- 12-128 characters with at least one letter and number
+- constant-time confirmation comparison
+- PASSWORD_DEFAULT password_hash and post-write password_verify
+- active administrator row plus required Wo_UserFields companion row
+
+5. License Verification
+-----------------------
+- Narrow RACInstallerHttpClient boundary.
+- HTTPS endpoint required; endpoint credentials are rejected.
+- TLS peer and host verification enabled.
+- 5-second connect timeout and 15-second total timeout.
+- Purchase code is sent in a POST body field, never in a URL.
+- Invalid, domain mismatch, network/TLS-class failure, HTTP 500, malformed response,
+  and unsafe endpoint paths fail closed.
+- No license failure imports, drops, writes config, creates an administrator, or
+  creates a lock.
+- The missing legitimate production contract is an intentional hard stop before
+  database import. It is the primary Phase 2 completion blocker.
+
+6. SQL Import And Post-Import Writes
+------------------------------------
+- Reads the repository's wowonder.sql; ramza.sql is not referenced.
+- Streams the dump line-by-line.
+- Tracks quoted strings, escaped/doubled quotes, backticks, line comments, block
+  comments, multiline statements, custom DELIMITER directives, and blank lines.
+- Stops at the first SQL error.
+- Logs only phase, exception class, safe reference, and statement index.
+- Does not return SQL text to the browser.
+- Does not drop tables on any failure path.
+- Requires a fresh database because MySQL DDL implicit commits cannot be rolled
+  back reliably; a partial database must be discarded after failure.
+- Verifies at least 100 tables plus Wo_Config, Wo_Users, and Wo_UserFields.
+- Final tested dump result: 139 tables, 479 statements.
+- Post-import settings and administrator writes use prepared statements and a DML
+  transaction.
+- The installed default theme is set to the present wowonder theme, fixing the
+  dump's stale removed-theme default.
+
+7. Configuration And Filesystem Safety
+--------------------------------------
+config.php:
+- exact application variable names retained
+- values serialized with var_export
+- siteEncryptKey generated from 32 random bytes
+- generated source parsed with the PHP tokenizer parser before staging
+- external php -l passed on the final isolated generated file
+- temporary file is created in the destination directory, flushed, fsynced where
+  available, closed, mode 0600 while staged, then published and set to 0640
+- populated active config is never replaceable
+- a pre-existing template backup is kept in protected temporary storage until the
+  lock succeeds and is restored on activation failure
+
+nodejs/config.json:
+- JSON_THROW_ON_ERROR, JSON_PRETTY_PRINT, and JSON_UNESCAPED_SLASHES
+- decode validation before activation
+- same staged write, flush/fsync, backup, rollback, and 0640 activation model
+- populated active Node configuration is never replaceable
+
+.htaccess:
+- an existing file is preserved byte-for-byte
+- htaccess.txt is copied only when .htaccess is absent
+- no recursive chmod and no 0777
+
+8. Logging And Secrets
+----------------------
+- E_ALL remains active; display_errors is disabled and log_errors enabled.
+- Installer logs use a hashed directory name under the system temporary directory,
+  outside the application web root.
+- Password, pass, purchase/code, token, secret, CSRF, session, encryption, and key
+  fields are redacted.
+- Full paths in exception messages are redacted.
+- Complete POST arrays and SQL statements are never logged.
+- Terminal internal errors receive a non-secret reference identifier.
+- Test scans confirmed that controlled fixture secrets were absent from protected
+  installer logs.
+
+9. Tested Security Gates
+------------------------
+- CLI security unit suite: 12/12 pass.
+- Actual web flow: 5/5 pass through the fail-closed production license boundary.
+- Isolated full component installation: 13/13 pass.
+- Installed web/authentication probe: 4/4 pass.
+- Active-workspace recovery protection: pass.
+- Final changed installer/test PHP lint: 22 files, 0 failures.
+- Full first-party lint refresh: 2,046 files, 0 failures.
+
+See 18_INSTALLER_TEST_MATRIX.csv and 19_INSTALLER_REBUILD_REPORT.txt for evidence
+and explicitly blocked coverage.

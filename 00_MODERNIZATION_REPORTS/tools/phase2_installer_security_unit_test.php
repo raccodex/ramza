@@ -26,6 +26,8 @@ $paths->lockFile = $paths->installDir . DIRECTORY_SEPARATOR . 'install.lock';
 $paths->logDir = $temporary . DIRECTORY_SEPARATOR . 'logs';
 $logger = new RACInstallerLogger($paths);
 $postInstall = new RACInstallerPostInstall($logger);
+$testPurchaseCode = 'TEST-' . bin2hex(random_bytes(16));
+$testDatabasePassword = bin2hex(random_bytes(8)) . "'\"\\json";
 $results = [];
 $record = static function (string $gate, bool $pass, string $evidence) use (&$results): void {
     $results[] = ['gate' => $gate, 'status' => $pass ? 'PASS' : 'FAIL', 'evidence' => $evidence];
@@ -95,18 +97,18 @@ try {
     ];
     $licenseFailuresSafe = true;
     foreach ($licenseCases as $case => $response) {
-        $result = (new RACInstallerLicenseVerifier($logger, new RACPhase2ResponseClient($response), 'https://license.test.invalid/verify'))->verify('TEST-UNIT-CODE-NEVER-LOG', 'https://community.example.test');
+        $result = (new RACInstallerLicenseVerifier($logger, new RACPhase2ResponseClient($response), 'https://license.test.invalid/verify'))->verify($testPurchaseCode, 'https://community.example.test');
         $licenseFailuresSafe = $licenseFailuresSafe && !$result['ok'];
     }
-    $unsafeEndpoint = (new RACInstallerLicenseVerifier($logger, new RACPhase2ResponseClient($licenseCases['invalid']), 'http://license.test.invalid/verify'))->verify('TEST-UNIT-CODE-NEVER-LOG', 'https://community.example.test');
+    $unsafeEndpoint = (new RACInstallerLicenseVerifier($logger, new RACPhase2ResponseClient($licenseCases['invalid']), 'http://license.test.invalid/verify'))->verify($testPurchaseCode, 'https://community.example.test');
     $record('license-failure-adapter', $licenseFailuresSafe && !$unsafeEndpoint['ok'] && $unsafeEndpoint['type'] === 'contract-invalid', 'invalid, domain mismatch, timeout/TLS-class, HTTP 500, malformed, and unsafe endpoint paths all failed closed');
 
     $site = ['url' => 'https://community.example.test/path', 'name' => 'RAC “Unit” 🌍', 'title' => "Title with 'quotes'", 'email' => 'owner@example.test'];
-    $database = ['host' => 'localhost', 'user' => "user'<?php", 'pass' => "p@ss'\"\\json", 'name' => 'database_name'];
+    $database = ['host' => 'localhost', 'user' => "user'<?php", 'pass' => $testDatabasePassword, 'name' => 'database_name'];
     $config = new RACInstallerConfigWriter($paths);
     $node = new RACInstallerNodeConfigWriter($paths);
-    $config->prepare($database, $site, 'TEST-UNIT-CODE-NEVER-LOG');
-    $node->prepare($database, $site, 'TEST-UNIT-CODE-NEVER-LOG');
+    $config->prepare($database, $site, $testPurchaseCode);
+    $node->prepare($database, $site, $testPurchaseCode);
     $node->commit();
     $config->commit();
     $nodeDecoded = json_decode((string) file_get_contents($paths->nodeConfigFile), true, 512, JSON_THROW_ON_ERROR);
@@ -130,7 +132,7 @@ try {
     $record('missing-sql-requirement', ($sqlRow['status'] ?? '') === 'fail', 'missing SQL dump is a blocking required-check result');
 
     $log = (string) file_get_contents($logger->path());
-    $record('unit-secret-redaction', !str_contains($log, 'TEST-UNIT-CODE-NEVER-LOG') && !str_contains($log, $database['pass']), 'controlled test secrets absent from protected logger output');
+    $record('unit-secret-redaction', !str_contains($log, $testPurchaseCode) && !str_contains($log, $database['pass']), 'controlled test secrets absent from protected logger output');
 
     $passed = count(array_filter($results, static fn (array $row): bool => $row['status'] === 'PASS'));
     echo json_encode(['status' => $passed === count($results) ? 'PASS' : 'FAIL', 'passed' => $passed, 'total' => count($results), 'results' => $results], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;

@@ -193,4 +193,34 @@ Completion decision:
   PASS for Phase 1 runtime gates.
 - Installer rebuild remains not started in this phase.
 
+10. PHASE 2 INSTALLER AND FINAL RUNTIME ADDENDUM
+------------------------------------------------
+Active maintained PHP floor:
+- assets/init.php: PHP 8.2.0+
+- installer requirements: PHP 8.2.0+
+- admin/system-status helper: PHP 8.2.0+
+- testable helper rejects PHP 8.1.99 and accepts PHP 8.2.0
+
+Final Phase 2 evidence:
+- PHP runtime: 8.2.30
+- first-party lint inventory: 2,046 pass, 0 fail
+- final changed installer/test PHP lint: 22 pass, 0 fail
+- existing web-SAPI regression: 18 pass, 0 fail
+- installed-clone homepage/admin/lock web probes: 4 pass, 0 fail
+- vendor runnable autoloads: 18 pass, 0 fail
+- final installed-clone PHP warning/deprecation/fatal/uncaught count: 0
+
+Installer runtime result:
+- controlled isolated component installation passed on a fresh disposable DB
+- wowonder.sql produced 139 tables from 479 statements
+- generated administrator authenticated through the real login route
+- production browser flow correctly stops before mutation because the repository
+  lacks a legitimate authorized license verification contract
+
+Decision:
+- PHP 8.2 runtime floor: PASS
+- installer controlled/runtime implementation evidence: PASS for executed gates
+- supported Phase 2 completion: BLOCKED in 21_INSTALLER_COMPLETION_DECISION.txt
+- admin-panel redesign: not started and not authorized
+
 END OF CURRENT MATRIX

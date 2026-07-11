@@ -5,11 +5,21 @@ if (PHP_SAPI !== 'cli') {
     http_response_code(404);
     exit;
 }
-if ($argc !== 2) {
-    fwrite(STDERR, "Usage: php phase2_installed_web_probe.php <base-url>\n");
+if ($argc !== 3) {
+    fwrite(STDERR, "Usage: php phase2_installed_web_probe.php <base-url> <auth-handoff>\n");
     exit(2);
 }
 $baseUrl = rtrim($argv[1], '/');
+$authFile = realpath($argv[2]);
+if (!is_string($authFile) || !str_starts_with($authFile, rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR)) {
+    fwrite(STDERR, "Authentication handoff must be a system-temporary file.\n");
+    exit(2);
+}
+$auth = json_decode((string) file_get_contents($authFile), true, 512, JSON_THROW_ON_ERROR);
+if (!is_array($auth) || !is_string($auth['username'] ?? null) || !is_string($auth['password'] ?? null)) {
+    fwrite(STDERR, "Authentication handoff is invalid.\n");
+    exit(2);
+}
 $cookieJar = tempnam(sys_get_temp_dir(), 'rac_phase2_cookie_');
 if ($cookieJar === false) {
     throw new RuntimeException('Unable to create temporary cookie jar.');
@@ -48,7 +58,7 @@ $request = static function (string $path, string $method = 'GET', array $fields 
 try {
     $installer = $request('/install/index.php');
     $welcome = $request('/index.php?link1=welcome');
-    $login = $request('/requests.php?f=login', 'POST', ['username' => 'phase2admin', 'password' => 'RAC-Phase2-Admin-82941']);
+    $login = $request('/requests.php?f=login', 'POST', ['username' => $auth['username'], 'password' => $auth['password']]);
     $admin = $request('/admincp.php');
     $loginJson = json_decode($login['body'], true);
     $results = [
@@ -62,4 +72,5 @@ try {
     exit($passed === count($results) ? 0 : 1);
 } finally {
     @unlink($cookieJar);
+    @unlink($authFile);
 }

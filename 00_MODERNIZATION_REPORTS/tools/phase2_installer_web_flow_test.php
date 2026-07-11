@@ -84,6 +84,8 @@ $csrf = static function (array $response): string {
     return $match[1];
 };
 $results = [];
+$testAdminPassword = 'RAC-' . bin2hex(random_bytes(16)) . '-9';
+$testPurchaseCode = 'TEST-' . bin2hex(random_bytes(16));
 $record = static function (string $gate, bool $pass, string $evidence) use (&$results): void {
     $results[] = ['gate' => $gate, 'status' => $pass ? 'PASS' : 'FAIL', 'evidence' => $evidence];
 };
@@ -122,8 +124,8 @@ try {
         'site_email' => 'site@example.test',
         'admin_username' => 'webflowadmin',
         'admin_email' => 'admin@example.test',
-        'admin_password' => 'RAC-Web-Flow-82941',
-        'purchase_code' => 'TEST-WEB-CODE-NEVER-LOG',
+        'admin_password' => $testAdminPassword,
+        'purchase_code' => $testPurchaseCode,
     ]);
     $database = $connect($credentials, $databaseName);
     $tableCount = (int) ($database->query("SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = DATABASE() AND table_type = 'BASE TABLE'")->fetch_assoc()['c'] ?? -1);
