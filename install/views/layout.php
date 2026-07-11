@@ -25,6 +25,8 @@ $descriptions = [
 ];
 $activeView = isset($view) && is_string($view) ? $view : 'welcome';
 $activeStep = isset($step) && is_string($step) ? $step : 'welcome';
+$scriptDirectory = str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/install/index.php')));
+$assetBase = rtrim($scriptDirectory === '/' ? '' : $scriptDirectory, '/') . '/assets';
 $old = static function (string $key, string $fallback = ''): string {
     if (isset($_POST[$key]) && is_string($_POST[$key])) {
         return $_POST[$key];
@@ -39,8 +41,8 @@ $old = static function (string $key, string $fallback = ''): string {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow,noarchive">
     <title><?= rac_installer_e($titles[$activeView] ?? 'RACSocial setup') ?></title>
-    <link rel="stylesheet" href="assets/css/installer.css?v=<?= rawurlencode(RACSOCIAL_INSTALLER_VERSION) ?>">
-    <script src="assets/js/installer.js?v=<?= rawurlencode(RACSOCIAL_INSTALLER_VERSION) ?>" defer></script>
+    <link rel="stylesheet" href="<?= rac_installer_e($assetBase) ?>/css/installer.css?v=<?= rawurlencode(RACSOCIAL_INSTALLER_VERSION) ?>">
+    <script src="<?= rac_installer_e($assetBase) ?>/js/installer.js?v=<?= rawurlencode(RACSOCIAL_INSTALLER_VERSION) ?>" defer></script>
 </head>
 <body>
 <div class="shell">
