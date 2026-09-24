@@ -162,7 +162,7 @@ Ramza can be used as a foundation for many different types of platforms.
 Clone the repository:
 
 ```bash
-git clone https://github.com/alihasnainentrepreneur-del/ramza.git
+git clone https://github.com/raccodex/ramza.git
 ```
 
 Move into the project directory:
@@ -387,7 +387,7 @@ See the [`LICENSE`](LICENSE) file for the full license terms.
 🌐 **Website:** Coming soon
 📚 **Documentation:** Coming soon
 💬 **Community:** Coming soon
-🐙 **GitHub:** https://raccodex/ramza
+🐙 **GitHub:** [https://raccodex/ramza](https://github.com/raccodex)
 
 ---
 
