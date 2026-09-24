@@ -387,7 +387,7 @@ See the [`LICENSE`](LICENSE) file for the full license terms.
 🌐 **Website:** Coming soon
 📚 **Documentation:** Coming soon
 💬 **Community:** Coming soon
-🐙 **GitHub:** https://github.com/YOUR-USERNAME/ramza
+🐙 **GitHub:** https://raccodex/ramza
 
 ---
 
