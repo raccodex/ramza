@@ -1,11 +1,11 @@
-# PayFast PHP SDK
+# payfast-php-sdk
 
-The PayFast PHP SDK provides an easy-to-use library for integrating PayFast payments into your project.
+The Payfast PHP SDK provides an easy-to-use library for integrating Payfast payments into your project.
 This includes Custom Integration, Onsite Integration and all APIs.
 
 ## Requirements
 
-PHP 7.2.5 and later.
+PHP 8.1 and later.
 
 ## Documentation
 
@@ -29,7 +29,9 @@ require_once('vendor/autoload.php');
 
 ### Custom Integration
 
-Build a checkout form and receive payments securely from the PayFast payment platform.
+Build a checkout form and receive payments securely from the Payfast payment platform.
+
+**NB!** The default value of 'testMode' is true.
 
 See the [Developer Docs](https://developers.payfast.co.za/docs#quickstart)
 
@@ -39,7 +41,7 @@ try {
         [
             'merchantId' => '10000100',
             'merchantKey' => '46f0cd694581a',
-            'passPhrase' => '',
+            'passPhrase' => 'jt7NOE43FZPn',
             'testMode' => true
         ]
     );
@@ -57,7 +59,10 @@ try {
 
 ### Onsite Payments
 
-Integrate PayFast’s secure payment engine directly into your checkout page.
+Integrate Payfast’s secure payment engine directly into your checkout page.
+
+**NB!** The default value of 'testMode' is false. Otherwise we get the Exception: "
+_**There was an exception: Sorry but Onsite is not available in Sandbox mode**_"
 
 See the [Developer Docs](https://developers.payfast.co.za/docs#onsite_payments)
 
@@ -69,7 +74,7 @@ try {
         [
             'merchantId' => '10000100',
             'merchantKey' => '46f0cd694581a',
-            'passPhrase' => '',
+            'passPhrase' => 'jt7NOE43FZPn',
             'testMode' => false
         ]
     );
@@ -96,6 +101,8 @@ try {
 
 The Subscription Payments API gives Merchants the ability to interact with subscriptions on their accounts.
 
+**NB!** The default value of 'testMode' is true.
+
 See the [Developer Docs](https://developers.payfast.co.za/api#recurring-billing)
 
 ```php
@@ -113,7 +120,7 @@ try {
     $pauseArray = $api->subscriptions->pause('2afa4575-5628-051a-d0ed-4e071b56a7b0', ['cycles' => 1]);
 
     $unpauseArray = $api->subscriptions->unpause('2afa4575-5628-051a-d0ed-4e071b56a7b0');
-    
+
     $cancelArray = $api->subscriptions->cancel('2afa4575-5628-051a-d0ed-4e071b56a7b0');
 
     $updateArray = $api->subscriptions->update('2afa4575-5628-051a-d0ed-4e071b56a7b0', ['cycles' => 1]);
@@ -127,7 +134,11 @@ try {
 
 #### Update card
 
-The update card endpoint allows you to provide buyers with a link to update their card details on a Recurring Billing subscription or Tokenization charges.
+The update card endpoint allows you to provide buyers with a link to update their card details on a Recurring Billing
+subscription or Tokenization charges.
+
+**NB!** The default value of 'testMode' is false. Otherwise we get the Exception: "
+_**There was an exception: Sorry but Onsite is not available in Sandbox mode**_"
 
 See the [Developer Docs](https://developers.payfast.co.za/docs#recurring_card_update)
 
@@ -137,7 +148,7 @@ try {
             [
                 'merchantId' => '10000100',
                 'merchantKey' => '46f0cd694581a',
-                'passPhrase' => '',
+                'passPhrase' => 'jt7NOE43FZPn',
                 'testMode' => false
             ]
         );
@@ -151,7 +162,9 @@ try {
 
 #### Transaction History
 
-The transaction history API gives Merchants the ability to interact with their PayFast account.
+The transaction history API gives Merchants the ability to interact with their Payfast account.
+
+**NB!** The default value of 'testMode' is true.
 
 See the [Developer Docs](https://developers.payfast.co.za/api#transaction-history)
 
@@ -166,11 +179,11 @@ try {
     );
 
     $rangeArray = $api->transactionHistory->range(['from' => '2020-08-01', 'to' => '2020-08-07', 'offset' => 0, 'limit' => 1000]);
-    
+
     $dailyArray = $api->transactionHistory->daily(['date' => '2020-08-07', 'offset' => 0, 'limit' => 1000]);
-    
+
     $weeklyArray = $api->transactionHistory->weekly(['date' => '2020-08-07', 'offset' => 0, 'limit' => 1000]);
-    
+
     $monthlyArray = $api->transactionHistory->monthly(['date' => '2020-08', 'offset' => 0, 'limit' => 1000]);
 
 } catch(Exception $e) {
@@ -181,6 +194,8 @@ try {
 #### Credit card transaction query
 
 The credit card transaction query API gives Merchants the ability to query credit card transactions.
+
+**NB!** The default value of 'testMode' is true.
 
 See the [Developer Docs](https://developers.payfast.co.za/api#credit-card-transactions)
 
@@ -205,6 +220,9 @@ try {
 
 The Refunds API Providing gives Merchants the ability to perform refunds on their account.
 
+**NB!** The default value of 'testMode' is false. Otherwise we get the Exception: "
+_**There was an exception: Sorry but Onsite is not available in Sandbox mode**_"
+
 See the [Developer Docs](https://developers.payfast.co.za/api#refunds)
 
 ```php
@@ -218,11 +236,10 @@ try {
     );
 
     $refundFetchArray = $api->refunds->fetch('dc0521d3-55fe-269b-fa00-b647310d760f');
-    
+
     $refundCreateArray = $api->refunds->create('dc0521d3-55fe-269b-fa00-b647310d760f', ['amount' => 50, 'reason' => 'Product returned', 'acc_type' => 'savings']);
 
 } catch(Exception $e) {
     echo 'There was an exception: '.$e->getMessage();
 }
 ```
-

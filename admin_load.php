@@ -45,12 +45,10 @@ $page = 'dashboard';
 if (!empty($path['page']) && in_array($path['page'], $files) && file_exists('admin-panel/pages/' . $path['page'] . '/content.phtml')) {
     $page = $path['page'];
 }
-$wo['user']['permission'] = !empty($wo['user']['permission']) ? json_decode($wo['user']['permission'], true) : [];
-if (!empty($wo['user']['permission'][$page])) {
-  if (!empty($wo['user']['permission']) && $wo['user']['permission'][$page] == 0) {
-      header("Location: " . Wo_SeoLink('index.php?link1=welcome'));
-      exit();
-  }
+$wo['user']['permission'] = !empty($wo['user']['permission']) ? (is_array($wo['user']['permission']) ? $wo['user']['permission'] : json_decode($wo['user']['permission'], true)) : [];
+if (!Wo_IsAdmin() && isset($wo['user']['permission'][$page]) && (int)$wo['user']['permission'][$page] === 0) {
+    header("Location: " . Wo_SeoLink('index.php?link1=welcome'));
+    exit();
 }
 $wo['decode_android_v']  = $wo['config']['footer_background'];
 $wo['decode_android_value']  = base64_decode('I2FhYQ==');

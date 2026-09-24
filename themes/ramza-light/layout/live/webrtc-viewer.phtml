@@ -1,0 +1,105 @@
+<?php
+$ramzaViewerPostId = (int) ($wo['webrtc_live_post_id'] ?? 0);
+$ramzaViewerConfig = Ramza_WebRtcLiveClientConfig($ramzaViewerPostId, (int) $wo['user']['user_id']);
+if ($ramzaViewerConfig === [] || !empty($ramzaViewerConfig['isBroadcaster'])) {
+    return;
+}
+?>
+<script>
+(function () {
+    'use strict';
+    const config = <?php echo json_encode($ramzaViewerConfig, JSON_UNESCAPED_SLASHES); ?>;
+    const element = document.getElementById('post_live_video_' + config.postId);
+    if (!element || element.dataset.webrtcStarted === '1') return;
+    element.dataset.webrtcStarted = '1';
+    let pc = null;
+    let pullTimer = null;
+    const pendingCandidates = [];
+
+    function request(action, fields) {
+        const body = new URLSearchParams(Object.assign({
+            hash_id: config.hash,
+            call_type: 'live',
+            call_id: config.postId
+        }, fields || {}));
+        return fetch(config.endpoint + '&s=' + encodeURIComponent(action), {
+            method: 'POST', credentials: 'same-origin',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+            body: body.toString()
+        }).then(async response => {
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || Number(data.status || 0) >= 400) throw new Error(data.message || 'Live connection failed.');
+            return data;
+        });
+    }
+
+    function send(type, payload) {
+        return request('push', {message_type: type, payload: JSON.stringify(payload || {})});
+    }
+
+    function ensurePeer() {
+        if (pc) return pc;
+        pc = new RTCPeerConnection({iceServers: config.iceServers});
+        pc.onicecandidate = event => {
+            if (event.candidate) send('candidate', event.candidate.toJSON()).catch(() => {});
+        };
+        pc.ontrack = event => {
+            let video = element.querySelector('video');
+            if (!video) {
+                video = document.createElement('video');
+                video.autoplay = true;
+                video.playsInline = true;
+                video.controls = true;
+                video.className = 'embed-responsive-item ramza-webrtc-live-video';
+                element.prepend(video);
+            }
+            video.srcObject = event.streams[0];
+            video.play().catch(() => {});
+        };
+        pc.onconnectionstatechange = () => {
+            if (['failed', 'closed'].includes(pc.connectionState)) stop('Live connection ended.');
+        };
+        return pc;
+    }
+
+    async function handle(signal) {
+        const peer = ensurePeer();
+        if (signal.type === 'offer') {
+            await peer.setRemoteDescription(new RTCSessionDescription(signal.payload));
+            while (pendingCandidates.length) await peer.addIceCandidate(pendingCandidates.shift());
+            const answer = await peer.createAnswer();
+            await peer.setLocalDescription(answer);
+            await send('answer', peer.localDescription);
+        } else if (signal.type === 'candidate' && signal.payload) {
+            if (peer.remoteDescription) await peer.addIceCandidate(new RTCIceCandidate(signal.payload));
+            else pendingCandidates.push(new RTCIceCandidate(signal.payload));
+        } else if (signal.type === 'hangup') {
+            stop('The live stream has ended.');
+        }
+    }
+
+    async function pull() {
+        try {
+            const data = await request('pull');
+            for (const signal of (data.signals || [])) await handle(signal);
+        } catch (error) {
+            stop(error.message);
+        }
+    }
+
+    function stop(message) {
+        if (pullTimer) window.clearInterval(pullTimer);
+        if (pc) pc.close();
+        if (message && !element.querySelector('video')) {
+            element.insertAdjacentHTML('afterbegin', '<div class="valign empty_state"></div>');
+            element.querySelector('.empty_state').textContent = message;
+        }
+    }
+
+    request('push', {message_type: 'join', payload: '{}'}).then(() => {
+        pullTimer = window.setInterval(pull, 700);
+        pull();
+    }).catch(error => stop(error.message));
+    window.addEventListener('beforeunload', () => send('hangup', {}).catch(() => {}), {once: true});
+})();
+</script>

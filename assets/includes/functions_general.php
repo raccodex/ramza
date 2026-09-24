@@ -545,6 +545,39 @@ function url_slug($str, $options = array()) {
     $str = trim($str, $options['delimiter']);
     return $options['lowercase'] ? mb_strtolower($str, 'UTF-8') : $str;
 }
+
+/**
+ * Turn a page or group URL name into the legacy-compatible account slug used
+ * by timeline routes. Display titles remain untouched; only the URL segment is
+ * normalized. Keeping this in one place prevents the browser and XHR handlers
+ * from applying different validation rules.
+ */
+function Wo_NormalizeCommunitySlug($value) {
+    $value = html_entity_decode(trim((string) $value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+    if ($value === '') {
+        return '';
+    }
+
+    if (function_exists('transliterator_transliterate')) {
+        $transliterated = @transliterator_transliterate('Any-Latin; Latin-ASCII', $value);
+        if (is_string($transliterated) && $transliterated !== '') {
+            $value = $transliterated;
+        }
+    } elseif (function_exists('iconv')) {
+        $transliterated = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value);
+        if (is_string($transliterated) && $transliterated !== '') {
+            $value = $transliterated;
+        }
+    }
+
+    $value = strtolower($value);
+    $value = preg_replace('/[\s-]+/', '_', $value);
+    $value = preg_replace('/[^a-z0-9_]/', '', $value);
+    $value = preg_replace('/_+/', '_', $value);
+
+    return trim((string) $value, '_');
+}
 function Wo_SeoLink($query = '') {
     global $wo, $config;
     if ($wo['config']['seoLink'] == 1) {
@@ -1254,40 +1287,69 @@ function Wo_CompressImage($source_url, $destination_url, $quality = 50) {
     return $destination_url;
 }
 function get_ip_address() {
-    if (!empty($_SERVER['HTTP_X_FORWARDED']) && validate_ip($_SERVER['HTTP_X_FORWARDED']))
-        return $_SERVER['HTTP_X_FORWARDED'];
-    if (!empty($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']) && validate_ip($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']))
-        return $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
-    if (!empty($_SERVER['HTTP_FORWARDED_FOR']) && validate_ip($_SERVER['HTTP_FORWARDED_FOR']))
-        return $_SERVER['HTTP_FORWARDED_FOR'];
-    if (!empty($_SERVER['HTTP_FORWARDED']) && validate_ip($_SERVER['HTTP_FORWARDED']))
-        return $_SERVER['HTTP_FORWARDED'];
-    return $_SERVER['REMOTE_ADDR'];
+    $candidates = array();
+
+    // 1. Cloudflare header - contains real client IP
+    if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+        $candidates[] = trim($_SERVER['HTTP_CF_CONNECTING_IP']);
+    }
+
+    // 2. Standard X-Forwarded-For - take the first IP in the comma-separated list
+    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $forwarded_ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        foreach ($forwarded_ips as $f_ip) {
+            $f_ip = trim($f_ip);
+            if (!empty($f_ip)) {
+                $candidates[] = $f_ip;
+            }
+        }
+    }
+
+    // 3. Other proxy headers
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $candidates[] = trim($_SERVER['HTTP_CLIENT_IP']);
+    }
+    if (!empty($_SERVER['HTTP_X_FORWARDED'])) {
+        $candidates[] = trim($_SERVER['HTTP_X_FORWARDED']);
+    }
+    if (!empty($_SERVER['HTTP_X_CLUSTER_CLIENT_IP'])) {
+        $candidates[] = trim($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']);
+    }
+    if (!empty($_SERVER['HTTP_FORWARDED_FOR'])) {
+        $candidates[] = trim($_SERVER['HTTP_FORWARDED_FOR']);
+    }
+    if (!empty($_SERVER['HTTP_FORWARDED'])) {
+        $candidates[] = trim($_SERVER['HTTP_FORWARDED']);
+    }
+
+    foreach ($candidates as $ip) {
+        if (validate_ip($ip)) {
+            return $ip;
+        }
+    }
+
+    // Fallback to REMOTE_ADDR
+    return !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 }
 function validate_ip($ip) {
-    if (strtolower($ip) === 'unknown')
+    if (empty($ip) || strtolower($ip) === 'unknown') {
         return false;
-    $ip = ip2long($ip);
-    if ($ip !== false && $ip !== -1) {
-        $ip = sprintf('%u', $ip);
-        if ($ip >= 0 && $ip <= 50331647)
-            return false;
-        if ($ip >= 167772160 && $ip <= 184549375)
-            return false;
-        if ($ip >= 2130706432 && $ip <= 2147483647)
-            return false;
-        if ($ip >= 2851995648 && $ip <= 2852061183)
-            return false;
-        if ($ip >= 2886729728 && $ip <= 2887778303)
-            return false;
-        if ($ip >= 3221225984 && $ip <= 3221226239)
-            return false;
-        if ($ip >= 3232235520 && $ip <= 3232301055)
-            return false;
-        if ($ip >= 4294967040)
-            return false;
     }
-    return true;
+    // Validate IPv4 or IPv6 syntax
+    if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+        return false;
+    }
+    // Exclude private / reserved ranges for proxy headers unless running in local environment
+    $is_valid_public = filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+    if ($is_valid_public !== false) {
+        return true;
+    }
+    // If it is a valid IP, allow local IPs (127.0.0.1, ::1, 192.168.x.x, 10.x.x.x) if REMOTE_ADDR itself is private/localhost
+    $remote = !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+    if ($remote === '127.0.0.1' || $remote === '::1' || filter_var($remote, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE) === false) {
+        return true;
+    }
+    return false;
 }
 function Wo_Backup($sql_db_host, $sql_db_user, $sql_db_pass, $sql_db_name, $tables = false, $backup_name = false) {
     $mysqli = new mysqli($sql_db_host, $sql_db_user, $sql_db_pass, $sql_db_name);
@@ -1514,23 +1576,419 @@ function br2nlf($st) {
     return str_replace('[nl]', "\r", $st);
 }
 use Aws\S3\S3Client;
+use Aws\S3\MultipartUploader;
 function makeFTPdir($ftp, $dir) {
 }
 use Google\Cloud\Storage\StorageClient;
+
+function Wo_RemoteStorageConfigKeys() {
+    return array(
+        'amazone_s3',
+        'wasabi_storage',
+        'cloudflare_r2_storage',
+        's3_compatible_storage',
+        'ftp_upload',
+        'spaces',
+        'cloud_upload',
+        'backblaze_storage'
+    );
+}
+
+function Wo_StorageFlagEnabled($value) {
+    if (is_bool($value)) {
+        return $value;
+    }
+    return in_array(strtolower(trim((string) $value)), array('1', 'true', 'yes', 'on', 'enabled'), true);
+}
+
+function Ramza_CloudflareR2Endpoint() {
+    global $wo;
+    $account = trim((string) ($wo['config']['cloudflare_r2_account_id'] ?? ''));
+    if ($account === '') {
+        return '';
+    }
+    if (filter_var($account, FILTER_VALIDATE_URL)) {
+        return rtrim($account, '/');
+    }
+    $account = preg_replace('/\.r2\.cloudflarestorage\.com.*$/i', '', $account);
+    $account = preg_replace('/^https?:\/\//i', '', (string) $account);
+    $account = trim((string) $account, " \t\n\r\0\x0B/");
+    return $account !== '' ? 'https://' . $account . '.r2.cloudflarestorage.com' : '';
+}
+
+function Ramza_CloudflareR2PublicUrl() {
+    global $wo;
+    $publicUrl = trim((string) ($wo['config']['cloudflare_r2_public_url'] ?? ''));
+    if ($publicUrl === '' || !filter_var($publicUrl, FILTER_VALIDATE_URL)) {
+        return '';
+    }
+    return rtrim($publicUrl, '/');
+}
+
+function Ramza_CloudflareR2MediaReady() {
+    global $wo;
+    return Ramza_CloudflareR2Endpoint() !== ''
+        && trim((string) ($wo['config']['cloudflare_r2_bucket_name'] ?? '')) !== ''
+        && trim((string) ($wo['config']['cloudflare_r2_access_key'] ?? '')) !== ''
+        && trim((string) ($wo['config']['cloudflare_r2_secret_key'] ?? '')) !== ''
+        && Ramza_CloudflareR2PublicUrl() !== '';
+}
+
+function Ramza_CloudflareR2Client() {
+    global $wo;
+    $endpoint = Ramza_CloudflareR2Endpoint();
+    $accessKey = trim((string) ($wo['config']['cloudflare_r2_access_key'] ?? ''));
+    $secretKey = trim((string) ($wo['config']['cloudflare_r2_secret_key'] ?? ''));
+    if ($endpoint === '' || $accessKey === '' || $secretKey === '') {
+        throw new RuntimeException('Cloudflare R2 endpoint or API credentials are incomplete.');
+    }
+    require_once dirname(__DIR__, 2) . '/assets/libraries/s3-lib/vendor/autoload.php';
+    return new S3Client(array(
+        'version' => 'latest',
+        'region' => 'auto',
+        'endpoint' => $endpoint,
+        'use_path_style_endpoint' => true,
+        'signature_version' => 'v4',
+        'credentials' => array(
+            'key' => $accessKey,
+            'secret' => $secretKey
+        ),
+        'http' => array(
+            'connect_timeout' => 10,
+            'timeout' => 180
+        )
+    ));
+}
+
+function Ramza_CloudflareR2Upload($localPath, $objectKey) {
+    global $wo;
+    $bucket = trim((string) ($wo['config']['cloudflare_r2_bucket_name'] ?? ''));
+    if ($bucket === '' || !is_file($localPath) || $objectKey === '') {
+        throw new RuntimeException('Cloudflare R2 bucket, local file, or object key is invalid.');
+    }
+
+    $client = Ramza_CloudflareR2Client();
+    $mime = function_exists('mime_content_type') ? @mime_content_type($localPath) : '';
+    $options = array(
+        'Bucket' => $bucket,
+        'Key' => $objectKey,
+        'CacheControl' => 'public, max-age=31536000, immutable'
+    );
+    if (is_string($mime) && $mime !== '') {
+        $options['ContentType'] = $mime;
+    }
+
+    $size = @filesize($localPath);
+    if (is_int($size) && $size >= 64 * 1024 * 1024) {
+        $multipartParams = array(
+            'CacheControl' => $options['CacheControl']
+        );
+        if (!empty($options['ContentType'])) {
+            $multipartParams['ContentType'] = $options['ContentType'];
+        }
+        $uploader = new MultipartUploader($client, $localPath, array(
+            'bucket' => $bucket,
+            'key' => $objectKey,
+            'part_size' => 16 * 1024 * 1024,
+            'params' => $multipartParams
+        ));
+        $result = $uploader->upload();
+        $statusCode = 200;
+    } else {
+        $options['SourceFile'] = $localPath;
+        $result = $client->putObject($options);
+        $statusCode = (int) ($result['@metadata']['statusCode'] ?? 0);
+    }
+
+    if ($statusCode < 200 || $statusCode >= 300) {
+        throw new RuntimeException('Cloudflare R2 returned HTTP ' . $statusCode . ' for the upload.');
+    }
+    $client->headObject(array('Bucket' => $bucket, 'Key' => $objectKey));
+    return true;
+}
+
+function Ramza_CloudflareR2Probe() {
+    global $wo;
+    $bucket = trim((string) ($wo['config']['cloudflare_r2_bucket_name'] ?? ''));
+    if ($bucket === '') {
+        return array('ok' => false, 'message' => 'Cloudflare R2 bucket name is required.');
+    }
+
+    $key = 'ramza-health/r2-' . gmdate('Ymd-His') . '-' . bin2hex(random_bytes(8)) . '.txt';
+    $client = null;
+    try {
+        $client = Ramza_CloudflareR2Client();
+        $result = $client->putObject(array(
+            'Bucket' => $bucket,
+            'Key' => $key,
+            'Body' => 'Ramza R2 connection test ' . gmdate('c'),
+            'ContentType' => 'text/plain',
+            'CacheControl' => 'no-store'
+        ));
+        $statusCode = (int) ($result['@metadata']['statusCode'] ?? 0);
+        if ($statusCode < 200 || $statusCode >= 300) {
+            throw new RuntimeException('Cloudflare R2 returned HTTP ' . $statusCode . '.');
+        }
+        $client->headObject(array('Bucket' => $bucket, 'Key' => $key));
+        $publicUrlReady = Ramza_CloudflareR2PublicUrl() !== '';
+        $publicStatus = 0;
+        if ($publicUrlReady && function_exists('curl_init')) {
+            $publicRequest = curl_init(Ramza_CloudflareR2PublicUrl() . '/' . $key);
+            curl_setopt_array($publicRequest, array(
+                CURLOPT_NOBODY => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_FOLLOWLOCATION => false,
+                CURLOPT_CONNECTTIMEOUT => 10,
+                CURLOPT_TIMEOUT => 20
+            ));
+            curl_exec($publicRequest);
+            $publicStatus = (int) curl_getinfo($publicRequest, CURLINFO_HTTP_CODE);
+            curl_close($publicRequest);
+        }
+        $publicReadable = $publicUrlReady && $publicStatus >= 200 && $publicStatus < 300;
+        return array(
+            'ok' => $publicReadable,
+            'storage_ok' => true,
+            'public_status' => $publicStatus,
+            'message' => !$publicUrlReady
+                ? 'R2 read/write access works, but the Public URL / Custom Domain is missing. Add it before R2 can become the active media provider.'
+                : ($publicReadable
+                    ? 'R2 write, read, and public media configuration passed.'
+                    : 'R2 storage access works, but the configured public URL cannot read objects from this bucket.')
+        );
+    } catch (Throwable $exception) {
+        Ramza_RemoteStorageLog('cloudflare-r2-probe', $exception->getMessage());
+        return array('ok' => false, 'message' => 'R2 verification failed. Check the protected storage log for the redacted server error.');
+    } finally {
+        if ($client instanceof S3Client) {
+            try {
+                $client->deleteObject(array('Bucket' => $bucket, 'Key' => $key));
+            } catch (Throwable $ignored) {
+                Ramza_RemoteStorageLog('cloudflare-r2-probe', 'The temporary verification object could not be deleted.');
+            }
+        }
+    }
+}
+
+function Ramza_RemoteStorageLog($provider, $message) {
+    $root = dirname(__DIR__, 2);
+    $directory = $root . DIRECTORY_SEPARATOR . 'cache';
+    if (!is_dir($directory)) {
+        @mkdir($directory, 0755, true);
+    }
+    $safeProvider = preg_replace('/[^a-z0-9_-]/i', '', (string) $provider);
+    $safeMessage = preg_replace('/[\r\n]+/', ' ', (string) $message);
+    @file_put_contents(
+        $directory . DIRECTORY_SEPARATOR . 'ramza-storage.log',
+        '[' . gmdate('c') . '] ' . $safeProvider . ': ' . $safeMessage . PHP_EOL,
+        FILE_APPEND | LOCK_EX
+    );
+}
+
+function Ramza_StorageLocalPath($filename) {
+    $filename = str_replace(array("\0", '\\'), array('', DIRECTORY_SEPARATOR), (string) $filename);
+    if (is_file($filename)) {
+        return $filename;
+    }
+    $candidate = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . ltrim($filename, '/\\');
+    return is_file($candidate) ? $candidate : '';
+}
+
+function Ramza_StorageObjectKey($filename) {
+    $root = str_replace('\\', '/', rtrim(dirname(__DIR__, 2), '/\\'));
+    $key = str_replace('\\', '/', (string) $filename);
+    if (stripos($key, $root . '/') === 0) {
+        $key = substr($key, strlen($root) + 1);
+    }
+    $key = ltrim($key, '/');
+    $parts = array_values(array_filter(explode('/', $key), static function ($part) {
+        return $part !== '' && $part !== '.' && $part !== '..';
+    }));
+    return implode('/', $parts);
+}
+
+function Wo_IsRemoteStorageEnabled() {
+    global $wo;
+    foreach (Wo_RemoteStorageConfigKeys() as $key) {
+        if (Wo_StorageFlagEnabled($wo['config'][$key] ?? 0)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function Wo_SuspendRemoteStorage() {
+    global $wo;
+    $snapshot = array();
+    foreach (Wo_RemoteStorageConfigKeys() as $key) {
+        $snapshot[$key] = isset($wo['config'][$key]) ? $wo['config'][$key] : 0;
+        $wo['config'][$key] = 0;
+    }
+    return $snapshot;
+}
+
+function Wo_RestoreRemoteStorage($snapshot) {
+    global $wo;
+    if (!is_array($snapshot)) {
+        return;
+    }
+    foreach (Wo_RemoteStorageConfigKeys() as $key) {
+        if (array_key_exists($key, $snapshot)) {
+            $wo['config'][$key] = $snapshot[$key];
+        }
+    }
+}
+
+function Ramza_FunctionEnabled($name) {
+    if (!is_string($name) || $name === '' || !is_callable($name)) {
+        return false;
+    }
+    $disabled = array_filter(array_map('trim', explode(',', (string) ini_get('disable_functions'))));
+    return !in_array($name, $disabled, true);
+}
+
+function Ramza_ResolveFfmpegBinary($configured = '') {
+    $configured = trim(str_replace("\0", '', (string) $configured));
+    $root = dirname(__DIR__, 2);
+    $names = PHP_OS_FAMILY === 'Windows'
+        ? array('ffmpeg.exe', 'ffmpeg')
+        : array('ffmpeg');
+    $candidates = array();
+
+    if ($configured !== '') {
+        $candidates[] = $configured;
+        if (basename($configured) === $configured) {
+            foreach (explode(PATH_SEPARATOR, (string) getenv('PATH')) as $directory) {
+                if ($directory !== '') {
+                    $candidates[] = rtrim($directory, '/\\') . DIRECTORY_SEPARATOR . $configured;
+                }
+            }
+        }
+    }
+
+    foreach ($names as $name) {
+        $candidates[] = $root . DIRECTORY_SEPARATOR . 'ffmpeg' . DIRECTORY_SEPARATOR . $name;
+        $candidates[] = $root . DIRECTORY_SEPARATOR . 'ffmpeg' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . $name;
+        foreach (explode(PATH_SEPARATOR, (string) getenv('PATH')) as $directory) {
+            if ($directory !== '') {
+                $candidates[] = rtrim($directory, '/\\') . DIRECTORY_SEPARATOR . $name;
+            }
+        }
+    }
+
+    if (PHP_OS_FAMILY !== 'Windows') {
+        array_push(
+            $candidates,
+            '/usr/bin/ffmpeg',
+            '/usr/local/bin/ffmpeg',
+            '/usr/local/cpanel/3rdparty/bin/ffmpeg',
+            '/opt/ffmpeg/bin/ffmpeg',
+            '/opt/homebrew/bin/ffmpeg'
+        );
+    }
+
+    foreach (array_values(array_unique($candidates)) as $candidate) {
+        if (!is_file($candidate)) {
+            continue;
+        }
+        if (PHP_OS_FAMILY !== 'Windows' && !is_executable($candidate)) {
+            // ZIP extraction commonly drops the executable bit on bundled binaries.
+            @chmod($candidate, 0755);
+        }
+        if (PHP_OS_FAMILY === 'Windows' || is_executable($candidate)) {
+            $real = realpath($candidate);
+            return $real !== false ? $real : $candidate;
+        }
+    }
+    return '';
+}
+
+function Ramza_FfmpegStatus($configured = null) {
+    global $wo;
+    if ($configured === null) {
+        $configured = isset($wo['config']['ffmpeg_binary_file']) ? $wo['config']['ffmpeg_binary_file'] : '';
+    }
+    $resolved = Ramza_ResolveFfmpegBinary($configured);
+    $shellEnabled = Ramza_FunctionEnabled('shell_exec');
+    $available = $resolved !== '' && $shellEnabled;
+    $message = 'FFmpeg is ready.';
+    if ($resolved === '') {
+        $message = 'FFmpeg was not found. Compatible videos will use direct upload until a valid binary is configured.';
+    } elseif (!$shellEnabled) {
+        $message = 'FFmpeg was found, but shell_exec is disabled. Compatible videos will use direct upload.';
+    }
+    return array(
+        'available' => $available,
+        'resolved' => $resolved,
+        'shell_enabled' => $shellEnabled,
+        'message' => $message
+    );
+}
+
+function Ramza_FfmpegEnabled() {
+    global $wo;
+    if ((string) ($wo['config']['ffmpeg_system'] ?? 'off') !== 'on') {
+        return false;
+    }
+    $status = Ramza_FfmpegStatus();
+    return !empty($status['available']);
+}
+
+function Ramza_FfmpegCommand() {
+    $status = Ramza_FfmpegStatus();
+    return !empty($status['available']) ? escapeshellarg((string) $status['resolved']) : '';
+}
+
 function Wo_UploadToS3($filename, $config = array()) {
     global $wo;
-    if ($wo['config']['amazone_s3'] == 0 && $wo['config']['ftp_upload'] == 0 && $wo['config']['spaces'] == 0 && $wo['config']['cloud_upload'] == 0 && $wo['config']['wasabi_storage'] == 0 && $wo['config']['backblaze_storage'] == 0) {
+    if ($wo['config']['amazone_s3'] == 0 && $wo['config']['ftp_upload'] == 0 && $wo['config']['spaces'] == 0 && $wo['config']['cloud_upload'] == 0 && $wo['config']['wasabi_storage'] == 0 && $wo['config']['backblaze_storage'] == 0 && empty($wo['config']['cloudflare_r2_storage']) && empty($wo['config']['s3_compatible_storage'])) {
         return false;
     }
     if (empty($filename)) {
         return false;
     }
     if (!file_exists($filename)) {
-        return false;
+        $resolved = Ramza_StorageLocalPath($filename);
+        if ($resolved === '') {
+            return false;
+        }
     }
     if (!empty($wo['removeFromLocal']) && $wo['removeFromLocal'] == 1) {
         $config['delete'] = 1;
     }
+    if (Wo_StorageFlagEnabled($wo['config']['cloudflare_r2_storage'] ?? 0)) {
+        $endpoint = Ramza_CloudflareR2Endpoint();
+        $bucket = trim((string) ($wo['config']['cloudflare_r2_bucket_name'] ?? ''));
+        $accessKey = trim((string) ($wo['config']['cloudflare_r2_access_key'] ?? ''));
+        $secretKey = trim((string) ($wo['config']['cloudflare_r2_secret_key'] ?? ''));
+        if ($endpoint === '' || $bucket === '' || $accessKey === '' || $secretKey === '') {
+            Ramza_RemoteStorageLog('cloudflare-r2', 'Upload skipped because the endpoint, bucket or API credentials are incomplete.');
+            return false;
+        }
+        if (Ramza_CloudflareR2PublicUrl() === '') {
+            Ramza_RemoteStorageLog('cloudflare-r2', 'Upload kept on local storage because the R2 Public URL / Custom Domain is missing.');
+            return false;
+        }
+
+        $localPath = Ramza_StorageLocalPath($filename);
+        $objectKey = Ramza_StorageObjectKey($filename);
+        if ($localPath === '' || $objectKey === '') {
+            Ramza_RemoteStorageLog('cloudflare-r2', 'Upload skipped because the local media path or object key is invalid.');
+            return false;
+        }
+
+        try {
+            Ramza_CloudflareR2Upload($localPath, $objectKey);
+            if (empty($config['delete']) && empty($config['cloudflare_r2']) && empty($config['amazon'])) {
+                @unlink($localPath);
+            }
+            return true;
+        } catch (Throwable $exception) {
+            Ramza_RemoteStorageLog('cloudflare-r2', $exception->getMessage());
+            return false;
+        }
+    }
+
     if ($wo['config']['ftp_upload'] == 1) {
         include_once('assets/libraries/ftp/vendor/autoload.php');
         $ftp = new \FtpClient\FtpClient();
@@ -1624,6 +2082,73 @@ function Wo_UploadToS3($filename, $config = array()) {
         if (empty($config['delete'])) {
             if ($s3->doesObjectExist($wo['config']['wasabi_bucket_name'], $filename)) {
                 if (empty($config['wasabi'])) {
+                    @unlink($filename);
+                }
+                return true;
+            }
+        } else {
+            return true;
+        }
+    } else if (!empty($wo['config']['cloudflare_r2_storage']) && $wo['config']['cloudflare_r2_storage'] == 1) {
+        if (empty($wo['config']['cloudflare_r2_account_id']) || empty($wo['config']['cloudflare_r2_bucket_name']) || empty($wo['config']['cloudflare_r2_access_key']) || empty($wo['config']['cloudflare_r2_secret_key'])) {
+            return false;
+        }
+        include_once('assets/libraries/s3-lib/vendor/autoload.php');
+        $r2_endpoint = 'https://' . trim($wo['config']['cloudflare_r2_account_id']) . '.r2.cloudflarestorage.com';
+        $r2_key = str_replace("\\", "/", $filename);
+        $s3 = new S3Client(array(
+            'version' => 'latest',
+            'region' => 'auto',
+            'endpoint' => $r2_endpoint,
+            'use_path_style_endpoint' => true,
+            'signature_version' => 'v4',
+            'credentials' => array(
+                'key' => $wo['config']['cloudflare_r2_access_key'],
+                'secret' => $wo['config']['cloudflare_r2_secret_key']
+            )
+        ));
+        $s3->putObject(array(
+            'Bucket' => $wo['config']['cloudflare_r2_bucket_name'],
+            'Key' => $r2_key,
+            'Body' => fopen($filename, 'r+'),
+            'CacheControl' => 'public, max-age=31536000, immutable'
+        ));
+        if (empty($config['delete'])) {
+            if ($s3->doesObjectExist($wo['config']['cloudflare_r2_bucket_name'], $r2_key)) {
+                if (empty($config['cloudflare_r2'])) {
+                    @unlink($filename);
+                }
+                return true;
+            }
+        } else {
+            return true;
+        }
+    } else if (!empty($wo['config']['s3_compatible_storage']) && $wo['config']['s3_compatible_storage'] == 1) {
+        if (empty($wo['config']['s3_compatible_endpoint']) || empty($wo['config']['s3_compatible_bucket']) || empty($wo['config']['s3_compatible_access_key']) || empty($wo['config']['s3_compatible_secret_key'])) {
+            return false;
+        }
+        include_once('assets/libraries/s3-lib/vendor/autoload.php');
+        $s3_key = str_replace("\\", "/", $filename);
+        $s3 = new S3Client(array(
+            'version' => 'latest',
+            'region' => !empty($wo['config']['s3_compatible_region']) ? $wo['config']['s3_compatible_region'] : 'us-east-1',
+            'endpoint' => rtrim($wo['config']['s3_compatible_endpoint'], '/'),
+            'use_path_style_endpoint' => !empty($wo['config']['s3_compatible_path_style']),
+            'signature_version' => 'v4',
+            'credentials' => array(
+                'key' => $wo['config']['s3_compatible_access_key'],
+                'secret' => $wo['config']['s3_compatible_secret_key']
+            )
+        ));
+        $s3->putObject(array(
+            'Bucket' => $wo['config']['s3_compatible_bucket'],
+            'Key' => $s3_key,
+            'Body' => fopen($filename, 'r+'),
+            'CacheControl' => 'public, max-age=31536000, immutable'
+        ));
+        if (empty($config['delete'])) {
+            if ($s3->doesObjectExist($wo['config']['s3_compatible_bucket'], $s3_key)) {
+                if (empty($config['s3_compatible'])) {
                     @unlink($filename);
                 }
                 return true;
@@ -1739,7 +2264,7 @@ function Wo_UploadToS3($filename, $config = array()) {
 }
 function Wo_DeleteFromToS3($filename, $config = array()) {
     global $wo;
-    if ($wo['config']['amazone_s3'] == 0 && $wo['config']['ftp_upload'] == 0 && $wo['config']['spaces'] == 0 && $wo['config']['cloud_upload'] == 0 && $wo['config']['amazone_s3_2'] == 0 && $wo['config']['wasabi_storage'] == 0 && $wo['config']['backblaze_storage'] == 0) {
+    if ($wo['config']['amazone_s3'] == 0 && $wo['config']['ftp_upload'] == 0 && $wo['config']['spaces'] == 0 && $wo['config']['cloud_upload'] == 0 && $wo['config']['amazone_s3_2'] == 0 && $wo['config']['wasabi_storage'] == 0 && $wo['config']['backblaze_storage'] == 0 && empty($wo['config']['cloudflare_r2_storage']) && empty($wo['config']['s3_compatible_storage'])) {
         return false;
     }
     if (empty($filename)) {
@@ -1808,6 +2333,47 @@ function Wo_DeleteFromToS3($filename, $config = array()) {
             'Key' => $filename
         ));
         if (!$s3->doesObjectExist($wo['config']['wasabi_bucket_name'], $filename)) {
+            return true;
+        }
+    } else if (!empty($wo['config']['cloudflare_r2_storage']) && $wo['config']['cloudflare_r2_storage'] == 1) {
+        $bucket = trim((string) ($wo['config']['cloudflare_r2_bucket_name'] ?? ''));
+        $r2Key = Ramza_StorageObjectKey($filename);
+        if ($bucket === '' || $r2Key === '') {
+            return false;
+        }
+        try {
+            $result = Ramza_CloudflareR2Client()->deleteObject(array(
+                'Bucket' => $bucket,
+                'Key' => $r2Key
+            ));
+            $statusCode = (int) ($result['@metadata']['statusCode'] ?? 0);
+            return $statusCode >= 200 && $statusCode < 300;
+        } catch (Throwable $exception) {
+            Ramza_RemoteStorageLog('cloudflare-r2-delete', $exception->getMessage());
+            return false;
+        }
+    } else if (!empty($wo['config']['s3_compatible_storage']) && $wo['config']['s3_compatible_storage'] == 1) {
+        include_once('assets/libraries/s3-lib/vendor/autoload.php');
+        if (empty($wo['config']['s3_compatible_endpoint']) || empty($wo['config']['s3_compatible_bucket']) || empty($wo['config']['s3_compatible_access_key']) || empty($wo['config']['s3_compatible_secret_key'])) {
+            return false;
+        }
+        $s3_key = str_replace("\\", "/", $filename);
+        $s3 = new S3Client(array(
+            'version' => 'latest',
+            'region' => !empty($wo['config']['s3_compatible_region']) ? $wo['config']['s3_compatible_region'] : 'us-east-1',
+            'endpoint' => rtrim($wo['config']['s3_compatible_endpoint'], '/'),
+            'use_path_style_endpoint' => !empty($wo['config']['s3_compatible_path_style']),
+            'signature_version' => 'v4',
+            'credentials' => array(
+                'key' => $wo['config']['s3_compatible_access_key'],
+                'secret' => $wo['config']['s3_compatible_secret_key']
+            )
+        ));
+        $s3->deleteObject(array(
+            'Bucket' => $wo['config']['s3_compatible_bucket'],
+            'Key' => $s3_key
+        ));
+        if (!$s3->doesObjectExist($wo['config']['s3_compatible_bucket'], $s3_key)) {
             return true;
         }
     } else if ($wo['config']['spaces'] == 1) {
@@ -1961,6 +2527,52 @@ function Wo_GetIcon($icon) {
     global $wo;
     return $wo['config']['theme_url'] . '/icons/png/' . $icon . '.png';
 }
+function Wo_NormalizeUploadedMime($fileType = '', $fileName = '', $tmpFile = '') {
+    $fileType = strtolower(trim(explode(';', (string)$fileType)[0]));
+    $aliases = array(
+        'image/jpg' => 'image/jpeg',
+        'image/pjpeg' => 'image/jpeg',
+        'image/x-png' => 'image/png',
+        'image/x-gif' => 'image/gif',
+        'video/x-msvideo' => 'video/avi',
+        'video/msvideo' => 'video/avi',
+        'video/x-flv' => 'video/flv',
+        'video/x-m4v' => 'video/mp4',
+        'video/x-matroska' => 'video/mkv',
+        'video/mpg' => 'video/mpeg',
+        'audio/x-wav' => 'audio/wav',
+        'audio/wave' => 'audio/wav'
+    );
+    if (isset($aliases[$fileType])) {
+        $fileType = $aliases[$fileType];
+    }
+    $file_extension = strtolower(pathinfo((string)$fileName, PATHINFO_EXTENSION));
+    if (($fileType === '' || $fileType === 'application/octet-stream' || $fileType === 'binary/octet-stream') && !empty($tmpFile) && is_file($tmpFile) && in_array($file_extension, array('gif', 'jpg', 'jpeg', 'png', 'webp'), true)) {
+        $image_info = @getimagesize($tmpFile);
+        if (!empty($image_info['mime'])) {
+            $fileType = strtolower($image_info['mime']);
+        }
+    }
+    return $fileType;
+}
+function Wo_IsVideoMediaFile($media = '') {
+    $path = parse_url((string)$media, PHP_URL_PATH);
+    if (empty($path)) {
+        $path = (string)$media;
+    }
+    $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+    return in_array($extension, array('mp4', 'm4v', 'mov', 'webm', 'flv', 'avi', 'mpeg', 'mpg', 'mkv'), true);
+}
+function Wo_RenderAdMedia($media = '', $alt = 'Picture', $class = '') {
+    $media_url = htmlspecialchars((string)$media, ENT_QUOTES, 'UTF-8');
+    $alt_text = htmlspecialchars((string)$alt, ENT_QUOTES, 'UTF-8');
+    $class_attr = !empty($class) ? ' class="' . htmlspecialchars((string)$class, ENT_QUOTES, 'UTF-8') . '"' : '';
+    $media_style = ' style="width:100%;max-width:100%;display:block;object-fit:cover;background:#0b0f14;"';
+    if (Wo_IsVideoMediaFile($media)) {
+        return '<video' . $class_attr . $media_style . ' controls muted playsinline preload="metadata"><source src="' . $media_url . '"></video>';
+    }
+    return '<img' . $class_attr . $media_style . ' src="' . $media_url . '" alt="' . $alt_text . '">';
+}
 function Wo_IsFileAllowed($file_name, $fileType = '') {
     global $wo;
     $new_string        = pathinfo($file_name, PATHINFO_FILENAME) . '.' . strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
@@ -1970,26 +2582,31 @@ function Wo_IsFileAllowed($file_name, $fileType = '') {
     if ($wo['config']['video_upload'] == 0) {
         $wo['config']['allowedExtenstion'] = str_replace(array(',mp4',',flv',',mov',',avi',',webm',',mpeg'), '', $wo['config']['allowedExtenstion']);
     }
-    $extension_allowed = explode(',', $wo['config']['allowedExtenstion']);
-    $file_extension    = pathinfo($new_string, PATHINFO_EXTENSION);
-    $mime_types = explode(',', str_replace(' ', '', $wo['config']['mime_types'] . ',application/json,application/octet-stream'));
+    $extension_allowed = array_filter(array_map('trim', explode(',', strtolower($wo['config']['allowedExtenstion']))));
+    if (!in_array('gif', $extension_allowed, true)) {
+        $extension_allowed[] = 'gif';
+    }
+    $file_extension    = strtolower(pathinfo($new_string, PATHINFO_EXTENSION));
+    $mime_types = explode(',', strtolower(str_replace(' ', '', $wo['config']['mime_types'] . ',application/json,application/octet-stream')));
     if (Wo_IsAdmin()) {
-        $mime_types = explode(',', str_replace(' ', '', $wo['config']['mime_types'] . ',application/json,application/octet-stream,image/svg+xml'));
+        $mime_types = explode(',', strtolower(str_replace(' ', '', $wo['config']['mime_types'] . ',application/json,application/octet-stream,image/svg+xml')));
     }
     if (!empty($fileType)) {
-        if (!in_array($fileType, $mime_types)) {
+        $fileType = Wo_NormalizeUploadedMime($fileType, $file_name);
+        if (!in_array($fileType, $mime_types, true)) {
             return false;
         }
     }
-    if (!in_array($file_extension, $extension_allowed)) {
+    if (!in_array($file_extension, $extension_allowed, true)) {
         return false;
     }
     return true;
 }
 function Wo_IsVideoNotAllowedMime($file_type) {
     global $wo;
-    $mime_types = explode(',', $wo['config']['ffmpeg_mime_types']);
-    if (!in_array($file_type, $mime_types)) {
+    $file_type = Wo_NormalizeUploadedMime($file_type);
+    $mime_types = explode(',', strtolower(str_replace(' ', '', $wo['config']['ffmpeg_mime_types'])));
+    if (!in_array($file_type, $mime_types, true)) {
         return true;
     }
     return false;

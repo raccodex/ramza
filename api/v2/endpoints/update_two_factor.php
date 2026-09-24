@@ -147,8 +147,8 @@ else{
 				$response_data['message'] = 'confirmation code sent';
 	        }
 	        else{
-	        	$error_code    = 4;
-		        $error_message = 'phone_number can not be empty';
+	        	$error_code    = 6;
+		        $error_message = 'The confirmation email could not be delivered. Check the site email settings.';
 	        }
 		}
 	}

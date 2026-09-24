@@ -1,7 +1,10 @@
 <?php
 if ($f == 'pages') {
     if ($s == 'create_page') {
-        if (!empty($_POST['page_name']) && ($_POST['page_name'] == 'ramza' || $_POST['page_name'] == 'sunshine' || $_POST['page_name'] == $wo['config']['theme'])) {
+        if (isset($_POST['page_name'])) {
+            $_POST['page_name'] = Wo_NormalizeCommunitySlug($_POST['page_name']);
+        }
+        if (!empty($_POST['page_name']) && in_array($_POST['page_name'], array('ramza', 'ramza-light', 'sunshine', $wo['config']['theme']), true)) {
             $_POST['page_name'] = "";
         }
         if (empty($_POST['page_name']) || empty($_POST['page_title']) || empty(Wo_Secure($_POST['page_title'])) || Wo_CheckSession($hash_id) === false) {
@@ -62,7 +65,8 @@ if ($f == 'pages') {
             if ($register_page) {
                 $data = array(
                     'status' => 200,
-                    'location' => Wo_SeoLink('index.php?link1=timeline&u=' . Wo_Secure($_POST['page_name']))
+                    'location' => Wo_SeoLink('index.php?link1=timeline&u=' . Wo_Secure($_POST['page_name'])),
+                    'normalized_name' => Wo_Secure($_POST['page_name'])
                 );
             }
         }
@@ -180,7 +184,10 @@ if ($f == 'pages') {
         }
     }
     if ($s == 'update_general_settings') {
-        if (!empty($_POST['page_name']) && ($_POST['page_name'] == 'ramza' || $_POST['page_name'] == 'sunshine' || $_POST['page_name'] == $wo['config']['theme'])) {
+        if (isset($_POST['page_name'])) {
+            $_POST['page_name'] = Wo_NormalizeCommunitySlug($_POST['page_name']);
+        }
+        if (!empty($_POST['page_name']) && in_array($_POST['page_name'], array('ramza', 'ramza-light', 'sunshine', $wo['config']['theme']), true)) {
             $_POST['page_name'] = "";
         }
         if (!empty($_POST['page_id']) && is_numeric($_POST['page_id']) && $_POST['page_id'] > 0 && Wo_CheckSession($hash_id) === true) {

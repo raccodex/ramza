@@ -1,0 +1,265 @@
+<div class="modal fade" id="create_hiring_modal" role="dialog">
+	<div class="modal-dialog modal-lg wow_mat_mdl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title"><?php echo $wo['lang']['create_job'] ?></h4>
+			</div>
+			<form class="create-hiring-form form-horizontal" method="post">
+				<div class="modal-body">
+					<div class="wo_create_job_box tag_field_full_margin hiring-setting-panel">
+						<div class="app-general-alert setting-update-alert"></div>
+						<div class="clear"></div>
+						<div class="row">
+							<div class="col-xl-6">
+								<label class="tag_field">
+									<input id="job_title" name="job_title" type="text" placeholder=" " value="">
+									<span><?php echo $wo['lang']['job_title'] ?></span>
+								</label>
+							</div>
+							<div class="col-xl-6">
+								<label class="tag_field">
+									<input id="location" name="location" class="job_location" type="text" placeholder=" " value="<?php echo $wo['user']['address'];?>">
+									<span><?php echo $wo['lang']['location'] ?></span>
+								</label>
+							</div>
+						</div>
+						<label class="tag_field">
+							<textarea name="description" rows="3" placeholder=" " id="description"></textarea>
+							<span><?php echo $wo['lang']['description'] ?></span>
+						</label>
+						<div class="help-block"><?php echo $wo['lang']['job_des_text'] ?></div>
+						<label class="bold"><?php echo $wo['lang']['salary_range'] ?></label>
+						<div class="valign wo_create_job_box_flex">
+							<div>
+								<label class="tag_field">
+									<input id="minimum" name="minimum" type="text" placeholder=" " oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+									<span><?php echo $wo['config']['currency_symbol_array'][$wo['config']['currency']] .' '. $wo['lang']['minimum'] ?></span>
+								</label>
+							</div>
+							<div>
+								<label class="tag_field">
+									<input id="maximum" name="maximum" type="text" placeholder=" " oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+									<span><?php echo $wo['config']['currency_symbol_array'][$wo['config']['currency']] .' '. $wo['lang']['maximum'] ?></span>
+								</label>
+							</div>
+							<div>
+								<label class="tag_field">
+									<select id="currency" name="currency">
+										<?php foreach ($wo['currencies'] as $key => $currency) { ?>
+											<option value="<?php echo $key; ?>"><?php echo  $currency['text'] ?> (<?php echo  $currency['symbol'] ?>)</option>
+										<?php } ?>
+									</select>
+									<span><?php echo $wo['lang']['currency']; ?></span>
+								</label>
+							</div>
+							<div>
+								<label class="tag_field">
+									<select id="salary_date" name="salary_date">
+										<option value="per_hour"><?php echo $wo['lang']['per_hour'] ?></option>
+										<option value="per_day"><?php echo $wo['lang']['per_day'] ?></option>
+										<option value="per_week"><?php echo $wo['lang']['per_week'] ?></option>
+										<option value="per_month"><?php echo $wo['lang']['per_month'] ?></option>
+										<option value="per_year"><?php echo $wo['lang']['per_year'] ?></option>
+									</select>
+									<span><?php echo $wo['lang']['type']; ?></span>
+								</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-6">
+								<label class="tag_field">
+									<select id="job_type" name="job_type">
+										<option value="full_time"><?php echo $wo['lang']['full_time'] ?></option>
+										<option value="part_time"><?php echo $wo['lang']['part_time'] ?></option>
+										<option value="internship"><?php echo $wo['lang']['internship'] ?></option>
+										<option value="volunteer"><?php echo $wo['lang']['volunteer'] ?></option>
+										<option value="contract"><?php echo $wo['lang']['contract'] ?></option>
+									</select>
+									<span><?php echo $wo['lang']['job_type']; ?></span>
+								</label>
+							</div>
+							<div class="col-xl-6">
+								<label class="tag_field">
+									<select name="category" id="category">
+										<?php foreach ($wo['job_categories'] as $category_id => $category_name) {?>
+											<option value="<?php echo $category_id?>"><?php echo $category_name; ?></option>
+										<?php } ?>
+									</select>
+									<span><?php echo $wo['lang']['category']; ?></span>
+								</label>
+							</div>
+						</div>
+						<label class="bold"><?php echo $wo['lang']['questions'] ?></label>
+						<div class="clear"></div>
+						<a href="javascript:void(0)" class="btn btn-mat btn-block btn-default wo_create_job_qstn" id="add_new_question_"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-11H7v2h4v4h2v-4h4v-2h-4V7h-2v4z"/></svg> <?php echo $wo['lang']['add_question']; ?></a>
+						<div id="question_one_parent_"></div>
+						<div id="question_two_parent_"></div>
+						<div id="question_three_parent_"></div>
+						<div class="clear"></div><br>
+						<label class="bold"><?php echo $wo['lang']['job_add_iamge'] ?></label>
+						<div class="wo_create_job_box_img">
+							<div class="prv-img pointer wo_create_job_box_img" id="select-img-job" data-block="thumdrop-zone">
+								<div class="thumbnail-rendderer">
+									<img src="<?php echo(!empty($wo['user_profile']) ? $wo['user_profile']['cover'] : (!empty($wo['user']) ? $wo['user']['cover'] : '')) ?>">
+								</div>
+							</div>
+							<div class="row wo_create_job_box_img_btns">
+								<div class="col-lg-6">
+									<button type="button" class="btn btn-block btn-default btn-mat" id="use_upload_photo_"><?php echo $wo['lang']['browse_to_upload'] ?></button>
+								</div>
+								<div class="col-lg-6">
+									<button type="button" class="btn btn-block btn-default btn-mat" id="use_cover_photo_"><?php echo $wo['lang']['use_cover_photo'] ?></button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<input type="file" class="hidden" id="thumbnail_job" name="thumbnail" accept="image/*">
+					<input type="text" class="hidden" id="image_type_" name="image_type" value="cover">
+					<input type="hidden" name="lat" id="lat-job" class="form-control input-md" value="">
+					<input type="hidden" name="lng" id="lng-job" class="form-control input-md" value="">
+					<input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+       
+				</div>
+				<div class="form-group last-sett-btn modal-footer">
+					<button type="button" class="btn btn-default btn-mat disable_btn" data-dismiss="modal" aria-label="Close"><?php echo $wo['lang']['cancel'] ?></button>
+					<button type="submit" class="btn btn-main btn-mat disable_btn"><?php echo $wo['lang']['publish'] ?></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+  <?php if ($wo['config']['website_mode'] == 'linkedin' && empty($wo['page_profile']) && ($wo['page'] == 'timeline' || $wo['page'] == 'home')) { ?>
+function OpenLinkedinJobModal(){
+  $('#create_hiring_modal').modal('show');
+}
+var question_one = '<div id="question_one_block_" class="wo_create_job_qstn_block"><label><?php echo $wo['lang']['question_one'] ?></label><button type="button" class="close" onclick="HideQuestion_(\'one\')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><select class="form-control" name="question_one_type" id="question_one_type_"><option value="free_text_question"><?php echo $wo['lang']['free_text_question'] ?></option><option value="yes_no_question"><?php echo $wo['lang']['yes_no_question'] ?></option><option value="multiple_choice_question"><?php echo $wo['lang']['multiple_choice_question'] ?></option></select><br><textarea class="form-control" name="question_one" rows="3" id="question_one_"></textarea><div id="question_one_answers_div_" style="display: none;"><br><input class="form-control" type="text" name="question_one_answers" id="question_one_answers_" placeholder="<?php echo $wo['lang']['add_an_answers'] ?>"></div></div>';
+var question_two = '<div id="question_two_block_" class="wo_create_job_qstn_block"><label><?php echo $wo['lang']['question_two'] ?></label><button type="button" class="close" onclick="HideQuestion_(\'two\')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><select class="form-control" name="question_two_type" id="question_two_type_"><option value="free_text_question"><?php echo $wo['lang']['free_text_question'] ?></option><option value="yes_no_question"><?php echo $wo['lang']['yes_no_question'] ?></option><option value="multiple_choice_question"><?php echo $wo['lang']['multiple_choice_question'] ?></option></select><br><textarea class="form-control" name="question_two" rows="3" id="question_two_"></textarea><div id="question_two_answers_div_" style="display: none;"><br><input class="form-control" type="text" name="question_two_answers" id="question_two_answers_" placeholder="<?php echo $wo['lang']['add_an_answers'] ?>"></div></div>';
+
+var question_three = '<div id="question_three_block_" class="wo_create_job_qstn_block"><label><?php echo $wo['lang']['question_three'] ?></label><button type="button" class="close" onclick="HideQuestion_(\'three\')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><select class="form-control" name="question_three_type" id="question_three_type_"><option value="free_text_question"><?php echo $wo['lang']['free_text_question'] ?></option><option value="yes_no_question"><?php echo $wo['lang']['yes_no_question'] ?></option><option value="multiple_choice_question"><?php echo $wo['lang']['multiple_choice_question'] ?></option></select><br><textarea class="form-control" name="question_three" rows="3" id="question_three_"></textarea><div id="question_three_answers_div_" style="display: none;"><br><input class="form-control" type="text" name="question_three_answers" id="question_three_answers_" placeholder="<?php echo $wo['lang']['add_an_answers'] ?>"></div></div>';
+
+
+function HideQuestion_(type) {
+  $('#question_'+type+'_block_').remove();
+  $('#add_new_question_').css('display', 'block');
+}
+$(document).ready(function() {
+  $('#add_new_question_').click(function(event) {
+      if ($('#question_one_block_').is(":visible")) {
+        if ($('#question_two_block_').is(":visible")) {
+          if ($('#question_three_block_').is(":visible")) {
+            $(this).css('display', 'none');
+          }
+          else{
+            $('#question_three_parent_').html(question_three);
+            setTimeout(function (argument) {
+              $("#question_three_answers_").tagsinput({
+                  maxTags: 10,
+                });
+            },1000);
+          }
+        }
+        else{
+          $('#question_two_parent_').html(question_two);
+          setTimeout(function (argument) {
+            $("#question_two_answers_").tagsinput({
+                maxTags: 10,
+              });
+          },1000);
+        }
+      }
+      else{
+        $('#question_one_parent_').html(question_one);
+        setTimeout(function (argument) {
+          $("#question_one_answers_").tagsinput({
+              maxTags: 10,
+            });
+        },1000);
+      }
+    });
+    $(document).on('change', '#question_one_type_', function(event) {
+        if ($(this).val() == 'multiple_choice_question') {
+            $('#question_one_answers_div_').css('display', 'block');
+          }
+          else{
+            $('#question_one_answers_div_').css('display', 'none');
+          }
+     });
+
+     $(document).on('change', '#question_two_type_', function(event) {
+        if ($(this).val() == 'multiple_choice_question') {
+            $('#question_two_answers_div_').css('display', 'block');
+          }
+          else{
+            $('#question_two_answers_div_').css('display', 'none');
+          }
+     });
+
+     $(document).on('change', '#question_three_type_', function(event) {
+        if ($(this).val() == 'multiple_choice_question') {
+            $('#question_three_answers_div_').css('display', 'block');
+          }
+          else{
+            $('#question_three_answers_div_').css('display', 'none');
+          }
+     });
+     $("#select-img-job").click(function(event) {
+        $("#thumbnail_job").click()
+     });
+
+     $("#use_upload_photo_").click(function(event) {
+        $("#thumbnail_job").click()
+     });
+
+     $("#thumbnail_job").change(function(event) {
+        $('#create_hiring_modal').find(".prv-img").html("<img src='" + window.URL.createObjectURL(this.files[0]) + "' alt='Picture'>");
+        $('#image_type_').val('upload');
+     });
+
+     $("#use_cover_photo_").click(function(event) {
+        $('#create_hiring_modal').find(".prv-img").html("<img src='<?php echo(!empty($wo['user_profile']) ? $wo['user_profile']['cover'] : (!empty($wo['user']) ? $wo['user']['cover'] : '')) ?>' alt='Picture'>");
+        $('#image_type_').val('cover');
+     });
+
+     var create_bar = $('.create-product-bar_');
+     var create_percent = $('.create-product-percent_');
+
+     $('form.create-hiring-form').ajaxForm({
+          url: Wo_Ajax_Requests_File() + '?f=job&s=create_job',
+          beforeSend: function() {
+           var percentVal = '0%';
+           create_bar.width(percentVal);
+           create_percent.html(percentVal);
+          },
+          uploadProgress: function (event, position, total, percentComplete) {
+             var percentVal = percentComplete + '%';
+             create_bar.width(percentVal);
+             $('.create-product-progress').slideDown(200);
+             create_percent.html(percentVal);
+          },
+          success: function(data) {
+           if (data.status == 200) {
+             $('.app-general-alert').html("<div class='alert alert-success'><?php echo($wo['lang']['job_successfully_created']) ?></div>");
+           $('.app-general-alert').find('.alert-success').fadeIn(300);
+           setTimeout(function (argument) {
+            $('.app-general-alert').find('.alert-success').fadeOut(300);
+            window.location.reload(true);
+
+           },3000);
+           } else {
+            $('#create-job-modal').animate({
+              scrollTop: $('html, body').offset().top //#DIV_ID is an example. Use the id of your destination on the page
+          });
+               $('.app-general-alert').html('<div class="alert alert-danger">' + data.error + '</div>');
+               $('.app-general-alert').find('.alert-danger').fadeIn(300);
+               setTimeout(function (argument) {
+                $('.app-general-alert').find('.alert-danger').fadeOut(300);
+               },3000);
+           }
+          }
+     });
+});
+<?php } ?>
+</script>

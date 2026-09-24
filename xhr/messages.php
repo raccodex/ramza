@@ -774,8 +774,8 @@ if ($f == 'messages') {
         $data            = array(
             'status' => 400
         );
-        $reactions_types = array_keys($wo['reactions_types']);
-        if (!empty($_GET['message_id']) && is_numeric($_GET['message_id']) && $_GET['message_id'] > 0 && !empty($_GET['reaction']) && in_array($_GET['reaction'], $reactions_types)) {
+        $reactions_types = Ramza_GetActiveReactionIds();
+        if (!empty($_GET['message_id']) && is_numeric($_GET['message_id']) && $_GET['message_id'] > 0 && !empty($_GET['reaction']) && in_array((int) $_GET['reaction'], $reactions_types, true)) {
             $message_id = Wo_Secure($_GET['message_id']);
             $message    = $db->where('id', $message_id)->getOne(T_MESSAGES);
             if (!empty($message)) {

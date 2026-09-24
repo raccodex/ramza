@@ -105,7 +105,9 @@ if ($f == 'stripe') {
 		}
 		if (!empty($_SESSION['stripe_session_payment_intent']) && !empty($_GET['type']) && in_array($_GET['type'], array('wallet','fund','pro'))) {
 			try {
-				$checkout_session = \Stripe\Checkout\Session::retrieve($_SESSION['stripe_session_payment_intent']);
+				$stripe_intent_id = $_SESSION['stripe_session_payment_intent'];
+				unset($_SESSION['stripe_session_payment_intent']);
+				$checkout_session = \Stripe\Checkout\Session::retrieve($stripe_intent_id);
 				if ($checkout_session->payment_status == 'paid') {
 					$amount = ($checkout_session->amount_total / 100);
 					if ($_GET['type'] == 'wallet') {

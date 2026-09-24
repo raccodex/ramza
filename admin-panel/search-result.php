@@ -346,13 +346,13 @@ $pages_search = array (
   57 => 
   array (
     'link' => 'ai-settings',
-    'title' => 'prompt_strength',
+    'title' => 'Creative guidance',
     'page_title' => '',
   ),
   58 => 
   array (
     'link' => 'ai-settings',
-    'title' => 'negative_prompt',
+    'title' => 'Exclude terms',
     'page_title' => '',
   ),
   59 => 
@@ -2165,18 +2165,6 @@ $pages_search = array (
   array (
     'link' => 'manage-stories',
     'title' => '',
-    'page_title' => '',
-  ),
-  353 => 
-  array (
-    'link' => 'manage-third-psites',
-    'title' => 'PlayTube',
-    'page_title' => '',
-  ),
-  354 => 
-  array (
-    'link' => 'manage-third-psites',
-    'title' => 'DeepSound',
     'page_title' => '',
   ),
   355 => 
@@ -4109,30 +4097,6 @@ $pages_search = array (
     'title' => '',
     'page_title' => '',
   ),
-  675 => 
-  array (
-    'link' => 'verfiy-applications',
-    'title' => 'Android Messenger Verification Code',
-    'page_title' => '',
-  ),
-  676 => 
-  array (
-    'link' => 'verfiy-applications',
-    'title' => 'IOS Messenger Verification Code',
-    'page_title' => '',
-  ),
-  677 => 
-  array (
-    'link' => 'verfiy-applications',
-    'title' => 'Windows Desktop Verification Code',
-    'page_title' => '',
-  ),
-  678 => 
-  array (
-    'link' => 'verfiy-applications',
-    'title' => 'Android Timeline Verification Code',
-    'page_title' => '',
-  ),
   679 => 
   array (
     'link' => 'video-settings',
@@ -4252,5 +4216,77 @@ $pages_search = array (
     'link' => 'website_mode',
     'title' => 'TikTok Mode',
     'page_title' => '',
+  ),
+  699 =>
+  array (
+    'link' => 'algorithm-control',
+    'title' => 'Algorithm Control',
+    'page_title' => 'Algorithm Control',
+  ),
+  700 =>
+  array (
+    'link' => 'algorithm-control',
+    'title' => 'User signal tracking',
+    'page_title' => 'Algorithm Control',
+  ),
+  701 =>
+  array (
+    'link' => 'algorithm-control',
+    'title' => 'Behavior tracking',
+    'page_title' => 'Algorithm Control',
+  ),
+  702 =>
+  array (
+    'link' => 'algorithm-control',
+    'title' => 'Search intent',
+    'page_title' => 'Algorithm Control',
+  ),
+  703 =>
+  array (
+    'link' => 'algorithm-control',
+    'title' => 'Watched video categories',
+    'page_title' => 'Algorithm Control',
+  ),
+  704 =>
+  array (
+    'link' => 'algorithm-control',
+    'title' => 'Liked post categories',
+    'page_title' => 'Algorithm Control',
+  ),
+  705 =>
+  array (
+    'link' => 'algorithm-control',
+    'title' => 'Trending posts',
+    'page_title' => 'Algorithm Control',
+  ),
+  706 =>
+  array (
+    'link' => 'algorithm-control',
+    'title' => 'Home feed ranking',
+    'page_title' => 'Algorithm Control',
+  ),
+  707 =>
+  array (
+    'link' => 'pwa-settings',
+    'title' => 'PWA Settings',
+    'page_title' => 'PWA Settings',
+  ),
+  708 =>
+  array (
+    'link' => 'pwa-settings',
+    'title' => 'Progressive Web App',
+    'page_title' => 'PWA Settings',
+  ),
+  709 =>
+  array (
+    'link' => 'pwa-settings',
+    'title' => 'PWA Install Banner',
+    'page_title' => 'PWA Settings',
+  ),
+  710 =>
+  array (
+    'link' => 'pwa-settings',
+    'title' => 'Offline Access',
+    'page_title' => 'PWA Settings',
   ),
 );

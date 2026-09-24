@@ -13,12 +13,132 @@
             </ol>
         </nav>
     </div>
+    <?php
+        $assistantLicensed = function_exists('Wo_SiteAssistantLicensed') && Wo_SiteAssistantLicensed();
+        $assistantEnabled = (string) ($wo['config']['site_assistant_system'] ?? '0') === '1';
+        $cloudflareImageLicensed = function_exists('Ramza_AddonLicensed') && Ramza_AddonLicensed('cloudflare_image');
+    ?>
+    <style>
+        .ramza-assistant-admin{background:#fff;border:1px solid #d8dde3;border-left:4px solid #263947;border-radius:10px;margin:0 0 22px;box-shadow:0 8px 24px rgba(30,44,55,.06)}
+        .ramza-assistant-admin .card-body{padding:22px 24px}
+        .ramza-assistant-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding-bottom:18px;border-bottom:1px solid #e8ebee}
+        .ramza-assistant-head h6{font-size:17px;margin:0 0 4px;color:#17232c}
+        .ramza-assistant-head p{margin:0;color:#69747c;font-size:13px}
+        .ramza-assistant-badge{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;background:#eef2f4;color:#43515b;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+        .ramza-assistant-badge.is-ready{background:#e7f4ed;color:#1e6847}
+        .ramza-assistant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:0;margin-top:4px}
+        .ramza-assistant-field{padding:18px 20px 8px 0;margin-right:20px;border-right:1px solid #edf0f2}
+        .ramza-assistant-field:last-child{border-right:0;margin-right:0}
+        .ramza-assistant-field .main-label{font-size:13px;color:#26333c;margin-bottom:5px}
+        .ramza-assistant-field .admin-info{display:block;min-height:34px;color:#7a858d;font-size:12px;line-height:1.4}
+        .ramza-assistant-field select,.ramza-assistant-field input[type=number]{margin-top:10px;height:39px;border-color:#d7dce0;border-radius:6px}
+        .ramza-assistant-field .switcher{float:none!important;margin:13px 0 0}
+        .ramza-assistant-license{display:flex;align-items:end;gap:12px;margin-top:18px;padding-top:18px;border-top:1px solid #e8ebee}
+        .ramza-assistant-license .form-group{flex:1;max-width:480px;margin:0}
+        .ramza-assistant-license input{height:42px;border-radius:6px}
+        .ramza-assistant-license .btn{height:42px;border-radius:6px;padding:0 20px;background:#263947;color:#fff}
+        .ramza-assistant-license-status{min-height:18px;margin-top:9px;font-size:12px}
+        .ramza-addon-banner{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 18px;padding:16px 18px;border:1px solid #d8dde1;border-left:4px solid #293d4c;border-radius:7px;background:#fff}.ramza-addon-banner strong,.ramza-addon-banner span{display:block}.ramza-addon-banner span{margin-top:3px;color:#6d7780;font-size:12px}.ramza-addon-status{display:flex;align-items:center;gap:10px}.ramza-addon-status em{font-style:normal;font-size:11px;font-weight:850;text-transform:uppercase}.ramza-addon-action{padding:8px 13px;border-radius:5px;background:#293d4c;color:#fff!important;font-weight:800}
+        @media(max-width:1100px){.ramza-assistant-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ramza-assistant-field:nth-child(even){border-right:0}}
+        @media(max-width:640px){.ramza-assistant-grid{display:block}.ramza-assistant-field{border-right:0;border-bottom:1px solid #edf0f2;margin:0}.ramza-assistant-license{align-items:stretch;flex-direction:column}}
+    </style>
+    <div class="card ramza-assistant-admin">
+        <div class="card-body">
+            <div class="ramza-assistant-head">
+                <div>
+                    <h6>Ramza Site Assistant</h6>
+                    <p>Live public-site knowledge and confirmed account actions.</p>
+                </div>
+                <span class="ramza-assistant-badge <?php echo $assistantLicensed ? 'is-ready' : ''; ?>">
+                    <?php echo $assistantLicensed ? ($assistantEnabled ? 'Active' : 'Licensed') : 'License required'; ?>
+                </span>
+            </div>
+            <div class="ramza-assistant-grid">
+                <div class="ramza-assistant-field">
+                    <label class="main-label" for="chck-site_assistant_system">Assistant</label>
+                    <small class="admin-info">Show the assistant to signed-in users.</small>
+                    <div class="form-group switcher">
+                        <input type="hidden" name="site_assistant_system" value="0">
+                        <input type="checkbox" name="site_assistant_system" id="chck-site_assistant_system" value="1" <?php echo $assistantEnabled ? 'checked' : ''; ?> <?php echo $assistantLicensed ? '' : 'disabled'; ?>>
+                        <label for="chck-site_assistant_system" class="check-trail"><span class="check-handler"></span></label>
+                    </div>
+                </div>
+                <div class="ramza-assistant-field">
+                    <label class="main-label" for="site_assistant_provider">Text provider</label>
+                    <small class="admin-info">Uses the credentials already saved on this page.</small>
+                    <select class="form-control" id="site_assistant_provider" name="site_assistant_provider" <?php echo $assistantLicensed ? '' : 'disabled'; ?>>
+                        <option value="site_default" <?php echo (($wo['config']['site_assistant_provider'] ?? 'site_default') === 'site_default') ? 'selected' : ''; ?>>Site default</option>
+                        <option value="openai" <?php echo (($wo['config']['site_assistant_provider'] ?? '') === 'openai') ? 'selected' : ''; ?>>OpenAI</option>
+                        <option value="gemini" <?php echo (($wo['config']['site_assistant_provider'] ?? '') === 'gemini') ? 'selected' : ''; ?>>Gemini</option>
+                        <option value="cloudflare" <?php echo (($wo['config']['site_assistant_provider'] ?? '') === 'cloudflare') ? 'selected' : ''; ?>>Cloudflare Workers AI</option>
+                        <option value="custom" <?php echo (($wo['config']['site_assistant_provider'] ?? '') === 'custom') ? 'selected' : ''; ?>>Custom provider</option>
+                    </select>
+                </div>
+                <div class="ramza-assistant-field">
+                    <label class="main-label" for="site_assistant_image_provider">Image provider</label>
+                    <small class="admin-info">Uses the saved OpenAI or Gemini credentials.</small>
+                    <select class="form-control" id="site_assistant_image_provider" name="site_assistant_image_provider" <?php echo $assistantLicensed ? '' : 'disabled'; ?>>
+                        <option value="site_default" <?php echo (($wo['config']['site_assistant_image_provider'] ?? 'site_default') === 'site_default') ? 'selected' : ''; ?>>Site default</option>
+                        <option value="openai" <?php echo (($wo['config']['site_assistant_image_provider'] ?? '') === 'openai') ? 'selected' : ''; ?>>OpenAI</option>
+                        <option value="gemini" <?php echo (($wo['config']['site_assistant_image_provider'] ?? '') === 'gemini') ? 'selected' : ''; ?>>Gemini</option>
+                        <option value="cloudflare" <?php echo (($wo['config']['site_assistant_image_provider'] ?? '') === 'cloudflare') ? 'selected' : ''; ?> <?php echo $cloudflareImageLicensed ? '' : 'disabled'; ?>>Cloudflare Workers AI</option>
+                    </select>
+                </div>
+                <div class="ramza-assistant-field">
+                    <label class="main-label" for="chck-site_assistant_retrieval">Site knowledge</label>
+                    <small class="admin-info">Public profiles, posts, pages, groups and blogs.</small>
+                    <div class="form-group switcher">
+                        <input type="hidden" name="site_assistant_retrieval" value="0">
+                        <input type="checkbox" name="site_assistant_retrieval" id="chck-site_assistant_retrieval" value="1" <?php echo !empty($wo['config']['site_assistant_retrieval']) ? 'checked' : ''; ?> <?php echo $assistantLicensed ? '' : 'disabled'; ?>>
+                        <label for="chck-site_assistant_retrieval" class="check-trail"><span class="check-handler"></span></label>
+                    </div>
+                </div>
+                <div class="ramza-assistant-field">
+                    <label class="main-label" for="chck-site_assistant_actions">Account actions</label>
+                    <small class="admin-info">Follow, react, comment and publish after confirmation.</small>
+                    <div class="form-group switcher">
+                        <input type="hidden" name="site_assistant_actions" value="0">
+                        <input type="checkbox" name="site_assistant_actions" id="chck-site_assistant_actions" value="1" <?php echo !empty($wo['config']['site_assistant_actions']) ? 'checked' : ''; ?> <?php echo $assistantLicensed ? '' : 'disabled'; ?>>
+                        <label for="chck-site_assistant_actions" class="check-trail"><span class="check-handler"></span></label>
+                    </div>
+                </div>
+            </div>
+            <?php if (!$assistantLicensed) { ?>
+                <form id="ramza-assistant-license-form" class="ramza-assistant-license">
+                    <div class="form-group">
+                        <label class="main-label" for="assistant_activation_code">Assistant purchase code</label>
+                        <input type="password" autocomplete="off" class="form-control" id="assistant_activation_code" name="activation_code" required>
+                    </div>
+                    <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession(); ?>">
+                    <button type="submit" class="btn">Activate</button>
+                </form>
+                <div id="ramza-assistant-license-status" class="ramza-assistant-license-status" role="status"></div>
+            <?php } ?>
+        </div>
+    </div>
+    <?php echo function_exists('Ramza_AddonAdminBanner') ? Ramza_AddonAdminBanner('cloudflare_image') : ''; ?>
+    <div class="card ramza-cloudflare-ai-card">
+        <div class="card-body">
+            <div class="ramza-assistant-head"><div><h6>Cloudflare Workers AI</h6><p>Open-model text and image providers. Cloudflare account limits still apply.</p></div><span class="ramza-assistant-badge is-ready"><?php echo $cloudflareImageLicensed ? 'Text + image' : 'Text available'; ?></span></div>
+            <form class="cloudflare-ai-settings" method="POST">
+                <div class="ramza-assistant-grid">
+                    <div class="ramza-assistant-field"><label class="main-label" for="chck-cloudflare_ai_image_system">Provider</label><div class="form-group switcher"><input type="hidden" name="cloudflare_ai_image_system" value="0"><input type="checkbox" name="cloudflare_ai_image_system" id="chck-cloudflare_ai_image_system" value="1" <?php echo !empty($wo['config']['cloudflare_ai_image_system']) ? 'checked' : ''; ?> <?php echo $cloudflareImageLicensed ? '' : 'disabled'; ?>><label for="chck-cloudflare_ai_image_system" class="check-trail"><span class="check-handler"></span></label></div></div>
+                    <div class="ramza-assistant-field"><label class="main-label" for="cloudflare_ai_account_id">Account ID</label><input class="form-control" id="cloudflare_ai_account_id" name="cloudflare_ai_account_id" value="<?php echo htmlspecialchars((string) ($wo['config']['cloudflare_ai_account_id'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"></div>
+                    <div class="ramza-assistant-field"><label class="main-label" for="cloudflare_ai_api_token">API token</label><input type="password" autocomplete="new-password" class="form-control" id="cloudflare_ai_api_token" name="cloudflare_ai_api_token" value="<?php echo htmlspecialchars((string) ($wo['config']['cloudflare_ai_api_token'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"></div>
+                    <div class="ramza-assistant-field"><label class="main-label" for="cloudflare_ai_text_model">Free/open text model</label><input class="form-control" id="cloudflare_ai_text_model" name="cloudflare_ai_text_model" value="<?php echo htmlspecialchars((string) ($wo['config']['cloudflare_ai_text_model'] ?? '@cf/meta/llama-3.1-8b-instruct'), ENT_QUOTES, 'UTF-8'); ?>"></div>
+                    <div class="ramza-assistant-field"><label class="main-label" for="cloudflare_ai_image_model">Model</label><input class="form-control" id="cloudflare_ai_image_model" name="cloudflare_ai_image_model" value="<?php echo htmlspecialchars((string) ($wo['config']['cloudflare_ai_image_model'] ?? '@cf/black-forest-labs/flux-1-schnell'), ENT_QUOTES, 'UTF-8'); ?>" <?php echo $cloudflareImageLicensed ? '' : 'disabled'; ?>></div>
+                </div>
+                <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession(); ?>">
+                <button class="btn btn-primary m-t-15" type="submit">Save Cloudflare</button>
+            </form>
+        </div>
+    </div>
     <!-- Vertical Layout -->
     <div class="row">
         <div class="col-lg-6 col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Open AI settings</h6>
+                    <h6 class="card-title">Text AI Provider Settings</h6>
                     <form class="email-settings" method="POST">
                         <div class="form-group form-float">
                             <div class="form-line">
@@ -29,13 +149,82 @@
                         </div>
                         <label class="form-check-label" for="openai_text_model">OpenAI text model</label>
                         <select class="form-control show-tick" id="openai_text_model" name="openai_text_model">
-                              <option value="gpt-4" <?php echo ($wo['config']['openai_text_model'] == 'gpt-4')   ? ' selected': '';?>>gpt-4</option>
-                              <option value="gpt-4-0314" <?php echo ($wo['config']['openai_text_model'] == 'gpt-4-0314')   ? ' selected': '';?>>gpt-4-0314</option>
-                              <option value="gpt-4-32k" <?php echo ($wo['config']['openai_text_model'] == 'gpt-4-32k')   ? ' selected': '';?>>gpt-4-32k</option>
-                              <option value="gpt-4-32k-0314" <?php echo ($wo['config']['openai_text_model'] == 'gpt-4-32k-0314')   ? ' selected': '';?>>gpt-4-32k-0314</option>
-                              <option value="gpt-3.5-turbo" <?php echo ($wo['config']['openai_text_model'] == 'gpt-3.5-turbo')   ? ' selected': '';?>>gpt-3.5-turbo</option>
-                              <option value="gpt-3.5-turbo-0301" <?php echo ($wo['config']['openai_text_model'] == 'gpt-3.5-turbo-0301')   ? ' selected': '';?>>gpt-3.5-turbo-0301</option>
+                              <option value="gpt-5.6" <?php echo ($wo['config']['openai_text_model'] == 'gpt-5.6') ? ' selected': '';?>>gpt-5.6</option>
+                              <option value="gpt-5.6-sol" <?php echo ($wo['config']['openai_text_model'] == 'gpt-5.6-sol') ? ' selected': '';?>>gpt-5.6-sol</option>
+                              <option value="gpt-5.6-terra" <?php echo ($wo['config']['openai_text_model'] == 'gpt-5.6-terra') ? ' selected': '';?>>gpt-5.6-terra</option>
+                              <option value="gpt-5.6-luna" <?php echo ($wo['config']['openai_text_model'] == 'gpt-5.6-luna') ? ' selected': '';?>>gpt-5.6-luna</option>
+                              <option value="gpt-5.1" <?php echo ($wo['config']['openai_text_model'] == 'gpt-5.1') ? ' selected': '';?>>gpt-5.1</option>
+                              <option value="gpt-5" <?php echo ($wo['config']['openai_text_model'] == 'gpt-5') ? ' selected': '';?>>gpt-5</option>
+                              <option value="gpt-4.1" <?php echo ($wo['config']['openai_text_model'] == 'gpt-4.1') ? ' selected': '';?>>gpt-4.1</option>
+                              <option value="gpt-4.1-mini" <?php echo ($wo['config']['openai_text_model'] == 'gpt-4.1-mini') ? ' selected': '';?>>gpt-4.1-mini</option>
+                              <option value="gpt-4.1-nano" <?php echo ($wo['config']['openai_text_model'] == 'gpt-4.1-nano') ? ' selected': '';?>>gpt-4.1-nano</option>
+                              <option value="gpt-4o" <?php echo ($wo['config']['openai_text_model'] == 'gpt-4o') ? ' selected': '';?>>gpt-4o</option>
+                              <option value="gpt-4o-mini" <?php echo ($wo['config']['openai_text_model'] == 'gpt-4o-mini') ? ' selected': '';?>>gpt-4o-mini</option>
                         </select>
+                        <div class="clearfix"></div>
+                        <hr>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Gemini API key</label>
+                                <input type="text" id="gemini_api_key" name="gemini_api_key" class="form-control" value="<?php echo $wo['config']['gemini_api_key'] ?? ''?>">
+                                <small class="admin-info">Google Gemini key used by AI posts and AI blogs when Gemini is selected.</small>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Gemini model ID</label>
+                                <input type="text" id="gemini_model" name="gemini_model" class="form-control" value="<?php echo $wo['config']['gemini_model'] ?? 'gemini-3.5-flash'?>">
+                                <small class="admin-info">Example: gemini-3.5-flash</small>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Gemini image model</label>
+                                <input type="text" id="gemini_image_model" name="gemini_image_model" class="form-control" value="<?php echo $wo['config']['gemini_image_model'] ?? 'gemini-3.1-flash-image'?>">
+                                <small class="admin-info">Used by assistant image generation.</small>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <hr>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Custom AI provider name</label>
+                                <input type="text" id="custom_ai_provider_name" name="custom_ai_provider_name" class="form-control" value="<?php echo $wo['config']['custom_ai_provider_name'] ?? 'Custom AI'?>">
+                                <small class="admin-info">The label shown in provider selectors.</small>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Custom AI base URL</label>
+                                <input type="text" id="custom_ai_base_url" name="custom_ai_base_url" class="form-control" value="<?php echo $wo['config']['custom_ai_base_url'] ?? ''?>">
+                                <small class="admin-info">Accepts an OpenAI-compatible base URL, /v1 URL, /chat/completions URL, or /responses URL.</small>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Custom AI API key</label>
+                                <input type="text" id="custom_ai_api_key" name="custom_ai_api_key" class="form-control" value="<?php echo $wo['config']['custom_ai_api_key'] ?? ''?>">
+                                <small class="admin-info">Optional bearer token sent to the custom AI provider.</small>
+                            </div>
+                        </div>
+                        <label class="form-check-label" for="custom_ai_auth_header">Custom AI auth method</label>
+                        <select class="form-control show-tick" id="custom_ai_auth_header" name="custom_ai_auth_header">
+                              <option value="authorization_bearer" <?php echo (($wo['config']['custom_ai_auth_header'] ?? 'authorization_bearer') == 'authorization_bearer') ? ' selected': '';?>>Authorization: Bearer API_KEY</option>
+                              <option value="x_api_key" <?php echo (($wo['config']['custom_ai_auth_header'] ?? '') == 'x_api_key') ? ' selected': '';?>>x-api-key: API_KEY</option>
+                              <option value="api_key" <?php echo (($wo['config']['custom_ai_auth_header'] ?? '') == 'api_key') ? ' selected': '';?>>api-key: API_KEY</option>
+                              <option value="authorization_raw" <?php echo (($wo['config']['custom_ai_auth_header'] ?? '') == 'authorization_raw') ? ' selected': '';?>>Authorization: API_KEY</option>
+                              <option value="none" <?php echo (($wo['config']['custom_ai_auth_header'] ?? '') == 'none') ? ' selected': '';?>>No auth header</option>
+                        </select>
+                        <small class="admin-info">If the custom provider says you must sign in, choose the auth method required by that provider.</small>
+                        <div class="clearfix"></div>
+                        <hr>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Custom AI model ID</label>
+                                <input type="text" id="custom_ai_model" name="custom_ai_model" class="form-control" value="<?php echo $wo['config']['custom_ai_model'] ?? ''?>">
+                                <small class="admin-info">Model name passed with each custom AI request.</small>
+                            </div>
+                        </div>
                         <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
                     </form>
                 </div>
@@ -133,6 +322,9 @@
                         <label class="form-check-label" for="post_ai">AI Posts API</label>
                         <select class="form-control show-tick" id="post_ai" name="post_ai">
                               <option value="openai"    <?php echo ($wo['config']['post_ai'] == 'openai')   ? ' selected': '';?>>OpenAI</option>
+                              <option value="gemini"    <?php echo ($wo['config']['post_ai'] == 'gemini')   ? ' selected': '';?>>Gemini</option>
+                              <option value="cloudflare" <?php echo (($wo['config']['post_ai'] ?? '') == 'cloudflare') ? ' selected': '';?>>Cloudflare Workers AI (open model)</option>
+                              <option value="custom"    <?php echo ($wo['config']['post_ai'] == 'custom')   ? ' selected': '';?>><?php echo !empty($wo['config']['custom_ai_provider_name']) ? $wo['config']['custom_ai_provider_name'] : 'Custom AI';?></option>
                               <option value="openai" disabled>Replicate (this feature is not supported by Replicate)</option>
                         </select>
                         <div class="clearfix"></div>
@@ -180,6 +372,8 @@
                         <label class="form-check-label" for="blog_ai">AI Blog API</label>
                         <select class="form-control show-tick" id="blog_ai" name="blog_ai">
                               <option value="openai"    <?php echo ($wo['config']['blog_ai'] == 'openai')   ? ' selected': '';?>>OpenAI</option>
+                              <option value="gemini"    <?php echo ($wo['config']['blog_ai'] == 'gemini')   ? ' selected': '';?>>Gemini</option>
+                              <option value="custom"    <?php echo ($wo['config']['blog_ai'] == 'custom')   ? ' selected': '';?>><?php echo !empty($wo['config']['custom_ai_provider_name']) ? $wo['config']['custom_ai_provider_name'] : 'Custom AI';?></option>
                               <option value="openai" disabled>Replicate (this feature is not supported by Replicate)</option>
                         </select>
                         <div class="clearfix"></div>
@@ -247,7 +441,7 @@
                     <form class="email-settings" method="POST">
                         <label class="form-check-label" for="midjeourny_model">Replicate Model</label>
                         <select class="form-control show-tick" id="midjeourny_model" name="midjeourny_model">
-                              <option value="prompthero-openjourney" <?php echo ($wo['config']['midjeourny_model'] == 'prompthero-openjourney')   ? ' selected': '';?>>prompthero/openjourney</option>
+                              <option value="prompthero-openjourney" <?php echo ($wo['config']['midjeourny_model'] == 'prompthero-openjourney')   ? ' selected': '';?>>OpenJourney</option>
                               <option value="stability-ai-stable-diffusion" <?php echo ($wo['config']['midjeourny_model'] == 'stability-ai-stable-diffusion')   ? ' selected': '';?>>stability-ai/stable-diffusion</option>
                               <option value="22-hours-vintedois-diffusion" <?php echo ($wo['config']['midjeourny_model'] == '22-hours-vintedois-diffusion')   ? ' selected': '';?>>22-hours/vintedois-diffusion</option>
                         </select>
@@ -307,9 +501,9 @@
                         <?php if ($wo['config']['midjeourny_model'] == '22-hours-vintedois-diffusion') { ?>
                         <div class="form-group form-float">
                             <div class="form-line">
-                                <label class="form-label">prompt_strength</label>
+                                <label class="form-label">Creative guidance</label>
                                 <input type="text" id="prompt_strength" name="prompt_strength" class="form-control" value="<?php echo $wo['config']['prompt_strength']?>">
-                                <small class="admin-info">Prompt strength when using init image. 1.0 corresponds to full destruction of information in init image</small>
+                                <small class="admin-info">Controls how strongly the image follows the description when using a starter image.</small>
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -318,9 +512,9 @@
                         <?php if ($wo['config']['midjeourny_model'] != 'prompthero-openjourney') { ?>
                         <div class="form-group form-float">
                             <div class="form-line">
-                                <label class="form-label">negative_prompt</label>
+                                <label class="form-label">Exclude terms</label>
                                 <input type="text" id="negative_prompt" name="negative_prompt" class="form-control" value="<?php echo $wo['config']['negative_prompt']?>">
-                                <small class="admin-info">Specify things to not see in the output</small>
+                                <small class="admin-info">Add words or visual details that should not appear in the output.</small>
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -391,6 +585,40 @@
     <!-- #END# Vertical Layout -->
 <script>
 $(function() {
+    $('.cloudflare-ai-settings').on('submit', function(event) {
+        event.preventDefault();
+        var form = $(this), button = form.find('[type=submit]');
+        button.prop('disabled', true).text('Saving');
+        $.post(Wo_Ajax_Requests_File() + '?f=admin_setting&s=update_general_setting', form.serialize(), function(data) {
+            button.text(data.status == 200 ? 'Saved' : 'Try again');
+            window.setTimeout(function(){ button.prop('disabled', false).text('Save Cloudflare'); }, 1200);
+        }, 'json').fail(function(){ button.prop('disabled', false).text('Try again'); });
+    });
+    $('#ramza-assistant-license-form').on('submit', function(event) {
+        event.preventDefault();
+        var form = $(this);
+        var button = form.find('button[type=submit]');
+        var status = $('#ramza-assistant-license-status');
+        button.prop('disabled', true);
+        status.css('color', '#52616b').text('Checking license…');
+        $.ajax({
+            url: Wo_Ajax_Requests_File() + '?f=site_assistant&s=activate',
+            method: 'POST',
+            dataType: 'json',
+            data: form.serialize()
+        }).done(function(data) {
+            status.css('color', data.ok ? '#1e6847' : '#a33b42').text(data.message || 'Activation failed.');
+            if (data.ok && data.reload) {
+                window.setTimeout(function() { window.location.reload(); }, 700);
+            }
+        }).fail(function(xhr) {
+            var data = xhr.responseJSON || {};
+            status.css('color', '#a33b42').text(data.message || 'Activation failed.');
+        }).always(function() {
+            button.prop('disabled', false);
+        });
+    });
+
     $('.round_check input[type=radio]').on('change', function() {
         clearTimeout(setTimeOutColor);
         var thisElement = $(this);

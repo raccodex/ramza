@@ -44,6 +44,15 @@ if ($f == 'wallet') {
             if (!empty($result)) {
                 $result = json_decode($result);
                 if (!empty($result->status) && $result->status == 'COMPLETED') {
+                    $verified_amount = null;
+                    if (!empty($result->purchase_units[0]->payments->captures[0]->amount->value)) {
+                        $verified_amount = floatval($result->purchase_units[0]->payments->captures[0]->amount->value);
+                    } elseif (!empty($result->purchase_units[0]->amount->value)) {
+                        $verified_amount = floatval($result->purchase_units[0]->amount->value);
+                    }
+                    if ($verified_amount !== null && $verified_amount > 0) {
+                        $_GET['amount'] = $verified_amount;
+                    }
                     if (!empty($wo["config"]['currency_array']) && in_array($wo["config"]['paypal_currency'], $wo["config"]['currency_array']) && $wo["config"]['paypal_currency'] != $wo['config']['currency'] && !empty($wo['config']['exchange']) && !empty($wo['config']['exchange'][$wo["config"]['paypal_currency']])) {
                         $_GET['amount'] = (($_GET['amount'] / $wo['config']['exchange'][$wo["config"]['paypal_currency']]));
                         //$sum = round($sum, 2);

@@ -1,0 +1,199 @@
+<h2 class="tag_page_title"><button type="button" class="btn setting_navigation" onclick="$('.tag_sett_sidebar').fadeIn(50);$('#tag_sett_right_prt').fadeOut(50);"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" fill="currentColor"></path></svg></button> <?php echo $wo['lang']['experience']; ?></h2>
+<div class="wow_sett_content wow_content p20">
+	<a href="javascript:void();" class="btn btn-main btn-mat mb-15" onclick="NewExperience();"><?php echo $wo['lang']['add_new'];?> <?php echo $wo['lang']['experience']; ?></a>
+
+	<?php 
+		if (!empty($wo['experience_html'])) {
+			echo $wo['experience_html']; 
+		}
+		else{
+			echo '<div class="empty_state"><svg height="512pt" viewBox="0 0 512 512" width="512pt" xmlns="http://www.w3.org/2000/svg"><path d="m416 512h-320c-53.023438 0-96-42.976562-96-96v-320c0-53.023438 42.976562-96 96-96h320c53.023438 0 96 42.976562 96 96v320c0 53.023438-42.976562 96-96 96zm0 0" fill="#fff9dd"></path><path d="m221.328125 128c-16.191406 0-29.328125 13.136719-29.328125 29.328125v144c0 16.207031 13.136719 29.328125 29.328125 29.328125h122.671875c16.207031 0 29.328125-13.136719 29.328125-29.328125v-141.328125c0-17.679688-14.320313-32-32-32zm101.34375 154.671875h-80c-4.414063 0-8-3.582031-8-8 0-4.414063 3.585937-8 8-8h80c4.417969 0 8 3.585937 8 8 0 4.417969-3.582031 8-8 8zm0-32h-80c-4.414063 0-8-3.582031-8-8 0-4.414063 3.585937-8 8-8h80c4.417969 0 8 3.585937 8 8 0 4.417969-3.582031 8-8 8zm0-32h-80c-4.414063 0-8-3.582031-8-8 0-4.414063 3.585937-8 8-8h80c4.417969 0 8 3.585937 8 8 0 4.417969-3.582031 8-8 8zm0 0" fill="#ffd200"></path><path d="m221.328125 346.671875c-25.007813 0-45.328125-20.335937-45.328125-45.328125v-144c0-.910156.222656-1.757812.273438-2.671875h-8.273438c-16.175781 0-29.328125 13.152344-29.328125 29.328125v170.671875c0 16.175781 13.152344 29.328125 29.328125 29.328125h128c16.175781 0 29.328125-13.152344 29.328125-29.328125v-8zm0 0" fill="#ffe777"></path></svg>' . $wo['lang']['no_available_data'] . '</div>';
+		}
+	?>
+</div>
+
+<script type="text/javascript">
+	function NewExperience() {
+	  $('.modal_add_experience_modal_alert').empty();
+	  $("#add_experience_modal").find('.btn-main').removeAttr('disabled')
+	  $("#add_experience_modal").find('.btn-main').text("<?php echo $wo['lang']['add'] ?>");
+	  $('#add_experience_modal').modal('show');
+    $( ".experience_start" ).datepicker({ dateFormat: 'yy-mm-dd',prevText: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" /></svg>',nextText: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>'});
+    $( ".experience_end" ).datepicker({ dateFormat: 'yy-mm-dd',prevText: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" /></svg>',nextText: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>'});
+    $("#select_experience_image").click(function(event) {
+      $("#experience_image").click()
+    });
+    $("#experience_image").change(function(event) {
+      $("#select_experience_image").html("<img src='" + window.URL.createObjectURL(this.files[0]) + "' alt='Picture'>")
+    });
+    var options = { 
+    url: Wo_Ajax_Requests_File() + '?f=experience&s=add&hash=' + $('.main_session').val() + "&mode_type=linkedin",
+      beforeSubmit:  function () {
+        $('.modal_add_experience_modal_alert').empty();
+        $("#add_experience_modal").find('.btn-main').attr('disabled', 'true');
+        $("#add_experience_modal").find('.btn-main').text("<?php echo($wo['lang']['please_wait']) ?>");
+      }, 
+      success: function (data) {
+        $("#add_experience_modal").find('.btn-main').text("<?php echo $wo['lang']['add'] ?>");
+        $("#add_experience_modal").find('.btn-main').removeAttr('disabled')
+        if (data.status == 200) {
+          $('.modal_add_experience_modal_alert').html('<div class="alert alert-success"><i class="fa fa-check"></i> '+
+            data.message
+            +'</div>');
+            setTimeout(function (){
+            	location.reload();
+            }, 3000)
+        } else {
+          $('.modal_add_experience_modal_alert').html('<div class="alert alert-danger"> '+
+          data.message
+          +'</div>');
+        } 
+      }
+  }; 
+  $('.add_experience_form').ajaxForm(options); 
+	}
+  function EditExperience(id) {
+		$('.modal_edit_experience_modal_alert_'+id).empty();
+		$("#edit_experience_modal_"+id).find('.btn-main').removeAttr('disabled')
+		$("#edit_experience_modal_"+id).find('.btn-main').text("<?php echo $wo['lang']['edit']; ?>");
+		$( ".edit_experience_start_"+id ).datepicker({ dateFormat: 'yy-mm-dd',prevText: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" /></svg>',nextText: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>'});
+    $( ".edit_experience_end_"+id ).datepicker({ dateFormat: 'yy-mm-dd',prevText: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" /></svg>',nextText: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>'});
+		$('#edit_experience_modal_'+id).modal('show');
+		$("#select_experience_image_"+id).click(function(event) {
+      $("#experience_image_"+id).click()
+    });
+    $("#experience_image_"+id).change(function(event) {
+      $("#select_experience_image_"+id).html("<img src='" + window.URL.createObjectURL(this.files[0]) + "' alt='Picture'>")
+    });
+	}
+	function DeleteExperience(id,type = 'show') {
+		if (type == 'hide') {
+	      $('#delete-experience').find('.btn-main').attr('onclick', "DeleteExperience('"+id+"')");
+	      $('#delete-experience').modal('show');
+	      return false;
+	    }
+	    $('.experience_'+id).slideUp();
+		$('.experience_'+id).remove();
+		$('#edit_experience_modal_'+id).remove();
+		$.post(Wo_Ajax_Requests_File() + '?f=experience&s=delete&hash=' + $('.main_session').val() + "&mode_type=linkedin", {id: id}, function(data, textStatus, xhr) {});
+	}
+</script>
+<!-- experience -->
+<div class="modal fade" id="delete-experience" tabindex="-1" role="dialog" aria-labelledby="delete-experience" aria-hidden="true" data-id="0">
+	<div class="modal-dialog modal-md wow_mat_mdl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title"> <?php echo $wo['lang']['delete_your_experience']; ?></h5>
+			</div>
+			<div class="modal-body">
+				<p><?php echo $wo['lang']['are_you_delete_your_experience']; ?></p>
+			</div>  
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default btn-mat disable_btn" data-dismiss="modal" aria-label="Close"><?php echo $wo['lang']['cancel']; ?></button>
+				<button type="button" class="btn btn-main btn-mat" data-dismiss="modal"><?php echo $wo['lang']['delete']; ?></button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="add_experience_modal" role="dialog" data-keyboard="false" style="overflow-y: auto;">
+	<div class="modal-dialog wow_mat_mdl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title"><?php echo $wo['lang']['add_new_experience'] ?></h4>
+			</div>
+			<form class="form form-horizontal add_experience_form" method="post" action="#">
+				<div class="modal-body twocheckout_modal">
+					<div class="modal_add_experience_modal_alert"></div>
+					<div class="clear"></div>
+					<div class="row">
+						<div class="col-lg-6">
+							<label class="tag_field">
+								<input name="title" type="text" value="" placeholder=" ">
+								<span><?php echo $wo['lang']['title'] ?></span>
+							</label>
+						</div>
+						<div class="col-lg-6">
+							<label class="tag_field">
+								<input name="company_name" type="text" value="" placeholder=" ">
+								<span><?php echo $wo['lang']['company_name'] ?></span>
+							</label>
+						</div>
+						<div class="col-lg-6">
+							<label class="tag_field">
+								<select name="employment_type">
+									<?php foreach ($wo['employment_type'] as $key => $value) { ?>
+										<option value="<?php echo $key;?>"><?php echo $wo['lang'][$value];?></option>
+									<?php } ?>
+								</select>
+								<span><?php echo $wo['lang']['employment_type']; ?></span>
+							</label>
+						</div>
+						<div class="col-lg-6">
+							<label class="tag_field">
+								<input name="location" type="text" value="" autocomplete="off" placeholder=" ">
+								<span><?php echo $wo['lang']['location'] ?></span>
+							</label>
+						</div>
+						<div class="col-lg-6">
+							<label class="tag_field">
+								<input class="experience_start" name="experience_start" type="text" value="" autocomplete="off" placeholder=" ">
+								<span><?php echo $wo['lang']['start_date'] ?></span>
+							</label>
+						</div>
+						<div class="col-lg-6">
+							<label class="tag_field">
+								<input type="text" name="experience_end" class="experience_end" autocomplete="off" placeholder=" ">
+								<span><?php echo $wo['lang']['end_date']; ?>:</span>  
+							</label>
+						</div>
+						<div class="col-lg-6">
+							<label class="tag_field">
+								<input name="headline" type="text" autocomplete="off" placeholder=" ">
+								<span><?php echo $wo['lang']['headline']; ?></span> 
+							</label>
+						</div>
+						<div class="col-lg-6">
+							<label class="tag_field">
+								<input name="industry" type="text" autocomplete="off" placeholder=" ">
+								<span><?php echo $wo['lang']['industry']; ?></span>  
+							</label>
+						</div>
+						<div class="col-lg-12">
+							<label class="tag_field">
+								<input name="link" type="text" autocomplete="off" placeholder=" ">
+								<span><?php echo $wo['lang']['link']; ?></span>  
+							</label>
+						</div>
+						<div class="col-lg-12">
+							<label class="tag_field">
+								<textarea name="description" rows="5" placeholder=" "></textarea>
+								<span><?php echo $wo['lang']['description']; ?></span>  
+							</label>
+						</div>
+						<div class="col-lg-12">
+							<div class="tag_alone_label">
+								<label><?php echo $wo['lang']['image'];?></label>
+							</div>
+							<div class="wow_fcov_image" data-block="thumdrop-zone">
+								<div id="select_experience_image"></div>
+								<div class="valign upload_ad_image" onclick="document.getElementById('experience_image').click(); return false">
+									<div class="btn btn-mat btn-default upload_ad_image_content">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M8.5,13.5L11,16.5L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z"></path></svg> <?php echo $wo['lang']['select_image'] ?>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<input type="file" name="image" class="hidden" id="experience_image">
+				<div class="clear"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default btn-mat disable_btn" data-dismiss="modal" aria-label="Close"><?php echo $wo['lang']['cancel']; ?></button>
+					<button type="submit" class="btn btn-main btn-mat"><?php echo $wo['lang']['add']; ?></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- experience -->

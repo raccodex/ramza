@@ -31,13 +31,21 @@ if ($f == 'recover') {
             'subject' => $subject,
             'charSet' => 'utf-8',
             'message_body' => $body,
-            'is_html' => true
+            'is_html' => true,
+            'return' => 'error'
         );
         $send                      = Wo_SendMessage($send_message_data);
-        $data                      = array(
-            'status' => 200,
-            'message' => $success_icon . $wo['lang']['email_sent']
-        );
+        if ($send === true) {
+            $data = array(
+                'status' => 200,
+                'message' => $success_icon . $wo['lang']['email_sent']
+            );
+        } else {
+            mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `email_code` = '', `time_code_sent` = '0' WHERE `user_id` = " . (int)$user_recover_data['user_id']);
+            cache($user_recover_data['user_id'], 'users', 'delete');
+            error_log('[Ramza password recovery] Mail delivery failed: ' . preg_replace('/[\r\n]+/', ' ', (string)$send));
+            $errors = $error_icon . 'Unable to deliver the recovery email. Please contact the site administrator.';
+        }
     }
     header("Content-type: application/json");
     if (isset($errors)) {

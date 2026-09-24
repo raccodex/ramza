@@ -1,0 +1,202 @@
+@media (min-width: 1200px) {
+    body.rac-admin-shell .content-body {
+        padding: 20px 22px;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    body.rac-admin-shell .header-search-form {
+        max-width: 360px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    html,
+    body.rac-admin-shell {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    body.rac-admin-shell .layout-wrapper,
+    body.rac-admin-shell .content-wrapper,
+    body.rac-admin-shell .content-body,
+    body.rac-admin-shell .content-body .content,
+    body.rac-admin-shell .content-footer {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        min-width: 0 !important;
+    }
+
+    body.rac-admin-shell .header {
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+    }
+
+    body.rac-admin-shell .content-body {
+        padding: 14px;
+    }
+
+    body.rac-admin-shell .header .header-left {
+        width: auto;
+        min-width: 0;
+        padding-inline-end: 0;
+    }
+
+    body.rac-admin-shell .navigation {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        z-index: 1100 !important;
+        width: min(86vw, 320px);
+        transform: translateX(-105%);
+        box-shadow: var(--rac-shadow-modal);
+    }
+
+    body.rac-admin-shell.navigation-show .navigation,
+    body.rac-admin-shell.rac-mobile-nav-open .navigation {
+        transform: translateX(0);
+    }
+
+    body.rac-admin-shell .rac-admin-drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: none;
+        background: rgba(17, 24, 39, 0.44);
+    }
+
+    body.rac-admin-shell.rac-mobile-nav-open .rac-admin-drawer-backdrop,
+    body.rac-admin-shell.navigation-show .rac-admin-drawer-backdrop {
+        display: block;
+    }
+
+    body.rac-admin-shell .header-body-left {
+        min-width: 0;
+    }
+
+    body.rac-admin-shell .header-search-form {
+        display: none;
+    }
+
+    body.rac-admin-shell:not(.horizontal-navigation):not(.small-navigation) .layout-wrapper .content-wrapper .content-body .content,
+    body.rac-admin-shell:not(.horizontal-navigation):not(.small-navigation) .content-footer {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    body.rac-admin-shell .table-responsive,
+    body.rac-admin-shell .dataTables_wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    body.rac-admin-shell .btn {
+        white-space: normal;
+    }
+
+    body.rac-admin-shell .container,
+    body.rac-admin-shell .container-fluid,
+    body.rac-admin-shell .card,
+    body.rac-admin-shell form,
+    body.rac-admin-shell fieldset,
+    body.rac-admin-shell .form-group,
+    body.rac-admin-shell .select2-container,
+    body.rac-admin-shell .dataTables_wrapper,
+    body.rac-admin-shell .nav-tabs,
+    body.rac-admin-shell .tab-content {
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    body.rac-admin-shell input,
+    body.rac-admin-shell select,
+    body.rac-admin-shell textarea,
+    body.rac-admin-shell .form-control,
+    body.rac-admin-shell .select2-container {
+        width: 100% !important;
+    }
+
+    body.rac-admin-shell .dataTables_length,
+    body.rac-admin-shell .dataTables_filter,
+    body.rac-admin-shell .dataTables_info,
+    body.rac-admin-shell .dataTables_paginate {
+        float: none !important;
+        width: 100%;
+        text-align: left !important;
+        margin: 8px 0;
+    }
+
+    body.rac-admin-shell .modal-dialog {
+        width: auto !important;
+        max-width: calc(100vw - 24px) !important;
+        margin: 12px auto !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    body.rac-admin-shell .content-body {
+        padding: 12px;
+    }
+
+    body.rac-admin-shell .card .card-header,
+    body.rac-admin-shell .card .card-body,
+    body.rac-admin-shell .card .card-footer,
+    body.rac-admin-shell .modal-header,
+    body.rac-admin-shell .modal-body,
+    body.rac-admin-shell .modal-footer {
+        padding: 12px;
+    }
+
+    body.rac-admin-shell .content h1,
+    body.rac-admin-shell .content .page-title h1,
+    body.rac-admin-shell .content .block-header h2 {
+        font-size: 20px;
+    }
+
+    body.rac-admin-shell .row {
+        margin-inline: -8px;
+    }
+
+    body.rac-admin-shell .row > [class*="col-"] {
+        padding-inline: 8px;
+    }
+
+    body.rac-admin-shell .card-header,
+    body.rac-admin-shell .page-title,
+    body.rac-admin-shell .block-header,
+    body.rac-admin-shell .breadcrumb,
+    body.rac-admin-shell .modal-footer {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    body.rac-admin-shell .nav-tabs {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    body.rac-admin-shell .nav-tabs .nav-link {
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 420px) {
+    body.rac-admin-shell .header .header-container {
+        padding-inline: 10px;
+    }
+
+    body.rac-admin-shell .content-body {
+        padding: 10px;
+    }
+
+    body.rac-admin-shell .modal-dialog {
+        margin: 8px;
+    }
+}

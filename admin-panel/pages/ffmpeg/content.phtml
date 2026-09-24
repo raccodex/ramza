@@ -1,5 +1,6 @@
 <?php 
-$wo['config']['ffmpeg']  = is_executable($wo['config']['ffmpeg_binary_file']);
+$ramzaFfmpegStatus = function_exists('Ramza_FfmpegStatus') ? Ramza_FfmpegStatus() : array('available' => false, 'resolved' => '', 'message' => 'FFmpeg status is unavailable.');
+$wo['config']['ffmpeg'] = !empty($ramzaFfmpegStatus['available']);
 function isEnabled($func) {
     return is_callable($func) && false === stripos(ini_get('disable_functions'), $func);
 }

@@ -3,7 +3,10 @@ global $sqlConnect;
 $error = '';
 $succuss = '';
 
-if (isset($_FILES['media_file'])) {
+if (isset($_FILES['media_file']) && Ramza_IsDemoMode()) {
+    $error = '<i class="fa fa-fw fa-lock"></i> Demo mode is enabled. Admin changes are disabled.';
+}
+elseif (isset($_FILES['media_file'])) {
     if(!empty($_FILES['media_file']["tmp_name"])){
         $filename = "";
         $fileInfo = array(

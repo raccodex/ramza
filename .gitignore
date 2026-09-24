@@ -12,13 +12,45 @@ service-account*.json
 *.p12
 *.pfx
 
-# User uploads and generated language/configuration data
-/upload/
+# User uploads (keep directory structure and security files)
+/upload/*
+!/upload/.htaccess
+!/upload/index.html
+!/upload/files/
+!/upload/files/index.html
+!/upload/games/
+!/upload/games/index.html
+!/upload/photos/
+!/upload/photos/index.html
+!/upload/sounds/
+!/upload/sounds/index.html
+!/upload/videos/
+!/upload/videos/index.html
+/upload/files/*
+!/upload/files/index.html
+/upload/games/*
+!/upload/games/index.html
+/upload/photos/*
+!/upload/photos/index.html
+/upload/sounds/*
+!/upload/sounds/index.html
+/upload/videos/*
+!/upload/videos/index.html
 /Uploads/
 /nodejs/models/wo_langs.js
 
 # Runtime cache, logs, backups, and temporary files
-/cache/
+/cache/*
+!/cache/.htaccess
+!/cache/index.html
+!/cache/groups/
+!/cache/groups/index.html
+!/cache/users/
+!/cache/users/index.html
+/cache/groups/*
+!/cache/groups/index.html
+/cache/users/*
+!/cache/users/index.html
 /Cache/
 /changes/
 /backup/
@@ -26,9 +58,6 @@ service-account*.json
 /Backups/
 /logs/
 /Logs/
-/00_MODERNIZATION_REPORTS/runtime_logs/
-/00_MODERNIZATION_REPORTS/phase2_test_workspaces/
-/00_MODERNIZATION_REPORTS/phase2_test_configs/
 /install/install.lock
 /install/storage/
 *.log
@@ -40,7 +69,7 @@ service-account*.json
 *~
 /*_updated.php
 
-# Local dependencies and IDE/OS metadata
+# Local dependencies, IDE, internal dev tools, and release builds
 node_modules/
 .idea/
 .vscode/
@@ -48,3 +77,21 @@ node_modules/
 .DS_Store
 Thumbs.db
 Desktop.ini
+.claude/
+.codex/
+.agents/
+__pycache__/
+*.pyc
+*.zip
+resize_codecanyon_screenshots.py
+Run_CodeCanyon_Image_Resize.ps1
+/00_MODERNIZATION_REPORTS/
+/developer-tools/
+/legacy-licensed/
+/migration-tools/
+/ramza-next/
+/community-portal/
+/release-output/
+/review-output/
+/test-evidence/
+/provenance/

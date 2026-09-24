@@ -16,34 +16,25 @@ if ($f == 'check_for_updates') {
         echo json_encode($data);
         exit();
     }
-    if (Wo_CheckMainSession($hash_id) === true) {
-        $arrContextOptions = array(
-            "ssl" => array(
-                "verify_peer" => false,
-                "verify_peer_name" => false
-            )
-        );
-        if (!empty($_GET['purchase_code'])) {
-            $purchase_code = Wo_Secure($_GET['purchase_code']);
-            $version       = Wo_Secure($wo['script_version']);
-            $siteurl       = urlencode($_SERVER['SERVER_NAME']);
-            $file          = file_get_contents("http://www.ramza.com/check_for_updates.php?code={$purchase_code}&version=$version&url=$siteurl", false, stream_context_create($arrContextOptions));
-            $check         = json_decode($file, true);
-            if (!empty($check['status'])) {
-                if ($check['status'] == 'SUCCESS') {
-                    if (!empty($check['versions'])) {
-                        $data['status']         = 200;
-                        $data['script_version'] = $wo['script_version'];
-                        $data['versions']       = $check['versions'];
-                    } else {
-                        $data['status'] = 300;
-                    }
-                } else {
-                    $data['status']     = 400;
-                    $data['ERROR_NAME'] = $check['ERROR_NAME'];
+    if (Wo_CheckMainSession($hash_id) === true || Wo_CheckSession($hash_id) === true) {
+        $check = function_exists('Ramza_UpdateCheck') ? Ramza_UpdateCheck() : ['ok' => true, 'available' => false, 'releases' => []];
+        $data['status']         = 200;
+        $data['script_version'] = $wo['script_version'] ?? '1.0';
+        $versions = [];
+        if (!empty($check['available']) && !empty($check['releases'])) {
+            foreach ($check['releases'] as $rel) {
+                if (!empty($rel['version'])) {
+                    $versions[] = $rel['version'];
                 }
             }
         }
+        $data['versions'] = $versions;
+        if (empty($versions)) {
+            $data['status'] = 300;
+        }
+    } else {
+        $data['status'] = 400;
+        $data['ERROR_NAME'] = 'Session expired. Please reload the page.';
     }
     header("Content-type: application/json");
     echo json_encode($data);

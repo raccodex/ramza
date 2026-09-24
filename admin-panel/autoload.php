@@ -151,7 +151,13 @@ if ($is_moderoter && !empty($wo['user']['permission'])) {
         $db->where('user_id',$wo['user']['user_id'])->update(T_USERS,array('permission' => $permission));
         
             cache($wo['user']['id'], 'users', 'delete');
-        header("Location: " . Wo_LoadAdminLinkSettings($page));
+        foreach ($wo['user']['permission'] as $key => $value) {
+            if ($value == 1) {
+                header("Location: " . Wo_LoadAdminLinkSettings($key));
+                exit();
+            }
+        }
+        header("Location: " . Wo_SeoLink('index.php?link1=admin-cp'));
         exit();
     }
     else{
@@ -162,6 +168,8 @@ if ($is_moderoter && !empty($wo['user']['permission'])) {
                     exit();
                 }
             }
+            header("Location: " . Wo_SeoLink('index.php?link1=admin-cp'));
+            exit();
         }
     }
 }
@@ -229,6 +237,10 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
 
 <!-- App css -->
     <link rel="stylesheet" href="<?php echo(Wo_LoadAdminLink('assets/css/app.css')) ?>" type="text/css">
+    <link rel="stylesheet" href="<?php echo(Wo_LoadAdminLink('assets/css/admin-dashboard.css')) ?>?v=4.1" type="text/css">
+    <!-- Admin Reference V4 Style -->
+    <link rel="stylesheet" href="<?php echo(Wo_LoadAdminLink('assets/css/admin-reference-v4.css')) ?>?v=4.3" type="text/css">
+    <link rel="stylesheet" href="<?php echo(Wo_LoadAdminLink('assets/css/admin-website-mode.css')) ?>?v=4.0" type="text/css">
     <!-- Main scripts -->
 <script src="<?php echo(Wo_LoadAdminLink('vendors/bundle.js')) ?>"></script>
 
@@ -287,14 +299,13 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
         }
     </script>
     <style>
-        body {background-color: #222;}
-        .btn.btn-primary, a.btn[href="#next"], a.btn[href="#previous"] {color: #fff !important;background: #C32E3A;border-color: #C32E3A;}
-        .btn.btn-primary:not(:disabled):not(.disabled):hover, a.btn[href="#next"]:not(:disabled):not(.disabled):hover, a.btn[href="#previous"]:not(:disabled):not(.disabled):hover, .btn.btn-primary:not(:disabled):not(.disabled):focus, a.btn[href="#next"]:not(:disabled):not(.disabled):focus, a.btn[href="#previous"]:not(:disabled):not(.disabled):focus, .btn.btn-primary:not(:disabled):not(.disabled):active, a.btn[href="#next"]:not(:disabled):not(.disabled):active, a.btn[href="#previous"]:not(:disabled):not(.disabled):active, .btn.btn-primary:not(:disabled):not(.disabled).active, a.btn[href="#next"]:not(:disabled):not(.disabled).active, a.btn[href="#previous"]:not(:disabled):not(.disabled).active {background: #CE3643;border-color: #CE3643;}
-        body.dark .navigation .navigation-menu-body ul li a.active, .breadcrumb .breadcrumb-item.active, body.dark .breadcrumb li.breadcrumb-item.active, body.dark .navigation .navigation-menu-body ul li a.active .nav-link-icon {color: #C32E3A !important;}
-        .card form .form-check-inline input:checked {background-color: #C32E3A;}
-        .card form .form-check-inline input:checked + label::before, .card form .form-check-inline input:active + label::before {border-color: #C32E3A;}
-        .card form .form-check-inline label::after {background-color: #C32E3A;}
-        .select2-container--default.select2-container--focus .select2-selection--multiple {border: 2px solid #C32E3A !important;}
+        .btn.btn-primary, a.btn[href="#next"], a.btn[href="#previous"] {color: #fff !important;background: #107980;border-color: #107980;}
+        .btn.btn-primary:not(:disabled):not(.disabled):hover, a.btn[href="#next"]:not(:disabled):not(.disabled):hover, a.btn[href="#previous"]:not(:disabled):not(.disabled):hover, .btn.btn-primary:not(:disabled):not(.disabled):focus, a.btn[href="#next"]:not(:disabled):not(.disabled):focus, a.btn[href="#previous"]:not(:disabled):not(.disabled):focus, .btn.btn-primary:not(:disabled):not(.disabled):active, a.btn[href="#next"]:not(:disabled):not(.disabled):active, a.btn[href="#previous"]:not(:disabled):not(.disabled):active, .btn.btn-primary:not(:disabled):not(.disabled).active, a.btn[href="#next"]:not(:disabled):not(.disabled).active, a.btn[href="#previous"]:not(:disabled):not(.disabled).active {background: #006161;border-color: #006161;}
+        body.dark .navigation .navigation-menu-body ul li a.active, .breadcrumb .breadcrumb-item.active, body.dark .breadcrumb li.breadcrumb-item.active, body.dark .navigation .navigation-menu-body ul li a.active .nav-link-icon {color: #107980 !important;}
+        .card form .form-check-inline input:checked {background-color: #107980;}
+        .card form .form-check-inline input:checked + label::before, .card form .form-check-inline input:active + label::before {border-color: #107980;}
+        .card form .form-check-inline label::after {background-color: #107980;}
+        .select2-container--default.select2-container--focus .select2-selection--multiple {border: 2px solid #107980 !important;}
     </style>
 </head>
 <script type="text/javascript">
@@ -316,6 +327,10 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
                     $(this).attr('data-sent', "1");
                 }
                 var url = $(this).attr('data-ajax');
+                var pageMatch = url.match(/[?&]path=([^&]+)/);
+                if (pageMatch && pageMatch[1]) {
+                    $('body').attr('data-admin-page', pageMatch[1]);
+                }
                 $.post(Wo_Ajax_Requests_File_load() + url, {url:url}, function (data) {
                     $(".barloading").css("display","none");
                     if ($('#redirect_link')[0].hasAttribute("data-sent")) {
@@ -336,7 +351,7 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
         });
     });
 </script>
-<body <?php echo ($mode == 'night' ? 'class="dark"' : ''); ?>>
+<body id="rac-admin-shell" class="rac-admin-shell rac-reference-v4 <?php echo ($mode == 'night' ? 'dark' : ''); ?>" data-admin-page="<?php echo htmlspecialchars($page, ENT_QUOTES, 'UTF-8'); ?>">
     <div class="barloading"></div>
     <a id="redirect_link" href="" data-ajax="" data-sent="0"></a>
     <input type="hidden" class="main_session" value="<?php echo Wo_CreateMainSession();?>">
@@ -390,18 +405,18 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
             <div class="header-body">
                 <div class="header-body-left">
                     <ul class="navbar-nav">
-                        <li class="nav-item mr-3">
-                            <div class="header-search-form">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <button class="btn">
-                                            <i data-feather="search"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control" placeholder="Search"  onkeyup="searchInFiles($(this).val())">
-                                    <div class="pt_admin_hdr_srch_reslts" id="search_for_bar"></div>
+                        <li class="nav-item">
+                            <button type="button" id="modalOpener" class="header-modal-search-btn border-0 d-flex align-items-center justify-content-between" data-toggle="modal" data-target="#staticBackdrop">
+                                <div class="d-flex align-items-center gap-2 flex-grow-1 overflow-hidden">
+                                    <span class="search-lead-icon d-flex align-items-center text-muted">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    </span>
+                                    <span class="search-placeholder-text text-muted text-truncate">Search settings, pages, tools...</span>
                                 </div>
-                            </div>
+                                <span class="search-badge-kbd d-none d-sm-flex align-items-center ml-2">
+                                    <kbd class="ctrlplusk">Ctrl+K</kbd>
+                                </span>
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -618,6 +633,7 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
                     <i class="ti-close"></i>
                 </a>
             </div>
+
             <div class="navigation-menu-body">
                 <ul>
                     <?php if ($is_admin || ($is_moderoter && $wo['user']['permission']['dashboard'] == 1)) { ?>
@@ -1420,21 +1436,14 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
                     </li>
                     <?php } ?>
                     <?php if ($is_admin || ($is_moderoter && ($wo['user']['permission']['manage-updates'] == 1))) { ?>
-                   <!--  <li <?php echo ($page == 'manage-updates') ? 'class="active"' : ''; ?>>
-                        <a href="#">
+                    <li <?php echo ($page == 'manage-updates') ? 'class="active"' : ''; ?>>
+                        <a href="<?php echo Wo_LoadAdminLinkSettings('manage-updates'); ?>" data-ajax="?path=manage-updates">
                             <span class="nav-link-icon">
-                                <i class="material-icons">cloud_download</i>
+                                <i class="material-icons">system_update</i>
                             </span>
-                            <span>Updates</span>
+                            <span>Updates & Bug Fixes</span>
                         </a>
-                        <ul class="ml-menu">
-                            <?php if ($is_admin || ($is_moderoter && $wo['user']['permission']['manage-updates'] == 1)) { ?>
-                            <li>
-                                <a <?php echo ($page == 'manage-updates') ? 'class="active"' : ''; ?> href="<?php echo Wo_LoadAdminLinkSettings('manage-updates'); ?>" data-ajax="?path=manage-updates">Updates & Bug Fixes</a>
-                            </li>
-                            <?php } ?>
-                        </ul>
-                    </li> -->
+                    </li>
                     <?php } ?>
                     <li>
                         <a <?php echo ($page == 'system_status') ? 'class="active"' : ''; ?> href="<?php echo Wo_LoadAdminLinkSettings('system_status'); ?>" data-ajax="?path=system_status">
@@ -1464,11 +1473,7 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
                         </a>
                     </li>
                     <?php } ?>
-                    <a class="pow_link" href="https://bit.ly/2R2jrcz" target="_blank">
-                        <p>Powered by</p>
-                        <img src="https://demo.ramza.com/themes/default/img/logo.png">
-                        <b class="badge">v<?php echo $wo['config']['version'];?></b>
-                    </a>
+
                 </ul>
             </div>
         </div>
@@ -1489,6 +1494,34 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
 </div>
 <!-- ./ Layout wrapper -->
 <div class="select_pro_model"></div>
+
+<!-- Search Popup Modal (Matching Reference Micco V4) -->
+<div class="modal fade removeSlideDown" id="staticBackdrop" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered max-w-520">
+        <div class="modal-content modal-content__search border-0 shadow-lg">
+            <div class="d-flex flex-column gap-3 rounded-20 bg-card py-2 px-3">
+                <div class="d-flex gap-2 align-items-center position-relative pt-2 px-1">
+                    <form class="flex-grow-1 w-100" id="searchForm" onsubmit="return false;">
+                        <div class="rac-modal-search-wrapper position-relative w-100">
+                            <span class="rac-modal-search-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </span>
+                            <input autocomplete="off" class="form-control rac-modal-search-field" id="searchInput" maxlength="255" name="search" type="search" placeholder="Search by keyword..." aria-label="Search" autofocus>
+                            <div class="search-esc-wrapper">
+                                <button class="border-0 rounded px-2 py-1 search-esc-btn" type="button" data-dismiss="modal">Esc</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="search-modal-body px-1 pb-2">
+                    <div class="search-result" id="searchResults">
+                        <div class="text-center text-muted py-5">Loading search...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="<?php echo Wo_LoadAdminLink('vendors/sweetalert/sweetalert.min.js'); ?>"></script>
 <script src="<?php echo(Wo_LoadAdminLink('vendors/select2/js/select2.min.js')) ?>"></script>
     <script src="<?php echo(Wo_LoadAdminLink('assets/js/examples/select2.js')) ?>"></script>
@@ -1670,6 +1703,7 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
             }
         },500);
     </script>
-
+    <!-- Admin Reference V4 Javascript -->
+    <script src="<?php echo Wo_LoadAdminLink('assets/js/admin-reference-v4.js'); ?>?v=4.3"></script>
 </body>
 </html>

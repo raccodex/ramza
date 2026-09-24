@@ -2,36 +2,309 @@
 use Aws\S3\S3Client;
 use Google\Cloud\Storage\StorageClient;
 if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
+    if ($s === 'fetch_mobile_license_public_key') {
+        header('Content-Type: application/json; charset=UTF-8');
+        if (!Wo_IsAdmin() || Wo_CheckSession($hash_id) !== true) {
+            echo json_encode(array('status' => 403, 'message' => 'Administrator verification failed.'));
+            exit();
+        }
+        if (function_exists('Ramza_IsDemoMode') && Ramza_IsDemoMode()) {
+            echo json_encode(array('status' => 403, 'message' => 'Mobile settings are locked in demo mode.'));
+            exit();
+        }
+        if (!function_exists('Ramza_MobileTablesReady') || !Ramza_MobileTablesReady()) {
+            echo json_encode(array('status' => 503, 'message' => 'Apply updates/ramza_mobile_api_v1.sql first.'));
+            exit();
+        }
+        try {
+            $publicKey = function_exists('Ramza_MobileDiscoverLicensePublicKey')
+                ? Ramza_MobileDiscoverLicensePublicKey()
+                : '';
+            if ($publicKey === '') {
+                echo json_encode(array(
+                    'status' => 503,
+                    'message' => 'The license server has not published its mobile signing key yet.',
+                ));
+                exit();
+            }
+            echo json_encode(array(
+                'status' => 200,
+                'message' => 'License public key fetched.',
+                'public_key' => $publicKey,
+            ));
+        } catch (Throwable $error) {
+            error_log('Ramza mobile public-key fetch failed: ' . preg_replace('/[\r\n]+/', ' ', $error->getMessage()));
+            echo json_encode(array(
+                'status' => 503,
+                'message' => 'The license public key could not be fetched.',
+            ));
+        }
+        exit();
+    }
+
+    if ($s === 'update_mobile_app_settings') {
+        header('Content-Type: application/json; charset=UTF-8');
+        if (!Wo_IsAdmin() || Wo_CheckSession($hash_id) !== true) {
+            echo json_encode(array('status' => 403, 'message' => 'Administrator verification failed.'));
+            exit();
+        }
+        if (function_exists('Ramza_IsDemoMode') && Ramza_IsDemoMode()) {
+            echo json_encode(array('status' => 403, 'message' => 'Mobile settings are locked in demo mode.'));
+            exit();
+        }
+        if (!function_exists('Ramza_MobileTablesReady') || !Ramza_MobileTablesReady()) {
+            echo json_encode(array('status' => 503, 'message' => 'Apply updates/ramza_mobile_api_v1.sql first.'));
+            exit();
+        }
+
+        $mobileText = static function (string $key, int $maximum = 255): string {
+            $value = trim((string) ($_POST[$key] ?? ''));
+            if (mb_strlen($value) > $maximum) {
+                throw new InvalidArgumentException('A mobile setting is too long: ' . $key);
+            }
+            return $value;
+        };
+        $mobileBool = static function (string $key): string {
+            return !empty($_POST[$key]) && (string) $_POST[$key] === '1' ? '1' : '0';
+        };
+        $mobileUrl = static function (string $key) use ($mobileText): string {
+            $value = $mobileText($key, 1000);
+            if ($value !== '' && filter_var($value, FILTER_VALIDATE_URL) === false) {
+                throw new InvalidArgumentException('Enter a valid URL for ' . $key . '.');
+            }
+            return $value;
+        };
+
+        try {
+            $androidPackage = $mobileText('android_package', 190);
+            $iosBundle = $mobileText('ios_bundle_id', 190);
+            if (preg_match('/^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$/', $androidPackage) !== 1) {
+                throw new InvalidArgumentException('Enter a valid Android package name.');
+            }
+            if (preg_match('/^[A-Za-z0-9][A-Za-z0-9-]*(\.[A-Za-z0-9][A-Za-z0-9-]*)+$/', $iosBundle) !== 1) {
+                throw new InvalidArgumentException('Enter a valid iOS bundle ID.');
+            }
+            foreach (array('minimum_android_version', 'minimum_ios_version', 'latest_android_version', 'latest_ios_version') as $versionKey) {
+                $version = $mobileText($versionKey, 32);
+                if (preg_match('/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/', $version) !== 1) {
+                    throw new InvalidArgumentException('Use semantic versions such as 1.0.0.');
+                }
+            }
+            foreach (array('primary_color', 'secondary_color') as $colorKey) {
+                if (preg_match('/^#[0-9A-Fa-f]{6}$/', $mobileText($colorKey, 7)) !== 1) {
+                    throw new InvalidArgumentException('Use six-digit hexadecimal colors.');
+                }
+            }
+
+            $plainSettings = array(
+                'mobile_enabled' => $mobileBool('mobile_enabled'),
+                'app_name' => $mobileText('app_name', 80),
+                'codecanyon_username' => $mobileText('codecanyon_username', 100),
+                'android_package' => $androidPackage,
+                'ios_bundle_id' => $iosBundle,
+                'primary_color' => strtolower($mobileText('primary_color', 7)),
+                'secondary_color' => strtolower($mobileText('secondary_color', 7)),
+                'minimum_android_version' => $mobileText('minimum_android_version', 32),
+                'minimum_ios_version' => $mobileText('minimum_ios_version', 32),
+                'latest_android_version' => $mobileText('latest_android_version', 32),
+                'latest_ios_version' => $mobileText('latest_ios_version', 32),
+                'force_update' => $mobileBool('force_update'),
+                'maintenance_mode' => $mobileBool('maintenance_mode'),
+                'maintenance_message' => $mobileText('maintenance_message', 240),
+                'android_store_url' => $mobileUrl('android_store_url'),
+                'ios_store_url' => $mobileUrl('ios_store_url'),
+                'terms_url' => $mobileUrl('terms_url'),
+                'privacy_url' => $mobileUrl('privacy_url'),
+            );
+            foreach ($plainSettings as $settingKey => $settingValue) {
+                if (!Ramza_SaveMobileSetting($settingKey, $settingValue, false)) {
+                    throw new RuntimeException('A mobile setting could not be saved.');
+                }
+            }
+            $licensePublicKey = $mobileText('license_public_key', 128);
+            if ($licensePublicKey !== '') {
+                $decodedPublicKey = Ramza_MobileDecodeBase64Url($licensePublicKey);
+                if (strlen($decodedPublicKey) !== SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES) {
+                    throw new InvalidArgumentException('Enter a valid Ed25519 license public key.');
+                }
+                if (!Ramza_SaveMobileSetting('license_public_key', $licensePublicKey, false)) {
+                    throw new RuntimeException('The license public key could not be saved.');
+                }
+            }
+
+            foreach (array('main_purchase_code', 'mobile_addon_purchase_code') as $secretKey) {
+                $secret = $mobileText($secretKey, 190);
+                if ($secret !== '' && !Ramza_SaveMobileSetting($secretKey, $secret, true)) {
+                    throw new RuntimeException('A protected license value could not be saved.');
+                }
+            }
+
+            $installationId = Ramza_MobileSetting('license_installation_id');
+            if ($installationId === '') {
+                $installationId = 'rmi_' . rtrim(strtr(base64_encode(random_bytes(24)), '+/', '-_'), '=');
+                Ramza_SaveMobileSetting('license_installation_id', $installationId, false);
+            }
+            $publicClientId = Ramza_MobileSetting('public_client_id');
+            if ($publicClientId === '') {
+                $publicClientId = 'rmp_' . rtrim(strtr(base64_encode(random_bytes(24)), '+/', '-_'), '=');
+                Ramza_SaveMobileSetting('public_client_id', $publicClientId, false);
+            }
+            $enabled = (int) $plainSettings['mobile_enabled'];
+            $now = time();
+            $clientStatement = mysqli_prepare(
+                $sqlConnect,
+                'INSERT INTO `Ramza_MobileApiClients`
+                 (`public_client_id`,`display_name`,`android_package`,`ios_bundle_id`,`enabled`,`created_at`,`updated_at`)
+                 VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE `display_name` = VALUES(`display_name`),
+                 `android_package` = VALUES(`android_package`), `ios_bundle_id` = VALUES(`ios_bundle_id`),
+                 `enabled` = VALUES(`enabled`), `updated_at` = VALUES(`updated_at`)'
+            );
+            mysqli_stmt_bind_param(
+                $clientStatement,
+                'ssssiii',
+                $publicClientId,
+                $plainSettings['app_name'],
+                $androidPackage,
+                $iosBundle,
+                $enabled,
+                $now,
+                $now
+            );
+            mysqli_stmt_execute($clientStatement);
+            mysqli_stmt_close($clientStatement);
+
+            $licenseStatus = 'unconfigured';
+            if (!empty($_POST['verify_license']) && (string) $_POST['verify_license'] === '1') {
+                $mainCode = Ramza_MobileSetting('main_purchase_code', '', true);
+                $addonCode = Ramza_MobileSetting('mobile_addon_purchase_code', '', true);
+                if ($mainCode === '' || $addonCode === '' || $plainSettings['codecanyon_username'] === '') {
+                    throw new InvalidArgumentException('Save both purchase codes and the CodeCanyon username before verification.');
+                }
+                try {
+                    Ramza_MobileLicensePublicKey();
+                } catch (Throwable) {
+                    throw new RuntimeException('The mobile license public key is unavailable. Update the license service or paste the public key.');
+                }
+                $activation = Ramza_MobileActivateLicense(array(
+                    'site_url' => rtrim((string) $wo['config']['site_url'], '/'),
+                    'main_purchase_code' => $mainCode,
+                    'mobile_addon_purchase_code' => $addonCode,
+                    'codecanyon_username' => $plainSettings['codecanyon_username'],
+                    'android_package_name' => $androidPackage,
+                    'ios_bundle_id' => $iosBundle,
+                    'installation_id' => $installationId,
+                    'public_client_id' => $publicClientId,
+                ));
+                if (empty($activation['success'])) {
+                    $errorCode = (string) ($activation['code'] ?? 'LICENSE_INVALID');
+                    throw new RuntimeException('License verification failed: ' . $errorCode);
+                }
+                $payload = $activation['payload'];
+                $licenseStatus = in_array((string) ($payload['status'] ?? ''), array('active', 'grace'), true)
+                    ? (string) $payload['status']
+                    : 'invalid';
+                if ($licenseStatus === 'invalid') {
+                    throw new RuntimeException('License verification returned an invalid status.');
+                }
+                if (!Ramza_MobilePersistLicense(
+                    $payload,
+                    (string) $activation['signature'],
+                    (string) ($activation['activation_token'] ?? '')
+                )) {
+                    throw new RuntimeException('The verified mobile license could not be stored securely.');
+                }
+            } else {
+                $licenseResult = mysqli_query($sqlConnect, 'SELECT `status` FROM `Ramza_MobileLicenseCache` WHERE `id` = 1 LIMIT 1');
+                $licenseRow = $licenseResult ? mysqli_fetch_assoc($licenseResult) : null;
+                $licenseStatus = is_array($licenseRow) ? (string) $licenseRow['status'] : 'unconfigured';
+            }
+
+            echo json_encode(array(
+                'status' => 200,
+                'message' => !empty($_POST['verify_license']) ? 'Mobile settings saved and license verified.' : 'Mobile settings saved.',
+                'client_id' => $publicClientId,
+                'license_status' => $licenseStatus,
+            ));
+        } catch (Throwable $error) {
+            echo json_encode(array(
+                'status' => 400,
+                'message' => preg_replace('/[\r\n]+/', ' ', $error->getMessage()),
+            ));
+        }
+        exit();
+    }
+
     if ($s == 'search_in_pages') {
         $keyword           = Wo_Secure($_POST['keyword']);
         $html              = '';
+
+        $cleanKeyword = trim(strip_tags(html_entity_decode($keyword, ENT_QUOTES, 'UTF-8')));
+        $keywordLower = strtolower($cleanKeyword);
+        $seenLinks = array();
+        $not_allowed_files = array(
+            'edit-custom-page',
+            'edit-lang',
+            'edit-movie',
+            'edit-profile-field',
+            'edit-terms-pages',
+            'manage-permissions'
+        );
+        $resultCount = 0;
+        $resultLimit = 12;
+        $renderSearchItem = function ($link, $title, $pageTitle = '') use (&$html, &$seenLinks, &$resultCount, $resultLimit, $cleanKeyword) {
+            if ($resultCount >= $resultLimit) {
+                return;
+            }
+            $link = trim((string) $link);
+            $title = trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags((string) $title), ENT_QUOTES, 'UTF-8')));
+            $pageTitle = trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags((string) $pageTitle), ENT_QUOTES, 'UTF-8')));
+            if ($link === '' || $title === '') {
+                return;
+            }
+            $key = $link . '|' . strtolower($title);
+            if (!empty($seenLinks[$key])) {
+                return;
+            }
+            $seenLinks[$key] = true;
+            $resultCount++;
+            if ($pageTitle === '') {
+                $pageTitle = ucwords(str_replace(array('-', '_'), ' ', $link));
+            }
+            $href = Wo_LoadAdminLinkSettings($link) . '?highlight=' . urlencode($cleanKeyword);
+            $html .= '<a class="rac-admin-search-result" role="option" aria-selected="false" href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '"><span class="rac-admin-search-page">' . htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') . '</span><span class="rac-admin-search-title">' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '</span></a>';
+        };
+
+        if ($keywordLower !== '') {
+            $files = scandir('./admin-panel/pages');
+            foreach ($files as $file) {
+                if (file_exists('./admin-panel/pages/' . $file . '/content.phtml') && !in_array($file, $not_allowed_files)) {
+                    $pageTitle = ucwords(str_replace(array('-', '_'), ' ', $file));
+                    if (strpos(strtolower($file), $keywordLower) !== false || strpos(strtolower($pageTitle), $keywordLower) !== false) {
+                        $renderSearchItem($file, $pageTitle, 'Admin page');
+                    }
+                }
+            }
+        }
 
         if (file_exists('./admin-panel/search-result.php')) {
             include_once './admin-panel/search-result.php';
 
             $foundItems = [];
             foreach ($pages_search as $item) {
-                if (strpos(strtolower($item['title']), strtolower($keyword)) !== false) {
+                $searchText = strtolower(($item['title'] ?? '') . ' ' . ($item['page_title'] ?? '') . ' ' . ($item['link'] ?? ''));
+                if ($keywordLower !== '' && strpos($searchText, $keywordLower) !== false) {
                     $foundItems[] = $item;
                 }
             }
 
             if (!empty($foundItems)) {
                 foreach ($foundItems as $key => $item) {
-                    $html .= '<a href="' . Wo_LoadAdminLinkSettings($item['link']) . '?highlight=' . $keyword . '"><div  style="padding: 5px 2px;">' . $item['page_title']. '</div><div><small style="color: #333;">' . $item['title'] . '</small></div></a>';
+                    $renderSearchItem($item['link'], $item['title'], $item['page_title']);
                 }
             }
         }
         else{
             $files             = scandir('./admin-panel/pages');
-            $not_allowed_files = array(
-                'edit-custom-page',
-                'edit-lang',
-                'edit-movie',
-                'edit-profile-field',
-                'edit-terms-pages',
-                'manage-permissions'
-            );
             foreach ($files as $key => $file) {
                 if (file_exists('./admin-panel/pages/' . $file . '/content.phtml') && !in_array($file, $not_allowed_files)) {
                     $string = file_get_contents('./admin-panel/pages/' . $file . '/content.phtml');
@@ -47,7 +320,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                                         break;
                                     }
                                 }
-                                $html .= '<a href="' . Wo_LoadAdminLinkSettings($file) . '?highlight=' . $keyword . '"><div  style="padding: 5px 2px;">' . $page_title . '</div><div><small style="color: #333;">' . $title . '</small></div></a>';
+                                $renderSearchItem($file, $title, $page_title);
                                 break;
                             }
                         }
@@ -64,7 +337,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                                         break;
                                     }
                                 }
-                                $html .= '<a href="' . Wo_LoadAdminLinkSettings($file) . '?highlight=' . $keyword . '"><div  style="padding: 5px 2px;">' . $page_title . '</div><div><small style="color: #333;">' . $lable . '</small></div></a>';
+                                $renderSearchItem($file, $lable, $page_title);
                                 break;
                             }
                         }
@@ -300,7 +573,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                 $photo_file = $color->image;
                 if (file_exists($photo_file)) {
                     @unlink(trim($photo_file));
-                } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+                } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || !empty($wo['config']['cloudflare_r2_storage']) || !empty($wo['config']['s3_compatible_storage']) || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
                     @Wo_DeleteFromToS3($photo_file);
                 }
             }
@@ -669,7 +942,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
             $db->where('id', $id)->delete('bank_receipts');
             if (file_exists($photo_file)) {
                 @unlink(trim($photo_file));
-            } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+            } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || !empty($wo['config']['cloudflare_r2_storage']) || !empty($wo['config']['s3_compatible_storage']) || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
                 @Wo_DeleteFromToS3($photo_file);
             }
             $data = array(
@@ -1227,7 +1500,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                         $link = $gender->image;
                         if (file_exists($link)) {
                             @unlink(trim($link));
-                        } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+                        } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || !empty($wo['config']['cloudflare_r2_storage']) || !empty($wo['config']['s3_compatible_storage']) || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
                             @Wo_DeleteFromToS3($link);
                         }
                         $db->where('gender_id', Wo_Secure($value))->delete(T_GENDER);
@@ -2137,14 +2410,14 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                     $link = substr($wo['pro_packages'][$_POST['type']]['image'], strpos($wo['pro_packages'][$_POST['type']]['image'], 'upload/'));
                     if (file_exists($link)) {
                         @unlink(trim($link));
-                    } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+                    } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || !empty($wo['config']['cloudflare_r2_storage']) || !empty($wo['config']['s3_compatible_storage']) || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
                         @Wo_DeleteFromToS3($link);
                     }
                     $update_array['image'] = '';
                     $link           = substr($wo['pro_packages'][$_POST['type']]['night_image'], strpos($wo['pro_packages'][$_POST['type']]['night_image'], 'upload/'));
                     if (file_exists($link)) {
                         @unlink(trim($link));
-                    } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+                    } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || !empty($wo['config']['cloudflare_r2_storage']) || !empty($wo['config']['s3_compatible_storage']) || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
                         @Wo_DeleteFromToS3($link);
                     }
                     $update_array['night_image'] = '';
@@ -2198,13 +2471,13 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
             $link           = substr($wo['pro_packages'][$_GET['id']]['night_image'], strpos($wo['pro_packages'][$_GET['id']]['night_image'], 'upload/'));
             if (file_exists($link)) {
                 @unlink(trim($link));
-            } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+            } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || !empty($wo['config']['cloudflare_r2_storage']) || !empty($wo['config']['s3_compatible_storage']) || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
                 @Wo_DeleteFromToS3($link);
             }
             $link           = substr($wo['pro_packages'][$_GET['id']]['image'], strpos($wo['pro_packages'][$_GET['id']]['image'], 'upload/'));
             if (file_exists($link)) {
                 @unlink(trim($link));
-            } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+            } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || !empty($wo['config']['cloudflare_r2_storage']) || !empty($wo['config']['s3_compatible_storage']) || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
                 @Wo_DeleteFromToS3($link);
             }
             $db->where('id',Wo_Secure($_GET['id']))->delete(T_MANAGE_PRO);
@@ -2532,7 +2805,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                         $link = $gender->image;
                         if (file_exists($link)) {
                             @unlink(trim($link));
-                        } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+                        } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || !empty($wo['config']['cloudflare_r2_storage']) || !empty($wo['config']['s3_compatible_storage']) || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
                             @Wo_DeleteFromToS3($link);
                         }
                         $db->where('gender_id', $lang_key)->update(T_GENDER, array(
@@ -2552,7 +2825,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                     $link = $gender->image;
                     if (file_exists($link)) {
                         @unlink(trim($link));
-                    } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+                    } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || !empty($wo['config']['cloudflare_r2_storage']) || !empty($wo['config']['s3_compatible_storage']) || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
                         @Wo_DeleteFromToS3($link);
                     }
                     $db->where('gender_id', $lang_key)->delete(T_GENDER);
@@ -2619,7 +2892,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                 $link = $gender->image;
                 if (file_exists($link)) {
                     @unlink(trim($link));
-                } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+                } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || !empty($wo['config']['cloudflare_r2_storage']) || !empty($wo['config']['s3_compatible_storage']) || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
                     @Wo_DeleteFromToS3($link);
                 }
                 $db->where('gender_id', Wo_Secure($_GET['key']))->delete(T_GENDER);
@@ -3189,11 +3462,34 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
         echo json_encode($data);
         exit();
     }
+    if ($s == 'system_diagnostics') {
+        $data = array('status' => 400, 'message' => 'Diagnostic action was not accepted.');
+        if (Wo_CheckSession($hash_id) === true && !empty($wo['user']['admin'])) {
+            $action = isset($_POST['action']) ? (string) $_POST['action'] : 'collect';
+            if ($action === 'send') {
+                $feedback = array(
+                    'subject' => isset($_POST['feedback_subject']) && !is_array($_POST['feedback_subject']) ? (string) $_POST['feedback_subject'] : '',
+                    'message' => isset($_POST['feedback_message']) && !is_array($_POST['feedback_message']) ? (string) $_POST['feedback_message'] : '',
+                );
+                $result = function_exists('Ramza_DiagnosticsSend') ? Ramza_DiagnosticsSend(true, $feedback) : array('ok' => false, 'message' => 'Diagnostic service is unavailable.');
+                $data['status'] = !empty($result['ok']) ? 200 : 400;
+                $data['message'] = (string) ($result['message'] ?? 'Diagnostic report completed.');
+            } else {
+                $data['status'] = 200;
+                $data['message'] = 'Runtime scan refreshed.';
+                $data['diagnostics'] = function_exists('Ramza_DiagnosticsSnapshot') ? Ramza_DiagnosticsSnapshot(false) : array();
+            }
+        }
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit();
+    }
     if ($s == 'ffmpeg_debug') {
-        $ffmpeg_b                   = $wo['config']['ffmpeg_binary_file'];
-        if (!isfuncEnabled("shell_exec")) {
+        $ffmpegStatus = function_exists('Ramza_FfmpegStatus') ? Ramza_FfmpegStatus() : array('available' => false, 'message' => 'FFmpeg helper is unavailable.');
+        $ffmpeg_b = function_exists('Ramza_FfmpegCommand') ? Ramza_FfmpegCommand() : '';
+        if (empty($ffmpegStatus['available']) || $ffmpeg_b === '') {
             $data['status'] = 200;
-            $data['data']   = "The function: shell_exec is not enabled, please contact your hosting provider to enable it, it's required for FFMPEG";
+            $data['data']   = (string) ($ffmpegStatus['message'] ?? 'FFmpeg is not available.');
             header("Content-type: application/json");
             echo json_encode($data);
             exit();
@@ -3201,7 +3497,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
         $video_output_full_path_240 = dirname(__DIR__) . "/admin-panel/videos/test_240p_converted.mp4";
         @unlink($video_output_full_path_240);
         $video_file_full_path = dirname(__DIR__) . "/admin-panel/videos/test.mp4";
-        $shell                = shell_exec("$ffmpeg_b -y -i $video_file_full_path -vcodec libx264 -preset " . $wo['config']['convert_speed'] . " -filter:v scale=426:-2 -crf 26 $video_output_full_path_240 2>&1");
+        $shell                = shell_exec($ffmpeg_b . ' -y -i ' . escapeshellarg($video_file_full_path) . ' -vcodec libx264 -preset ' . escapeshellarg((string) $wo['config']['convert_speed']) . ' -filter:v scale=426:-2 -crf 26 ' . escapeshellarg($video_output_full_path_240) . ' 2>&1');
         if (file_exists($video_output_full_path_240)) {
             $data['video_url'] = $wo['config']['site_url'] . '/admin-panel/videos/test_240p_converted.mp4';
         }
@@ -3211,7 +3507,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
         echo json_encode($data);
         exit();
     }
-    if ($s == 'update_general_setting' && Wo_CheckSession($hash_id) === true) {
+    if ($s == 'update_general_setting' && (Wo_CheckSession($hash_id) === true || Wo_CheckMainSession($hash_id) === true)) {
         $saveSetting         = false;
         $delete_follow_table = 0;
         if (!empty($_FILES) && !empty($_FILES["cloud_file"])) {
@@ -3229,9 +3525,71 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                 resetCache();
             }
         }
+        $pwaIconUploads = array(
+            'pwa_icon_192' => 192,
+            'pwa_icon_512' => 512
+        );
+        foreach ($pwaIconUploads as $pwaIconKey => $pwaIconSize) {
+            if (!empty($_FILES[$pwaIconKey]) && !empty($_FILES[$pwaIconKey]['tmp_name'])) {
+                if (!empty($_FILES[$pwaIconKey]['error']) && $_FILES[$pwaIconKey]['error'] !== UPLOAD_ERR_OK) {
+                    $data['status'] = 400;
+                    $data['message'] = 'Unable to upload the PWA icon. Please choose a valid image file.';
+                    header("Content-type: application/json");
+                    echo json_encode($data);
+                    exit();
+                }
+
+                $pwaIconInfo = @getimagesize($_FILES[$pwaIconKey]['tmp_name']);
+                if (empty($pwaIconInfo) || (int)$pwaIconInfo[0] !== $pwaIconSize || (int)$pwaIconInfo[1] !== $pwaIconSize) {
+                    $data['status'] = 400;
+                    $data['message'] = 'The ' . $pwaIconSize . 'x' . $pwaIconSize . ' PWA icon must be exactly ' . $pwaIconSize . 'x' . $pwaIconSize . ' pixels.';
+                    header("Content-type: application/json");
+                    echo json_encode($data);
+                    exit();
+                }
+
+                $pwaIconExtension = strtolower(pathinfo($_FILES[$pwaIconKey]['name'], PATHINFO_EXTENSION));
+                $pwaIconMime = Wo_NormalizeUploadedMime($_FILES[$pwaIconKey]['type'], $_FILES[$pwaIconKey]['name'], $_FILES[$pwaIconKey]['tmp_name']);
+                if (!in_array($pwaIconExtension, array('png', 'jpg', 'jpeg'), true) || !in_array($pwaIconMime, array('image/png', 'image/jpeg', 'image/jpg'), true)) {
+                    $data['status'] = 400;
+                    $data['message'] = 'PWA icons must be PNG or JPG images.';
+                    header("Content-type: application/json");
+                    echo json_encode($data);
+                    exit();
+                }
+
+                $fileInfo = array(
+                    'file' => $_FILES[$pwaIconKey]['tmp_name'],
+                    'name' => $_FILES[$pwaIconKey]['name'],
+                    'size' => $_FILES[$pwaIconKey]['size'],
+                    'type' => $_FILES[$pwaIconKey]['type'],
+                    'types' => 'png,jpg,jpeg',
+                    'compress' => false
+                );
+                $media = Wo_ShareFile($fileInfo, 0, false);
+                if (!empty($media) && !empty($media['filename'])) {
+                    $saveSetting = Wo_SaveConfig($pwaIconKey, $media['filename']);
+                    $wo['config'][$pwaIconKey] = $media['filename'];
+                    resetCache();
+                } else {
+                    $data['status'] = 400;
+                    $data['message'] = 'Unable to save the PWA icon. Please confirm uploads are enabled and try again.';
+                    header("Content-type: application/json");
+                    echo json_encode($data);
+                    exit();
+                }
+            }
+        }
         foreach ($_POST as $key => $value) {
+            if (strpos((string)$key, 'algorithm_') === 0 && function_exists('Wo_RamzaAlgorithmValidateAdminSetting')) {
+                $validated_algorithm_value = Wo_RamzaAlgorithmValidateAdminSetting($key, $value);
+                if ($validated_algorithm_value === null) {
+                    continue;
+                }
+                $value = $validated_algorithm_value;
+            }
             if (!empty($value) && in_array($key, $wo['encryptedKeys'])) {
-                $value = '$Ap1_'.openssl_encrypt($value, "AES-128-ECB", $siteEncryptKey);
+                $value = Wo_EncryptConfigValue($value);
             }
             if ($key == 'bank' || $key == 'p_paypal' || $key == 'skrill' || $key == 'custom') {
                 if (in_array($value, array(0,1))) {
@@ -3271,6 +3629,18 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                 }
             }
             if ($key == 'website_mode') {
+                $futureWebsiteModes = array(
+                    'twitter' => '2.0',
+                    'askfm' => '2.5',
+                    'tiktok' => '3.0',
+                );
+                if (isset($futureWebsiteModes[$value]) && version_compare((string)($wo['config']['version'] ?? '1.0'), $futureWebsiteModes[$value], '<')) {
+                    $data['status'] = 400;
+                    $data['message'] = 'This website mode unlocks in RACSocial v' . $futureWebsiteModes[$value] . '.';
+                    header("Content-type: application/json");
+                    echo json_encode($data);
+                    exit();
+                }
                 if (!empty($wo['website_modes_off'][$wo['config']['website_mode']])) {
                     foreach ($wo['website_modes_off'][$wo['config']['website_mode']] as $key5 => $value5) {
                         if ($value5 != 'second_post_button') {
@@ -3331,7 +3701,22 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                     $value = '';
                 }
             }
-            if (isset($wo['config'][$key]) || $key == 'googleAnalytics_en') {
+            if (isset($wo['config'][$key]) || $key == 'googleAnalytics_en' || $key == 'post_views' || $key == 'post_view_type') {
+                if (in_array($key, array('pwa_theme_color', 'pwa_background_color'), true) && !preg_match('/^#[0-9a-fA-F]{6}$/', (string)$value)) {
+                    $value = ($key == 'pwa_theme_color') ? '#c94b57' : '#f6f7f9';
+                }
+                if ($key == 'pwa_display' && !in_array($value, array('standalone', 'minimal-ui', 'fullscreen', 'browser'), true)) {
+                    $value = 'standalone';
+                }
+                if ($key == 'pwa_cache_strategy' && !in_array($value, array('network_first', 'cache_first'), true)) {
+                    $value = 'network_first';
+                }
+                if (in_array($key, array('pwa_start_url', 'pwa_scope'), true)) {
+                    $value = trim((string)$value);
+                    if ($value === '') {
+                        $value = '/';
+                    }
+                }
                 if ($key == 'yandex_translate') {
                     if ($value == 1) {
                         $saveSetting = Wo_SaveConfig('google_translate', 0);
@@ -3364,6 +3749,15 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                             $delete_follow_table = 1;
                         }
                     }
+                }
+                $storage_switches = array('ftp_upload', 'amazone_s3', 'spaces', 'cloud_upload', 'wasabi_storage', 'backblaze_storage', 'cloudflare_r2_storage', 's3_compatible_storage');
+                if (in_array($key, $storage_switches, true) && $value == 1) {
+                    foreach ($storage_switches as $storage_switch) {
+                        if ($storage_switch !== $key && !empty($wo['config'][$storage_switch]) && $wo['config'][$storage_switch] == 1) {
+                            $saveSetting = Wo_SaveConfig($storage_switch, 0);
+                        }
+                    }
+                    resetCache();
                 }
                 if ($key == 'ftp_upload') {
                     if ($value == 1) {
@@ -3516,7 +3910,11 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                     $value = 10000;
                 }
                 if ($key == 'smtp_password') {
-                    $value = openssl_encrypt($value, "AES-128-ECB", 'mysecretkey1234');
+                    if ($value === '') {
+                        continue;
+                    }
+                    $encryptedSmtpPassword = openssl_encrypt($value, "AES-128-ECB", $siteEncryptKey);
+                    $value = $encryptedSmtpPassword !== false ? '$Ap1_' . $encryptedSmtpPassword : openssl_encrypt($value, "AES-128-ECB", 'mysecretkey1234');
                 }
                 // if ($key == 'two_factor_type' && $wo['config']['two_factor_type'] != $value) {
                 //     $db->where('two_factor_verified',1)->update(T_USERS,array('two_factor_email_verified' => 0,
@@ -3809,6 +4207,157 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
         echo json_encode($data);
         exit();
     }
+    if ($s == 'save_cloudflare_r2') {
+        $data = array('status' => 400, 'message' => 'Cloudflare R2 settings could not be saved.');
+        $r2_admin_session_valid = Wo_CheckSession($hash_id) === true || Wo_CheckMainSession($hash_id) === true;
+        if (!$r2_admin_session_valid) {
+            http_response_code(403);
+            $data = array('status' => 403, 'message' => 'Your admin session has expired. Reload the page and try again.');
+        } else {
+            $accountId = trim((string) ($_POST['cloudflare_r2_account_id'] ?? ''));
+            $bucketName = trim((string) ($_POST['cloudflare_r2_bucket_name'] ?? ''));
+            $accessKey = trim((string) ($_POST['cloudflare_r2_access_key'] ?? ''));
+            $secretKey = trim((string) ($_POST['cloudflare_r2_secret_key'] ?? ''));
+            $publicUrl = rtrim(trim((string) ($_POST['cloudflare_r2_public_url'] ?? '')), '/');
+            $enabled = !empty($_POST['cloudflare_r2_storage']) ? 1 : 0;
+
+            if ($accountId === '' || $bucketName === '' || $accessKey === '') {
+                $data['message'] = 'Account ID, bucket name, and access key are required.';
+            } elseif ($secretKey === '' && trim((string) ($wo['config']['cloudflare_r2_secret_key'] ?? '')) === '') {
+                $data['message'] = 'The R2 secret access key is required.';
+            } elseif (!filter_var($publicUrl, FILTER_VALIDATE_URL) || strtolower((string) parse_url($publicUrl, PHP_URL_SCHEME)) !== 'https') {
+                $data['message'] = 'Enter a valid HTTPS R2 public URL or custom domain.';
+            } else {
+                $settings = array(
+                    'cloudflare_r2_account_id' => $accountId,
+                    'cloudflare_r2_bucket_name' => $bucketName,
+                    'cloudflare_r2_access_key' => $accessKey,
+                    'cloudflare_r2_public_url' => $publicUrl
+                );
+                if ($secretKey !== '') {
+                    $settings['cloudflare_r2_secret_key'] = Wo_EncryptConfigValue($secretKey);
+                }
+
+                $saved = true;
+                foreach ($settings as $settingName => $settingValue) {
+                    if (!Wo_SaveConfig($settingName, $settingValue)) {
+                        $saved = false;
+                        break;
+                    }
+                }
+                if (!$saved) {
+                    $data['message'] = 'The R2 configuration could not be written to the database.';
+                } else {
+                    $wo['config']['cloudflare_r2_account_id'] = $accountId;
+                    $wo['config']['cloudflare_r2_bucket_name'] = $bucketName;
+                    $wo['config']['cloudflare_r2_access_key'] = $accessKey;
+                    $wo['config']['cloudflare_r2_public_url'] = $publicUrl;
+                    if ($secretKey !== '') {
+                        $wo['config']['cloudflare_r2_secret_key'] = $secretKey;
+                    }
+
+                    $probe = function_exists('Ramza_CloudflareR2Probe')
+                        ? Ramza_CloudflareR2Probe()
+                        : array('ok' => false, 'message' => 'The R2 verifier is unavailable.');
+                    if (empty($probe['ok'])) {
+                        Wo_SaveConfig('cloudflare_r2_storage', 0);
+                        $data['message'] = (string) ($probe['message'] ?? 'R2 verification failed.');
+                    } else {
+                        Wo_SaveConfig('cloudflare_r2_storage', $enabled);
+                        if ($enabled === 1) {
+                            foreach (array('ftp_upload', 'amazone_s3', 'spaces', 'cloud_upload', 'wasabi_storage', 'backblaze_storage', 's3_compatible_storage') as $storageSwitch) {
+                                Wo_SaveConfig($storageSwitch, 0);
+                            }
+                        }
+                        resetCache();
+                        $data = array(
+                            'status' => 200,
+                            'message' => $enabled === 1
+                                ? 'Cloudflare R2 is saved, verified, and active for media uploads.'
+                                : 'Cloudflare R2 is saved and verified. Enable it when you are ready.'
+                        );
+                    }
+                }
+            }
+        }
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit();
+    }
+    if ($s == 'test_cloudflare_r2') {
+        if (empty($wo['config']['cloudflare_r2_storage'])) {
+            $data['status'] = 400;
+            $data['message'] = 'Enable Cloudflare R2 and save the settings first.';
+        } else {
+            $probe = function_exists('Ramza_CloudflareR2Probe')
+                ? Ramza_CloudflareR2Probe()
+                : array('ok' => false, 'message' => 'The R2 verifier is unavailable.');
+            $data['status'] = !empty($probe['ok']) ? 200 : 400;
+            $data['message'] = (string) ($probe['message'] ?? '');
+        }
+        header("Content-type: application/json");
+        echo json_encode($data);
+        exit();
+    }
+    if ($s == 'test_s3_compatible') {
+        include_once('assets/libraries/s3-lib/vendor/autoload.php');
+        $data['status'] = 404;
+        if (empty($wo['config']['s3_compatible_storage']) || empty($wo['config']['s3_compatible_endpoint']) || empty($wo['config']['s3_compatible_bucket']) || empty($wo['config']['s3_compatible_access_key']) || empty($wo['config']['s3_compatible_secret_key'])) {
+            $data['status'] = 400;
+            $data['message'] = 'Please enable S3-compatible storage and fill endpoint, bucket, access key and secret key.';
+        } else {
+            try {
+                $s3Client = S3Client::factory(array(
+                    'version' => 'latest',
+                    'region' => !empty($wo['config']['s3_compatible_region']) ? $wo['config']['s3_compatible_region'] : 'us-east-1',
+                    'endpoint' => rtrim($wo['config']['s3_compatible_endpoint'], '/'),
+                    'use_path_style_endpoint' => !empty($wo['config']['s3_compatible_path_style']),
+                    'signature_version' => 'v4',
+                    'credentials' => array(
+                        'key' => $wo['config']['s3_compatible_access_key'],
+                        'secret' => $wo['config']['s3_compatible_secret_key']
+                    )
+                ));
+                if ($s3Client->doesBucketExist($wo['config']['s3_compatible_bucket'])) {
+                    $data['status'] = 200;
+                    $array = array(
+                        'upload/photos/d-avatar.jpg',
+                        $wo["userDefaultBlur"],
+                        'upload/photos/f-avatar.jpg',
+                        'upload/photos/d-cover.jpg',
+                        'upload/photos/d-group.jpg',
+                        'upload/photos/d-page.jpg',
+                        'upload/photos/d-blog.jpg',
+                        'upload/photos/game-icon.png',
+                        'upload/photos/d-film.jpg',
+                        'upload/photos/incognito.png',
+                        'upload/photos/app-default-icon.png',
+                        'upload/files/2022/09/EAufYfaIkYQEsYzwvZha_01_4bafb7db09656e1ecb54d195b26be5c3_file.svg',
+                        'upload/files/2022/09/2MRRkhb7rDhUNuClfOfc_01_76c3c700064cfaef049d0bb983655cd4_file.svg',
+                        'upload/files/2022/09/D91CP5YFfv74GVAbYtT7_01_288940ae12acf0198d590acbf11efae0_file.svg',
+                        'upload/files/2022/09/cFNOXZB1XeWRSdXXEdlx_01_7d9c4adcbe750bfc8e864c69cbed3daf_file.svg',
+                        'upload/files/2022/09/yKmDaNA7DpA7RkCRdoM6_01_eb391ca40102606b78fef1eb70ce3c0f_file.svg',
+                        'upload/files/2022/09/iZcVfFlay3gkABhEhtVC_01_771d67d0b8ae8720f7775be3a0cfb51a_file.svg'
+                    );
+                    foreach ($array as $key => $value) {
+                        $upload = Wo_UploadToS3($value, array(
+                            'delete' => 'no',
+                            's3_compatible' => 'yes'
+                        ));
+                    }
+                } else {
+                    $data['status'] = 300;
+                }
+            }
+            catch (Exception $e) {
+                $data['status'] = 400;
+                $data['message'] = $e->getMessage();
+            }
+        }
+        header("Content-type: application/json");
+        echo json_encode($data);
+        exit();
+    }
     if ($s == 'test_s3') {
         include_once('assets/libraries/s3-lib/vendor/autoload.php');
         try {
@@ -3877,7 +4426,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                 $data['status'] = 500;
             }
         }
-        catch (Exception $e) {
+        catch (Throwable $e) {
             $data['status']  = 400;
             $data['message'] = $e->getMessage();
         }
@@ -4033,30 +4582,80 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
         exit();
     }
     if ($s == 'update_html_emails') {
-        $saveSetting = false;
-        foreach ($_POST as $key => $value) {
-            if ($key != 'hash_id' && in_array($key, array(
-                'activate',
-                'invite',
-                'login_with',
-                'notification',
-                'payment_declined',
-                'payment_approved',
-                'recover',
-                'unusual_login',
-                'account_deleted'
-            ))) {
-                $saveSetting = Wo_SaveHTMLEmails($key, $value);
+        header('Content-Type: application/json; charset=UTF-8');
+        if (Wo_CheckSession($hash_id) !== true) {
+            echo json_encode(array('status' => 403, 'message' => 'Your admin session has expired. Reload the page and try again.'));
+            exit();
+        }
+        if (function_exists('Ramza_IsDemoMode') && Ramza_IsDemoMode()) {
+            echo json_encode(array('status' => 403, 'message' => 'Email templates cannot be changed in demo mode.'));
+            exit();
+        }
+
+        $templateKeys = array(
+            'activate',
+            'invite',
+            'login_with',
+            'notification',
+            'payment_declined',
+            'payment_approved',
+            'recover',
+            'unusual_login',
+            'account_deleted'
+        );
+        $submitted = 0;
+        $failed = array();
+        $templateEncoding = (string) ($_POST['template_encoding'] ?? 'plain');
+        if (!in_array($templateEncoding, array('plain', 'base64'), true)) {
+            echo json_encode(array('status' => 400, 'message' => 'Unsupported email-template encoding.'));
+            exit();
+        }
+        mysqli_begin_transaction($sqlConnect);
+        try {
+            foreach ($templateKeys as $templateKey) {
+                if (!array_key_exists($templateKey, $_POST)) {
+                    continue;
+                }
+                $templateValue = (string) $_POST[$templateKey];
+                if ($templateEncoding === 'base64') {
+                    if (strlen($templateValue) > 2800000) {
+                        throw new RuntimeException('The ' . str_replace('_', ' ', $templateKey) . ' template is too large.');
+                    }
+                    $decodedTemplate = base64_decode($templateValue, true);
+                    if ($decodedTemplate === false) {
+                        throw new RuntimeException('The ' . str_replace('_', ' ', $templateKey) . ' template could not be decoded.');
+                    }
+                    $templateValue = $decodedTemplate;
+                }
+                if (strlen($templateValue) > 2000000) {
+                    throw new RuntimeException('The ' . str_replace('_', ' ', $templateKey) . ' template is too large.');
+                }
+                $submitted++;
+                if (!Wo_SaveHTMLEmails($templateKey, $templateValue)) {
+                    $failed[] = $templateKey;
+                }
             }
+            if ($submitted === 0) {
+                throw new RuntimeException('No email templates were received.');
+            }
+            if (!empty($failed)) {
+                throw new RuntimeException('Could not save: ' . implode(', ', $failed) . '.');
+            }
+            mysqli_commit($sqlConnect);
+            echo json_encode(array('status' => 200, 'message' => 'Email templates saved successfully.'));
+        } catch (Throwable $error) {
+            mysqli_rollback($sqlConnect);
+            error_log('Ramza email-template save failed: ' . preg_replace('/[\r\n]+/', ' ', $error->getMessage()));
+            echo json_encode(array('status' => 400, 'message' => $error->getMessage()));
         }
-        if ($saveSetting === true) {
-            $data['status'] = 200;
-        }
-        header("Content-type: application/json");
-        echo json_encode($data);
         exit();
     }
     if ($s == 'email_debug') {
+        if (!Wo_IsAdmin() || Wo_CheckSession($hash_id) !== true) {
+            header("Content-type: text/plain; charset=UTF-8");
+            echo 'Your admin session has expired. Reload the page and try again.';
+            exit();
+        }
         $send_message_data = array(
             'from_email' => $wo['config']['siteEmail'],
             'from_name' => $wo['config']['siteName'],
@@ -4073,7 +4672,74 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
         header("Content-type: application/json");
         exit();
     }
+    if ($s == 'save_test_message') {
+        header("Content-type: application/json");
+        if (!Wo_IsAdmin() || Wo_CheckSession($hash_id) !== true) {
+            echo json_encode(array('status' => 403, 'error' => 'Your admin session has expired. Reload the page and try again.'));
+            exit();
+        }
+        if (function_exists('Ramza_IsDemoMode') && Ramza_IsDemoMode()) {
+            echo json_encode(array('status' => 403, 'error' => 'Email settings are locked in demo mode.'));
+            exit();
+        }
+
+        $mailSettings = array(
+            'smtp_or_mail' => strtolower(trim((string)($_POST['smtp_or_mail'] ?? ''))),
+            'siteEmail' => trim((string)($_POST['siteEmail'] ?? '')),
+            'smtp_host' => trim((string)($_POST['smtp_host'] ?? '')),
+            'smtp_username' => trim((string)($_POST['smtp_username'] ?? '')),
+            'smtp_port' => (int)($_POST['smtp_port'] ?? 0),
+            'smtp_encryption' => strtolower(trim((string)($_POST['smtp_encryption'] ?? ''))),
+        );
+        if (!in_array($mailSettings['smtp_or_mail'], array('smtp', 'mail'), true) || !filter_var($mailSettings['siteEmail'], FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(array('status' => 400, 'error' => 'Enter a valid email server and sender address.'));
+            exit();
+        }
+        if ($mailSettings['smtp_or_mail'] === 'smtp' && ($mailSettings['smtp_host'] === '' || $mailSettings['smtp_port'] < 1 || $mailSettings['smtp_port'] > 65535 || !in_array($mailSettings['smtp_encryption'], array('tls', 'ssl'), true))) {
+            echo json_encode(array('status' => 400, 'error' => 'Enter a valid SMTP host, port, and encryption method.'));
+            exit();
+        }
+        foreach ($mailSettings as $mailKey => $mailValue) {
+            Wo_SaveConfig($mailKey, $mailValue);
+            $wo['config'][$mailKey] = $mailValue;
+        }
+        $smtpPassword = (string)($_POST['smtp_password'] ?? '');
+        if ($smtpPassword !== '') {
+            $encryptedSmtpPassword = openssl_encrypt($smtpPassword, "AES-128-ECB", $siteEncryptKey);
+            if ($encryptedSmtpPassword === false) {
+                echo json_encode(array('status' => 500, 'error' => 'The SMTP password could not be protected.'));
+                exit();
+            }
+            $storedSmtpPassword = '$Ap1_' . $encryptedSmtpPassword;
+            Wo_SaveConfig('smtp_password', $storedSmtpPassword);
+            $wo['config']['smtp_password'] = $storedSmtpPassword;
+        }
+
+        $send_message_data = array(
+            'from_email' => $wo['config']['siteEmail'],
+            'from_name' => $wo['config']['siteName'],
+            'to_email' => $wo['user']['email'],
+            'to_name' => $wo['user']['name'],
+            'subject' => 'Test Message From ' . $wo['config']['siteName'],
+            'charSet' => 'utf-8',
+            'message_body' => 'If you can see this message, your email delivery configuration is working.',
+            'is_html' => false,
+            'return' => 'error',
+        );
+        $send_message = Wo_SendMessage($send_message_data);
+        if ($send_message === true) {
+            echo json_encode(array('status' => 200, 'message' => 'Settings saved and test email delivered.'));
+        } else {
+            echo json_encode(array('status' => 400, 'error' => (string)$send_message));
+        }
+        exit();
+    }
     if ($s == 'test_message') {
+        if (!Wo_IsAdmin() || Wo_CheckSession($hash_id) !== true) {
+            header("Content-type: application/json");
+            echo json_encode(array('status' => 403, 'error' => 'Your admin session has expired. Reload the page and try again.'));
+            exit();
+        }
         $send_message_data = array(
             'from_email' => $wo['config']['siteEmail'],
             'from_name' => $wo['config']['siteName'],
@@ -4176,12 +4842,15 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
     }
     if ($s == 'updateTheme' && isset($_POST['theme'])) {
         $_SESSION['theme'] = '';
-        $saveSetting       = false;
-        foreach ($_POST as $key => $value) {
-            if ($key != 'hash_id') {
-                $saveSetting = Wo_SaveConfig($key, $value);
-            }
+        $selectedTheme = Wo_Secure($_POST['theme'], 0);
+        if ($selectedTheme !== 'ramza-light') {
+            $data['status'] = 400;
+            $data['message'] = 'Ramza New is coming soon and cannot be enabled yet.';
+            header("Content-type: application/json");
+            echo json_encode($data);
+            exit();
         }
+        $saveSetting = Wo_SaveConfig('theme', $selectedTheme);
         if ($saveSetting === true) {
             $data['status'] = 200;
         }
@@ -4830,62 +5499,75 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
         exit();
     }
     if ($s == 'add_reaction') {
-        $data['status']  = 400;
-        $data['message'] = 'Please check your details';
-        if (!empty($_FILES['ramza'])) {
-            $ramza_image = '';
-            $add            = false;
-            $insert_data    = array();
-            foreach (Wo_LangsNamesFromDB() as $key => $lang) {
-                if (!empty($_POST[$lang])) {
-                    $insert_data[$lang] = Wo_Secure($_POST[$lang]);
-                    $add                = true;
-                }
-            }
-            if ($add == true && !empty($insert_data)) {
-                $id = $db->insert(T_LANGS, $insert_data);
-                $db->where('id', $id)->update(T_LANGS, array(
-                    'lang_key' => $id
-                ));
-                $data = array(
-                    'status' => 200
-                );
-            }
-            if ($add == true) {
-                if (!empty($_FILES['ramza'])) {
-                    $fileInfo = array(
-                        'file' => $_FILES["ramza"]["tmp_name"],
-                        'name' => $_FILES['ramza']['name'],
-                        'size' => $_FILES["ramza"]["size"],
-                        'type' => $_FILES["ramza"]["type"],
-                        'types' => 'png'
-                    );
-                    $media    = Wo_ShareFile($fileInfo, true);
-                    if (!empty($media) && !empty($media['filename'])) {
-                        $ramza_image = $media['filename'];
-                    } else {
-                        $data['status']  = 400;
-                        $data['message'] = $error_icon . " ramza image type must be png ";
-                        header("Content-type: application/json");
-                        echo json_encode($data);
-                        exit();
+        $data = array('status' => 400, 'message' => 'Enter a name and choose an icon.');
+        if (Wo_CheckMainSession($hash_id) === true) {
+            $upload_check = Ramza_ValidateReactionIconUpload(isset($_FILES['ramza']) ? $_FILES['ramza'] : array());
+            $insert_data = array();
+            $primary_label = '';
+            $language_names = Wo_LangsNamesFromDB();
+            foreach ($language_names as $lang) {
+                $label = isset($_POST[$lang]) ? trim((string) $_POST[$lang]) : '';
+                if ($label !== '') {
+                    $insert_data[$lang] = Wo_Secure($label);
+                    if ($primary_label === '') {
+                        $primary_label = $insert_data[$lang];
                     }
                 }
-                if (!empty($ramza_image)) {
-                    $db->insert(T_REACTIONS_TYPES, array(
-                        'name' => $id,
-                        'ramza_icon' => $ramza_image
-                    ));
-                    $data = array(
-                        'status' => 200
-                    );
-                } else {
-                    $data['message'] = 'Invalid image type';
-                }
-            } else {
-                $data['status']  = 400;
-                $data['message'] = 'Please check your details';
             }
+            if ($primary_label !== '') {
+                foreach ($language_names as $lang) {
+                    if (empty($insert_data[$lang])) {
+                        $insert_data[$lang] = $primary_label;
+                    }
+                }
+            }
+
+            if (!$upload_check['valid']) {
+                $data['message'] = $upload_check['message'];
+            }
+            elseif ($primary_label === '') {
+                $data['message'] = 'Enter a reaction name.';
+            }
+            else {
+                $file_info = array(
+                    'file' => $_FILES['ramza']['tmp_name'],
+                    'name' => $_FILES['ramza']['name'],
+                    'size' => $_FILES['ramza']['size'],
+                    'type' => $upload_check['mime'],
+                    'types' => 'jpeg,png,jpg,gif'
+                );
+                $media = Wo_ShareFile($file_info, true);
+                if (empty($media['filename'])) {
+                    $data['message'] = 'The reaction icon could not be stored.';
+                }
+                else {
+                    $lang_id = $db->insert(T_LANGS, $insert_data);
+                    if (!empty($lang_id)) {
+                        $db->where('id', $lang_id)->update(T_LANGS, array('lang_key' => $lang_id));
+                        $reaction_id = $db->insert(T_REACTIONS_TYPES, array(
+                            'name' => $lang_id,
+                            'ramza_icon' => $media['filename'],
+                            'sunshine_icon' => '',
+                            'status' => 1
+                        ));
+                        if (!empty($reaction_id)) {
+                            $data = array('status' => 200, 'id' => (int) $reaction_id, 'message' => 'Reaction added.');
+                        }
+                        else {
+                            $db->where('id', $lang_id)->delete(T_LANGS);
+                            Ramza_DeleteReactionIcon($media['filename']);
+                            $data['message'] = 'The reaction could not be saved.';
+                        }
+                    }
+                    else {
+                        Ramza_DeleteReactionIcon($media['filename']);
+                        $data['message'] = 'The reaction name could not be saved.';
+                    }
+                }
+            }
+        }
+        else {
+            $data['message'] = 'Your admin session expired. Refresh and try again.';
         }
         header("Content-type: application/json");
         echo json_encode($data);
@@ -4894,7 +5576,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
     if ($s == 'reaction_status') {
         $data['status']  = 400;
         $data['message'] = 'Please check your details';
-        if (!empty($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0) {
+        if (Wo_CheckMainSession($hash_id) === true && !empty($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0) {
             $active_reactions = $db->where('status', 1)->getValue(T_REACTIONS_TYPES, 'COUNT(*)');
             if ($active_reactions > 0) {
                 $id       = Wo_Secure($_POST['id']);
@@ -4910,9 +5592,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                         $db->where('id', $id)->update(T_REACTIONS_TYPES, array(
                             'status' => $status
                         ));
-                        $data = array(
-                            'status' => 200
-                        );
+                        $data = array('status' => 200, 'enabled' => (int) $status, 'message' => $status ? 'Reaction enabled.' : 'Reaction disabled.');
                     }
                 }
             } else {
@@ -4926,30 +5606,27 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
     if ($s == 'delete_reaction') {
         $data['status']  = 400;
         $data['message'] = 'Please check your details';
-        if (!empty($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0) {
+        if (Wo_CheckMainSession($hash_id) === true && !empty($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0) {
             $id       = Wo_Secure($_POST['id']);
             $reaction = $db->where('id', $id)->getOne(T_REACTIONS_TYPES);
             if ($id > 6 && !empty($reaction)) {
-                $explode2       = @end(explode('.', $reaction->ramza_icon));
-                $explode3       = @explode('.', $reaction->ramza_icon);
-                $ramza_small = $explode3[0] . '_small.' . $explode2;
-                if (file_exists($ramza_small)) {
-                    @unlink(trim($ramza_small));
-                } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
-                    @Wo_DeleteFromToS3($ramza_small);
+                $active_reactions = (int) $db->where('status', 1)->getValue(T_REACTIONS_TYPES, 'COUNT(*)');
+                if ((int) $reaction->status === 1 && $active_reactions <= 1) {
+                    $data['message'] = 'Enable another reaction before deleting this one.';
                 }
-                if (file_exists($reaction->ramza_icon)) {
-                    @unlink(trim($reaction->ramza_icon));
-                } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
-                    @Wo_DeleteFromToS3($reaction->ramza_icon);
+                else {
+                    $db->where('lang_key', $reaction->name)->delete(T_LANGS);
+                    $db->where('reaction', $id)->delete(T_REACTIONS);
+                    $db->where('reaction', $id)->delete(T_BLOG_REACTION);
+                    $deleted = $db->where('id', $id)->delete(T_REACTIONS_TYPES);
+                    if ($deleted) {
+                        Ramza_DeleteReactionIcon($reaction->ramza_icon);
+                        $data = array('status' => 200, 'message' => 'Reaction deleted.');
+                    }
                 }
-                $db->where('lang_key', $reaction->name)->delete(T_LANGS);
-                $db->where('reaction', $id)->delete(T_REACTIONS);
-                $db->where('reaction', $id)->delete(T_BLOG_REACTION);
-                $db->where('id', $id)->delete(T_REACTIONS_TYPES);
-                $data = array(
-                    'status' => 200
-                );
+            }
+            elseif ((int) $id <= 6) {
+                $data['message'] = 'Built-in reactions cannot be deleted.';
             }
         }
         header("Content-type: application/json");
@@ -4959,7 +5636,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
     if ($s == 'get_reaction_form') {
         $data['status']  = 400;
         $data['message'] = 'Please check your details';
-        if (!empty($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0) {
+        if (Wo_CheckMainSession($hash_id) === true && !empty($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0) {
             $id       = Wo_Secure($_POST['id']);
             $reaction = $db->where('id', $id)->getOne(T_REACTIONS_TYPES);
             $html     = '';
@@ -4977,6 +5654,8 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                 $wo['reaction_name'] = $lang_html;
                 $wo['reaction_id']   = $reaction->id;
                 $wo['ramza_icon'] = $reaction->ramza_icon;
+                $wo['reaction_icon_url'] = Ramza_ReactionIconUrl(!empty($reaction->ramza_icon) ? $reaction->ramza_icon : $reaction->sunshine_icon);
+                $wo['reaction_has_custom_icon'] = ((string) $reaction->ramza_icon !== '' && (string) $reaction->ramza_icon !== (string) $reaction->sunshine_icon);
                 $html                = Wo_LoadAdminPage('manage-reactions/form');
                 $data                = array(
                     'status' => 200,
@@ -4991,69 +5670,80 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
     if ($s == 'edit_reaction') {
         $data['status']  = 400;
         $data['message'] = 'Please check your details';
-        if (!empty($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0) {
+        if (Wo_CheckMainSession($hash_id) === true && !empty($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0) {
             $id       = Wo_Secure($_POST['id']);
             $reaction = $db->where('id', $id)->getOne(T_REACTIONS_TYPES);
             if (!empty($reaction)) {
                 $lang_key = $reaction->name;
                 $langs    = Wo_LangsNamesFromDB();
+                $language_updates = array();
                 foreach ($_POST as $key => $value) {
-                    if (in_array($key, $langs)) {
-                        $key   = Wo_Secure($key);
-                        $value = Wo_Secure($value);
-                        $query = mysqli_query($sqlConnect, "UPDATE " . T_LANGS . " SET `{$key}` = '{$value}' WHERE `lang_key` = '{$lang_key}'");
+                    if (in_array($key, $langs, true)) {
+                        $language_updates[$key] = $value;
                     }
                 }
                 $update_data = array();
-                if (!empty($_FILES['ramza'])) {
-                    // $cover = getimagesize($_FILES["ramza"]["tmp_name"]);
-                    // if (!empty($cover) && ($cover[0] > 48 || $cover[1] > 48)) {
-                    //     $data['status']  = 400;
-                    //     $data['message'] = $error_icon . " ramza image size should not be more than 48x48 ";
-                    //     header("Content-type: application/json");
-                    //     echo json_encode($data);
-                    //     exit();
-                    // }
-                    $fileInfo = array(
-                        'file' => $_FILES["ramza"]["tmp_name"],
-                        'name' => $_FILES['ramza']['name'],
-                        'size' => $_FILES["ramza"]["size"],
-                        'type' => $_FILES["ramza"]["type"],
-                        'types' => 'jpeg,png,jpg,gif,svg'
-                    );
-                    $media    = Wo_ShareFile($fileInfo, true);
-                    if (!empty($media) && !empty($media['filename'])) {
-                        $update_data['ramza_icon'] = $media['filename'];
-                    } else {
-                        $data['status']  = 400;
-                        $data['message'] = $error_icon . " ramza image type must be png ";
+                $new_icon = '';
+                if (!empty($_FILES['ramza']['tmp_name'])) {
+                    $upload_check = Ramza_ValidateReactionIconUpload($_FILES['ramza']);
+                    if (!$upload_check['valid']) {
+                        $data['message'] = $upload_check['message'];
                         header("Content-type: application/json");
                         echo json_encode($data);
                         exit();
                     }
+                    $file_info = array(
+                        'file' => $_FILES['ramza']['tmp_name'],
+                        'name' => $_FILES['ramza']['name'],
+                        'size' => $_FILES['ramza']['size'],
+                        'type' => $upload_check['mime'],
+                        'types' => 'jpeg,png,jpg,gif'
+                    );
+                    $media = Wo_ShareFile($file_info, true);
+                    if (empty($media['filename'])) {
+                        $data['message'] = 'The reaction icon could not be stored.';
+                        header("Content-type: application/json");
+                        echo json_encode($data);
+                        exit();
+                    }
+                    $new_icon = $media['filename'];
+                    $update_data['ramza_icon'] = $new_icon;
                 }
-                if (!empty($_POST['ramza_to_use']) && $_POST['ramza_to_use'] == 1) {
-                    $explode2       = @end(explode('.', $reaction->ramza_icon));
-                    $explode3       = @explode('.', $reaction->ramza_icon);
-                    $ramza_small = $explode3[0] . '_small.' . $explode2;
-                    if (file_exists($reaction->ramza_icon)) {
-                        @unlink(trim($reaction->ramza_icon));
-                    } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
-                        @Wo_DeleteFromToS3($reaction->ramza_icon);
-                    }
-                    if (file_exists($ramza_small)) {
-                        @unlink(trim($ramza_small));
-                    } else if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
-                        @Wo_DeleteFromToS3($ramza_small);
-                    }
+                elseif (!empty($_POST['ramza_to_use']) && (int) $_POST['ramza_to_use'] === 1 && (int) $id <= 6) {
                     $update_data['ramza_icon'] = '';
                 }
+
+                mysqli_begin_transaction($sqlConnect);
+                $updated = true;
                 if (!empty($update_data)) {
-                    $db->where('id', $id)->update(T_REACTIONS_TYPES, $update_data);
+                    $updated = $db->where('id', $id)->update(T_REACTIONS_TYPES, $update_data);
                 }
-                $data = array(
-                    'status' => 200
-                );
+                if ($updated) {
+                    $safe_lang_key = Wo_Secure($lang_key);
+                    foreach ($language_updates as $key => $value) {
+                        $safe_key = Wo_Secure($key);
+                        $safe_value = Wo_Secure($value);
+                        if (!mysqli_query($sqlConnect, "UPDATE " . T_LANGS . " SET `{$safe_key}` = '{$safe_value}' WHERE `lang_key` = '{$safe_lang_key}'")) {
+                            $updated = false;
+                            break;
+                        }
+                    }
+                }
+                if (!$updated) {
+                    mysqli_rollback($sqlConnect);
+                    if ($new_icon !== '') {
+                        Ramza_DeleteReactionIcon($new_icon);
+                    }
+                    $data['message'] = 'The reaction could not be updated.';
+                    header("Content-type: application/json");
+                    echo json_encode($data);
+                    exit();
+                }
+                mysqli_commit($sqlConnect);
+                if (!empty($update_data) && (string) $reaction->ramza_icon !== '' && (string) $reaction->ramza_icon !== (string) $reaction->sunshine_icon) {
+                    Ramza_DeleteReactionIcon($reaction->ramza_icon);
+                }
+                $data = array('status' => 200, 'message' => 'Reaction updated.');
             }
         }
         header("Content-type: application/json");
@@ -5519,11 +6209,34 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
         }
     }
     if ($s == 'permission') {
+        header("Content-type: application/json");
+        if (!Wo_IsAdmin()) {
+            http_response_code(403);
+            echo json_encode(array('status' => 403, 'message' => 'Only a full administrator can change account roles.'));
+            exit();
+        }
+        if (!Wo_CheckMainSession($hash_id)) {
+            http_response_code(403);
+            echo json_encode(array('status' => 403, 'message' => 'Your admin session has expired. Reload the page and try again.'));
+            exit();
+        }
         if (!empty($_GET['user_id']) && is_numeric($_GET['user_id']) && $_GET['user_id'] > 0 && !empty($_GET['type']) && in_array($_GET['type'], array(
             'normal',
             'moderator',
             'admin'
         ))) {
+            $target_user_id = (int) $_GET['user_id'];
+            if ($target_user_id === (int) $wo['user']['user_id']) {
+                http_response_code(400);
+                echo json_encode(array('status' => 400, 'message' => 'You cannot change your own administrator role.'));
+                exit();
+            }
+            $target_user = $db->where('user_id', $target_user_id)->getOne(T_USERS);
+            if (empty($target_user)) {
+                http_response_code(404);
+                echo json_encode(array('status' => 404, 'message' => 'The selected user no longer exists.'));
+                exit();
+            }
             $update = array(
                 'admin' => '0'
             );
@@ -5537,17 +6250,35 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                     'admin' => '2'
                 );
             }
-            $db->where('user_id', Wo_Secure($_GET['user_id']))->update(T_USERS, $update);
+            $updated = $db->where('user_id', $target_user_id)->update(T_USERS, $update);
+            if (!$updated) {
+                http_response_code(500);
+                echo json_encode(array('status' => 500, 'message' => 'The role could not be saved.'));
+                exit();
+            }
             $data = array(
                 'status' => 200
             );
-            cache($_GET['user_id'], 'users', 'delete');
-            header("Content-type: application/json");
+            cache($target_user_id, 'users', 'delete');
             echo json_encode($data);
             exit();
         }
+        http_response_code(400);
+        echo json_encode(array('status' => 400, 'message' => 'The permission request is invalid.'));
+        exit();
     }
     if ($s == 'update_moderator_permission') {
+        header("Content-type: application/json");
+        if (!Wo_IsAdmin()) {
+            http_response_code(403);
+            echo json_encode(array('status' => 403, 'message' => 'Only a full administrator can manage moderator permissions.'));
+            exit();
+        }
+        if (!Wo_CheckMainSession($hash_id)) {
+            http_response_code(403);
+            echo json_encode(array('status' => 403, 'message' => 'Your admin session has expired. Reload the page and try again.'));
+            exit();
+        }
         if (!empty($_GET['permission']) && !empty($_GET['user_id']) && is_numeric($_GET['user_id']) && $_GET['user_id'] > 0 && in_array($_GET['permission_val'], array(
             0,
             1
@@ -5572,13 +6303,19 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                 'add-new-game',
                 'manage-user-ads',
                 'manage-reports',
-                'manage-third-psites',
                 'edit-movie',
                 'bank-receipts',
                 'job-categories',
                 'manage-jobs'
             );
-            $user            = $db->where('user_id', Wo_Secure($_GET['user_id']))->where('admin', '2')->getOne(T_USERS);
+            $permission_name = (string) $_GET['permission'];
+            if (!preg_match('/^[a-z0-9_-]+$/i', $permission_name) || !is_dir('admin-panel/pages/' . $permission_name)) {
+                http_response_code(400);
+                echo json_encode(array('status' => 400, 'message' => 'The selected permission is not valid.'));
+                exit();
+            }
+            $target_user_id  = (int) $_GET['user_id'];
+            $user            = $db->where('user_id', $target_user_id)->where('admin', '2')->getOne(T_USERS);
             if (!empty($user)) {
                 $wo['all_pages'] = scandir('admin-panel/pages');
                 unset($wo['all_pages'][0]);
@@ -5586,7 +6323,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                 unset($wo['all_pages'][2]);
                 if (!empty($user->permission)) {
                     $permission                                 = json_decode($user->permission, true);
-                    $permission[Wo_Secure($_GET['permission'])] = Wo_Secure($_GET['permission_val']);
+                    $permission[$permission_name] = (int) $_GET['permission_val'];
                 } else {
                     $permission = array();
                     if (!empty($wo['all_pages'])) {
@@ -5598,19 +6335,33 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                             }
                         }
                     }
-                    $permission[Wo_Secure($_GET['permission'])] = Wo_Secure($_GET['permission_val']);
+                    $permission[$permission_name] = (int) $_GET['permission_val'];
                 }
                 $permission = json_encode($permission);
-                $db->where('user_id', Wo_Secure($_GET['user_id']))->update(T_USERS, array(
+                $updated = $db->where('user_id', $target_user_id)->update(T_USERS, array(
                     'permission' => $permission
                 ));
-                cache($_GET['user_id'], 'users', 'delete');
+                if (!$updated) {
+                    http_response_code(500);
+                    echo json_encode(array('status' => 500, 'message' => 'The permission could not be saved.'));
+                    exit();
+                }
+                cache($target_user_id, 'users', 'delete');
             }
+            else {
+                http_response_code(404);
+                echo json_encode(array('status' => 404, 'message' => 'The selected account is not a moderator.'));
+                exit();
+            }
+        }
+        else {
+            http_response_code(400);
+            echo json_encode(array('status' => 400, 'message' => 'The permission request is invalid.'));
+            exit();
         }
         $data = array(
             'status' => 200
         );
-        header("Content-type: application/json");
         echo json_encode($data);
         exit();
     }
@@ -5844,7 +6595,7 @@ if ($f == 'admin_setting' AND (Wo_IsAdmin() || Wo_IsModerator())) {
                     } else {
                         $data = ['status' => 400, 'message' => "Error found while uploading, please check settings."];
                     }
-               } catch (Exception $e) {
+               } catch (Throwable $e) {
                    $data = ['status' => 400, 'message' => $e->getMessage()];
                }
             } else {

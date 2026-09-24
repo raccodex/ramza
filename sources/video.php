@@ -12,7 +12,8 @@ if ($wo['config']['video_chat'] == 0) {
     exit();
 }
 $id = Wo_Secure($_GET['call_id']);
-if ($wo['config']['agora_chat_video'] == 1) {
+$ramzaNativeWebRtc = function_exists('Ramza_WebRtcActive') && Ramza_WebRtcActive();
+if ((function_exists('Ramza_CallProvider') ? Ramza_CallProvider() === 'agora' : $wo['config']['agora_chat_video'] == 1) && !$ramzaNativeWebRtc) {
     $wo['video_call'] = array();
     $call             = $db->where('room_name', $id)->where('(to_id = ' . $wo['user']['id'] . ' OR from_id = ' . $wo['user']['id'] . ')')->getOne(T_AGORA);
     if (!empty($call)) {

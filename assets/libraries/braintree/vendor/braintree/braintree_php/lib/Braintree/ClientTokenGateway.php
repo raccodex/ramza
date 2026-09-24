@@ -26,14 +26,15 @@ class ClientTokenGateway
     }
 
     /**
-     * Generate a client token for client-side authorization
+     * Generates a client token for client-side authorization
      *
-     * @param Optional $params containing request parameters
+     * @param array $params containing optional request parameters
      *
      * @return string client token
      */
     public function generate($params = [])
     {
+        // phpcs:ignore
         if (!array_key_exists("version", $params)) {
             $params["version"] = ClientToken::DEFAULT_VERSION;
         }
@@ -53,15 +54,19 @@ class ClientTokenGateway
         return $this->_verifyGatewayResponse($response);
     }
 
-    /*
+    // NEXT_MAJOR_VERSION Remove this method
+    /**
      * Checks if customer id is provided prior to verifying keys provided in params
      *
      * @param array $params to be verified
+     *
+     * @deprecated
      *
      * @return array
      */
     public function conditionallyVerifyKeys($params)
     {
+        // phpcs:ignore
         if (array_key_exists("customerId", $params)) {
             Util::verifyKeys($this->generateWithCustomerIdSignature(), $params);
         } else {
@@ -69,28 +74,53 @@ class ClientTokenGateway
         }
     }
 
-    /*
+    /**
+     * creates a full array signature of a valid generate request
+     *
+     * @return array gateway generate request format
+     */
+    public static function generateSignature()
+    {
+        return [
+            "customerId",
+            "merchantAccountId",
+            "proxyMerchantId",
+            "version",
+            ["domains" => ['_anyKey_']],
+            ["options" => ["failOnDuplicatePaymentMethod", "failOnDuplicatePaymentMethodForCustomer", "makeDefault", "verifyCard"]]
+        ];
+    }
+
+    // NEXT_MAJOR_VERSION Remove this method
+    // Replaced with generateSignature
+    /**
      * returns an array of keys including customer id
      *
-     * @return array
+     * @deprecated
      *
+     * @return array
      */
     public function generateWithCustomerIdSignature()
     {
         return [
             "version", "customerId", "proxyMerchantId",
-            ["options" => ["makeDefault", "verifyCard", "failOnDuplicatePaymentMethod"]],
+            ["domains" => ['_anyKey_']],
+            ["options" => ["makeDefault", "verifyCard", "failOnDuplicatePaymentMethod", "failOnDuplicatePaymentMethodForCustomer"]],
             "merchantAccountId"];
     }
 
-    /*
+    // NEXT_MAJOR_VERSION Remove this method
+    // Replaced with generateSignature
+    /**
      * returns an array of keys without customer id
+     *
+     * @deprecated
      *
      * @return array
      */
     public function generateWithoutCustomerIdSignature()
     {
-        return ["version", "proxyMerchantId", "merchantAccountId"];
+        return ["version", "proxyMerchantId", ["domains" => ['_anyKey_']], "merchantAccountId"];
     }
 
     /**

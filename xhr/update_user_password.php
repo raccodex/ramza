@@ -4,7 +4,11 @@ if ($f == "update_user_password") {
         $Userdata = Wo_UserData($_POST['user_id']);
         if (!empty($Userdata['user_id'])) {
             if ($_POST['user_id'] != $wo['user']['user_id']) {
-                $_POST['current_password'] = 1;
+                if (!Wo_IsAdmin()) {
+                    $errors[] = $error_icon . $wo['lang']['please_check_details'];
+                } else {
+                    $_POST['current_password'] = 1;
+                }
             }
             if (empty($_POST['current_password']) OR empty($_POST['new_password']) OR empty($_POST['repeat_new_password'])) {
                 $errors[] = $error_icon . $wo['lang']['please_check_details'];

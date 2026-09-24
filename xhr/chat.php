@@ -22,6 +22,12 @@ if ($f == 'chat') {
         $group_tab      = Wo_GroupTabData($group_id);
         $error          = '';
         if ($group_tab && is_array($group_tab)) {
+            if (!Wo_IsGChatOwner($group_id) && !Wo_IsAdmin()) {
+                $data['message'] = $error_icon . $wo['lang']['please_check_details'];
+                header("Content-type: application/json");
+                echo json_encode($data);
+                exit();
+            }
             if (!empty($_POST['group_name']) && (strlen($_POST['group_name']) < 4 || strlen($_POST['group_name']) > 15)) {
                 $error           = true;
                 $data['message'] = $error_icon . $wo['lang']['group_name_limit'];
@@ -128,7 +134,7 @@ if ($f == 'chat') {
                         'type' => 'user',
                         'not_seen' => 1
                     ));
-                    if (count($messages) > 0) {
+                    if (!empty($messages) && is_array($messages)) {
                         $messages_html = '';
                         foreach ($messages as $wo['chatMessage']) {
                             $messages_html .= Wo_LoadPage('chat/chat-list');
@@ -839,7 +845,7 @@ if ($f == 'chat') {
                     'new' => true,
                     'user_id' => $user_id
                 ));
-                if (count($messages) > 0) {
+                if (!empty($messages) && is_array($messages)) {
                     foreach ($messages as $wo['chatMessage']) {
                         $html .= Wo_LoadPage('chat/chat-list');
                     }
@@ -1023,7 +1029,7 @@ if ($f == 'chat') {
                     'group_id' => $_GET['group_id'],
                     'new' => true
                 ));
-                if (count($messages) > 0) {
+                if (!empty($messages) && is_array($messages)) {
                     foreach ($messages as $wo['chatMessage']) {
                         $html .= Wo_LoadPage('chat/group-chat-list');
                     }
@@ -1048,7 +1054,7 @@ if ($f == 'chat') {
                     'page_id' => $_GET['page_id'],
                     'new' => true
                 ));
-                if (count($messages) > 0) {
+                if (!empty($messages) && is_array($messages)) {
                     foreach ($messages as $wo['chatMessage']) {
                         $html .= Wo_LoadPage('chat/page-chat-list');
                     }

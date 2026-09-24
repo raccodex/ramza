@@ -1,0 +1,12 @@
+<div class="main-blog-sidebar">
+	<?php if ($wo['config']['user_ads'] == 1): ?>
+		<div class="widget sidebar">
+            <?php 
+                foreach (Wo_GetSideBarAds() as $wo['sidebar-ad']) {
+                    echo Wo_LoadPage('ads/includes/sidebar-ad');
+                }
+            ?>
+            <div class="clear"></div>
+		</div>
+	<?php endif; ?>
+</div>

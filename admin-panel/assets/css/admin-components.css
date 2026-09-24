@@ -1,0 +1,1838 @@
+body.rac-admin-shell .card,
+body.rac-admin-shell .panel,
+body.rac-admin-shell .tab-content,
+body.rac-admin-shell .modal-content {
+    border: 1px solid var(--rac-border);
+    border-radius: var(--rac-radius-md);
+    background: var(--rac-surface);
+    box-shadow: none;
+}
+
+body.rac-admin-shell .card .card-header,
+body.rac-admin-shell .modal-header {
+    min-height: 46px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rac-border);
+    background: var(--rac-surface);
+}
+
+body.rac-admin-shell .card .card-body,
+body.rac-admin-shell .modal-body {
+    padding: 16px;
+}
+
+body.rac-admin-shell .card .card-footer,
+body.rac-admin-shell .modal-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--rac-border);
+    background: var(--rac-surface-2);
+}
+
+body.rac-admin-shell .btn {
+    min-height: 34px;
+    padding: 7px 12px;
+    border-radius: var(--rac-radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: none !important;
+}
+
+body.rac-admin-shell .btn.btn-primary,
+body.rac-admin-shell a.btn[href="#next"],
+body.rac-admin-shell a.btn[href="#previous"] {
+    border-color: var(--rac-accent) !important;
+    background: var(--rac-accent) !important;
+    color: #ffffff !important;
+}
+
+body.rac-admin-shell .btn.btn-primary:hover,
+body.rac-admin-shell .btn.btn-primary:focus,
+body.rac-admin-shell a.btn[href="#next"]:hover,
+body.rac-admin-shell a.btn[href="#previous"]:hover {
+    border-color: var(--rac-accent-hover) !important;
+    background: var(--rac-accent-hover) !important;
+}
+
+body.rac-admin-shell .btn.btn-secondary,
+body.rac-admin-shell .btn.btn-light,
+body.rac-admin-shell .btn-default {
+    border-color: var(--rac-border);
+    background: var(--rac-surface);
+    color: var(--rac-text);
+}
+
+body.rac-admin-shell .btn.btn-danger {
+    border-color: var(--rac-danger);
+    background: var(--rac-danger);
+    color: #ffffff;
+}
+
+body.rac-admin-shell .form-control,
+body.rac-admin-shell .custom-select,
+body.rac-admin-shell select,
+body.rac-admin-shell textarea,
+body.rac-admin-shell input[type="text"],
+body.rac-admin-shell input[type="email"],
+body.rac-admin-shell input[type="password"],
+body.rac-admin-shell input[type="number"],
+body.rac-admin-shell input[type="url"],
+body.rac-admin-shell input[type="search"] {
+    min-height: 34px;
+    border-color: var(--rac-border);
+    border-radius: var(--rac-radius-sm);
+    background: var(--rac-surface);
+    color: var(--rac-text);
+    font-size: 13px;
+    box-shadow: none;
+}
+
+body.rac-admin-shell textarea.form-control,
+body.rac-admin-shell textarea {
+    min-height: 90px;
+}
+
+body.rac-admin-shell .form-control:focus,
+body.rac-admin-shell .custom-select:focus,
+body.rac-admin-shell select:focus,
+body.rac-admin-shell textarea:focus,
+body.rac-admin-shell input:focus {
+    border-color: var(--rac-accent);
+    box-shadow: var(--rac-focus);
+}
+
+body.rac-admin-shell label,
+body.rac-admin-shell .form-group label {
+    margin-bottom: 6px;
+    color: var(--rac-text-2);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+body.rac-admin-shell .form-group {
+    margin-bottom: 14px;
+}
+
+body.rac-admin-shell .help-block,
+body.rac-admin-shell .form-text,
+body.rac-admin-shell small.text-muted {
+    color: var(--rac-muted) !important;
+    font-size: 12px;
+}
+
+body.rac-admin-shell .table,
+body.rac-admin-shell table {
+    color: var(--rac-text);
+    font-size: 12.5px;
+}
+
+body.rac-admin-shell .table thead th,
+body.rac-admin-shell table thead th {
+    height: var(--rac-row-height);
+    border-top: 0;
+    border-bottom: 1px solid var(--rac-border-strong);
+    background: var(--rac-surface-2);
+    color: var(--rac-text-2);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    vertical-align: middle;
+}
+
+body.rac-admin-shell .table td,
+body.rac-admin-shell .table th,
+body.rac-admin-shell table td,
+body.rac-admin-shell table th {
+    padding: 9px 10px;
+    border-color: var(--rac-border);
+    vertical-align: middle;
+}
+
+body.rac-admin-shell .table tbody tr:hover,
+body.rac-admin-shell table tbody tr:hover {
+    background: var(--rac-hover);
+}
+
+body.rac-admin-shell .table-responsive {
+    border: 1px solid var(--rac-border);
+    border-radius: var(--rac-radius-md);
+    background: var(--rac-surface);
+}
+
+body.rac-admin-shell .badge,
+body.rac-admin-shell .label {
+    border-radius: var(--rac-radius-sm);
+    padding: 3px 7px;
+    font-size: 11.5px;
+    font-weight: 650;
+}
+
+body.rac-admin-shell .badge-success,
+body.rac-admin-shell .label-success {
+    background: rgba(34, 132, 91, 0.12);
+    color: var(--rac-success);
+}
+
+body.rac-admin-shell .badge-warning,
+body.rac-admin-shell .label-warning {
+    background: rgba(162, 99, 0, 0.13);
+    color: var(--rac-warning);
+}
+
+body.rac-admin-shell .badge-danger,
+body.rac-admin-shell .label-danger {
+    background: rgba(182, 41, 53, 0.12);
+    color: var(--rac-danger);
+}
+
+body.rac-admin-shell .alert {
+    border-width: 1px;
+    border-radius: var(--rac-radius-md);
+    box-shadow: none;
+}
+
+body.rac-admin-shell .alert-info {
+    border-color: rgba(37, 111, 156, 0.28);
+    background: rgba(37, 111, 156, 0.08);
+    color: var(--rac-info);
+}
+
+body.rac-admin-shell .alert-success {
+    border-color: rgba(34, 132, 91, 0.28);
+    background: rgba(34, 132, 91, 0.08);
+    color: var(--rac-success);
+}
+
+body.rac-admin-shell .alert-warning {
+    border-color: rgba(162, 99, 0, 0.28);
+    background: rgba(162, 99, 0, 0.09);
+    color: var(--rac-warning);
+}
+
+body.rac-admin-shell .alert-danger {
+    border-color: rgba(182, 41, 53, 0.28);
+    background: rgba(182, 41, 53, 0.08);
+    color: var(--rac-danger);
+}
+
+body.rac-admin-shell .nav-tabs {
+    border-bottom: 1px solid var(--rac-border);
+}
+
+body.rac-admin-shell .nav-tabs .nav-link {
+    border-radius: var(--rac-radius-sm) var(--rac-radius-sm) 0 0;
+    color: var(--rac-text-2);
+}
+
+body.rac-admin-shell .nav-tabs .nav-link.active {
+    border-color: var(--rac-border) var(--rac-border) var(--rac-surface);
+    color: var(--rac-text);
+}
+
+body.rac-admin-shell .pagination .page-link {
+    min-width: 32px;
+    border-color: var(--rac-border);
+    color: var(--rac-text-2);
+}
+
+body.rac-admin-shell .pagination .page-item.active .page-link {
+    border-color: var(--rac-accent);
+    background: var(--rac-accent);
+    color: #ffffff;
+}
+
+body.rac-admin-shell .select2-container .select2-selection {
+    min-height: 34px;
+    border-color: var(--rac-border);
+    border-radius: var(--rac-radius-sm);
+}
+
+body.rac-admin-shell .select2-container--default.select2-container--focus .select2-selection--multiple,
+body.rac-admin-shell .select2-container--default .select2-selection--single:focus {
+    border-color: var(--rac-accent) !important;
+    box-shadow: var(--rac-focus);
+}
+
+body.rac-admin-shell .select2-dropdown {
+    border-color: var(--rac-border);
+    box-shadow: var(--rac-shadow-dropdown);
+}
+
+body.rac-admin-shell .dataTables_wrapper .dataTables_filter input,
+body.rac-admin-shell .dataTables_wrapper .dataTables_length select {
+    min-height: 32px;
+    border: 1px solid var(--rac-border);
+    border-radius: var(--rac-radius-sm);
+}
+
+body.rac-admin-shell .dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: var(--rac-radius-sm) !important;
+}
+
+body.rac-admin-shell .swal-modal {
+    border-radius: var(--rac-radius-md);
+    box-shadow: var(--rac-shadow-modal);
+}
+
+body.rac-admin-shell .CodeMirror,
+body.rac-admin-shell .tox-tinymce,
+body.rac-admin-shell .ck-editor__editable,
+body.rac-admin-shell .ql-container {
+    border-color: var(--rac-border) !important;
+    border-radius: var(--rac-radius-sm);
+}
+
+body.rac-admin-shell .apexcharts-canvas,
+body.rac-admin-shell canvas {
+    max-width: 100%;
+}
+
+/* Ramza admin-wide card and page polish */
+body.rac-admin-shell .content .container-fluid > div:first-child > h3 {
+    margin-bottom: 5px;
+    color: #07111f;
+    font-size: 23px;
+    font-weight: 750;
+    letter-spacing: -0.035em;
+}
+
+body.rac-admin-shell .content .container-fluid > div:first-child .breadcrumb {
+    margin-bottom: 18px;
+    padding: 0;
+    background: transparent;
+    color: var(--rac-muted);
+    font-size: 12px;
+}
+
+body.rac-admin-shell .card,
+body.rac-admin-shell .panel,
+body.rac-admin-shell .tab-content,
+body.rac-admin-shell .modal-content {
+    border-color: rgba(148, 163, 184, 0.36);
+    border-radius: var(--rac-radius-md);
+    background: #ffffff;
+    box-shadow: var(--rac-shadow-card);
+    overflow: hidden;
+}
+
+body.rac-admin-shell .card {
+    margin-bottom: 24px;
+}
+
+body.rac-admin-shell .card .card-header,
+body.rac-admin-shell .modal-header {
+    min-height: 54px;
+    padding: 16px 20px;
+    border-bottom-color: rgba(148, 163, 184, 0.28);
+    background: #ffffff;
+}
+
+body.rac-admin-shell .card .card-body,
+body.rac-admin-shell .modal-body {
+    padding: 20px;
+}
+
+body.rac-admin-shell .card .card-footer,
+body.rac-admin-shell .modal-footer {
+    padding: 15px 20px;
+    border-top-color: rgba(148, 163, 184, 0.28);
+    background: #fafbfc;
+}
+
+body.rac-admin-shell .card-title,
+body.rac-admin-shell .panel-title {
+    color: #07111f;
+    font-weight: 740;
+    letter-spacing: -0.02em;
+}
+
+body.rac-admin-shell .btn {
+    min-height: 38px;
+    padding: 8px 15px;
+    border-radius: 999px;
+    letter-spacing: -0.01em;
+}
+
+body.rac-admin-shell .form-control,
+body.rac-admin-shell .custom-select,
+body.rac-admin-shell select,
+body.rac-admin-shell textarea,
+body.rac-admin-shell input[type="text"],
+body.rac-admin-shell input[type="email"],
+body.rac-admin-shell input[type="password"],
+body.rac-admin-shell input[type="number"],
+body.rac-admin-shell input[type="url"],
+body.rac-admin-shell input[type="search"] {
+    min-height: 40px;
+    border-color: rgba(148, 163, 184, 0.48);
+    border-radius: 13px;
+    background: #ffffff;
+}
+
+body.rac-admin-shell .table-responsive {
+    border-color: rgba(148, 163, 184, 0.36);
+    border-radius: var(--rac-radius-md);
+    box-shadow: var(--rac-shadow-card);
+    overflow: hidden;
+}
+
+body.rac-admin-shell .table-responsive1 {
+    border: 1px solid rgba(148, 163, 184, 0.36);
+    border-radius: var(--rac-radius-md);
+    background: #ffffff;
+    box-shadow: var(--rac-shadow-card);
+    overflow-x: auto;
+}
+
+body.rac-admin-shell .table thead th,
+body.rac-admin-shell table thead th {
+    background: #f7f9fb;
+    color: #334155;
+    font-size: 11.8px;
+    letter-spacing: 0.015em;
+}
+
+body.rac-admin-shell .badge,
+body.rac-admin-shell .label {
+    border-radius: 999px;
+}
+
+body.rac-admin-shell .alert {
+    border-radius: 16px;
+}
+
+body.rac-admin-shell .dataTables_wrapper .dataTables_filter input,
+body.rac-admin-shell .dataTables_wrapper .dataTables_length select,
+body.rac-admin-shell .select2-container .select2-selection {
+    border-radius: 13px;
+}
+
+body.rac-admin-shell .dropdown-menu {
+    border-color: rgba(148, 163, 184, 0.32);
+    border-radius: 16px;
+    box-shadow: var(--rac-shadow-dropdown);
+}
+
+body.rac-admin-shell .list-group-item {
+    border-color: rgba(148, 163, 184, 0.28);
+}
+
+body.rac-admin-shell .btn-file {
+    border-radius: 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(148, 163, 184, 0.34);
+    background: #fafbfc;
+}
+
+body.rac-admin-shell .change-file-ico svg {
+    border-radius: 14px !important;
+    background: rgba(195, 46, 58, 0.1) !important;
+    color: var(--rac-accent) !important;
+}
+
+body.rac-admin-shell .form-line {
+    border-radius: 14px;
+}
+
+/* Ramza theme manager */
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-head p {
+    max-width: 660px;
+    margin: 7px 0 0;
+    color: var(--rac-text-2);
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-grid > [class*="col-"] {
+    display: flex;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-card {
+    width: 100%;
+    transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(195, 46, 58, 0.34);
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-card.is-active {
+    border-color: rgba(34, 132, 91, 0.42);
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-card.is-locked {
+    opacity: 0.82;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-card.is-locked:hover {
+    transform: none;
+    border-color: rgba(148, 163, 184, 0.28);
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-cover {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 114px;
+    margin-bottom: 18px;
+    padding: 20px;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 20px;
+    background: #f8fafc;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-cover img {
+    max-width: 142px;
+    max-height: 56px;
+    object-fit: contain;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 30px;
+    padding: 0 11px;
+    border-radius: 999px;
+    background: rgba(100, 116, 139, 0.11);
+    color: #475569;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-status.is-active {
+    background: rgba(34, 132, 91, 0.12);
+    color: var(--rac-success);
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-status.is-locked {
+    background: rgba(15, 23, 42, 0.09);
+    color: #334155;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-status.is-locked::before {
+    content: "●";
+    color: #c3323a;
+    font-size: 10px;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-name {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-name h5 {
+    margin: 0;
+    color: #07111f;
+    font-size: 18px;
+    font-weight: 780;
+    letter-spacing: -0.03em;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-copy {
+    min-height: 44px;
+    margin-bottom: 16px;
+    color: var(--rac-text-2);
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-meta span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border: 1px solid rgba(148, 163, 184, 0.32);
+    border-radius: 999px;
+    color: #475569;
+    background: #ffffff;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Ramza paper card system: stronger admin-wide visual language */
+body.rac-admin-shell .card,
+body.rac-admin-shell .panel,
+body.rac-admin-shell .tab-content,
+body.rac-admin-shell .modal-content,
+body.rac-admin-shell .table-responsive,
+body.rac-admin-shell .table-responsive1 {
+    position: relative !important;
+    border: 1px solid #d9dde3 !important;
+    border-radius: 24px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: var(--rac-shadow-card) !important;
+}
+
+body.rac-admin-shell .card,
+body.rac-admin-shell .panel {
+    margin-bottom: 26px !important;
+    overflow: hidden !important;
+}
+
+body.rac-admin-shell .card::before,
+body.rac-admin-shell .panel::before {
+    content: "";
+    position: absolute;
+    inset-block: 18px;
+    inset-inline-start: 0;
+    width: 5px;
+    border-radius: 0 999px 999px 0;
+    background: #ba3441;
+    opacity: 0.88;
+    pointer-events: none;
+}
+
+body.rac-admin-shell .row > [class*="col-"]:nth-child(3n + 2) > .card::before {
+    background: #8a6a3f;
+}
+
+body.rac-admin-shell .row > [class*="col-"]:nth-child(3n + 3) > .card::before {
+    background: #2f6f5f;
+}
+
+body.rac-admin-shell .card .card-header,
+body.rac-admin-shell .modal-header {
+    position: relative;
+    z-index: 1;
+    min-height: 58px !important;
+    padding: 18px 24px 16px 30px !important;
+    border-bottom: 1px solid #e5e8ec !important;
+    background: #ffffff !important;
+    background-image: none !important;
+}
+
+body.rac-admin-shell .card .card-body,
+body.rac-admin-shell .modal-body {
+    position: relative;
+    z-index: 1;
+    padding: 24px 24px 24px 30px !important;
+}
+
+body.rac-admin-shell .card .card-footer,
+body.rac-admin-shell .modal-footer {
+    position: relative;
+    z-index: 1;
+    padding: 16px 24px 18px 30px !important;
+    border-top: 1px solid #e5e8ec !important;
+    background: #ffffff !important;
+    background-image: none !important;
+}
+
+body.rac-admin-shell .card-title,
+body.rac-admin-shell .panel-title,
+body.rac-admin-shell .card h5,
+body.rac-admin-shell .card h6 {
+    color: #19130f !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.035em !important;
+}
+
+body.rac-admin-shell .card-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+}
+
+body.rac-admin-shell .card-title::after {
+    content: "";
+    width: 26px;
+    height: 2px;
+    border-radius: 999px;
+    background: #ba3441;
+    opacity: 0.72;
+}
+
+body.rac-admin-shell .btn,
+body.rac-admin-shell .badge,
+body.rac-admin-shell .label,
+body.rac-admin-shell .alert,
+body.rac-admin-shell .dropdown-menu,
+body.rac-admin-shell .form-control,
+body.rac-admin-shell .custom-select,
+body.rac-admin-shell select,
+body.rac-admin-shell textarea,
+body.rac-admin-shell input {
+    background-image: none !important;
+}
+
+body.rac-admin-shell .btn {
+    min-height: 40px !important;
+    padding: 9px 17px !important;
+    border-radius: 999px !important;
+}
+
+body.rac-admin-shell .btn.btn-primary,
+body.rac-admin-shell a.btn[href="#next"],
+body.rac-admin-shell a.btn[href="#previous"] {
+    border-color: #ba3441 !important;
+    background: #ba3441 !important;
+    box-shadow: 0 10px 22px rgba(186, 52, 65, 0.16) !important;
+}
+
+body.rac-admin-shell .btn.btn-secondary,
+body.rac-admin-shell .btn.btn-light,
+body.rac-admin-shell .btn-default {
+    border-color: #d9dde3 !important;
+    background: #ffffff !important;
+}
+
+body.rac-admin-shell .form-control,
+body.rac-admin-shell .custom-select,
+body.rac-admin-shell select,
+body.rac-admin-shell textarea,
+body.rac-admin-shell input[type="text"],
+body.rac-admin-shell input[type="email"],
+body.rac-admin-shell input[type="password"],
+body.rac-admin-shell input[type="number"],
+body.rac-admin-shell input[type="url"],
+body.rac-admin-shell input[type="search"] {
+    min-height: 42px !important;
+    border-color: #d9dde3 !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+}
+
+body.rac-admin-shell .table,
+body.rac-admin-shell table {
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+body.rac-admin-shell .table thead th,
+body.rac-admin-shell table thead th {
+    height: 48px !important;
+    border-bottom: 1px solid #e8ded1 !important;
+    background: #f4f6f8 !important;
+    color: #4b5563 !important;
+    font-size: 11.5px !important;
+    letter-spacing: 0.055em !important;
+    text-transform: uppercase !important;
+}
+
+body.rac-admin-shell .table td,
+body.rac-admin-shell .table th,
+body.rac-admin-shell table td,
+body.rac-admin-shell table th {
+    padding: 13px 14px !important;
+    border-color: #e5e8ec !important;
+}
+
+body.rac-admin-shell .table tbody tr:hover,
+body.rac-admin-shell table tbody tr:hover {
+    background: #f7f9fb !important;
+}
+
+body.rac-admin-shell .alert {
+    border-radius: 20px !important;
+    border-color: #d9dde3 !important;
+}
+
+body.rac-admin-shell .btn-file {
+    border-color: #d9dde3 !important;
+    border-radius: 20px !important;
+    background: #ffffff !important;
+}
+
+body.rac-admin-shell .modal-content::before {
+    content: "";
+    position: absolute;
+    inset-inline: 24px;
+    top: 0;
+    height: 4px;
+    border-radius: 0 0 999px 999px;
+    background: #ba3441;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-card {
+    border-radius: 28px !important;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-cover {
+    border-color: #e8ded1 !important;
+    border-radius: 24px !important;
+    background: #faf4ea !important;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-status,
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-meta span {
+    border: 1px solid #d9dde3;
+    background: #ffffff;
+}
+
+body.rac-admin-shell[data-admin-page="manage-site-design"] .card::before {
+    content: none !important;
+}
+
+body.rac-admin-shell[data-admin-page="manage-site-design"] .card,
+body.rac-admin-shell[data-admin-page="manage-site-design"] .card .card-body {
+    overflow: visible !important;
+}
+
+body.rac-admin-shell[data-admin-page="manage-site-design"] .card .card-body {
+    padding-left: 26px !important;
+}
+
+body.rac-admin-shell[data-admin-page="manage-site-design"] .input-group.colorpicker-element {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(100%, 260px);
+    margin-bottom: 8px;
+    overflow: visible;
+}
+
+body.rac-admin-shell[data-admin-page="manage-site-design"] .input-group.colorpicker-element .form-line {
+    flex: 1;
+    min-width: 0;
+}
+
+body.rac-admin-shell[data-admin-page="manage-site-design"] .input-group.colorpicker-element .input-group-addon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border: 1px solid #d9dde3;
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 0 8px 18px rgba(36, 26, 18, 0.08);
+    cursor: pointer;
+}
+
+body.rac-admin-shell[data-admin-page="manage-site-design"] .input-group.colorpicker-element .input-group-addon i {
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+}
+
+body.rac-admin-shell .colorpicker.dropdown-menu {
+    z-index: 12000 !important;
+    border: 1px solid #d9dde3 !important;
+    border-radius: 14px !important;
+    background: #ffffff !important;
+    box-shadow: 0 22px 45px rgba(36, 26, 18, 0.18) !important;
+}
+
+@media (max-width: 767.98px) {
+    body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-cover {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* Ramza admin enterprise surface pass: cleaner cards, tighter radius, no generic cream blocks */
+body.rac-admin-shell {
+    --rac-enterprise-bg: #f4f6f9;
+    --rac-enterprise-surface: #ffffff;
+    --rac-enterprise-surface-soft: #fafbfc;
+    --rac-enterprise-border: #d9dee7;
+    --rac-enterprise-border-strong: #c6ceda;
+    --rac-enterprise-text: #141a23;
+    --rac-enterprise-muted: #647084;
+    --rac-enterprise-accent: #b92f3c;
+    --rac-enterprise-success: #23775b;
+    --rac-enterprise-danger: #b7353f;
+    --rac-radius-sm: 8px;
+    --rac-radius-md: 12px;
+    --rac-radius-lg: 16px;
+    --rac-bg: var(--rac-enterprise-bg);
+    --rac-surface: var(--rac-enterprise-surface);
+    --rac-surface-2: var(--rac-enterprise-surface-soft);
+    --rac-border: var(--rac-enterprise-border);
+    --rac-border-strong: var(--rac-enterprise-border-strong);
+    --rac-text: var(--rac-enterprise-text);
+    --rac-muted: var(--rac-enterprise-muted);
+    --rac-accent: var(--rac-enterprise-accent);
+    --rac-success: var(--rac-enterprise-success);
+    --rac-danger: var(--rac-enterprise-danger);
+}
+
+body.rac-admin-shell,
+body.rac-admin-shell .content,
+body.rac-admin-shell .layout-wrapper {
+    background: var(--rac-enterprise-bg) !important;
+}
+
+body.rac-admin-shell .card,
+body.rac-admin-shell .panel,
+body.rac-admin-shell .tab-content,
+body.rac-admin-shell .modal-content,
+body.rac-admin-shell .table-responsive,
+body.rac-admin-shell .table-responsive1 {
+    position: relative !important;
+    overflow: hidden !important;
+    border: 1px solid var(--rac-enterprise-border) !important;
+    border-radius: 14px !important;
+    background: var(--rac-enterprise-surface) !important;
+    background-image: none !important;
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.04), 0 12px 28px rgba(20, 26, 35, 0.045) !important;
+}
+
+body.rac-admin-shell .card:hover,
+body.rac-admin-shell .panel:hover,
+body.rac-admin-shell .table-responsive:hover,
+body.rac-admin-shell .table-responsive1:hover {
+    border-color: var(--rac-enterprise-border-strong) !important;
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.05), 0 16px 32px rgba(20, 26, 35, 0.055) !important;
+}
+
+body.rac-admin-shell .card::before,
+body.rac-admin-shell .panel::before,
+body.rac-admin-shell .modal-content::before,
+body.rac-admin-shell .card-title::after {
+    content: none !important;
+}
+
+body.rac-admin-shell .card,
+body.rac-admin-shell .panel {
+    margin-bottom: 20px !important;
+}
+
+body.rac-admin-shell .card .card-header,
+body.rac-admin-shell .modal-header {
+    min-height: 52px !important;
+    padding: 16px 20px !important;
+    border-bottom: 1px solid var(--rac-enterprise-border) !important;
+    background: var(--rac-enterprise-surface-soft) !important;
+    background-image: none !important;
+}
+
+body.rac-admin-shell .card .card-body,
+body.rac-admin-shell .modal-body {
+    padding: 20px !important;
+}
+
+body.rac-admin-shell .card .card-footer,
+body.rac-admin-shell .modal-footer {
+    padding: 14px 20px !important;
+    border-top: 1px solid var(--rac-enterprise-border) !important;
+    background: var(--rac-enterprise-surface-soft) !important;
+}
+
+body.rac-admin-shell .card-title,
+body.rac-admin-shell .panel-title,
+body.rac-admin-shell .card h5,
+body.rac-admin-shell .card h6 {
+    color: var(--rac-enterprise-text) !important;
+    font-weight: 720 !important;
+    letter-spacing: -0.018em !important;
+}
+
+body.rac-admin-shell .btn {
+    min-height: 38px !important;
+    padding: 8px 15px !important;
+    border-radius: 9px !important;
+    font-weight: 680 !important;
+    box-shadow: none !important;
+}
+
+body.rac-admin-shell .btn.btn-primary,
+body.rac-admin-shell a.btn[href="#next"],
+body.rac-admin-shell a.btn[href="#previous"] {
+    border-color: var(--rac-enterprise-accent) !important;
+    background: var(--rac-enterprise-accent) !important;
+    color: #ffffff !important;
+}
+
+body.rac-admin-shell .btn.btn-primary:hover,
+body.rac-admin-shell a.btn[href="#next"]:hover,
+body.rac-admin-shell a.btn[href="#previous"]:hover {
+    border-color: #982735 !important;
+    background: #982735 !important;
+}
+
+body.rac-admin-shell .form-control,
+body.rac-admin-shell .custom-select,
+body.rac-admin-shell select,
+body.rac-admin-shell textarea,
+body.rac-admin-shell input[type="text"],
+body.rac-admin-shell input[type="email"],
+body.rac-admin-shell input[type="password"],
+body.rac-admin-shell input[type="number"],
+body.rac-admin-shell input[type="url"],
+body.rac-admin-shell input[type="search"] {
+    min-height: 40px !important;
+    border-color: var(--rac-enterprise-border) !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    color: var(--rac-enterprise-text) !important;
+}
+
+body.rac-admin-shell .form-control:focus,
+body.rac-admin-shell .custom-select:focus,
+body.rac-admin-shell select:focus,
+body.rac-admin-shell textarea:focus,
+body.rac-admin-shell input[type="text"]:focus,
+body.rac-admin-shell input[type="email"]:focus,
+body.rac-admin-shell input[type="password"]:focus,
+body.rac-admin-shell input[type="number"]:focus,
+body.rac-admin-shell input[type="url"]:focus,
+body.rac-admin-shell input[type="search"]:focus {
+    border-color: rgba(185, 47, 60, 0.58) !important;
+    box-shadow: 0 0 0 3px rgba(185, 47, 60, 0.1) !important;
+}
+
+body.rac-admin-shell .table thead th,
+body.rac-admin-shell table thead th {
+    height: 44px !important;
+    border-bottom: 1px solid var(--rac-enterprise-border) !important;
+    background: #f6f8fb !important;
+    color: #4b5565 !important;
+    font-size: 11px !important;
+    letter-spacing: 0.045em !important;
+    text-transform: uppercase !important;
+}
+
+body.rac-admin-shell .table td,
+body.rac-admin-shell .table th,
+body.rac-admin-shell table td,
+body.rac-admin-shell table th {
+    padding: 12px 14px !important;
+    border-color: #e7ebf1 !important;
+}
+
+body.rac-admin-shell .table tbody tr:hover,
+body.rac-admin-shell table tbody tr:hover {
+    background: #f8fafc !important;
+}
+
+body.rac-admin-shell .alert {
+    border-radius: 12px !important;
+    border-color: var(--rac-enterprise-border) !important;
+}
+
+/* Ramza switcher: distinct ON / OFF / LOCKED states */
+body.rac-admin-shell .switcher {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    margin: 0;
+}
+
+body.rac-admin-shell .switcher input[type="checkbox"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+body.rac-admin-shell .switcher .check-trail {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 82px;
+    height: 34px;
+    padding: 3px;
+    overflow: hidden;
+    border: 1px solid #cfd6e2;
+    border-radius: 11px;
+    background: #eef2f6;
+    color: #6c7482;
+    cursor: pointer;
+    transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: inset 0 1px 2px rgba(20, 26, 35, 0.08);
+}
+
+body.rac-admin-shell .switcher .check-trail::before {
+    content: none !important;
+    display: none !important;
+}
+
+body.rac-admin-shell .switcher .check-handler {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 26px;
+    margin: 0 !important;
+    margin-left: 0 !important;
+    border-radius: 8px;
+    background: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.18), 0 5px 10px rgba(20, 26, 35, 0.1);
+    transform: translateX(0);
+    transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+body.rac-admin-shell .switcher .check-handler::before {
+    content: "" !important;
+    display: none !important;
+}
+
+body.rac-admin-shell .switcher input[type="checkbox"]:checked + .check-trail {
+    border-color: rgba(35, 119, 91, 0.42);
+    background: #e6f4ef;
+    color: var(--rac-enterprise-success);
+    box-shadow: inset 0 1px 2px rgba(35, 119, 91, 0.12);
+}
+
+body.rac-admin-shell .switcher input[type="checkbox"]:checked + .check-trail::before {
+    content: none !important;
+    display: none !important;
+}
+
+body.rac-admin-shell .switcher input[type="checkbox"]:checked + .check-trail .check-handler {
+    margin-left: 0 !important;
+    background: #ffffff !important;
+    transform: translateX(44px);
+}
+
+body.rac-admin-shell .switcher input[type="checkbox"]:checked + .check-trail .check-handler::before {
+    content: "" !important;
+    background: var(--rac-enterprise-success);
+}
+
+body.rac-admin-shell .switcher input[type="checkbox"]:focus-visible + .check-trail {
+    box-shadow: 0 0 0 3px rgba(185, 47, 60, 0.13), inset 0 1px 2px rgba(20, 26, 35, 0.08);
+}
+
+body.rac-admin-shell .switcher input[type="checkbox"]:disabled + .check-trail,
+body.rac-admin-shell .switcher input[type="checkbox"][aria-disabled="true"] + .check-trail {
+    border-color: #d8dee8;
+    background: repeating-linear-gradient(135deg, #f0f3f7 0, #f0f3f7 6px, #e7ebf1 6px, #e7ebf1 12px) !important;
+    color: #7f8998;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+body.rac-admin-shell .switcher input[type="checkbox"]:disabled + .check-trail::before,
+body.rac-admin-shell .switcher input[type="checkbox"][aria-disabled="true"] + .check-trail::before {
+    content: "LOCK";
+    right: 9px;
+    left: auto;
+}
+
+body.rac-admin-shell .switcher input[type="checkbox"]:disabled + .check-trail .check-handler,
+body.rac-admin-shell .switcher input[type="checkbox"][aria-disabled="true"] + .check-trail .check-handler {
+    margin-left: 0 !important;
+    background: #ffffff !important;
+    transform: translateX(0);
+}
+
+/* Specialized admin surfaces that do not always use the base .card class */
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-card,
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-cover,
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-status,
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-meta span {
+    border-color: var(--rac-enterprise-border) !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-card {
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.04), 0 12px 28px rgba(20, 26, 35, 0.045) !important;
+}
+
+body.rac-admin-shell[data-admin-page="manage-themes"] .rac-theme-cover {
+    background: #f7f9fc !important;
+}
+
+body.rac-admin-shell[data-admin-page="manage-site-design"] .input-group.colorpicker-element .input-group-addon {
+    border-color: var(--rac-enterprise-border) !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.08) !important;
+}
+
+body.rac-admin-shell .colorpicker.dropdown-menu {
+    border-color: var(--rac-enterprise-border) !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    box-shadow: 0 16px 38px rgba(20, 26, 35, 0.18) !important;
+}
+
+/* Algorithm Control admin page */
+body.rac-admin-shell .rac-algorithm-page {
+    padding-bottom: 36px;
+}
+
+body.rac-admin-shell .rac-algorithm-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+body.rac-admin-shell .rac-algorithm-stage {
+    display: inline-flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 210px;
+    padding: 11px 14px;
+    border: 1px solid #d9dee7;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #566173;
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.04);
+}
+
+body.rac-admin-shell .rac-algorithm-stage span {
+    font-size: 10px;
+    font-weight: 780;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+body.rac-admin-shell .rac-algorithm-stage strong {
+    color: #b92f3c;
+    font-size: 12px;
+}
+
+body.rac-admin-shell .rac-algorithm-hero {
+    margin-bottom: 20px !important;
+}
+
+body.rac-admin-shell .rac-algorithm-hero .card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 24px !important;
+}
+
+body.rac-admin-shell .rac-algorithm-eyebrow {
+    display: inline-flex;
+    margin-bottom: 8px;
+    color: #b92f3c;
+    font-size: 11px;
+    font-weight: 820;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+body.rac-admin-shell .rac-algorithm-hero h4 {
+    margin: 0 0 8px;
+    color: #111827;
+    font-size: 24px;
+    font-weight: 780;
+    letter-spacing: -0.035em;
+}
+
+body.rac-admin-shell .rac-algorithm-hero p,
+body.rac-admin-shell .rac-algorithm-note {
+    max-width: 760px;
+    margin: 0;
+    color: #647084;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+body.rac-admin-shell .rac-algorithm-hero__controls {
+    display: grid;
+    grid-template-columns: minmax(210px, 260px);
+    gap: 12px;
+    min-width: 260px;
+}
+
+body.rac-admin-shell .rac-algorithm-mode label,
+body.rac-admin-shell .rac-algorithm-master > span,
+body.rac-admin-shell .rac-field-grid label > span {
+    display: block;
+    margin-bottom: 7px;
+    color: #394456;
+    font-size: 12px;
+    font-weight: 780;
+}
+
+body.rac-admin-shell .rac-algorithm-master {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 12px;
+    border: 1px solid #d9dee7;
+    border-radius: 12px;
+    background: #f7f9fc;
+}
+
+body.rac-admin-shell .rac-algorithm-card .card-body {
+    padding: 22px !important;
+}
+
+body.rac-admin-shell .rac-algorithm-card .card-title {
+    margin-bottom: 7px;
+}
+
+body.rac-admin-shell .rac-algorithm-health {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(110px, 1fr)) auto;
+    align-items: center;
+    gap: 0;
+    margin: 0 0 20px;
+    border: 1px solid #d9dee7;
+    border-radius: 12px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+body.rac-admin-shell .rac-algorithm-health > div {
+    min-height: 68px;
+    padding: 13px 16px;
+    border-right: 1px solid #e3e7ed;
+}
+
+body.rac-admin-shell .rac-algorithm-health span,
+body.rac-admin-shell .rac-event-grid label > span {
+    display: block;
+    margin-bottom: 5px;
+    color: #647084;
+    font-size: 11px;
+    font-weight: 720;
+}
+
+body.rac-admin-shell .rac-algorithm-health strong {
+    color: #17202c;
+    font-size: 14px;
+    font-weight: 790;
+}
+
+body.rac-admin-shell .rac-algorithm-health .rac-algorithm-maintenance {
+    margin: 0 14px;
+    white-space: nowrap;
+}
+
+body.rac-admin-shell .rac-signal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+body.rac-admin-shell .rac-signal-item,
+body.rac-admin-shell .rac-inline-switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px;
+    border: 1px solid #e1e6ee;
+    border-radius: 12px;
+    background: #fbfcfe;
+}
+
+body.rac-admin-shell .rac-signal-item strong,
+body.rac-admin-shell .rac-inline-switch strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #141a23;
+    font-size: 13px;
+    font-weight: 760;
+}
+
+body.rac-admin-shell .rac-signal-item span,
+body.rac-admin-shell .rac-inline-switch small,
+body.rac-admin-shell .rac-field-grid small {
+    display: block;
+    color: #647084;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+body.rac-admin-shell .rac-signal-item .switcher,
+body.rac-admin-shell .rac-inline-switch .switcher {
+    flex: 0 0 auto;
+}
+
+body.rac-admin-shell .rac-weight-stack {
+    display: grid;
+    gap: 16px;
+    margin-top: 18px;
+}
+
+body.rac-admin-shell .rac-weight-control {
+    display: block;
+    margin: 0;
+}
+
+body.rac-admin-shell .rac-weight-control > span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+body.rac-admin-shell .rac-weight-control strong {
+    color: #394456;
+    font-size: 12px;
+    font-weight: 760;
+}
+
+body.rac-admin-shell .rac-weight-control output {
+    color: #b92f3c;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+body.rac-admin-shell .rac-weight-control input[type="range"] {
+    width: 100%;
+    accent-color: #b92f3c;
+}
+
+body.rac-admin-shell .rac-field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 18px;
+}
+
+body.rac-admin-shell .rac-field-grid--single {
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+body.rac-admin-shell .rac-event-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px 12px;
+    margin-top: 18px;
+}
+
+body.rac-admin-shell .rac-event-grid label {
+    margin: 0;
+}
+
+body.rac-admin-shell .rac-algorithm-debug-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+body.rac-admin-shell .rac-algorithm-debug-result {
+    margin-top: 14px;
+    border-top: 1px solid #e1e6ee;
+    padding-top: 10px;
+}
+
+body.rac-admin-shell .rac-debug-list > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px solid #edf0f4;
+    color: #394456;
+    font-size: 12px;
+}
+
+body.rac-admin-shell .rac-debug-list strong {
+    color: #a8323d;
+}
+
+body.rac-admin-shell .rac-debug-empty {
+    margin: 2px 0;
+    color: #647084;
+    font-size: 12px;
+}
+
+body.rac-admin-shell .rac-field-grid label {
+    margin: 0;
+}
+
+body.rac-admin-shell .rac-field-grid small {
+    margin-top: 6px;
+}
+
+body.rac-admin-shell .rac-algorithm-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+body.rac-admin-shell .rac-algorithm-footer h6 {
+    margin: 0 0 5px;
+    color: #111827;
+    font-size: 15px;
+    font-weight: 780;
+}
+
+body.rac-admin-shell .rac-algorithm-footer p {
+    margin: 0;
+    color: #647084;
+}
+
+@media (max-width: 1199.98px) {
+    body.rac-admin-shell .rac-algorithm-hero .card-body,
+    body.rac-admin-shell .rac-algorithm-heading,
+    body.rac-admin-shell .rac-algorithm-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    body.rac-admin-shell .rac-algorithm-hero__controls,
+    body.rac-admin-shell .rac-algorithm-stage {
+        width: 100%;
+        min-width: 0;
+    }
+
+    body.rac-admin-shell .rac-algorithm-health {
+        grid-template-columns: repeat(3, minmax(120px, 1fr));
+    }
+
+    body.rac-admin-shell .rac-algorithm-health .rac-algorithm-maintenance {
+        margin: 12px 14px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    body.rac-admin-shell .rac-signal-grid,
+    body.rac-admin-shell .rac-field-grid,
+    body.rac-admin-shell .rac-event-grid,
+    body.rac-admin-shell .rac-algorithm-health {
+        grid-template-columns: 1fr;
+    }
+
+    body.rac-admin-shell .rac-algorithm-health > div {
+        border-right: 0;
+        border-bottom: 1px solid #e3e7ed;
+    }
+}
+
+/* Ramza admin visibility pass: strong, non-generic control palette */
+body.rac-admin-shell {
+    --rac-control-ink: #17202c;
+    --rac-control-ink-soft: #49566a;
+    --rac-control-line: #c8d0dc;
+    --rac-control-line-strong: #9eaabd;
+    --rac-control-surface: #ffffff;
+    --rac-control-surface-soft: #f4f7fa;
+    --rac-control-surface-warm: #fbf7f1;
+    --rac-control-brand: #a8323d;
+    --rac-control-brand-strong: #842833;
+    --rac-control-green: #1f7058;
+    --rac-control-popover: #202733;
+}
+
+body.rac-admin-shell .main-label {
+    display: inline-block !important;
+    min-height: auto !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--rac-control-ink) !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+}
+
+body.rac-admin-shell .btn.btn-secondary,
+body.rac-admin-shell .btn.btn-light,
+body.rac-admin-shell .btn-default {
+    border-color: var(--rac-control-line) !important;
+    background: var(--rac-control-surface) !important;
+    color: var(--rac-control-ink) !important;
+}
+
+body.rac-admin-shell .btn.btn-secondary:hover,
+body.rac-admin-shell .btn.btn-light:hover,
+body.rac-admin-shell .btn-default:hover,
+body.rac-admin-shell .btn.btn-secondary:focus,
+body.rac-admin-shell .btn.btn-light:focus,
+body.rac-admin-shell .btn-default:focus {
+    border-color: var(--rac-control-line-strong) !important;
+    background: var(--rac-control-surface-soft) !important;
+    color: var(--rac-control-brand-strong) !important;
+}
+
+body.rac-admin-shell .user_filter_drop {
+    position: relative;
+    display: inline-flex;
+    margin: 0 4px;
+    vertical-align: middle;
+}
+
+body.rac-admin-shell .user_filter_drop > .btn,
+body.rac-admin-shell .user_filter_drop > .btn.btn-light {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+    border: 1px solid #b9c3d1 !important;
+    border-radius: 10px !important;
+    background: #edf2f7 !important;
+    color: #263244 !important;
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.09), inset 0 1px 0 rgba(255,255,255,0.9) !important;
+    opacity: 1 !important;
+}
+
+body.rac-admin-shell .user_filter_drop > .btn:hover,
+body.rac-admin-shell .user_filter_drop > .btn:focus,
+body.rac-admin-shell .user_filter_drop.show > .btn,
+body.rac-admin-shell .user_filter_drop.open > .btn {
+    border-color: rgba(168, 50, 61, 0.46) !important;
+    background: #f4e7e9 !important;
+    color: var(--rac-control-brand-strong) !important;
+    box-shadow: 0 0 0 3px rgba(168, 50, 61, 0.11), 0 1px 2px rgba(20, 26, 35, 0.08) !important;
+}
+
+body.rac-admin-shell .user_filter_drop > .btn svg {
+    width: 18px !important;
+    height: 18px !important;
+    color: currentColor !important;
+}
+
+body.rac-admin-shell .user_filter_drop .dropdown-menu {
+    z-index: 12050 !important;
+    min-width: 276px !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+body.rac-admin-shell .user_filter_drop .dropdown-menu-innr {
+    padding: 14px 16px 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px !important;
+    background: var(--rac-control-popover) !important;
+    color: #ffffff !important;
+    box-shadow: 0 18px 38px rgba(13, 19, 28, 0.28) !important;
+}
+
+body.rac-admin-shell .user_filter_drop .dropdown-menu-innr::before {
+    background: var(--rac-control-popover) !important;
+}
+
+body.rac-admin-shell .user_filter_drop .dropdown-menu-innr b {
+    margin: 0 0 13px !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 760 !important;
+    letter-spacing: -0.01em;
+}
+
+body.rac-admin-shell .user_filter_drop .dropdown-menu-innr > div {
+    justify-content: flex-start !important;
+    gap: 10px;
+}
+
+body.rac-admin-shell .user_filter_drop .dropdown-menu .round_check {
+    margin: 0 !important;
+    height: auto !important;
+}
+
+body.rac-admin-shell .user_filter_drop .dropdown-menu .round_check label {
+    width: 46px !important;
+    height: 46px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 14px !important;
+    background: rgba(255, 255, 255, 0.11) !important;
+    color: rgba(255, 255, 255, 0.86) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+}
+
+body.rac-admin-shell .user_filter_drop .dropdown-menu .round_check label:hover,
+body.rac-admin-shell .user_filter_drop .dropdown-menu .round_check input:focus + label {
+    border-color: rgba(255, 255, 255, 0.42) !important;
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+}
+
+body.rac-admin-shell .user_filter_drop .dropdown-menu .round_check input:checked + label,
+body.rac-admin-shell .user_filter_drop .dropdown-menu .round_check label.active {
+    border-color: #ffffff !important;
+    background: #ffffff !important;
+    color: var(--rac-control-brand-strong) !important;
+}
+
+body.rac-admin-shell .switcher .check-trail {
+    border-color: #b9c3d1 !important;
+    background: #e8edf3 !important;
+    color: #4f5c70 !important;
+}
+
+body.rac-admin-shell .switcher input[type="checkbox"]:checked + .check-trail {
+    border-color: rgba(31, 112, 88, 0.5) !important;
+    background: #dff2eb !important;
+    color: var(--rac-control-green) !important;
+}
+
+body.rac-admin-shell .switcher .check-handler {
+    border: 1px solid rgba(20, 26, 35, 0.08);
+}
+
+body.rac-admin-shell .form-control,
+body.rac-admin-shell .custom-select,
+body.rac-admin-shell select,
+body.rac-admin-shell textarea,
+body.rac-admin-shell input[type="text"],
+body.rac-admin-shell input[type="email"],
+body.rac-admin-shell input[type="password"],
+body.rac-admin-shell input[type="number"],
+body.rac-admin-shell input[type="url"],
+body.rac-admin-shell input[type="search"] {
+    border-color: var(--rac-control-line) !important;
+    background: var(--rac-control-surface) !important;
+    color: var(--rac-control-ink) !important;
+}
+
+body.rac-admin-shell .admin-info,
+body.rac-admin-shell small.admin-info,
+body.rac-admin-shell .help-block,
+body.rac-admin-shell .form-text,
+body.rac-admin-shell small.text-muted {
+    color: var(--rac-control-ink-soft) !important;
+}
+
+/* Algorithm operations stay inside the established flat admin language. */
+body.rac-admin-shell .rac-algorithm-operations {
+    margin-top: 2px;
+}
+
+body.rac-admin-shell .rac-algorithm-section-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+body.rac-admin-shell .rac-algorithm-action {
+    padding: 16px 0 18px;
+    border-bottom: 1px solid var(--rac-control-line);
+}
+
+body.rac-admin-shell .rac-algorithm-action .rac-field-grid {
+    margin-bottom: 12px;
+}
+
+body.rac-admin-shell .rac-field-span {
+    grid-column: 1 / -1;
+}
+
+body.rac-admin-shell .rac-plain-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 16px 0 0;
+    color: var(--rac-control-ink);
+    font-weight: 650;
+}
+
+body.rac-admin-shell .rac-plain-check input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--rac-control-brand);
+}
+
+body.rac-admin-shell .rac-algorithm-table-wrap {
+    max-height: 430px;
+    margin-top: 16px;
+    overflow: auto;
+    border-top: 1px solid var(--rac-control-line);
+}
+
+body.rac-admin-shell .rac-algorithm-table {
+    margin: 0;
+    color: var(--rac-control-ink);
+}
+
+body.rac-admin-shell .rac-algorithm-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 11px 9px;
+    border: 0;
+    border-bottom: 1px solid var(--rac-control-line-strong);
+    background: var(--rac-control-surface-soft);
+    color: var(--rac-control-ink-soft);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+body.rac-admin-shell .rac-algorithm-table td {
+    padding: 11px 9px;
+    border-top: 0;
+    border-bottom: 1px solid #e5e9ef;
+    vertical-align: middle;
+}
+
+body.rac-admin-shell .rac-algorithm-table td strong,
+body.rac-admin-shell .rac-algorithm-table td small {
+    display: block;
+}
+
+body.rac-admin-shell .rac-algorithm-table td small {
+    margin-top: 2px;
+    color: var(--rac-control-ink-soft);
+}
+
+body.rac-admin-shell .rac-table-actions {
+    white-space: nowrap;
+    text-align: right;
+}
+
+body.rac-admin-shell .rac-table-actions .btn {
+    min-height: 30px;
+    padding: 4px 9px;
+    font-size: 12px;
+}
+
+body.rac-admin-shell .rac-field-grid--boost {
+    grid-template-columns: repeat(5, minmax(130px, 1fr));
+}
+
+@media (max-width: 1199.98px) {
+    body.rac-admin-shell .rac-field-grid--boost {
+        grid-template-columns: repeat(2, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 575.98px) {
+    body.rac-admin-shell .rac-algorithm-section-head {
+        display: block;
+    }
+
+    body.rac-admin-shell .rac-algorithm-section-head .btn {
+        margin-top: 10px;
+    }
+
+    body.rac-admin-shell .rac-field-grid--boost {
+        grid-template-columns: 1fr;
+    }
+}

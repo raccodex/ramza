@@ -1,5 +1,5 @@
 <?php
-if ($wo['config']['reels_upload'] == 0 || $wo['config']['have_reels'] == 0) {
+if (empty($wo['config']['reels_upload'])) {
     header("Location: " . $wo['config']['site_url']);
     exit();
 }
@@ -32,45 +32,41 @@ if (!empty($wo['watched_reels']) && empty($_GET['id'])) {
     $postsData['not_in'] = $wo['watched_reels'];
 }
 
-$reels = [];
+$reels = array();
+$id = 0;
 
-if ($getPosts) {
+if (!empty($_GET['id'])) {
+    $requestedId = (int) Wo_Secure($_GET['id']);
+    $requestedReel = $requestedId > 0 ? Wo_PostData($requestedId) : array();
+    if (!empty($requestedReel) && !empty($requestedReel['is_reel'])) {
+        $reels[] = $requestedReel;
+        $id = (int) $requestedReel['id'];
+        setcookie('watched_reels', json_encode(array()), time() + (60 * 60 * 24), '/');
+        $wo['watched_reels'] = array($id);
+        $postsData['not_in'] = $wo['watched_reels'];
+        $nextReels = Wo_GetPosts($postsData);
+        if (!empty($nextReels)) {
+            $reels = array_merge($reels, $nextReels);
+        }
+    } else {
+        $getPosts = true;
+    }
+}
+
+if ($getPosts && empty($reels)) {
     $reels = Wo_GetPosts($postsData);
     if (empty($reels)) {
         setcookie('watched_reels', json_encode(array()), time()+(60 * 60 * 24),'/');
         $wo['watched_reels'] = array();
         $postsData['not_in'] = $wo['watched_reels'];
         $reels = Wo_GetPosts($postsData);
-        if (empty($reels)) {
-            header("Location: " . $wo['config']['site_url']);
-            exit();
-        }
     }
-    $id = $reels[0]['id'];
-}
-if (!empty($_GET['id'])) {
-    $id = Wo_Secure($_GET['id']);
-
-    $wo['story'] = Wo_PostData($id);
-
-    if (empty($wo['story'])) {
-        header("Location: " . $wo['config']['site_url']);
-        exit();
+    if (!empty($reels)) {
+        $id = (int) $reels[0]['id'];
     }
-
-    $reels[] = $wo['story'];
-
-    setcookie('watched_reels', json_encode(array()), time()+(60 * 60 * 24),'/');
-    $wo['watched_reels'] = array($wo['story']['id']);
-    $postsData['not_in'] = $wo['watched_reels'];
-    $nextReels = Wo_GetPosts($postsData);
-    if (!empty($nextReels)) {
-        $reels = array_merge($reels, $nextReels);
-    }
-    
 }
 
-$wo['page_url'] = $wo['config']['site_url']. "/reels/" . $id;
+$wo['page_url'] = rtrim($wo['config']['site_url'], '/') . ($id > 0 ? "/reels/" . $id : '/reels');
 $wo['reelOwnerName'] = $reelOwnerName;
 $wo['page'] = 'reels';
 
@@ -103,6 +99,9 @@ foreach ($reels as $key => $wo['story']) {
     $main_reel = 1;
 }
 
+if ($html === '') {
+    $html = '<section class="ramza-reels-empty" role="status"><div><strong>No reels yet</strong><span>Uploaded reels will appear here.</span></div></section>';
+}
 
 if (!empty($wo['watched_reels'])) {
     setcookie('watched_reels', json_encode($wo['watched_reels']), time()+(60 * 60 * 24),'/');

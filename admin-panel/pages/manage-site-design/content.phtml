@@ -55,7 +55,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"></path></svg>
                             </div>
                             <div>
-                                <b>Sunshine Night Mode Logo (470x75)</b>
+                                <b>Ramza Light Night Mode Logo (470x75)</b>
                                 <div class="mt-1 hidden" id="logo-s">
                                     <input type="text" class="change-file-input" readonly="">
                                 </div>
@@ -64,8 +64,7 @@
                         <div class="clearfix"></div><br><br>
                         <h5>Header</h5><hr>
 						<div class="alert alert-info">
-						This system is only supported for the default theme and Wondertag theme, for sunshine you can edit the colors through CSS files:
-						<br><code>./themes/sunshine/css/style.css<br>./themes/sunshine/layout/style.phtml</code>
+						These controls target Ramza Light, the supported default theme. Test the front-end after saving color changes.
 						</div>
 						<br>
                     	<div class="bold">Header Background Color</div>
@@ -220,5 +219,15 @@ $(function() {
 	.btn-file input[type=file] { position: absolute; top: 0; right: 0; min-width: 100%; min-height: 100%; font-size: 100px; text-align: right; opacity: 0; outline: none; background: #fff; cursor: inherit; display: block; }
 	.change-file-ico svg {border-radius: 50%;background: rgb(168 72 73 / 15%);color: <?php echo $wo['config']['btn_background_color'];?>;padding: 10px;width: 50px;height: 50px;}
 	.change-file-input {padding: 3px 6px;border: 0;line-height: 1;background: rgb(0 0 0 / 10%);border-radius: 2em;font-size: 13px;width: 100%;}
-	.colorpicker {z-index: 0 !important;}
+	body.rac-admin-shell[data-admin-page="manage-site-design"] .card::before {content: none !important;}
+	body.rac-admin-shell[data-admin-page="manage-site-design"] .card .card-body {padding-left: 26px !important;}
+	body.rac-admin-shell[data-admin-page="manage-site-design"] .bold {display: block;margin: 18px 0 8px;color: #19130f;font-weight: 760;}
+	body.rac-admin-shell[data-admin-page="manage-site-design"] .input-group.colorpicker-element {display: flex;align-items: center;gap: 12px;width: min(100%, 260px);margin-bottom: 8px;position: relative;}
+	body.rac-admin-shell[data-admin-page="manage-site-design"] .input-group.colorpicker-element .form-line {flex: 1;min-width: 0;}
+	body.rac-admin-shell[data-admin-page="manage-site-design"] .input-group.colorpicker-element .input-group-addon {display: inline-flex;align-items: center;justify-content: center;width: 34px;height: 34px;min-width: 34px;border: 1px solid #ded6cc;border-radius: 999px;background: #fffdf8;box-shadow: 0 8px 18px rgba(36, 26, 18, 0.08);cursor: pointer;}
+	body.rac-admin-shell[data-admin-page="manage-site-design"] .input-group.colorpicker-element .input-group-addon i {width: 22px;height: 22px;border-radius: 999px;}
+	body.rac-admin-shell[data-admin-page="manage-site-design"] .alert-info {border-color: #bfe8f4 !important;background: #dff6fb !important;color: #17627a !important;}
+	body.rac-admin-shell[data-admin-page="manage-site-design"] h5 {margin-top: 24px;color: #19130f;font-weight: 820;letter-spacing: -0.025em;}
+	body.rac-admin-shell[data-admin-page="manage-site-design"] hr {margin: 12px 0 16px;border-color: #e8ded1;}
+	body.rac-admin-shell .colorpicker.dropdown-menu {z-index: 12000 !important;border: 1px solid #ded6cc !important;border-radius: 14px !important;background: #fffdf8 !important;box-shadow: 0 22px 45px rgba(36, 26, 18, 0.18) !important;}
 </style>

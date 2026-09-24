@@ -1,0 +1,400 @@
+<?php 
+$ramza_theme_settings = array();
+if (mysqli_query($wo['sqlConnect'], "DESCRIBE `" . T_THEME_SETTINGS . "`" )) {
+	$settings = $db->get(T_THEME_SETTINGS);
+	foreach ($settings as $key => $value) {
+		$ramza_theme_settings[$value->name] = $value->value;
+	}
+}
+?>
+
+<div class="tag_welcome tag_stup_welcome">
+	<!-- Hero Header Section -->
+	<div class="tag_wel_upper">
+		<div class="tag_ambient_orb tag_orb_1"></div>
+		<div class="tag_ambient_orb tag_orb_2"></div>
+
+		<div class="container">
+			<div class="valign navbar-default">
+				<a class="logo" href="<?php echo $wo['config']['site_url'];?>">
+					<img src="<?php echo $wo['config']['theme_url'];?>/img/logo.<?php echo $wo['config']['logo_extension'];?>" alt="Logo">
+				</a>
+				<?php if ($wo['config']['user_registration'] == 1): ?>
+					<a class="btn btn-main btn-mat tag_header_reg_btn" href="<?php echo Wo_SeoLink('index.php?link1=register');?>"><?php echo $wo['lang']['register']?></a>
+				<?php endif ?>
+			</div>
+		</div>
+
+		<div class="tag_stup_hdr">
+			<div class="container text-center">
+				<div class="tag_welcome_badge">
+					<span>✨ <?php echo (!empty($wo['lang']['welcome_connect_text']) ? $wo['lang']['welcome_connect_text'] : 'Connect. Share. Discover.'); ?></span>
+				</div>
+				<h1 class="tag_stup_title"><?php echo $wo['lang']['welcome_share_text']?></h1>
+				<p class="tag_stup_desc"><?php echo (!empty($wo['lang']['welcome_discover_text']) ? $wo['lang']['welcome_discover_text'] : 'Join a vibrant community of friends, creators, and professionals sharing authentic moments every day.'); ?></p>
+				
+				<?php if ($wo['config']['profile_privacy'] == 1) { ?>
+					<div class="tag_pro_community_wrap">
+						<div class="tag_pro_users">
+							<?php echo Wo_LoadPage('welcome/welcome-users-profiles');?>
+						</div>
+						<span class="tag_pro_community_txt"><?php echo $wo['lang']['joined_users'] ?? 'Active Community Members'; ?></span>
+					</div>
+				<?php } ?>
+			</div>
+		</div>
+	</div>
+
+	<!-- Centered Modern Elevated Authentication Card -->
+	<div class="tag_wel_middle">
+		<div class="container">
+			<div class="tag_stup_login_wrapper">
+				<div class="wow_content tag_auth_box tag_stup_card">
+					<div class="valign tag_auth_animation d-none">
+						<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 367.805 367.805" xml:space="preserve">
+							<g>
+								<path style="fill:#3BB54A;" d="M183.903,0.001c101.566,0,183.902,82.336,183.902,183.902s-82.336,183.902-183.902,183.902 S0.001,285.469,0.001,183.903l0,0C-0.288,82.625,81.579,0.29,182.856,0.001C183.205,0,183.554,0,183.903,0.001z"/>
+								<polygon style="fill:#fff;" points="285.78,133.225 155.168,263.837 82.025,191.217 111.805,161.96 155.168,204.801 256.001,103.968"/>
+							</g>
+						</svg>
+						<?php echo $wo['lang']['welcome_back'] ?>
+					</div>
+
+					<div class="tag_auth_header text-center">
+						<h2 class="title"><?php echo $wo['lang']['welcome_']?></h2>
+						<p class="subtitle"><?php echo (!empty($wo['lang']['welcome_back']) ? $wo['lang']['welcome_back'] : 'Log in to continue to your account'); ?></p>
+					</div>
+
+					<form id="login" method="post">
+						<div class="errors"></div>
+
+						<!-- Username Input -->
+						<label class="tag_field">
+							<span class="tag_field_icon">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+							</span>
+							<input name="username" type="text" autocomplete="off" placeholder=" " autofocus required>
+							<span><?php echo $wo['lang']['username']?></span>
+						</label>
+
+						<!-- Password Input with Toggle -->
+						<label class="tag_field">
+							<span class="tag_field_icon">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+							</span>
+							<input name="password" id="stup_password" type="password" autocomplete="off" placeholder=" " required>
+							<span><?php echo $wo['lang']['password']?></span>
+							<button type="button" class="tag_password_toggle" id="toggle_stup_pwd" aria-label="Toggle password visibility">
+								<svg class="eye_open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+								<svg class="eye_closed d-none" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+							</button>
+						</label>
+
+						<!-- Remember Me Checkbox & Forgot Password Link -->
+						<div class="tag_auth_options">
+							<?php if ($wo['config']['remember_device'] == 1) { ?>
+							<label class="tag_custom_check" for="remember_device">
+								<input type="checkbox" name="remember_device" id="remember_device" <?php echo ($wo['config']['remember_device'] == 1 ? 'checked' : ''); ?>>
+								<span><?php echo $wo['lang']['remember_device'] ?></span>
+							</label>
+							<?php } else { ?>
+							<div></div>
+							<?php } ?>
+							<a class="tag_forgot_link" href="<?php echo Wo_SeoLink('index.php?link1=forgot-password');?>"><?php echo $wo['lang']['forget_password']?></a>
+						</div>
+
+						<?php if(isset($_GET['type']) && $_GET['type'] == "add_account") { ?>
+							<input name="add_account" type="number" value="1" hidden>
+						<?php } ?>
+
+						<!-- Submit Button -->
+						<button type="submit" class="btn btn-main btn-mat disable_btn tag_wel_btn" id="stup_submit_btn">
+							<span class="btn_text"><?php echo $wo['lang']['login']?></span>
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+						</button>
+
+						<?php if(!empty( $_GET['last_url'])){?>
+							<div><input type="hidden" name="last_url" value="<?php echo urldecode(Wo_Secure($_GET['last_url']));?>"></div>
+						<?php } ?>
+					</form>
+
+					<!-- Unified Social Logins -->
+					<?php if(!isset($_GET['type'])) {?>
+					<?php 
+					$has_other_social = ($wo['config']['facebookLogin'] != 0 || $wo['config']['twitterLogin'] != 0 || $wo['config']['linkedinLogin'] != 0 || $wo['config']['VkontakteLogin'] != 0 || $wo['config']['instagramLogin'] != 0 || $wo['config']['qqLogin'] != 0 || $wo['config']['WeChatLogin'] != 0 || $wo['config']['DiscordLogin'] != 0 || $wo['config']['MailruLogin'] != 0 || $wo['config']['OkLogin'] != 0 || $wo['config']['tiktok_login'] != 0 || $wo['config']['wordpressLogin'] != 0);
+					$has_any_social = ($has_other_social || $wo['config']['googleLogin'] != 0);
+					?>
+					<?php if ($has_any_social) { ?>
+						<div class="u_divider"><span><?php echo $wo['lang']['or']?></span></div>
+						<div class="tag_social_login_wrapper">
+							<?php if($wo['config']['googleLogin'] != 0): ?>
+								<div class="tag_google_btn_wrap">
+									<div id="buttonDiv"></div>
+								</div>
+							<?php endif; ?>
+							
+							<?php if ($has_other_social): ?>
+							<div class="tag_other_social_btns">
+								<?php if($wo['config']['instagramLogin'] != 0): ?>
+									<a href="<?php echo $wo['instagramLoginUrl']?>" class="tag_social_full_btn tag_btn_instagram" title="Instagram">
+										<span class="social_btn_icon">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="#d14668" d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153a4.908 4.908 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772 4.915 4.915 0 0 1-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm6.5-.25a1.25 1.25 0 0 0-2.5 0 1.25 1.25 0 0 0 2.5 0zM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"></path></svg>
+										</span>
+										<span class="social_btn_text"><?php echo $wo['lang']['continue_with'] ?? 'Continue with'; ?> Instagram</span>
+									</a>
+								<?php endif; ?>
+								<?php if($wo['config']['facebookLogin'] != 0): ?>
+									<a href="<?php echo $wo['facebookLoginUrl']?>" class="tag_social_full_btn tag_btn_facebook" title="Facebook">
+										<span class="social_btn_icon">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="#1877f2" d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z"></path></svg>
+										</span>
+										<span class="social_btn_text"><?php echo $wo['lang']['continue_with'] ?? 'Continue with'; ?> Facebook</span>
+									</a>
+								<?php endif; ?>
+								<?php if($wo['config']['twitterLogin'] != 0): ?>
+									<a href="<?php echo $wo['twitterLoginUrl']?>" class="tag_social_full_btn tag_btn_twitter" title="Twitter">
+										<span class="social_btn_icon">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="#1da1f2" d="M22.162 5.656a8.384 8.384 0 0 1-2.402.658A4.196 4.196 0 0 0 21.6 4c-.82.488-1.719.83-2.656 1.015a4.182 4.182 0 0 0-7.126 3.814 11.874 11.874 0 0 1-8.62-4.37 4.168 4.168 0 0 0-.566 2.103c0 1.45.738 2.731 1.86 3.481a4.168 4.168 0 0 1-1.894-.523v.052a4.185 4.185 0 0 0 3.355 4.101 4.21 4.21 0 0 1-1.89.072A4.185 4.185 0 0 0 7.97 16.65a8.394 8.394 0 0 1-6.191 1.732 11.83 11.83 0 0 0 6.41 1.88c7.693 0 11.9-6.373 11.9-11.9 0-.18-.005-.362-.013-.54a8.496 8.496 0 0 0 2.087-2.165z"></path></svg>
+										</span>
+										<span class="social_btn_text"><?php echo $wo['lang']['continue_with'] ?? 'Continue with'; ?> Twitter</span>
+									</a>
+								<?php endif; ?>
+								<?php if($wo['config']['linkedinLogin'] != 0): ?>
+									<a href="<?php echo $wo['linkedInLoginUrl']?>" class="tag_social_full_btn tag_btn_linkedin" title="LinkedIn">
+										<span class="social_btn_icon">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="#0076b6" d="M6.94 5a2 2 0 1 1-4-.002 2 2 0 0 1 4 .002zM7 8.48H3V21h4V8.48zm6.32 0H9.34V21h3.94v-6.57c0-3.66 4.77-4 4.77 0V21H22v-7.93c0-6.17-7.06-5.94-8.72-2.91l.04-1.68z"></path></svg>
+										</span>
+										<span class="social_btn_text"><?php echo $wo['lang']['continue_with'] ?? 'Continue with'; ?> LinkedIn</span>
+									</a>
+								<?php endif; ?>
+							</div>
+							<?php endif; ?>
+						</div>
+					<?php } ?>
+					<?php } ?>
+
+					<!-- Integrated Card Footer -->
+					<?php if ($wo['config']['user_registration'] == 1 && !isset($_GET['type'])): ?>
+						<div class="tag_auth_card_footer">
+							<?php echo $wo['lang']['dont_have_account']?> <a class="dec" href="<?php echo Wo_SeoLink('index.php?link1=register');?>"><?php echo $wo['lang']['register']?></a>
+						</div>
+					<?php endif ?>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Platform Features Highlights Grid -->
+	<div class="tag_stup_features_section">
+		<div class="container">
+			<div class="text-center tag_stup_sec_head">
+				<span class="sec_badge">Why RAC Social</span>
+				<h2>Everything you love about connecting, in one place.</h2>
+			</div>
+			<div class="row tag_stup_feats_grid">
+				<div class="col-lg-3 col-md-6 col-sm-12">
+					<div class="tag_feat_card">
+						<div class="feat_icon_wrap feat_blue">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+						</div>
+						<h3><?php echo $wo['lang']['welcome_share'] ?? 'Real-Time Feed'; ?></h3>
+						<p><?php echo $wo['lang']['welcome_share_desc'] ?? 'Publish updates, photos, videos, and stories that inspire your circle instantly.'; ?></p>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-6 col-sm-12">
+					<div class="tag_feat_card">
+						<div class="feat_icon_wrap feat_purple">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+						</div>
+						<h3><?php echo $wo['lang']['welcome_discover'] ?? 'Explore & Connect'; ?></h3>
+						<p><?php echo $wo['lang']['welcome_discover_text'] ?? 'Discover new people, create genuine connections, and explore trending communities.'; ?></p>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-6 col-sm-12">
+					<div class="tag_feat_card">
+						<div class="feat_icon_wrap feat_green">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+						</div>
+						<h3>100% <?php echo $wo['lang']['privacy'] ?? 'Privacy First'; ?></h3>
+						<p><?php echo $wo['lang']['welcome_privacy_text'] ?? 'You have complete control over your visibility, personal audience, and private data.'; ?></p>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-6 col-sm-12">
+					<div class="tag_feat_card">
+						<div class="feat_icon_wrap feat_amber">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+						</div>
+						<h3><?php echo $wo['lang']['security'] ?? 'Security & Safety'; ?></h3>
+						<p><?php echo $wo['lang']['welcome_security_text'] ?? 'Protected with modern security standards to keep your discussions and profile safe.'; ?></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Trending Hashtags Section -->
+	<?php if (!empty($ramza_theme_settings) && $ramza_theme_settings['tag_trend'] == 1) { ?>
+		<div class="tag_stup_trend_widget">
+			<div class="container">
+				<p><?php echo $wo['lang']['trending']?></p>
+				<h2><?php echo $wo['lang']['see_trending_people'] ?? 'See What is Trending Right Now'; ?></h2>
+				<div class="tag_stup_trend_prnt"><?php 
+					$hashtags = Wa_GetTrendingHashs('popular');
+					if (count($hashtags) > 0) {
+						foreach ($hashtags as $wo['hashtag']) { 
+					?><div class="tag_stup_trend">#<?php echo $wo['hashtag']['tag'];?></div><?php } } ?></div>
+			</div>
+		</div>
+	<?php } ?>
+
+	<!-- Discovery Modules -->
+	<?php if ($wo['config']['blogs'] == 1 || $wo['config']['forum'] == 1 && $wo['config']['forum_visibility'] == 0 || $wo['config']['events'] == 1 && $wo['config']['events_visibility'] == 0 || $wo['config']['classified'] == 1 && $wo['config']['product_visibility'] == 0) { ?>
+		<div class="container">
+			<div class="text-center wow_content tag_stup_explore_prnt">
+				<h2><?php echo $wo['lang']['welcome_discover'];?> <?php echo $wo['config']['siteName'];?></h2>
+				<div class="valign tag_stup_explore">
+					<a href="<?php echo Wo_SeoLink('index.php?link1=search?query=');?>">
+						<div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2.25C6.61522 2.25 2.25 6.61522 2.25 12C2.25 17.3848 6.61522 21.75 12 21.75C17.3848 21.75 21.75 17.3848 21.75 12C21.75 6.61522 17.3848 2.25 12 2.25ZM9.49404 11.5179C9.67955 10.9613 9.77232 10.6831 9.9304 10.452C10.0704 10.2473 10.2473 10.0704 10.452 9.9304C10.6831 9.77232 10.9613 9.67955 11.5179 9.49404L14.4821 8.50596L14.4821 8.50596C14.9707 8.34311 15.2149 8.26169 15.3774 8.31962C15.5187 8.37003 15.63 8.48127 15.6804 8.62263C15.7383 8.78507 15.6569 9.02935 15.494 9.51789L14.506 12.4821C14.3204 13.0387 14.2277 13.3169 14.0696 13.548C13.9296 13.7527 13.7527 13.9296 13.548 14.0696C13.3169 14.2277 13.0387 14.3204 12.4821 14.506L9.51789 15.494C9.02935 15.6569 8.78507 15.7383 8.62263 15.6804C8.48127 15.63 8.37003 15.5187 8.31962 15.3774C8.26169 15.2149 8.34311 14.9707 8.50596 14.4821L8.50596 14.4821L9.49404 11.5179Z" fill="currentColor"></path></svg><svg width="48" height="48" viewBox="0 0 48 48" class="squircle" xmlns="http://www.w3.org/2000/svg"><path d="M48 24C48 40 40 48 24 48C8 48 -1.15147e-06 40 -6.90884e-07 24C-2.30295e-07 8 8 0 24 0C40 0 48 8 48 24Z" fill="url(#paint_explore)"/><defs><radialGradient id="paint_explore" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(24) rotate(90) scale(48)"><stop stop-color="#FFCE47"/><stop offset="1" stop-color="#E0A500"/></radialGradient></defs></svg></div> <?php echo $wo['lang']['explore'];?>
+					</a>
+					<?php if ($wo['config']['blogs'] == 1) { ?>
+						<a href="<?php echo Wo_SeoLink('index.php?link1=blogs');?>">
+							<div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.62356 2.35132C2.85479 2.21713 3.13998 2.21617 3.3721 2.34882L6.5 4.13619L9.6279 2.34882C9.85847 2.21706 10.1415 2.21706 10.3721 2.34882L13.5 4.13619L16.6279 2.34882C16.86 2.21617 17.1452 2.21713 17.3764 2.35132C17.6077 2.48551 17.75 2.73265 17.75 3V11.25H21C21.4142 11.25 21.75 11.5858 21.75 12V19C21.75 20.5188 20.5188 21.75 19 21.75H7.8H7.76788C6.95505 21.75 6.29944 21.75 5.76853 21.7066C5.2219 21.662 4.74175 21.5676 4.29754 21.3413C3.59193 20.9817 3.01825 20.4081 2.65873 19.7025C2.43239 19.2582 2.33803 18.7781 2.29336 18.2315C2.24999 17.7006 2.24999 17.045 2.25 16.2321V16.2321V16.2V3C2.25 2.73265 2.39232 2.48551 2.62356 2.35132ZM19 20.25C19.6904 20.25 20.25 19.6904 20.25 19V12.75H17.75V19C17.75 19.6904 18.3096 20.25 19 20.25ZM7 8.25C6.58579 8.25 6.25 8.58579 6.25 9C6.25 9.41421 6.58579 9.75 7 9.75H11C11.4142 9.75 11.75 9.41421 11.75 9C11.75 8.58579 11.4142 8.25 11 8.25H7ZM6.25 13C6.25 12.5858 6.58579 12.25 7 12.25H13C13.4142 12.25 13.75 12.5858 13.75 13C13.75 13.4142 13.4142 13.75 13 13.75H7C6.58579 13.75 6.25 13.4142 6.25 13ZM7 16.25C6.58579 16.25 6.25 16.5858 6.25 17C6.25 17.4142 6.58579 17.75 7 17.75H13C13.4142 17.75 13.75 17.4142 13.75 17C13.75 16.5858 13.4142 16.25 13 16.25H7Z" fill="#fff"></path></svg><svg width="48" height="48" viewBox="0 0 48 48" class="squircle" xmlns="http://www.w3.org/2000/svg"><path d="M48 24C48 40 40 48 24 48C8 48 -1.15147e-06 40 -6.90884e-07 24C-2.30295e-07 8 8 0 24 0C40 0 48 8 48 24Z" fill="url(#paint_blog)"/><defs><linearGradient id="paint_blog" x1="24" y1="0" x2="24" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#1FB4FF"/><stop offset="1" stop-color="#0083F5"/></linearGradient></defs></svg></div> <?php echo $wo['lang']['blog'];?>
+						</a>
+					<?php } ?>
+					<?php if ($wo['config']['forum'] == 1 && $wo['config']['forum_visibility'] == 0) { ?>
+						<a href="<?php echo Wo_SeoLink('index.php?link1=forum');?>" data-ajax="?link1=forum">
+							<div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.8 3.25H7.7679C6.95506 3.24999 6.29944 3.24999 5.76853 3.29336C5.2219 3.33803 4.74175 3.43239 4.29754 3.65873C3.59193 4.01825 3.01825 4.59193 2.65873 5.29754C2.43239 5.74175 2.33803 6.2219 2.29336 6.76853C2.24999 7.29944 2.24999 7.95506 2.25 8.7679V8.8V13.2V13.2321C2.24999 14.0449 2.24999 14.7006 2.29336 15.2315C2.33803 15.7781 2.43239 16.2582 2.65873 16.7025C3.01825 17.4081 3.59193 17.9817 4.29754 18.3413C4.74175 18.5676 5.2219 18.662 5.76853 18.7066C6.29944 18.75 6.95505 18.75 7.76788 18.75H7.8H15.4892C16.0727 18.75 16.294 18.7517 16.5063 18.7814C16.7054 18.8093 16.9015 18.8556 17.0921 18.9197C17.2954 18.9881 17.494 19.0855 18.0159 19.3465L20.6646 20.6708C20.8971 20.7871 21.1732 20.7746 21.3943 20.638C21.6154 20.5013 21.75 20.2599 21.75 20V8.8V8.76788C21.75 7.95505 21.75 7.29944 21.7066 6.76853C21.662 6.2219 21.5676 5.74175 21.3413 5.29754C20.9817 4.59193 20.4081 4.01825 19.7025 3.65873C19.2582 3.43239 18.7781 3.33803 18.2315 3.29336C17.7006 3.24999 17.0449 3.24999 16.2321 3.25H16.2H7.8ZM7 7.25C6.58579 7.25 6.25 7.58579 6.25 8C6.25 8.41421 6.58579 8.75 7 8.75H15C15.4142 8.75 15.75 8.41421 15.75 8C15.75 7.58579 15.4142 7.25 15 7.25H7ZM6.25 12C6.25 11.5858 6.58579 11.25 7 11.25H11C11.4142 11.25 11.75 11.5858 11.75 12C11.75 12.4142 11.4142 12.75 11 12.75H7C6.58579 12.75 6.25 13.4142 6.25 13ZM7 16.25C6.58579 16.25 6.25 16.5858 6.25 17C6.25 17.4142 6.58579 17.75 7 17.75H13C13.4142 17.75 13.75 17.4142 13.75 17C13.75 16.5858 13.4142 16.25 13 16.25H7Z" fill="currentColor"></path></svg><svg width="48" height="48" viewBox="0 0 48 48" class="squircle" xmlns="http://www.w3.org/2000/svg"><path d="M48 24C48 40 40 48 24 48C8 48 -1.15147e-06 40 -6.90884e-07 24C-2.30295e-07 8 8 0 24 0C40 0 48 8 48 24Z" fill="url(#paint_forum)"/><defs><radialGradient id="paint_forum" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(24) rotate(90) scale(48)"><stop stop-color="#E95CFF"/><stop offset="1" stop-color="#D300F5"/></radialGradient></defs></svg></div> <?php echo $wo['lang']['forum'];?>
+						</a>
+					<?php } ?>
+					<?php if ($wo['config']['events'] == 1 && $wo['config']['events_visibility'] == 0) { ?>
+						<a href="<?php echo Wo_SeoLink('index.php?link1=events');?>" data-ajax="?link1=events">
+							<div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.75 1C8.75 0.585786 8.41422 0.25 8 0.25C7.58579 0.25 7.25 0.585786 7.25 1V2.25912C6.53068 2.27754 5.97875 2.33259 5.49049 2.49624C4.07813 2.96962 2.96962 4.07812 2.49624 5.49049C2.24943 6.22688 2.24964 7.10812 2.24998 8.48999L2.25 8.64706V14.6L2.25 14.633C2.25 15.7251 2.24999 16.5906 2.30699 17.2883C2.36528 18.0017 2.48689 18.6053 2.76772 19.1565C3.22312 20.0502 3.94978 20.7769 4.84355 21.2323C5.39472 21.5131 5.99835 21.6347 6.71174 21.693C7.40936 21.75 8.27485 21.75 9.36698 21.75H9.4H14.6H14.633C15.7252 21.75 16.5907 21.75 17.2883 21.693C18.0017 21.6347 18.6053 21.5131 19.1565 21.2323C20.0502 20.7769 20.7769 20.0502 21.2323 19.1565C21.5131 18.6053 21.6347 18.0017 21.693 17.2883C21.75 16.5906 21.75 15.7252 21.75 14.633V14.6V9.4V9.36698C21.75 8.27485 21.75 7.40935 21.693 6.71173C21.6347 5.99834 21.5131 5.39472 21.2323 4.84354C20.7769 3.94978 20.0502 3.22312 19.1565 2.76772C18.6053 2.48688 18.0017 2.36527 17.2883 2.30699C17.119 2.29316 16.9399 2.28269 16.75 2.27475V1C16.75 0.585786 16.4142 0.25 16 0.25C15.5858 0.25 15.25 0.585786 15.25 1V2.25043C15.0528 2.25 14.8473 2.25 14.6331 2.25H14.633L14.6 2.25H8.75V1ZM6.25002 8C6.25002 7.58579 6.5858 7.25 7.00002 7.25H17C17.4142 7.25 17.75 7.58579 17.75 8C17.75 8.41421 17.4142 8.75 17 8.75H7.00002C6.5858 8.75 6.25002 8.41421 6.25002 8ZM8.00002 13C8.5523 13 9.00002 12.5523 9.00002 12C9.00002 11.4477 8.5523 11 8.00002 11C7.44773 11 7.00002 11.4477 7.00002 12C7.00002 12.5523 7.44773 13 8.00002 13ZM9.00002 16C9.00002 16.5523 8.5523 17 8.00002 17C7.44773 17 7.00002 16.5523 7.00002 16C7.00002 15.4477 7.44773 15 8.00002 15C8.5523 15 9.00002 15.4477 9.00002 16ZM12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17ZM17 16C17 16.5523 16.5523 17 16 17C15.4477 17 15 16.5523 15 16C15 15.4477 15.4477 15 16 15C16.5523 15 17 15.4477 17 16ZM12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13ZM17 12C17 12.5523 16.5523 13 16 13C15.4477 13 15 12.5523 15 12C15 11.4477 15.4477 11 16 11C16.5523 11 17 11.4477 17 12Z" fill="#fff"></path></svg><svg width="48" height="48" viewBox="0 0 48 48" class="squircle" xmlns="http://www.w3.org/2000/svg"><path d="M48 24C48 40 40 48 24 48C8 48 -1.15147e-06 40 -6.90884e-07 24C-2.30295e-07 8 8 0 24 0C40 0 48 8 48 24Z" fill="url(#paint_event)"/><defs><radialGradient id="paint_event" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(24) rotate(90) scale(48)"><stop stop-color="#FF7070"/><stop offset="1" stop-color="#FF4778"/></radialGradient></defs></svg></div> <?php echo $wo['lang']['events'];?>
+						</a>
+					<?php } ?>
+					<?php if ($wo['config']['classified'] == 1 && $wo['config']['product_visibility'] == 0) { ?>
+						<a href="<?php echo Wo_SeoLink('index.php?link1=products');?>" data-ajax="?link1=products">
+							<div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.27772 4.89734C4.81195 5.65109 4.69395 6.65061 4.45795 8.64965L3.84407 13.8497C3.55212 16.3226 3.40614 17.5591 3.79874 18.517C4.14351 19.3582 4.76453 20.0568 5.55948 20.4978C6.46472 21 7.70979 21 10.1999 21H13.7999C16.2901 21 17.5351 21 18.4404 20.4978C19.2353 20.0568 19.8563 19.3582 20.2011 18.517C20.5937 17.5591 20.4477 16.3226 20.1558 13.8497L19.5419 8.64966L19.5419 8.64964C19.3059 6.65061 19.1879 5.65109 18.7221 4.89734C18.3118 4.2333 17.7162 3.70383 17.0086 3.37418C16.2054 3 15.199 3 13.186 3H10.8138C8.80089 3 7.79443 3 6.99127 3.37418C6.2837 3.70383 5.68805 4.2333 5.27772 4.89734ZM9.75003 9C9.75003 10.2426 10.7574 11.25 12 11.25C13.2427 11.25 14.25 10.2426 14.25 9V7C14.25 6.58579 14.5858 6.25 15 6.25C15.4142 6.25 15.75 6.58579 15.75 7V9C15.75 11.0711 14.0711 12.75 12 12.75C9.92897 12.75 8.25003 11.0711 8.25003 9V7C8.25003 6.58579 8.58582 6.25 9.00003 6.25C9.41425 6.25 9.75003 6.58579 9.75003 7V9Z" fill="#fff"></path></svg><svg width="48" height="48" viewBox="0 0 48 48" class="squircle" xmlns="http://www.w3.org/2000/svg"><path d="M48 24C48 40 40 48 24 48C8 48 -1.15147e-06 40 -6.90884e-07 24C-2.30295e-07 8 8 0 24 0C40 0 48 8 48 24Z" fill="url(#paint_market)"/><defs><radialGradient id="paint_market" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(24) rotate(90) scale(48)"><stop stop-color="#00E0D1"/><stop offset="1" stop-color="#00B8AD"/></radialGradient></defs></svg></div> <?php echo $wo['lang']['market'];?>
+						</a>
+					<?php } ?>
+				</div>
+			</div>
+		</div>
+	<?php } ?>
+
+	<!-- Mobile Apps Download Links -->
+	<?php if (!empty($wo['config']['native_android_messenger_url']) || !empty($wo['config']['native_android_timeline_url']) || !empty($wo['config']['native_ios_messenger_url']) || !empty($wo['config']['native_ios_timeline_url']) || !empty($wo['config']['native_windows_messenger_url'])) { ?>
+		<div class="container text-center mb-5 wo_side_apps">
+			<p class="font-weight-bold mb-3"><?php echo $wo['lang']['get_mobile_apps'];?></p>
+			<?php if (!empty($wo['config']['native_android_timeline_url'])) { ?>
+				<a href="<?php echo($wo['config']['native_android_timeline_url']) ?>" target="_blank">
+					<img width="130" src="<?php echo $wo['config']['theme_url'];?>/img/google.png"/>
+				</a>
+			<?php } ?>
+			<?php if (!empty($wo['config']['native_ios_timeline_url'])) { ?>
+				<a href="<?php echo($wo['config']['native_ios_timeline_url']) ?>" target="_blank">
+					<img width="130" src="<?php echo $wo['config']['theme_url'];?>/img/apple.png"/>
+				</a>
+			<?php } ?>
+			<?php if (!empty($wo['config']['native_windows_messenger_url'])) { ?>
+				<a href="<?php echo($wo['config']['native_windows_messenger_url']) ?>" target="_blank">
+					<img width="130" src="<?php echo $wo['config']['theme_url'];?>/img/microsoft.png"/>
+				</a>
+			<?php } ?>
+		</div>
+	<?php } ?>
+
+	<div class="tag_wel_bottom">
+		<?php echo Wo_LoadPage('footer/welcome');?>
+	</div>
+</div>
+
+<script>
+var working = false;
+var $this = $('#login');
+var $state = $this.find('.errors');
+var $login_anim = $('.tag_auth_animation');
+
+// Interactive password show/hide eye toggle
+$(document).ready(function() {
+	$('#toggle_stup_pwd').on('click', function(e) {
+		e.preventDefault();
+		var $pwd = $('#stup_password');
+		var $btn = $(this);
+		if ($pwd.attr('type') === 'password') {
+			$pwd.attr('type', 'text');
+			$btn.addClass('active');
+			$btn.find('.eye_open').addClass('d-none');
+			$btn.find('.eye_closed').removeClass('d-none');
+		} else {
+			$pwd.attr('type', 'password');
+			$btn.removeClass('active');
+			$btn.find('.eye_closed').addClass('d-none');
+			$btn.find('.eye_open').removeClass('d-none');
+		}
+	});
+});
+
+<?php if($wo['config']['googleLogin'] != 0): ?>
+function handleCredentialResponse(response) {
+   var id_token = response.credential;
+   $.post(Wo_Ajax_Requests_File() + '?f=google_login', {id_token: id_token}, function(data, textStatus, xhr) {
+      if (data.status == 200) {
+         $state.addClass('success');
+         $state.html('<?php echo $wo['lang']['welcome_back'] ?>');
+         $this.find('.loading').addClass('hidden');
+         setTimeout(function () {
+            window.location.href = data.location;
+         }, 1000);
+      }
+      else{
+         $this.find('button').attr("disabled", false);
+         $this.find('.loading').addClass('hidden');
+         $state.html(data.message);
+      }
+   });
+}
+window.onload = function () {
+  google.accounts.id.initialize({
+    client_id: "<?php echo $wo['config']['googleAppId']?>",
+    callback: handleCredentialResponse
+  });
+  var btnWrap = document.getElementById("buttonDiv");
+  var btnW = btnWrap ? btnWrap.offsetWidth : 368;
+  if (!btnW || btnW < 200) { btnW = 368; }
+  if (btnW > 400) { btnW = 368; }
+  google.accounts.id.renderButton(
+    document.getElementById("buttonDiv"),
+    { theme: "outline", size: "large", type: "standard", text: "continue_with", shape: "rectangular", width: btnW, logo_alignment: "left" }
+  );
+  google.accounts.id.prompt();
+}
+<?php endif; ?>
+
+$(function() {
+  $('#login').ajaxForm({
+    url: Wo_Ajax_Requests_File() + '?f=login',
+    beforeSend: function() {
+		working = true;
+		var $btn = $this.find('.disable_btn');
+		$btn.attr("disabled", true);
+		$btn.find('.btn_text').html('<span class="tag_btn_spinner"></span> <?php echo $wo['lang']['please_wait'] ?? "Please wait..."; ?>');
+    },
+    success: function(data) {
+      if (data.status == 200 || data.status == 600) {
+      	$login_anim.removeClass('d-none');
+        setTimeout(function () {
+        	window.location.href = data.location;
+        }, 1000);
+      } else {
+        var errors = (data.errors && Array.isArray(data.errors)) ? data.errors.join("<br>") : (data.errors || data.message || 'An error occurred');
+        $state.html(errors);
+        $state.show();
+      } 
+      working = false;
+	  var $btn = $this.find('.disable_btn');
+	  $btn.attr("disabled", false);
+	  $btn.find('.btn_text').text('<?php echo $wo['lang']['login']?>');
+    }
+  });
+});
+</script>

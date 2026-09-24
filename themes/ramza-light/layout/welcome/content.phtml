@@ -1,0 +1,15 @@
+<?php 
+$ramza_theme_settings = array();
+if (mysqli_query($wo['sqlConnect'], "DESCRIBE `" . T_THEME_SETTINGS . "`" )) {
+	$settings = $db->get(T_THEME_SETTINGS);
+	foreach ($settings as $key => $value) {
+		$ramza_theme_settings[$value->name] = $value->value;
+	}
+}
+?>
+
+<?php if (!empty($ramza_theme_settings) && $ramza_theme_settings['tag_welcome_layout'] == 1) { ?>
+	<?php echo Wo_LoadPage('welcome/content-startup'); ?>
+<?php } else { ?>
+	<?php echo Wo_LoadPage('welcome/content-simple'); ?>
+<?php } ?>

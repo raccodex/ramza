@@ -1443,9 +1443,12 @@ if (empty($wo['content'])) {
         include('sources/404.php');
     }
 }
-echo Wo_Loadpage('container');
+$ramza_page_output = Wo_Loadpage('container');
+if (PHP_SAPI !== 'cli' && http_response_code() >= 500 && !in_array((string)($page ?? ''), array('404', 'oops', 'maintenance'), true) && !empty($ramza_page_output)) {
+    http_response_code(200);
+}
+echo $ramza_page_output;
 mysqli_close($sqlConnect);
 unset($wo);
 ?>
-
 

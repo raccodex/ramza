@@ -57,6 +57,16 @@ if ($f == 'update_data') {
         $data['notifications_sound'] = $wo['user']['notifications_sound'];
     }
     $data['count_num'] = 0;
+    $not_in_posts = array();
+    if (!empty($_GET['not_in'])) {
+        $not_in_source = is_array($_GET['not_in']) ? $_GET['not_in'] : explode(',', $_GET['not_in']);
+        foreach ($not_in_source as $not_in_post_id) {
+            if (is_numeric($not_in_post_id) && (int) $not_in_post_id > 0) {
+                $not_in_posts[] = (int) $not_in_post_id;
+            }
+        }
+        $not_in_posts = array_values(array_unique($not_in_posts));
+    }
     if ($_GET['check_posts'] == 'true') {
         if (!empty($_GET['before_post_id']) && isset($_GET['user_id'])) {
             $html      = '';
@@ -65,7 +75,8 @@ if ($f == 'update_data') {
                 'publisher_id' => $_GET['user_id'],
                 'limit' => 20,
                 'ad-id' => 0,
-                'placement' => 'multi_image_post'
+                'placement' => 'multi_image_post',
+                'not_in' => $not_in_posts
             );
             $posts     = Wo_GetPosts($postsData);
             $count     = count($posts);

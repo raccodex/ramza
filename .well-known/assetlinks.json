@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.raccodex.ramza",
+      "sha256_cert_fingerprints": [
+        "DC:D6:41:22:12:33:7B:99:C2:00:0F:7E:67:77:AE:C6:E6:27:02:60:3E:0B:57:75:CC:4A:8A:E7:86:C4:47:1D"
+      ]
+    }
+  }
+]

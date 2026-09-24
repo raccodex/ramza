@@ -65,7 +65,7 @@
                <a class="dropdown-item" href="javascript:void(0)" onclick="Wo_BanUser(<?php echo $wo['userlist']['user_id']?>,'hide');">Ban User</a>
                <?php } ?>
             <?php } ?>
-            <a class="dropdown-item" href="<?php echo Wo_LoadAdminLinkSettings('manage-permissions?user_id='.$wo['userlist']['user_id']); ?>">Manage Permissions</a>
+             <a class="dropdown-item" href="<?php echo Wo_LoadAdminLinkSettings('manage-permissions?user_id='.$wo['userlist']['user_id']); ?>" data-ajax="?path=manage-permissions&amp;user_id=<?php echo (int) $wo['userlist']['user_id']; ?>">Manage Permissions</a>
          </div>
       </div>
    </td>

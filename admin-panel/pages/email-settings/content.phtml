@@ -56,8 +56,8 @@
                         <div class="form-group form-float">
                             <div class="form-line">
                                 <label class="form-label">SMTP Password</label>
-                                <input type="password" id="smtp_password" name="smtp_password" class="form-control" value="<?php echo openssl_decrypt($wo['config']['smtp_password'], "AES-128-ECB", 'mysecretkey1234');?>">
-                                <small class="admin-info">Your SMTP account password.</small>
+                                <input type="password" id="smtp_password" name="smtp_password" class="form-control" value="" autocomplete="new-password" placeholder="Leave blank to keep the saved password">
+                                <small class="admin-info">Enter a password only when you want to replace the saved SMTP password.</small>
                             </div>
                         </div>
                         <div class="form-group form-float">
@@ -69,7 +69,7 @@
                         </div>
                         <label for="smtp_encryption">SMTP Encryption</label>
                         <select class="form-control show-tick" id="smtp_encryption" name="smtp_encryption">
-                          <option value="tls" <?php if((strtolower($wo['config']['smtp_encryption']) == 'tls')){echo 'selected';};?> >TLS (Default, Not secured)</option>
+                          <option value="tls" <?php if((strtolower($wo['config']['smtp_encryption']) == 'tls')){echo 'selected';};?> >TLS (Recommended)</option>
                           <option value="ssl" <?php if((strtolower($wo['config']['smtp_encryption']) == 'ssl')){echo 'selected';};?> >SSL (Secure)</option>
                         </select>
                         <small class="admin-info">Which encryption method does your SMTP server use?</small>
@@ -80,7 +80,7 @@
                         <div class="email-settings-alert"></div>
                         <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
                         <!-- <button type="submit" class="btn btn-primary m-t-15 waves-effect">Save</button> -->
-                        <button type="button" class="btn btn-success m-t-15 waves-effect" onclick="Wo_TestMessage();">Test E-mail Server</button>
+                        <button type="button" class="btn btn-success m-t-15 waves-effect" onclick="Wo_TestMessage();">Save &amp; Test Email</button>
                     </form>
                 </div>
             </div>
@@ -211,20 +211,22 @@
     <!-- #END# Vertical Layout -->
 <script>
 function Wo_TestMessage() {
-    $('form.email-settings').find('.btn-success').text('Please wait..');
-    $.get(Wo_Ajax_Requests_File(), {f:'admin_setting', s: 'test_message'}, function (data) {
+    var form = $('form.email-settings');
+    var button = form.find('.btn-success');
+    button.prop('disabled', true).text('Saving & testing...');
+    $.post(Wo_Ajax_Requests_File() + '?f=admin_setting&s=save_test_message', form.serialize(), function (data) {
+        var alert = $('<div class="alert"></div>');
         if (data.status == 200) {
-            $('.email-settings-alert').html('<div class="alert alert-success"><i class="fa fa-check"></i> Message sent!</div>');
-            setTimeout(function () {
-                $('.email-settings-alert').empty();
-            }, 2000);
+            alert.addClass('alert-success').text(data.message || 'Settings saved and test email delivered.');
+            $('#smtp_password').val('');
         } else {
-            $('.email-settings-alert').html('<div class="alert alert-danger">Message failed to sent, error: ' + data.error+'</div>');
-            setTimeout(function () {
-                $('.email-settings-alert').empty();
-            }, 2000);
+            alert.addClass('alert-danger').text(data.error || 'Email delivery failed.');
         }
-        $('form.email-settings').find('.btn-success').text('Test E-mail Server');
+        $('.email-settings-alert').empty().append(alert);
+    }, 'json').fail(function () {
+        $('.email-settings-alert').html('<div class="alert alert-danger">The email test request failed. Reload and try again.</div>');
+    }).always(function () {
+        button.prop('disabled', false).text('Save & Test Email');
     });
 }
 function Wo_TestSMSMessage() {
@@ -275,7 +277,7 @@ $(function() {
     });
 
     var setTimeOutColor = setTimeout(function (){});
-    $('select').on('change', function() {
+    $('form:not(.email-settings) select').on('change', function() {
          clearTimeout(setTimeOutColor);
         var thisElement = $(this);
         var configName = thisElement.attr('name');
@@ -298,7 +300,7 @@ $(function() {
             }, 2000);
         });
     });
-    $('input[type=text], input[type=number], input[type=password]').on('input', delay(function() {
+    $('form:not(.email-settings) input[type=text], form:not(.email-settings) input[type=number], form:not(.email-settings) input[type=password]').on('input', delay(function() {
             clearTimeout(setTimeOutColor);
             var thisElement = $(this);
             var configName = thisElement.attr('name');

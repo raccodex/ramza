@@ -1,0 +1,171 @@
+<div class="container">
+	<h2 class="tag_page_title"><?php echo $wo['lang']['checkout']; ?></h2>
+	<div class="page-margin">
+		<div class="row">
+			<div class="col-md-5 mb-3">
+				<h5><?php echo $wo['lang']['delivery_address'] ?></h5>
+				<div class="wow_content ch_summary">
+					<?php if (!empty($wo['addresses'])) { ?>
+						<ul class="list-unstyled mb-0 cart_chos_addrs">
+							<?php foreach ($wo['addresses'] as $key => $address) { ?>
+								<li>
+									<input type="radio" name="choose-address" id="choose_adrs_<?php echo($address->id) ?>" value="<?php echo($address->id) ?>" class="payment_address">
+									<label for="choose_adrs_<?php echo($address->id) ?>">
+										<p><b><?php echo($address->name) ?></b>&nbsp;<?php echo($address->phone) ?></p>
+										<p><?php echo($address->country) ?>, <?php echo($address->city) ?> - <?php echo($address->zip) ?></p>
+									</label>
+								</li>
+							<?php } ?>
+						</ul>
+					<?php } else { ?>
+						<p class="m-0"><?php echo($wo['lang']['please_add_new_address']); ?></p>
+					<?php } ?>
+				</div>
+				
+				<h5><?php echo $wo['lang']['add_new_address'] ?></h5>
+				<form class="form form-horizontal address_form" method="post" action="#">
+					<div class="wow_content ch_address p-3">
+						<div class="modal_add_address_modal_alert"></div>
+						<div class="clear"></div>
+						<div class="row">
+							<div class="col-md-12">
+								<label class="tag_field">
+									<input name="name" type="text" autocomplete="off" placeholder=" " value="<?php echo($wo['user']['name']) ?>">
+									<span><?php echo $wo['lang']['name']; ?></span>
+								</label>
+								<label class="tag_field"></label>
+							</div>
+							<div class="col-md-6">
+								<label class="tag_field">
+									<input name="phone" type="text" autocomplete="off" placeholder=" " value="<?php echo($wo['user']['phone_number']) ?>">
+									<span><?php echo $wo['lang']['phone_number']; ?></span>
+								</label>
+								<label class="tag_field"></label>
+							</div>
+							<div class="col-md-6">
+								<label class="tag_field">
+									<input id="country" name="country" type="text" autocomplete="off" placeholder=" ">
+									<span><?php echo $wo['lang']['country']; ?></span>
+								</label>
+								<label class="tag_field"></label>
+							</div>
+							<div class="col-md-6">
+								<label class="tag_field">
+									<input id="city" name="city" type="text" autocomplete="off" placeholder=" ">
+									<span><?php echo $wo['lang']['city']; ?></span>
+								</label>
+								<label class="tag_field"></label>
+							</div>
+							<div class="col-md-6">
+								<label class="tag_field">
+									<input id="zip" name="zip" type="text" autocomplete="off" placeholder=" ">
+									<span><?php echo $wo['lang']['zip']; ?></span>
+								</label>
+								<label class="tag_field"></label>
+							</div>
+							<div class="col-md-12">
+								<label class="tag_field">
+									<textarea placeholder=" " name="address"></textarea>
+									<span><?php echo $wo['lang']['address']; ?></span>
+								</label>
+							</div>
+						</div>
+						<div class="clear"></div>
+						<button type="submit" class="btn btn-info btn-block btn-mat"><?php echo $wo['lang']['add']; ?></button>
+					</div>
+				</form>
+			</div>
+			<div class="col-md-7">
+				<div class="wow_content p-3 ch_cart">
+					<div class="ch_title">
+						<div>
+							<h4>
+								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18M1,2V4H3L6.6,11.59L5.24,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42A0.25,0.25 0 0,1 7.17,14.75C7.17,14.7 7.18,14.66 7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.58 17.3,11.97L20.88,5.5C20.95,5.34 21,5.17 21,5A1,1 0 0,0 20,4H5.21L4.27,2M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.1,18 7,18Z" fill="currentColor"/></svg> <?php echo $wo['lang']['shopping_cart'] ?>
+							</h4>
+							<p><?php echo(!empty($wo['items']) ? count($wo['items']) : 0) ?> <?php echo $wo['lang']['items'] ?></p>
+						</div>
+						<a href="<?php echo $wo['config']['site_url'].'/products';?>" data-ajax="?link1=products" class="back-to-shop">
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M21,11H6.83L10.41,7.41L9,6L3,12L9,18L10.41,16.58L6.83,13H21V11Z" /></svg> <?php echo $wo['lang']['back_to_shop'] ?>
+						</a>
+					</div>
+					<div class="row ch_prod_items_row">
+						<?php
+							if (!empty($wo['html'])) {
+								echo $wo['html'];
+							} else {
+								echo '<div class="empty_state"><svg height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m6 0h20c3.314 0 6 2.686 6 6v20c0 3.314-2.686 6-6 6h-20c-3.314 0-6-2.686-6-6v-20c0-3.314 2.686-6 6-6z" fill="#ffe6e2"/><circle cx="15" cy="23" fill="#fc573b" r="1"/><circle cx="20.333" cy="23" fill="#fc573b" r="1"/><path d="m24 12.333c0 2.389-1.944 4.333-4.333 4.333s-4.333-1.944-4.333-4.333 1.943-4.333 4.333-4.333 4.333 1.944 4.333 4.333zm-3.391 0 .862-.862c.26-.26.26-.682 0-.943s-.682-.26-.943 0l-.862.862-.862-.862c-.26-.26-.682-.26-.943 0s-.26.682 0 .943l.862.862-.862.862c-.26.26-.26.682 0 .943.26.26.682.26.943 0l.862-.862.862.862c.26.26.682.26.943 0 .26-.26.26-.682 0-.943z" fill="#fd907e"/><path d="m14 12.333c0-.113.01-.222.017-.333h-1.778l-.253-1.204c-.177-.84-.928-1.452-1.786-1.455l-1.698-.008c-.001 0-.002 0-.002 0-.275 0-.499.222-.5.498s.222.501.498.502l1.698.007c.39.002.731.28.812.661l.337 1.6 1.206 5.73h-.384c-.827 0-1.5.673-1.5 1.5s.673 1.5 1.5 1.5h10c.276 0 .5-.224.5-.5s-.224-.5-.5-.5h-10c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h.999.001 9c.236 0 .44-.166.489-.397l.443-2.105c-.954.732-2.141 1.171-3.432 1.171-3.125 0-5.667-2.542-5.667-5.667z" fill="#fc573b"/></svg>' . $wo['lang']['no_items_found'] . '</div>';
+							}
+						?>
+					</div>
+					<div class="ch_total_price">
+						<hr class="divider">
+						<?php if ($wo['topup'] == 'show') { ?>
+							<div class='alert alert-danger wallet_alert'><i class='fa fa-info-circle'></i> <a href='<?php echo $wo['config']['site_url'].'/wallet';?>' target="_blank"><?php echo $wo["lang"]["please_top_up_wallet"]?></a></div>
+						<?php } ?>
+						<h4><?php echo $wo['lang']['total'] ?></h4>
+						<p><?php echo $wo['config']['currency_symbol_array'][$wo['config']['currency']]; ?><?php echo $wo['total']; ?></p>
+						<hr class="divider">
+						<div class="checkout_alert"></div>
+						<button type="button" class="btn btn-success btn-mat buy_button" onclick="BuyProducts('hide','<?php echo $wo['total']; ?>')" <?php if ($wo['topup'] == 'show' || empty($wo['addresses'])) { ?>disabled="true"<?php } ?>><?php echo $wo['lang']['buy'] ?></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+$(document).ready(function() {
+    var options = {
+      url: Wo_Ajax_Requests_File() + '?f=address&s=add&hash=' + $('.main_session').val(),
+        beforeSubmit:  function () {
+          $('.modal_add_address_modal_alert').empty();
+          $("#add_address_modal").find('.btn-mat').attr('disabled', 'true');
+          $("#add_address_modal").find('.btn-mat').text("<?php echo($wo['lang']['please_wait']) ?>");
+        },
+        success: function (data) {
+          $("#add_address_modal").find('.btn-mat').text("<?php echo $wo['lang']['add'] ?>");
+          $("#add_address_modal").find('.btn-mat').removeAttr('disabled')
+          if (data.status == 200) {
+            $('.modal_add_address_modal_alert').html('<div class="alert alert-success"><i class="fa fa-check"></i> '+
+              data.message
+              +'</div>');
+              if (data.url && data.url != '') {
+                if ($('#setting_address_page').length > 0) {
+                  setTimeout(function () {
+                    location.href = data.url;
+                  },2000);
+                }
+                else{
+                  setTimeout(function () {
+                    $('.modal_add_address_modal_alert').empty();
+              $("#add_address_modal").find('.btn-mat').removeAttr('disabled')
+              $("#add_address_modal").find('.btn-mat').text("<?php echo $wo['lang']['add'] ?>");
+              $('#add_address_modal').modal('hide');
+              $('#load_checkout').click();
+                  },2000);
+                }
+              }
+          } else {
+            $('.modal_add_address_modal_alert').html('<div class="alert alert-danger"> '+
+            data.message
+            +'</div>');
+          }
+        }
+    };
+    $('.address_form').ajaxForm(options);
+});
+    <?php if ($wo['topup'] == 'show') { ?>
+    var check_wallet = setInterval(function(){
+        $.post(Wo_Ajax_Requests_File() + '?f=products&s=check_wallet&hash=' + $('.main_session').val(), function(data, textStatus, xhr) {
+            if (data.status == 200) {
+                if (data.topup == 'hide') {
+                    $('.wallet_alert').remove();
+                    $('.buy_button').removeAttr('disabled');
+                    clearInterval(check_wallet);
+                }
+            }
+        });
+     }, 3000);
+    <?php } ?>
+</script>

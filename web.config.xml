@@ -3,6 +3,14 @@
    <system.webServer>
       <rewrite>
          <rules>
+            <rule name="Block private release folders" stopProcessing="true">
+               <match url="^(\.git|\.agents|\.codex|00_MODERNIZATION_REPORTS|review-output)(/|$)" ignoreCase="true" />
+               <action type="CustomResponse" statusCode="403" statusReason="Forbidden" statusDescription="Forbidden" />
+            </rule>
+            <rule name="Block sensitive release files" stopProcessing="true">
+               <match url="(^|/)(config\.php|ramza\.sql|composer\.(json|lock)|package(-lock)?\.json|php\.ini|\.user\.ini|.*\.(sql|log|bak|backup|old|swp|dist))$" ignoreCase="true" />
+               <action type="CustomResponse" statusCode="403" statusReason="Forbidden" statusDescription="Forbidden" />
+            </rule>
             <rule name="rule 1k">
                <match url="^password-reset/([^\/]+)(\/|)$"  ignoreCase="true" />
                <action type="Rewrite" url="/index.php?link1=welcome&amp;link2=password_reset&amp;user_id={R:1}"  appendQueryString="true" />

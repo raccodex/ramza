@@ -1,0 +1,37 @@
+<div class="page-margin">
+	<div class="container">
+		<h2 class="tag_page_title m5"><?php echo $wo['lang']['market']; ?></h2>
+		<ul class="list-unstyled tag_page_nav">
+			<?php if ($wo['config']['can_use_market']) { ?>
+				<li class="separate"><a class="btn-mat" href="<?php echo Wo_SeoLink('index.php?link1=my-products'); ?>" data-ajax="?link1=my-products"><?php echo $wo['lang']['my_products'] ?></a></li>
+			<?php } ?>
+			<?php if ($wo['config']['store_system'] == 'on') { ?>
+				<li class="active"><a class="btn-mat" href="<?php echo Wo_SeoLink('index.php?link1=purchased'); ?>" data-ajax="?link1=purchased"><?php echo $wo['lang']['purchased'] ?></a></li>
+				<?php if ($wo['have_products'] > 0) { ?>
+					<li><a class="btn-mat" href="<?php echo Wo_SeoLink('index.php?link1=orders'); ?>" data-ajax="?link1=orders"><?php echo $wo['lang']['orders'] ?></a></li>
+				<?php } ?>
+			<?php } ?>
+			<li><a class="btn-mat" href="<?php echo Wo_SeoLink('index.php?link1=products'); ?>" data-ajax="?link1=products"><?php echo $wo['lang']['market'] ?></a></li>
+		</ul>
+		
+		<?php if (count($wo['purchased']) > 0): ?>
+			<div class="row">
+				<?php echo($wo['html']); ?>
+			</div>
+			<?php if (count($wo['purchased']) == 20){ ?>
+				<div class="purchased_posts_load">
+					<div class="purchased_load-more">
+						<button class="btn btn-default text-center pointer" onclick="Wo_LoadPurchase();">
+							<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg></span> <?php echo $wo['lang']['load_more'] ?>
+						</button>
+					</div>
+				</div>
+			<?php } ?>
+		<?php else: ?>
+			<div class="empty_state">
+				<svg height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m6 0h20c3.314 0 6 2.686 6 6v20c0 3.314-2.686 6-6 6h-20c-3.314 0-6-2.686-6-6v-20c0-3.314 2.686-6 6-6z" fill="#ffe6e2"/><circle cx="15" cy="23" fill="#fc573b" r="1"/><circle cx="20.333" cy="23" fill="#fc573b" r="1"/><path d="m24 12.333c0 2.389-1.944 4.333-4.333 4.333s-4.333-1.944-4.333-4.333 1.943-4.333 4.333-4.333 4.333 1.944 4.333 4.333zm-3.391 0 .862-.862c.26-.26.26-.682 0-.943s-.682-.26-.943 0l-.862.862-.862-.862c-.26-.26-.682-.26-.943 0s-.26.682 0 .943l.862.862-.862.862c-.26.26-.26.682 0 .943.26.26.682.26.943 0l.862-.862.862.862c.26.26.682.26.943 0 .26-.26.26-.682 0-.943z" fill="#fd907e"/><path d="m14 12.333c0-.113.01-.222.017-.333h-1.778l-.253-1.204c-.177-.84-.928-1.452-1.786-1.455l-1.698-.008c-.001 0-.002 0-.002 0-.275 0-.499.222-.5.498s.222.501.498.502l1.698.007c.39.002.731.28.812.661l.337 1.6 1.206 5.73h-.384c-.827 0-1.5.673-1.5 1.5s.673 1.5 1.5 1.5h10c.276 0 .5-.224.5-.5s-.224-.5-.5-.5h-10c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h.999.001 9c.236 0 .44-.166.489-.397l.443-2.105c-.954.732-2.141 1.171-3.432 1.171-3.125 0-5.667-2.542-5.667-5.667z" fill="#fc573b"/></svg> <?php echo($wo['html']); ?>
+			</div>
+		<?php endif; ?>
+	</div>
+	<!-- .row -->
+</div>

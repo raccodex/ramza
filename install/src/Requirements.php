@@ -14,11 +14,12 @@ final class RACInstallerRequirements
         $info = [];
 
         $required[] = $this->check('PHP 8.2+', self::supportsPhp(), 'RACSocial requires PHP 8.2.0 or newer.');
-        foreach (['mysqli' => 'MySQLi', 'mbstring' => 'mbstring', 'curl' => 'cURL', 'gd' => 'GD', 'openssl' => 'OpenSSL', 'fileinfo' => 'fileinfo/MIME', 'zip' => 'ZIP', 'json' => 'JSON', 'session' => 'Session'] as $extension => $label) {
+        foreach (['mysqli' => 'MySQLi', 'mbstring' => 'mbstring', 'curl' => 'cURL', 'gd' => 'GD', 'openssl' => 'OpenSSL', 'sodium' => 'Sodium', 'fileinfo' => 'fileinfo/MIME', 'zip' => 'ZIP', 'json' => 'JSON', 'session' => 'Session'] as $extension => $label) {
             $required[] = $this->check($label, extension_loaded($extension), "Enable the {$label} PHP extension.");
         }
         $required[] = $this->check('random_bytes()', function_exists('random_bytes'), 'PHP random_bytes() must be available for secure keys.');
-        $required[] = $this->check('SQL dump', is_readable($this->paths->sqlDump), 'The repository root must contain a readable wowonder.sql file.');
+        $required[] = $this->check('SQL dump', is_readable($this->paths->sqlDump), 'The repository root must contain a readable ramza.sql file.');
+        $required[] = $this->check('Mobile API migration', is_readable($this->paths->mobileApiMigration), 'The package must contain updates/ramza_mobile_api_v1.sql.');
         $required[] = $this->check('Temporary directory', $this->temporaryDirectoryUsable(), 'PHP temporary directory must be writable for installer logs and atomic files.');
         $required[] = $this->check('config.php destination', RACInstallerConfigWriter::canWriteFreshConfig($this->paths->configFile), 'config.php must be missing, blank/template, or replaceable by the installer.');
         $required[] = $this->check('nodejs/config.json destination', RACInstallerNodeConfigWriter::canWriteFreshNodeConfig($this->paths->nodeConfigFile), 'nodejs/config.json must be missing, blank/template, or replaceable by the installer.');

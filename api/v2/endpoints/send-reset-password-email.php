@@ -22,7 +22,15 @@ if (empty($error_code)) {
     } else {
     	$user_recover_data         = Wo_UserData(Wo_UserIdFromEmail($_POST['email']));
         $subject                   = $config['siteName'] . ' ' . $wo['lang']['password_rest_request'];
-        $user_recover_data['link'] = Wo_Link('index.php?link1=reset-password&code=' . $user_recover_data['user_id'] . '_' . $user_recover_data['password']);
+        try {
+            $code = bin2hex(random_bytes(32));
+        } catch (Exception $e) {
+            $code = hash('sha256', uniqid((string)mt_rand(), true) . microtime(true));
+        }
+        $user_recover_data['link'] = Wo_Link('index.php?link1=reset-password&code=' . $user_recover_data['user_id'] . '_' . $code);
+        $expires_at = time() + (60 * 60 * 12);
+        mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `email_code` = '" . Wo_Secure($code) . "', `time_code_sent` = '" . (int)$expires_at . "' WHERE `user_id` = " . (int)$user_recover_data['user_id']);
+        cache($user_recover_data['user_id'], 'users', 'delete');
         $wo['recover']             = $user_recover_data;
         $body                      = Wo_LoadPage('emails/recover');
         $send_message_data         = array(
@@ -33,7 +41,8 @@ if (empty($error_code)) {
             'subject' => $subject,
             'charSet' => 'utf-8',
             'message_body' => $body,
-            'is_html' => true
+            'is_html' => true,
+            'return' => 'error'
         );
         $send                      = Wo_SendMessage($send_message_data);
         if ($send) {
@@ -41,6 +50,9 @@ if (empty($error_code)) {
 			    'api_status' => 200,
 			);
         } else {
+            mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `email_code` = '', `time_code_sent` = '0' WHERE `user_id` = " . (int)$user_recover_data['user_id']);
+            cache($user_recover_data['user_id'], 'users', 'delete');
+            error_log('[Ramza API password recovery] Mail delivery failed: ' . preg_replace('/[\r\n]+/', ' ', (string)$send));
         	$error_code    = 7;
             $error_message = 'Failed to send the email, please check your server email settings.';
         }

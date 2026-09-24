@@ -1,0 +1,112 @@
+<div class="modal fade" id="AI-credit-modal" role="dialog">
+	<div class="modal-dialog modal-md wow_mat_mdl">
+		<form method="post">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title"><?php echo $wo['lang']['buy_credit']; ?></h4>
+				</div>
+				<div class="modal-body">
+					<div class="ai_alert_balance buy_cred mb-4">
+						<b class="ai_credit_prices"><?php echo $wo['lang']['available_balance']?></b>
+					</div>
+					
+					<div class="ai_credit_alert"></div>
+					
+					<label class="tag_field">
+						<input type="number" placeholder=" " onkeyup="updatedConvertedWalletAmount(this);checkCanBuy(this)" id="ai-credit-input">
+						<span><?php echo $wo['lang']['amount']?></span>
+						<p class="ai_wallet_amount"></p>
+					</label>
+					<input type="hidden" name="user" value="<?php echo $wo['user']['user_id'];?>">
+					<input type="hidden" value="<?php echo $wo['user']['credits'];?>" id="current_user_credits">
+					<input type="hidden" value="" id="current_model_credits">
+				</div>
+				<div class="modal-footer" style="border: none">
+					<div class="ball-pulse"><div></div><div></div><div></div></div>
+					<button type="button" class="btn btn-default btn-mat disable_btn" data-dismiss="modal" aria-label="Close"><?php echo $wo['lang']['cancel'] ?></button>
+					<button type="button" class="btn btn-main btn-mat" id="ai-credit-button" onclick="buyCredits()"><?php echo $wo['lang']['buy']; ?></button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script type="text/javascript">
+	function updatedConvertedWalletAmount(self) {
+		let num = Number($(self).val());
+		if (typeof num === "number" && !isNaN(num) && num > 0) {
+			$('.ai_wallet_amount').html("<?php echo($wo['lang']['equals_to']) ?> <?php echo Wo_GetCurrency($wo['config']['ads_currency']); ?>" + (parseInt($(self).val()) / <?php echo($wo['config']['credit_price']) ?>));
+		}
+		else{
+			$('.ai_wallet_amount').html("");
+		}
+	}
+	function getAvailableByType(type = 'image'){
+		if (type == 'text') {
+			return parseInt(parseInt($('#current_user_credits').val()) / parseInt("<?php echo($wo['config']['generated_word_price']) ?>"));
+		}
+		return parseInt(parseInt($('#current_user_credits').val()) / parseInt("<?php echo($wo['config']['generated_image_price']) ?>"));
+	}
+	function buyCredits() {
+		$("#ai-credit-button").text("<?php echo($wo['lang']['please_wait']) ?>");
+		$("#ai-credit-button").attr("disabled",true);
+		$.post(Wo_Ajax_Requests_File()+'?f=wallet&s=buy_credit', {amount: $('#ai-credit-input').val()}, function(data, textStatus, xhr) {
+			if (data.status == 200) {
+				$('#current_user_credits').val(parseInt($('#current_user_credits').val()) + parseInt($('#ai-credit-input').val()));
+				$('#ai-credit-input').val('');
+				$('#AI-credit-modal').modal('hide');
+				if ($('#current_model_credits').val() == 'AI-post-modal') {
+					openPostModel();
+				}
+				else if($('#current_model_credits').val() == 'AI-user-modal'){
+					openAiUserModel($('#ai-user-model-type').val());
+				}
+				else if($('#current_model_credits').val() == 'AI-modal'){
+					openAIModel();
+				}
+				else if($('#current_model_credits').val() == 'AI-blog-modal'){
+					refreshBlogInfo();
+				}
+			}
+			else{
+				$('.ai_credit_alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+			}
+			$("#ai-credit-button").text("<?php echo($wo['lang']['buy']) ?>");
+			$("#ai-credit-button").attr("disabled",true);
+		});
+	}
+	function checkCanBuy(self) {
+		$.post(Wo_Ajax_Requests_File()+'?f=wallet&s=check_credit', {amount: $(self).val()}, function(data, textStatus, xhr) {
+			if (data.status == 200) {
+				$("#ai-credit-button").removeAttr("disabled");
+				$('.ai_credit_alert').html("");
+			}
+			else{
+				$("#ai-credit-button").attr("disabled",true);
+				$('.ai_credit_alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+			}
+		});
+	}
+	function openAICredit(id) {
+		$('.ai_wallet_amount').html("");
+		$('#ai-credit-input').val('');
+		$('#ai_credit_alert').html('');
+		<?php if ($wo['user']['wallet'] < 1) { ?>
+			$('.ai_credit_alert').html("<div class='alert alert-danger'><a href='<?php echo $wo['config']['site_url'];?>/wallet'><?php echo $wo["lang"]["please_top_up_wallet"]?></a></div>");
+		<?php } ?>
+		var div = '{TX}';
+		if (id == 'AI-post-modal' || id == 'AI-blog-modal') {
+			$('.ai_credit_prices').html(div.replace('{TX}',"<?php echo(str_replace('{price}', $wo['config']['generated_word_price'], $wo['lang']['text_price'])) ?>"));
+		}
+		else{
+			$('.ai_credit_prices').html(div.replace('{TX}',"<?php echo(str_replace('{price}', $wo['config']['generated_image_price'], $wo['lang']['image_price'])) ?>"));
+		}
+					
+		$('#current_model_credits').val(id);
+		$('#AI-post-modal').modal('hide');
+		$('#AI-user-modal').modal('hide');
+		$('#AI-modal').modal('hide');
+		$('#AI-blog-modal').modal('hide');
+		$('#AI-credit-modal').modal('show');
+	}
+</script>

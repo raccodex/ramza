@@ -1,0 +1,52 @@
+body.rac-admin-shell.dark,
+body.rac-admin-shell[data-rac-theme="dark"] {
+    --rac-bg: #111418;
+    --rac-sidebar-bg: #0f1216;
+    --rac-header-bg: #181c21;
+    --rac-surface: #1b2026;
+    --rac-surface-2: #20262d;
+    --rac-hover: #262d35;
+    --rac-border: #303842;
+    --rac-border-strong: #46515e;
+    --rac-text: #e6e9ee;
+    --rac-text-2: #c0c7d1;
+    --rac-muted: #8b95a3;
+    --rac-accent: #dc4c57;
+    --rac-accent-hover: #e3656e;
+    --rac-success: #56b58c;
+    --rac-warning: #d29a39;
+    --rac-danger: #e05a65;
+    --rac-info: #61a8d3;
+}
+
+body.rac-admin-shell.dark .card,
+body.rac-admin-shell.dark .modal-content,
+body.rac-admin-shell.dark .dropdown-menu,
+body.rac-admin-shell[data-rac-theme="dark"] .card,
+body.rac-admin-shell[data-rac-theme="dark"] .modal-content,
+body.rac-admin-shell[data-rac-theme="dark"] .dropdown-menu {
+    color: var(--rac-text);
+}
+
+body.rac-admin-shell.dark .form-control,
+body.rac-admin-shell.dark select,
+body.rac-admin-shell.dark textarea,
+body.rac-admin-shell[data-rac-theme="dark"] .form-control,
+body.rac-admin-shell[data-rac-theme="dark"] select,
+body.rac-admin-shell[data-rac-theme="dark"] textarea {
+    background: var(--rac-surface);
+    color: var(--rac-text);
+}
+
+body.rac-admin-shell.dark .table,
+body.rac-admin-shell[data-rac-theme="dark"] .table {
+    color: var(--rac-text);
+}
+
+body.rac-admin-shell.dark .select2-container .select2-selection,
+body.rac-admin-shell.dark .select2-dropdown,
+body.rac-admin-shell[data-rac-theme="dark"] .select2-container .select2-selection,
+body.rac-admin-shell[data-rac-theme="dark"] .select2-dropdown {
+    background: var(--rac-surface);
+    color: var(--rac-text);
+}

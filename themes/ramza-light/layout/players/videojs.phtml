@@ -1,0 +1,48 @@
+<div class="tag_vid_plyr">
+	<video id="video--<?php echo $wo['media']['storyId'];?>" class="plyrr-<?php echo $wo['media']['storyId'];?> <?php echo($wo['rvad_con']); ?>" playsinline crossorigin preload="metadata" poster="<?php  echo $wo['media']['video_thumb'];?>" data-setup="{}" data-post-video="<?php echo $wo['media']['storyId'];?>"></video>
+</div>
+
+<script>
+	var source = '<?php echo $wo['media']['filename'];?>';
+	var tagvideo = '.plyrr-<?php echo $wo['story']['id'];?>';
+	var players = Plyr.setup(tagvideo, {
+		controls: ['play-large', 'progress', 'play', 'mute', 'volume', 'current-time', 'pip', 'airplay', 'fullscreen'],
+		<?php if (Wo_IsMobile() == false) { ?>
+		ratio: '16:9',
+		<?php } ?>
+		fullscreen: {
+			iosNative: true
+		},
+		ads: {
+			enabled: false,
+			tagUrl: ''
+		}
+	});
+
+	(function () {
+	  var video = document.querySelector('.plyrr-<?php echo $wo['story']['id'];?>');
+
+	  if (Hls.isSupported()) {
+		var hls = new Hls();
+		hls.loadSource('<?php echo $wo['media']['filename'];?>');
+		hls.attachMedia(video);
+		hls.on(Hls.Events.MANIFEST_PARSED,function() {
+		  video.play();
+		});
+	  }
+	  
+	  plyr.setup(video);
+	})();
+
+	$(window).scroll(function(e){
+		if (!document.pictureInPictureElement) {
+			$('.plyrr-<?php echo $wo['story']['id'];?>').each(function(){
+				if ($(this).is(":in-viewport")) {
+					
+				} else {
+					$(this)[0].pause();
+				}
+			});
+		}
+	});
+</script>

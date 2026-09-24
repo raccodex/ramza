@@ -9,7 +9,7 @@ if ($f == 'check_for_audio_answer') {
                 'text_please_wait' => $wo['lang']['please_wait']
             );
             $id   = Wo_Secure($_GET['id']);
-            if ($wo['config']['agora_chat_video'] == 1) {
+            if (function_exists('Ramza_CallProvider') ? Ramza_CallProvider() === 'agora' : $wo['config']['agora_chat_video'] == 1) {
                 $query = mysqli_query($sqlConnect, "SELECT * FROM " . T_AGORA . " WHERE `id` = '{$id}'");
             } else {
                 $query = mysqli_query($sqlConnect, "SELECT * FROM " . T_AUDIO_CALLES . " WHERE `id` = '{$id}'");
@@ -17,7 +17,7 @@ if ($f == 'check_for_audio_answer') {
             $sql = mysqli_fetch_assoc($query);
             if (!empty($sql) && is_array($sql)) {
                 $wo['incall'] = $sql;
-                if ($wo['config']['agora_chat_video'] == 1) {
+                if (function_exists('Ramza_CallProvider') ? Ramza_CallProvider() === 'agora' : $wo['config']['agora_chat_video'] == 1) {
                     $wo['incall']['in_call_user'] = Wo_UserData($sql['to_id']);
                 } else {
                     $wo['incall']['in_call_user'] = Wo_UserData($sql['to_id']);

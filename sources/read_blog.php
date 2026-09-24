@@ -20,7 +20,7 @@ if (empty($article)) {
     header("Location: " . Wo_SeoLink('index.php?link1=welcome'));
     exit();
 }
-$sql_query         = mysqli_query($sqlConnect, "UPDATE `Wo_Blog` SET `view` = `view` + 1 WHERE `id` = '$id'");
+$sql_query         = mysqli_query($sqlConnect, "UPDATE `" . T_BLOG . "` SET `view` = `view` + 1 WHERE `id` = '$id'");
 $wo['description'] = $article['description'];
 $wo['keywords']    = $article['tags'];
 $wo['page']        = 'read-blog';

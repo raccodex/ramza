@@ -1,5 +1,171 @@
 # Changelog
 
+## 6.36.0
+* Deprecate `debugId` on `Transaction\PayPalDetails`, `Transaction\LocalPaymentDetails`, and `Transaction\SepaDirectDebitAccountDetails`
+* Add `accountReferenceNumberType` to sender and receiver in transfer on `Transaction`
+* Add `CannotCloneThirdPartyCofNetworkTokenTransaction (915274)` transaction validation error code
+
+## 6.35.0
+* Add `mastercardTransactionLinkId` to `Transaction` and `Verification`
+* Fix webhook signature verification vulnerability when using OAuth Connect
+
+## 6.34.0
+* Add support for apple pay card verifications
+
+## 6.33.1
+* Fixes syntax error in `Version.php` file
+
+## 6.33.0
+* Add Local Payment Context support with `LocalPaymentGateway->create()` and `LocalPaymentGateway->find()` methods
+* Add support for MBWAY and CRYPTO payment types
+* Add `acquirerReferenceNumber` to transaction search object
+* Remove merchant create functionality
+* Remove `accountFundingTransaction` from `Transaction` request
+* Add `apiRequestKey` (idempotency) support for `Transaction::sale()`, `Transaction::credit()`, `Transaction::submitForSettlement()`, `Transaction::submitForPartialSettlement()`, `Transaction::void()`, and `Transaction::refund()`
+* Add `surchargeAmount` to transaction object
+
+## 6.32.0
+* Add JsonSerializable interface to Instance class for proper JSON encoding support
+* Fix PHP 8.5 curl_close() deprecation warning by using version-conditional cleanup
+* Add `acceptPartialAuthorization` to `TransactionGateway` and `partiallyAuthorized` to `Transaction`
+* Deprecate transactions for `visa_checkout_card` and maintain search functionality
+* Add `achType` to `options` -> `usBankAccount` in `Transaction::sale()`
+* Add `achType` and `requestedAchType` to `Transaction`
+
+## 6.31.0
+* Filter CreditCardVerification::search() to only return credit card verifications
+* Add `middleName` to sender and receiver, and `dateOfBirth` to sender in transfer on `Transaction`
+* Remove unused error code `AdjustmentAmountMustBeGreaterThanZero`
+
+## 6.30.0
+* Add `processingMerchantCategoryCode` to `TransactionGateway`
+* Add missing `transfer` validation error codes in `Transaction`
+
+## 6.29.0
+* Add Bank Account Instant Verification functionality
+* Add `BankAccountInstantVerificationGateway` for creating JWT tokens
+* Add `BankAccountInstantVerificationJwt` and `BankAccountInstantVerificationJwtRequest` classes
+* Add `bankAccountInstantVerification()` method to main Gateway class
+* Add ACH mandate support for US Bank Account transactions
+* Add `achMandateText` and `achMandateAcceptedAt` fields to Transaction and PaymentMethod create signatures
+* Add `usBankAccount` parameter support for ACH mandate details
+* Add `INSTANT_VERIFICATION_ACCOUNT_VALIDATION` as a new US Bank Account verification method
+* Add `sender` and `receiver` to `transfer` in `Transaction`
+* Add `achRejectReason` field to `Transaction`
+* Add `isDeviceToken` and `merchantTokenIdentifier` to `ApplePayCard` and `ApplePayDetails`
+* Add `paymentAccountReference` to `ApplePayCardDetails`, `GooglePayCardDetails`, `CreditCardDetails` and `CreditCardVerification`
+
+## 6.28.0
+* Add `upcomingRetryDate` to Transaction
+* Add `remainingFileEvidenceStorage` to `Dispute`
+* Add `transaction_retried` webhook
+* Add `transfer type` to Transaction
+
+## 6.27.0
+* Add Session Id to Customer Recommendations Payload
+
+## 6.26.0
+* Add `accountInformationInquiry` to:
+  * `CreditCard.create` and `CreditCard.update`
+  * `PaymentMethod.create` and `PaymentMethod.update`
+  * `CreditCardVerification.create`
+* Enhancements to PayPal customer recommendations
+  * Create a session and get recommendations in one call
+  * Hash customer email and phone number
+* Add `business`, `consumer`, `corporate`, and `purchase` from the bin data to credit card responses
+
+## 6.25.0 
+* Remove marketplace features
+* Add support for capturing payment facilitator and sub-merchant details with transactions 
+
+## 6.24.0
+* Add support for `PayPalPaymentResource` requests
+* Add prepaid_reloadable from bin data in credit card responses
+
+## 6.23.0
+* Add support for creating and updating PayPal customer session
+* Add support for getting PayPal customer recommendations
+
+## 6.22.0
+* Add recipient/contact info: `recipient_email`and `recipient_phone` to `Transaction` 
+
+## 6.21.0
+* Add `fail_on_duplicate_payment_method_for_customer` option to 
+  * `ClientToken`
+  * `PaymentMethod`
+  * `CreditCard`
+* Add `blik_aliases` to LocalPaymentCompleted webhook
+* Deprecate `SamsungPayCard`
+* Updated expiring pinned vendor SSL certificates
+
+## 6.20.0
+* Add `payer_name`, `bic` and `iban_last_chars` to LocalPaymentCompleted webhook
+* Fixes "Array to String conversion" error when an international phone number is included in customer details
+* Add `editPaypalVaultId` to PayPalAccount
+* Add `aniFirstNameResponseCode` and `aniLastNameResponseCode` to CreditCardVerification
+* Add `shippingTaxAmount` to Transaction
+* Add `networkTokenizationAttributes` parameter to `Transaction.sale`
+* Add `CREDIT_CARD_NETWORK_TOKENIZATION_ATTRIBUTE_CRYPTOGRAM_IS_REQUIRED` to validation error codes.
+
+## 6.19.0
+* Add `foreignRetailer` to Transaction
+* Add `internationalPhone` to `Address` and `Customer`
+* Add `fundingSourceDescription` to PayPalAccount
+* Add missing `GooglePayCard` error code
+* Add `REFUND_FAILED` to WebhookNotification
+* Add `final_capture` to Transaction `submitForPartialSettlement`
+* Deprecate `paypalTrackingId` in favor of `paypalTrackerId`
+
+## 6.18.0
+* Deprecate `CreditCard::credit` in favor of `Transaction::credit`
+* Deprecate `CreditCard::sale` in favor of `Transaction::sale`
+* Add `domains` parameter support to `ClientToken::generate`
+* Refactor key validation in `ClientTokenGateway`
+
+## 6.17.0
+* Add `UNDER_REVIEW` Dispute Status
+* Add `DISPUTE_UNDER_REVIEW` WebhookNotification
+* Add `debitNetwork` support `Transaction` and `TransactionSearch`
+* Add `process_debit_as_credit` to `TransactionOptionsCreditCardRequest`
+
+## 6.16.0
+* Deprecate `threeDSecureToken` in favor of `threeDSecureAuthenticationId`
+* Deprecate `venmoSdkSession`, `venmoSdkPaymentMethodCode`, and `isVenmoSdk()`
+* Add `PICKUP_IN_STORE` to `ShippingMethod` enum
+* Add to `CreditCardVerification` create request
+  * `externalVault`
+  * `paymentMethodNonce`
+  * `riskData`
+  * `threeDSecureAuthenticationId`
+  * `threeDSecurePassThru` 
+* Add `phoneNumber` to `Address`, `CreditCardGateway`, `PaymentMethodGateway` and `CustomerGateway`
+* Add `packages` to `Transaction`
+* Add `packageTracking` method to `TransactionGateway` to make request to add tracking information to transactions
+* Add check for empty `liabilityShift` in `RiskData`
+* Add `imageUrl`, `upcCode`, and `upcType` to `lineItems` in `TransactionGateway`
+
+## 6.15.0
+* Add `billingAddress` and `shippingAddress` to `VenmoProfileData` for `PaymentMethodCustomerDataUpdated` webhook
+* Add `MetaCheckoutCard` and `MetaCheckoutToken` payment methods
+* Add `MetaCheckoutCardDetails` and `MetaCheckoutTokenDetails` to Transaction object
+* Add `verificationAddOns` and `additionalProcessorResponse` to `PaymentMethodCreate` for ACH Network Check
+* Add `dateOfBirth` and `countryCode` to `industry_data`
+
+## 6.14.0
+* Add `arrivalDate` and `ticketIssuerAddress` to Transaction object
+* Add `SUBSCRIPTION_BILLING_SKIPPED` WebhookNotification
+
+## 6.13.0 
+* Add `retry_ids` and `retry_transaction_id` to Transaction object
+* Add `processing_overrides` to `Transaction.sale` options
+
+## 6.12.0
+* Add subscriptions for SEPA direct debit account
+* Add `merchant_advice_code` and `merchant_advice_code_text` to `Transaction`
+
+## 6.11.2 
+*  `TestingGateway` methods return type is `Result\Error` for validation errors.
+
 ## 6.11.1
 * Resolved various dynamic property warnings for PHP 8.2 (thanks to @mvoelker & @markdavidsonEE)
 

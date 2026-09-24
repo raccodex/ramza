@@ -1,11 +1,11 @@
 <?php
-if (empty($_GET['user_id'])) {
-    header("Location: " . $wo['config']['site_url']);
+if (empty($_GET['user_id']) || !is_numeric($_GET['user_id']) || (int) $_GET['user_id'] < 1) {
+    header("Location: " . Wo_LoadAdminLinkSettings('manage-users'));
     exit();
 }
-$user_data = Wo_UserData($_GET['user_id']);
+$user_data = Wo_UserData((int) $_GET['user_id']);
 if (empty($user_data)) {
-    header("Location: " . $wo['config']['site_url']);
+    header("Location: " . Wo_LoadAdminLinkSettings('manage-users'));
     exit();
 }
 
@@ -22,10 +22,15 @@ if (!empty($wo['all_pages'])) {
 }
 if (empty($user_data['permission'])) {
     $permission = json_encode($per_array);
-    $db->where('user_id',$user_data['user_id'])->update(T_USERS,array('permission' => $permission));
-    cache($user_data['user_id'], 'users', 'delete');
-    $user_data = Wo_UserData($user_data['user_id']);
-    $user_data['permission'] = json_decode($user_data['permission'],true);
+    if (!Ramza_IsDemoMode()) {
+        $db->where('user_id',$user_data['user_id'])->update(T_USERS,array('permission' => $permission));
+        cache($user_data['user_id'], 'users', 'delete');
+        $user_data = Wo_UserData($user_data['user_id']);
+        $user_data['permission'] = json_decode($user_data['permission'],true);
+    }
+    else {
+        $user_data['permission'] = $per_array;
+    }
 }
 else{
     $user_data['permission'] = json_decode($user_data['permission'],true);
@@ -35,14 +40,17 @@ else{
         }
     }
     $permission = json_encode($user_data['permission']);
-    $db->where('user_id',$user_data['user_id'])->update(T_USERS,array('permission' => $permission));
-    cache($user_data['user_id'], 'users', 'delete');
-    $user_data = Wo_UserData($user_data['user_id']);
-    $user_data['permission'] = json_decode($user_data['permission'],true);
+    if (!Ramza_IsDemoMode()) {
+        $db->where('user_id',$user_data['user_id'])->update(T_USERS,array('permission' => $permission));
+        cache($user_data['user_id'], 'users', 'delete');
+        $user_data = Wo_UserData($user_data['user_id']);
+        $user_data['permission'] = json_decode($user_data['permission'],true);
+    }
 }
 
 ?>
-<div class="container-fluid">
+<div class="container-fluid" id="ramza-permission-manager" data-user-id="<?php echo (int) $user_data['user_id']; ?>">
+    <input type="hidden" id="permission_hash_id" value="<?php echo htmlspecialchars(Wo_CreateMainSession(), ENT_QUOTES, 'UTF-8'); ?>">
     <div>
         <h3>Manage Permissions</h3>
         <nav aria-label="breadcrumb">
@@ -68,13 +76,13 @@ else{
                         <label for="dashboard" class="main-label"></label>
                     </div>
 					<div class="text-center">
-						<button type="button" name="permission_type" value="normal" id="btn_permission_normal" class="btn select_user_perm <?php echo($user_data['admin'] == 0 ? 'btn-info' : 'active_permissions') ?>" <?php if($user_data['admin'] != 0){ ?>onclick="Wo_Permission(<?php echo $user_data['user_id']?>,'hide','normal');" <?php } ?>>
+						<button type="button" name="permission_type" value="normal" id="btn_permission_normal" class="btn select_user_perm <?php echo($user_data['admin'] == 0 ? 'btn-info' : 'active_permissions') ?>" <?php if($user_data['admin'] != 0){ ?>data-permission-role="normal"<?php } ?>>
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg> Normal
 						</button>
-						<button type="button" name="permission_type" value="moderator" id="btn_permission_moderator" class="btn select_user_perm <?php echo($user_data['admin'] == 2 ? 'btn-info' : 'active_permissions') ?>" <?php if($user_data['admin'] != 2){ ?>onclick="Wo_Permission(<?php echo $user_data['user_id']?>,'hide','moderator');" <?php } ?>>
+						<button type="button" name="permission_type" value="moderator" id="btn_permission_moderator" class="btn select_user_perm <?php echo($user_data['admin'] == 2 ? 'btn-info' : 'active_permissions') ?>" <?php if($user_data['admin'] != 2){ ?>data-permission-role="moderator"<?php } ?>>
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3C14.21 3 16 4.79 16 7S14.21 11 12 11 8 9.21 8 7 9.79 3 12 3M16 13.54C16 14.6 15.72 17.07 13.81 19.83L13 15L13.94 13.12C13.32 13.05 12.67 13 12 13S10.68 13.05 10.06 13.12L11 15L10.19 19.83C8.28 17.07 8 14.6 8 13.54C5.61 14.24 4 15.5 4 17V21H20V17C20 15.5 18.4 14.24 16 13.54Z" /></svg> Moderator
 						</button>
-						<button type="button" name="permission_type" value="admin" id="btn_permission_admin" class="btn select_user_perm <?php echo($user_data['admin'] == 1 ? 'btn-info' : 'active_permissions') ?>" <?php if($user_data['admin'] != 1){ ?> onclick="Wo_Permission(<?php echo $user_data['user_id']?>,'hide','admin');" <?php } ?>>
+						<button type="button" name="permission_type" value="admin" id="btn_permission_admin" class="btn select_user_perm <?php echo($user_data['admin'] == 1 ? 'btn-info' : 'active_permissions') ?>" <?php if($user_data['admin'] != 1){ ?>data-permission-role="admin"<?php } ?>>
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,8A3,3 0 0,1 12,5M17.13,17C15.92,18.85 14.11,20.24 12,20.92C9.89,20.24 8.08,18.85 6.87,17C6.53,16.5 6.24,16 6,15.47C6,13.82 8.71,12.47 12,12.47C15.29,12.47 18,13.79 18,15.47C17.76,16 17.47,16.5 17.13,17Z" /></svg> Admin
 						</button>
 					</div>
@@ -948,26 +956,6 @@ else{
                         <label for="chck-push-notifications-system" class="check-trail"><span class="check-handler"></span></label>
                     </div>
                     <div class="clearfix"></div>
-                    <hr>
-                    <div class="float-left">
-                        <label for="verfiy-applications" class="main-label">Verify Applications</label>
-                    </div>
-                    <div class="form-group float-right switcher">
-                        <input type="hidden" name="verfiy-applications" value="0" />
-                        <input type="checkbox" name="verfiy-applications" id="chck-verfiy-applications" value="1" <?php echo ($user_data['permission']['verfiy-applications'] == 1) ? 'checked': '';?>>
-                        <label for="chck-verfiy-applications" class="check-trail"><span class="check-handler"></span></label>
-                    </div>
-                    <div class="clearfix"></div>
-                    <hr>
-                    <div class="float-left">
-                        <label for="manage-third-psites" class="main-label">3rd Party Scripts</label>
-                    </div>
-                    <div class="form-group float-right switcher">
-                        <input type="hidden" name="manage-third-psites" value="0" />
-                        <input type="checkbox" name="manage-third-psites" id="chck-manage-third-psites" value="1" <?php echo ($user_data['permission']['manage-third-psites'] == 1) ? 'checked': '';?>>
-                        <label for="chck-manage-third-psites" class="check-trail"><span class="check-handler"></span></label>
-                    </div>
-                    <div class="clearfix"></div>
                 </div>
             </div>
         </div>
@@ -1269,51 +1257,120 @@ else{
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-secondary">Add</button>
+                <button type="button" class="btn btn-secondary" id="confirm_permission_role">Add</button>
             </div>
         </div>
     </div>
 </div>
 <script>
-    $(function() {
-        $('.switcher input[type=checkbox]').click(function () {
-            setToTrue = 0;
-            if ($(this).is(":checked") === true) {
-                setToTrue = 1;
-            }
-            var permission = $(this).attr('name');
-            var hash_id = $('input[name=hash_id]').val();
-            var objData = {};
-            objData['permission'] = permission;
-            objData['permission_val'] = setToTrue;
-            var user_id = '<?php echo (int)$user_data['id'];?>';
-            objData['user_id'] = user_id;
-            objData['hash_id'] = hash_id;
-            $.get( Wo_Ajax_Requests_File() + '?f=admin_setting&s=update_moderator_permission', objData);
-        });
-    });
+(function ($) {
+    'use strict';
 
-    function Wo_Permission(user_id,type = 'show',type2) {
-        if (type == 'hide') {
-            $('#PermissionModal').find('.btn-secondary').attr('onclick', "Wo_Permission('"+user_id+"','show','"+type2+"')");
-            text = 'Add as a normal user?';
-            text2 = 'Are you sure you want to add as a normal user?';
-            if (type2 == 'moderator') {
-                text = 'Add as a moderator?';
-                text2 = 'Are you sure you want to add as a moderator?';
-            }
-            if (type2 == 'admin') {
-                text = 'Add as an admin?';
-                text2 = 'Are you sure you want to add as an admin?';
-            }
-            $('#PermissionModal').find('.modal-title').html(text);
-            $('#PermissionModal').find('.permission_text').html(text2);
-            $('#PermissionModal').modal('show');
-            return false;
-        }
-        hash_id = $('#hash_id').val();
-        $.get(Wo_Ajax_Requests_File(),{f:'admin_setting', s:'permission', user_id: user_id, hash_id: hash_id,type: type2},function(data) {
-            location.reload();
-        });
+    var namespace = '.ramzaPermissions';
+
+    function permissionContext() {
+        var $manager = $('#ramza-permission-manager');
+        return {
+            manager: $manager,
+            userId: parseInt($manager.attr('data-user-id'), 10) || 0,
+            hashId: $('#permission_hash_id').val() || ''
+        };
     }
+
+    function showPermissionError(message) {
+        var safeMessage = message || 'The permission could not be updated. Please try again.';
+        var $alert = $('#PermissionModal .ModeratorModalAlert');
+        if ($alert.length) {
+            $alert.html('<div class="alert alert-danger">' + $('<div>').text(safeMessage).html() + '</div>');
+        }
+    }
+
+    $(document)
+        .off('change' + namespace, '#ramza-permission-manager .switcher input[type="checkbox"]')
+        .on('change' + namespace, '#ramza-permission-manager .switcher input[type="checkbox"]', function () {
+            var checkbox = this;
+            var context = permissionContext();
+            var originalValue = checkbox.checked;
+
+            if (!context.userId || !context.hashId) {
+                checkbox.checked = !originalValue;
+                showPermissionError('Your admin session has expired. Reload the page and try again.');
+                return;
+            }
+
+            checkbox.disabled = true;
+            $.ajax({
+                url: Wo_Ajax_Requests_File(),
+                method: 'GET',
+                dataType: 'json',
+                data: {
+                    f: 'admin_setting',
+                    s: 'update_moderator_permission',
+                    permission: $(checkbox).attr('name'),
+                    permission_val: originalValue ? 1 : 0,
+                    user_id: context.userId,
+                    hash_id: context.hashId
+                }
+            }).done(function (data) {
+                if (!data || parseInt(data.status, 10) !== 200) {
+                    checkbox.checked = !originalValue;
+                    showPermissionError(data && data.message ? data.message : 'The permission could not be updated.');
+                }
+            }).fail(function (xhr) {
+                checkbox.checked = !originalValue;
+                var response = xhr.responseJSON || {};
+                showPermissionError(response.message || 'The server did not accept the permission change.');
+            }).always(function () {
+                checkbox.disabled = false;
+            });
+        })
+        .off('click' + namespace, '#ramza-permission-manager [data-permission-role]')
+        .on('click' + namespace, '#ramza-permission-manager [data-permission-role]', function () {
+            var role = $(this).attr('data-permission-role');
+            var roleName = role === 'admin' ? 'an admin' : (role === 'moderator' ? 'a moderator' : 'a normal user');
+            var $modal = $('#PermissionModal');
+
+            $modal.find('.ModeratorModalAlert').empty();
+            $modal.find('.modal-title').text('Add as ' + roleName + '?');
+            $modal.find('.permission_text').text('Are you sure you want to add this account as ' + roleName + '?');
+            $('#confirm_permission_role').attr('data-permission-role', role);
+            $modal.modal('show');
+        })
+        .off('click' + namespace, '#confirm_permission_role')
+        .on('click' + namespace, '#confirm_permission_role', function () {
+            var $button = $(this);
+            var context = permissionContext();
+            var role = $button.attr('data-permission-role');
+
+            if (!context.userId || !context.hashId || $.inArray(role, ['normal', 'moderator', 'admin']) === -1) {
+                showPermissionError('The permission request is incomplete. Reload the page and try again.');
+                return;
+            }
+
+            $button.prop('disabled', true);
+            $.ajax({
+                url: Wo_Ajax_Requests_File(),
+                method: 'GET',
+                dataType: 'json',
+                data: {
+                    f: 'admin_setting',
+                    s: 'permission',
+                    user_id: context.userId,
+                    hash_id: context.hashId,
+                    type: role
+                }
+            }).done(function (data) {
+                if (data && parseInt(data.status, 10) === 200) {
+                    window.location.reload();
+                    return;
+                }
+                showPermissionError(data && data.message ? data.message : 'The role could not be updated.');
+            }).fail(function (xhr) {
+                var response = xhr.responseJSON || {};
+                showPermissionError(response.message || 'The server did not accept the role change.');
+            }).always(function () {
+                $button.prop('disabled', false);
+            });
+        });
+})(jQuery);
 </script>

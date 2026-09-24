@@ -1,0 +1,128 @@
+#!groovy
+
+def FAILED_STAGE
+
+pipeline {
+  agent none
+
+  environment {
+    REPO_NAME = "braintree-php"
+    SLACK_CHANNEL = "#auto-team-sdk-builds"
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '50'))
+    timestamps()
+    timeout(time: 120, unit: 'MINUTES')
+  }
+
+  stages {
+    stage("Lint") {
+      when {
+        branch 'master'
+      }
+
+      agent {
+        node {
+          label ""
+          customWorkspace "workspace/${REPO_NAME}"
+        }
+      }
+
+      steps {
+        build job: 'php_sdk_master_lint', wait: true
+      }
+
+      post {
+        failure {
+          script {
+            FAILED_STAGE = env.STAGE_NAME
+          }
+        }
+      }
+    }
+
+    stage("SonarQube") {
+      agent {
+        node {
+          label ""
+          customWorkspace "workspace/${REPO_NAME}-sonar"
+        }
+      }
+
+      steps {
+        script {
+          sh "docker build -t braintree-php ."
+          sh "docker run --rm -e COVERAGE=1 -v \"\$(pwd):\$(pwd)\" -w \"\$(pwd)\" braintree-php /bin/bash -l -c 'curl -sS https://getcomposer.org/installer | php && php composer.phar install && php -d pcov.enabled=1 vendor/bin/phpunit --testsuite unit --coverage-clover coverage/clover.xml'"
+          executeSonarQubeScan()
+        }
+      }
+
+      post {
+        failure {
+          script {
+            FAILED_STAGE = env.STAGE_NAME
+          }
+        }
+      }
+    }
+
+    stage("SDK Tests") {
+      when {
+        branch 'master'
+      }
+
+      parallel {
+        stage("PHP 7.4.0 Buster") {
+          agent {
+            node {
+              label ""
+              customWorkspace "workspace/${REPO_NAME}"
+            }
+          }
+
+          steps {
+            build job: 'php_7.4.0-buster_server_sdk_master', wait: true
+          }
+
+          post {
+            failure {
+              script {
+                FAILED_STAGE = env.STAGE_NAME
+              }
+            }
+          }
+        }
+
+        stage("PHP 8.2.0 Bullseye") {
+          agent {
+            node {
+              label ""
+              customWorkspace "workspace/${REPO_NAME}"
+            }
+          }
+
+          steps {
+            build job: 'php_8.2.0-bullseye_server_sdk_master', wait: true
+          }
+
+          post {
+            failure {
+              script {
+                FAILED_STAGE = env.STAGE_NAME
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    unsuccessful {
+      slackSend color: "danger",
+        channel: "${env.SLACK_CHANNEL}",
+        message: "${env.JOB_NAME} - #${env.BUILD_NUMBER} Failure after ${currentBuild.durationString} at stage \"${FAILED_STAGE}\"(<${env.BUILD_URL}|Open>)"
+    }
+  }
+}

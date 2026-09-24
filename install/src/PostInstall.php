@@ -73,7 +73,7 @@ final class RACInstallerPostInstall
             $this->setConfig($database, 'siteName', $site['name']);
             $this->setConfig($database, 'siteTitle', $site['title']);
             $this->setConfig($database, 'siteEmail', $site['email']);
-            $this->setConfig($database, 'theme', 'wowonder');
+            $this->setConfig($database, 'theme', 'ramza-light');
             $this->setConfig($database, 'maintenance_mode', '0');
             $this->setConfig($database, 'developer_mode', '0');
 
@@ -110,6 +110,33 @@ final class RACInstallerPostInstall
         } catch (Throwable $error) {
             $database->rollback();
             $this->logger->error('post-install', $error);
+            throw $error;
+        }
+    }
+
+    public function configureMigration(mysqli $database, array $site): int
+    {
+        $database->begin_transaction();
+        try {
+            $this->setConfig($database, 'site_url', $site['url']);
+            $this->setConfig($database, 'siteName', $site['name']);
+            $this->setConfig($database, 'siteTitle', $site['title']);
+            $this->setConfig($database, 'siteEmail', $site['email']);
+            $this->setConfig($database, 'theme', 'ramza-light');
+            $this->setConfig($database, 'version', '1.0');
+            $result = $database->query("SELECT `user_id` FROM `Wo_Users` WHERE `admin` = '1' AND `active` = '1' ORDER BY `user_id` ASC LIMIT 1");
+            $row = $result->fetch_assoc();
+            $result->free();
+            if (!is_array($row) || empty($row['user_id'])) {
+                throw new RACInstallerUserException('The WoWonder source has no active administrator. Create or activate an administrator in WoWonder before migrating.');
+            }
+            $database->commit();
+            $adminId = (int) $row['user_id'];
+            $this->logger->info('post-migration', ['result' => 'complete', 'admin_user_id' => $adminId]);
+            return $adminId;
+        } catch (Throwable $error) {
+            $database->rollback();
+            $this->logger->error('post-migration', $error);
             throw $error;
         }
     }

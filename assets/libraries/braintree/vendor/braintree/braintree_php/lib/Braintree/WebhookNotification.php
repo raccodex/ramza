@@ -21,6 +21,7 @@ class WebhookNotification extends Base
     const DISPUTE_EXPIRED = 'dispute_expired';
     const DISPUTE_LOST = 'dispute_lost';
     const DISPUTE_OPENED = 'dispute_opened';
+    const DISPUTE_UNDER_REVIEW = 'dispute_under_review';
     const DISPUTE_WON = 'dispute_won';
     const GRANTED_PAYMENT_METHOD_REVOKED = 'granted_payment_method_revoked';
     const GRANTOR_UPDATED_GRANTED_PAYMENT_METHOD = 'grantor_updated_granted_payment_method';
@@ -35,6 +36,8 @@ class WebhookNotification extends Base
     const PAYMENT_METHOD_CUSTOMER_DATA_UPDATED = 'payment_method_customer_data_updated';
     const PAYMENT_METHOD_REVOKED_BY_CUSTOMER = 'payment_method_revoked_by_customer';
     const RECIPIENT_UPDATED_GRANTED_PAYMENT_METHOD = 'recipient_updated_granted_payment_method';
+    const REFUND_FAILED = 'refund_failed';
+    const SUBSCRIPTION_BILLING_SKIPPED = 'subscription_billing_skipped';
     const SUBSCRIPTION_CANCELED = 'subscription_canceled';
     const SUBSCRIPTION_CHARGED_SUCCESSFULLY = 'subscription_charged_successfully';
     const SUBSCRIPTION_CHARGED_UNSUCCESSFULLY = 'subscription_charged_unsuccessfully';
@@ -42,9 +45,8 @@ class WebhookNotification extends Base
     const SUBSCRIPTION_TRIAL_ENDED = 'subscription_trial_ended';
     const SUBSCRIPTION_WENT_ACTIVE = 'subscription_went_active';
     const SUBSCRIPTION_WENT_PAST_DUE = 'subscription_went_past_due';
-    const SUB_MERCHANT_ACCOUNT_APPROVED = 'sub_merchant_account_approved';
-    const SUB_MERCHANT_ACCOUNT_DECLINED = 'sub_merchant_account_declined';
     const TRANSACTION_DISBURSED = 'transaction_disbursed';
+    const TRANSACTION_RETRIED = 'transaction_retried';
     const TRANSACTION_REVIEWED = 'transaction_reviewed';
     const TRANSACTION_SETTLED = 'transaction_settled';
     const TRANSACTION_SETTLEMENT_DECLINED = 'transaction_settlement_declined';

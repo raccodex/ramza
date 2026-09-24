@@ -177,9 +177,21 @@ class AddressGateway
     public static function createSignature()
     {
         return [
-            'company', 'countryCodeAlpha2', 'countryCodeAlpha3', 'countryCodeNumeric',
-            'countryName', 'customerId', 'extendedAddress', 'firstName',
-            'lastName', 'locality', 'postalCode', 'region', 'streetAddress'
+            'company',
+            'countryCodeAlpha2',
+            'countryCodeAlpha3',
+            'countryCodeNumeric',
+            'countryName',
+            'customerId',
+            'extendedAddress',
+            'firstName',
+            ['internationalPhone' => ['countryCode', 'nationalNumber']],
+            'lastName',
+            'locality',
+            'phoneNumber',
+            'postalCode',
+            'region',
+            'streetAddress'
         ];
     }
 

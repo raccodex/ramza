@@ -157,6 +157,25 @@
                     <div class="store-settings-alert"></div>
                     <form class="site-settings2" method="POST">
                         <div class="float-left">
+                            <label for="post_views" class="main-label">Post Views System</label>
+                            <br><small class="admin-info">Show views count on post cards on timeline/home page (similar to comments and share counts).</small>
+                        </div>
+                        <div class="form-group float-right switcher">
+                            <input type="hidden" name="post_views" value="0" />
+                            <input type="checkbox" name="post_views" id="chck-post_views" value="1" <?php echo (!empty($wo['config']['post_views']) && $wo['config']['post_views'] == 1) ? 'checked': '';?>>
+                            <label for="chck-post_views" class="check-trail"><span class="check-handler"></span></label>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="form-group form-float" style="margin-top: 15px;">
+                            <label class="form-label" for="post_view_type">Post Views Counting Method</label>
+                            <select class="form-control show-tick" id="post_view_type" name="post_view_type">
+                                <option value="repeat" <?php echo (empty($wo['config']['post_view_type']) || $wo['config']['post_view_type'] == 'repeat') ? 'selected' : ''; ?>>Repeat Views (Count every post view / page refresh)</option>
+                                <option value="unique" <?php echo (!empty($wo['config']['post_view_type']) && $wo['config']['post_view_type'] == 'unique') ? 'selected' : ''; ?>>Unique Views (Count single view per user or IP address)</option>
+                            </select>
+                            <small class="admin-info">Choose whether each scroll/impression increments the counter or only unique visitors count once.</small>
+                        </div>
+                        <hr>
+                        <div class="float-left">
                             <label for="memories_system" class="main-label">Memories System</label>
                             <br><small class="admin-info">Show post memories for users, on a yearly basis.</small>
                         </div>
@@ -434,12 +453,12 @@ function Wo_TestVisionApi() {
 }
 $(function() {
     $('.switcher input[type=checkbox]').click(function () {
-        setToTrue = 0;
+        var setToTrue = 0;
         if ($(this).is(":checked") === true) {
             setToTrue = 1;
         }
         var configName = $(this).attr('name');
-        var hash_id = $('input[name=hash_id]').val();
+        var hash_id = $('input[name=hash_id]').val() || $('.main_session').val();
         var objData = {};
         if (configName == 'redis') { 
             setToTrue = 'N';

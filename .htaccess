@@ -1,11 +1,30 @@
 RewriteEngine On
+DirectoryIndex index.php
+
+# Preserve bearer tokens for PHP under Apache/FastCGI. Required by /api/v1.
+SetEnvIf Authorization "(.+)" HTTP_AUTHORIZATION=$1
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# RACSocial/Ramza release hardening: never serve local configuration,
+# packaged SQL dumps, reviewer reports, VCS metadata, or private tooling.
+<FilesMatch "(^\.|config\.php$|ramza\.sql$|composer\.(json|lock)$|package(-lock)?\.json$|php\.ini$|\.user\.ini$|.*\.(sql|log|bak|backup|old|swp|dist)$)">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+RewriteRule ^(\.git|\.agents|\.codex|00_MODERNIZATION_REPORTS|review-output)(/|$) - [F,L,NC]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^password-reset/([^\/]+)(\/|)$  index.php?link1=welcome&link2=password_reset&user_id=$1 [NC,QSA]
-RewriteRule ^admin-cp$ admincp.php [NC,QSA]
-RewriteRule ^admin-cp/(.*)$ admincp.php?page=$1 [NC,QSA]
-RewriteRule ^admincp$ admincp.php [NC,QSA]
-RewriteRule ^admincp/(.*)$ admincp.php?page=$1 [NC,QSA]
+RewriteRule ^admin-cp$ admincp.php [L,NC,QSA]
+RewriteRule ^admin-cp/(.*)$ admincp.php?page=$1 [L,NC,QSA]
+RewriteRule ^admincp$ admincp.php [L,NC,QSA]
+RewriteRule ^admincp/(.*)$ admincp.php?page=$1 [L,NC,QSA]
 RewriteRule ^adminPages/(.*)$ admin-panel/$1 [L]
 RewriteRule ^start-up(/?|)$ index.php?link1=start-up [NC,QSA]
 RewriteRule ^watch/(.*)$ index.php?link1=watch&id=$1 [NC,QSA]
@@ -199,6 +218,7 @@ RewriteRule ^switch-account(/?|)$ index.php?link1=switch-account&session=$1 [NC,
 # *** FIND  NEARBY ***
 RewriteRule ^friends-nearby(/?|)$ index.php?link1=friends-nearby [NC,QSA]
 
+RewriteRule ^api/v1(?:/.*)?$ api/v1/index.php [NC,QSA,L]
 RewriteRule ^api(/?|)$ api-v2.php [NC,QSA]
 RewriteRule ^api/([^\/]+)(\/|)$ api-v2.php?type=$1 [NC,QSA]
 

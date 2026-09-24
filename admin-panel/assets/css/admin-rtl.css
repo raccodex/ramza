@@ -1,0 +1,43 @@
+html[dir="rtl"] body.rac-admin-shell,
+body.rac-admin-shell.rtl {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] body.rac-admin-shell .navigation .navigation-menu-body ul li a.active::before,
+body.rac-admin-shell.rtl .navigation .navigation-menu-body ul li a.active::before {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    border-radius: 2px 0 0 2px;
+}
+
+html[dir="rtl"] body.rac-admin-shell .navigation .navigation-menu-body ul li ul,
+body.rac-admin-shell.rtl .navigation .navigation-menu-body ul li ul {
+    padding-inline-start: 0;
+    padding-inline-end: 30px;
+}
+
+html[dir="rtl"] body.rac-admin-shell .dropdown-menu-right,
+body.rac-admin-shell.rtl .dropdown-menu-right {
+    right: auto;
+    left: 0;
+}
+
+html[dir="rtl"] body.rac-admin-shell .breadcrumb-item + .breadcrumb-item::before,
+body.rac-admin-shell.rtl .breadcrumb-item + .breadcrumb-item::before {
+    padding-inline: 0.5rem;
+}
+
+@media (max-width: 991.98px) {
+    html[dir="rtl"] body.rac-admin-shell .navigation,
+    body.rac-admin-shell.rtl .navigation {
+        transform: translateX(105%);
+    }
+
+    html[dir="rtl"] body.rac-admin-shell.navigation-show .navigation,
+    html[dir="rtl"] body.rac-admin-shell.rac-mobile-nav-open .navigation,
+    body.rac-admin-shell.rtl.navigation-show .navigation,
+    body.rac-admin-shell.rtl.rac-mobile-nav-open .navigation {
+        transform: translateX(0);
+    }
+}

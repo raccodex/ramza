@@ -1203,7 +1203,7 @@ if ((!$wo['loggedin'] || ($wo['loggedin'] && $wo['user']['banned'] != 1))) {
         case 'directory-market':
             include('sources/directory/market.php');
             break;
-        case 'direcajax_loadtory-movies':
+        case 'directory-movies':
             include('sources/directory/movies.php');
             break;
         case 'directory-jobs':

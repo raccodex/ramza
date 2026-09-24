@@ -36,6 +36,10 @@ class CreditCard extends Base
     const PREPAID_NO = 'No';
     const PREPAID_UNKNOWN = 'Unknown';
 
+    const PREPAID_RELOADABLE_YES = 'Yes';
+    const PREPAID_RELOADABLE_NO = 'No';
+    const PREPAID_RELOADABLE_UNKNOWN = 'Unknown';
+
     const PAYROLL_YES = 'Yes';
     const PAYROLL_NO = 'No';
     const PAYROLL_UNKNOWN = 'Unknown';
@@ -52,9 +56,25 @@ class CreditCard extends Base
     const DEBIT_NO = 'No';
     const DEBIT_UNKNOWN = 'Unknown';
 
+    const BUSINESS_YES = 'Yes';
+    const BUSINESS_NO = 'No';
+    const BUSINESS_UNKNOWN = 'Unknown';
+
     const COMMERCIAL_YES = 'Yes';
     const COMMERCIAL_NO = 'No';
     const COMMERCIAL_UNKNOWN = 'Unknown';
+
+    const CONSUMER_YES = 'Yes';
+    const CONSUMER_NO = 'No';
+    const CONSUMER_UNKNOWN = 'Unknown';
+
+    const CORPORATE_YES = 'Yes';
+    const CORPORATE_NO = 'No';
+    const CORPORATE_UNKNOWN = 'Unknown';
+
+    const PURCHASE_YES = 'Yes';
+    const PURCHASE_NO = 'No';
+    const PURCHASE_UNKNOWN = 'Unknown';
 
     const COUNTRY_OF_ISSUANCE_UNKNOWN = "Unknown";
     const ISSUING_BANK_UNKNOWN = "Unknown";
@@ -81,8 +101,11 @@ class CreditCard extends Base
         return $this->expired;
     }
 
+    // NEXT_MAJOR_VERSION Remove this method
     /**
      * checks whether the card is associated with venmo sdk
+     *
+     * @deprecated
      *
      * @return boolean
      */
@@ -288,19 +311,24 @@ class CreditCard extends Base
         return Configuration::gateway()->creditCard()->fromNonce($nonce);
     }
 
+    // NEXT_MAJOR_VERSION Remove this method
    /**
      * Create a credit on the card for the passed transaction
      *
      * @param string $token              belonging to the credit card
      * @param array  $transactionAttribs containing request parameters
      *
+     * @deprecated
+     *
      * @return Result\Successful|Result\Error
      */
     public static function credit($token, $transactionAttribs)
     {
+        trigger_error("CreditCard::credit has been deprecated in favor of Transaction::credit", E_USER_DEPRECATED);
         return Configuration::gateway()->creditCard()->credit($token, $transactionAttribs);
     }
 
+    // NEXT_MAJOR_VERSION Remove this method
     /**
      * Create a credit on this card, assuming validations will pass
      *
@@ -311,26 +339,34 @@ class CreditCard extends Base
      *
      * @throws Exception\ValidationError
      *
+     * @deprecated
+     *
      * @return Transaction
      */
     public static function creditNoValidate($token, $transactionAttribs)
     {
+        trigger_error("CreditCard::creditNoValidate has been deprecated in favor of Transaction::creditNoValidate", E_USER_DEPRECATED);
         return Configuration::gateway()->creditCard()->creditNoValidate($token, $transactionAttribs);
     }
 
+    // NEXT_MAJOR_VERSION Remove this method
     /**
      * Create a new sale for the current card
      *
      * @param string $token              belonging to the credit card
      * @param array  $transactionAttribs containing request parameters
      *
+     * @deprecated
+     *
      * @return Result\Successful|Result\Error
      */
     public static function sale($token, $transactionAttribs)
     {
+        trigger_error("CreditCard::sale has been deprecated in favor of Transaction::sale", E_USER_DEPRECATED);
         return Configuration::gateway()->creditCard()->sale($token, $transactionAttribs);
     }
 
+    // NEXT_MAJOR_VERSION Remove this method
     /**
      * Create a new sale using this card, assuming validations will pass
      *
@@ -339,12 +375,15 @@ class CreditCard extends Base
      * @param string $token              belonging to the credit card
      * @param array  $transactionAttribs containing request parameters
      *
+     * @deprecated
+     *
      * @throws Exception\ValidationsFailed
      *
      * @return Transaction
      */
     public static function saleNoValidate($token, $transactionAttribs)
     {
+        trigger_error("CreditCard::saleNoValidate has been deprecated in favor of Transaction::saleNoValidate", E_USER_DEPRECATED);
         return Configuration::gateway()->creditCard()->saleNoValidate($token, $transactionAttribs);
     }
 

@@ -153,13 +153,14 @@ if (isset($_FILES['postFile']['name'])) {
 }
 $not_video = true;
 $ffmpeg_convert_video = '';
+$ffmpeg_ready = function_exists('Ramza_FfmpegEnabled') ? Ramza_FfmpegEnabled() : false;
 if (isset($_FILES['postVideo']['name']) && empty($mediaFilename)) {
     $mimeType = mime_content_type($_FILES['postVideo']['tmp_name']);
     $fileType = explode('/', $mimeType)[0]; // video|image
     if ($fileType === 'video' && Wo_IsFfmpegFileAllowed($_FILES['postVideo']['name']) && !Wo_IsVideoNotAllowedMime($_FILES["postVideo"]["type"])) {
         $not_video = false;
     }
-    if ($wo['config']['ffmpeg_system'] == 'on' && $not_video) {
+    if ($ffmpeg_ready && $not_video) {
         $error_code    = 8;
         $error_message = 'invalid file';
         $response_data = array(
@@ -178,39 +179,24 @@ if (isset($_FILES['postVideo']['name']) && empty($mediaFilename)) {
         'size' => $_FILES["postVideo"]["size"],
         'type' => $_FILES["postVideo"]["type"]
     );
-    if ($wo['config']['ffmpeg_system'] != 'on') {
+    if (!$ffmpeg_ready) {
         $fileInfo['types'] = 'mp4,m4v,webm,flv,mov,mpeg,mkv';
     }
-    if ($wo['config']['ffmpeg_system'] == 'on') {
+    $remoteStorageSnapshot = null;
+    if ($ffmpeg_ready) {
         if ($not_video == false) {
             $fileInfo['is_video'] = 1;
         }
-        $amazone_s3                   = $wo['config']['amazone_s3'];
-        $wasabi_storage               = $wo['config']['wasabi_storage'];
-        $backblaze_storage               = $wo['config']['backblaze_storage'];
-        $ftp_upload                   = $wo['config']['ftp_upload'];
-        $spaces                       = $wo['config']['spaces'];
-        $cloud_upload                 = $wo['config']['cloud_upload'];
-        $wo['config']['amazone_s3']   = 0;
-        $wo['config']['wasabi_storage']   = 0;
-        $wo['config']['backblaze_storage']   = 0;
-        $wo['config']['ftp_upload']   = 0;
-        $wo['config']['spaces']       = 0;
-        $wo['config']['cloud_upload'] = 0;
+        $remoteStorageSnapshot = Wo_SuspendRemoteStorage();
     }
     $media    = Wo_ShareFile($fileInfo);
-    if ($wo['config']['ffmpeg_system'] == 'on') {
-        $wo['config']['amazone_s3']   = $amazone_s3;
-        $wo['config']['wasabi_storage']   = $wasabi_storage;
-        $wo['config']['backblaze_storage']   = $backblaze_storage;
-        $wo['config']['ftp_upload']   = $ftp_upload;
-        $wo['config']['spaces']       = $spaces;
-        $wo['config']['cloud_upload'] = $cloud_upload;
+    if ($remoteStorageSnapshot !== null) {
+        Wo_RestoreRemoteStorage($remoteStorageSnapshot);
     }
     if (!empty($media)) {
         $mediaFilename = $media['filename'];
         $mediaName     = $media['name'];
-        if (!empty($mediaFilename) && $wo['config']['ffmpeg_system'] == 'on') {
+        if (!empty($mediaFilename) && $ffmpeg_ready) {
             $ffmpeg_convert_video = $mediaFilename;
         }
         $img_types = array(
@@ -461,9 +447,9 @@ if (empty($error_message)) {
         $post_data['color_id'] = Wo_Secure($_POST['post_color']);
     }
     if (!empty($ffmpeg_convert_video)) {
-        $ffmpeg_b             = $wo['config']['ffmpeg_binary_file'];
-        $video_file_full_path = dirname(__DIR__) . '/' . $ffmpeg_convert_video;
-        $video_info           = shell_exec("$ffmpeg_b -i " . $video_file_full_path . " 2>&1");
+        $ffmpeg_b             = Ramza_FfmpegCommand();
+        $video_file_full_path = dirname(__DIR__, 3) . '/' . ltrim($ffmpeg_convert_video, '/\\');
+        $video_info           = shell_exec($ffmpeg_b . ' -i ' . escapeshellarg($video_file_full_path) . ' 2>&1');
         $re                   = '/[0-9]{3}+x[0-9]{3}/m';
         preg_match_all($re, $video_info, $min_str);
         $resolution = 0;

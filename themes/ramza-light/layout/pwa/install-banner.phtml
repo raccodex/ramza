@@ -1,0 +1,233 @@
+<?php
+$ramzaPwaSiteUrl = rtrim($wo['config']['site_url'], '/');
+$ramzaPwaAppName = trim((string)($wo['config']['pwa_app_name'] ?? $wo['config']['siteName'] ?? 'Ramza'));
+$ramzaPwaThemeColor = trim((string)($wo['config']['pwa_theme_color'] ?? '#c94b57'));
+$ramzaPwaIcon = !empty($wo['config']['pwa_icon_192']) ? Wo_GetMedia($wo['config']['pwa_icon_192']) : $wo['config']['theme_url'] . '/img/icon.png';
+$ramzaPwaScopePath = parse_url($ramzaPwaSiteUrl, PHP_URL_PATH);
+$ramzaPwaScopePath = rtrim((string)$ramzaPwaScopePath, '/');
+if ($ramzaPwaScopePath === '') {
+    $ramzaPwaScopePath = '/';
+} else {
+    $ramzaPwaScopePath .= '/';
+}
+if (!preg_match('/^#[0-9a-fA-F]{6}$/', $ramzaPwaThemeColor)) {
+    $ramzaPwaThemeColor = '#c94b57';
+}
+?>
+<div class="ramza-pwa-install-banner" data-ramza-pwa-banner aria-live="polite">
+    <button type="button" class="ramza-pwa-install-banner__close" data-ramza-pwa-close aria-label="Hide install banner">×</button>
+    <img class="ramza-pwa-install-banner__icon" src="<?php echo htmlspecialchars($ramzaPwaIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($ramzaPwaAppName, ENT_QUOTES, 'UTF-8'); ?>">
+    <div class="ramza-pwa-install-banner__copy">
+        <strong><?php echo htmlspecialchars($ramzaPwaAppName, ENT_QUOTES, 'UTF-8'); ?></strong>
+        <span><?php echo htmlspecialchars($ramzaPwaSiteUrl, ENT_QUOTES, 'UTF-8'); ?></span>
+        <small data-ramza-pwa-hint>Install Ramza for faster launch and offline access.</small>
+    </div>
+    <button type="button" class="ramza-pwa-install-banner__install" data-ramza-pwa-install>Install</button>
+</div>
+
+<style>
+.ramza-pwa-install-banner {
+    position: fixed;
+    left: max(16px, env(safe-area-inset-left));
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    z-index: 2147483000;
+    display: none;
+    grid-template-columns: 28px 50px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    min-height: 72px;
+    padding: 12px 14px;
+    border: 1px solid rgba(148, 163, 184, 0.32);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.18);
+    color: #111827;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 180ms ease, opacity 180ms ease;
+}
+.ramza-pwa-install-banner.is-visible {
+    display: grid;
+    transform: translateY(0);
+    opacity: 1;
+}
+.ramza-pwa-install-banner__close {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 1px solid rgba(17, 24, 39, 0.16);
+    border-radius: 50%;
+    background: #ffffff;
+    color: #111827;
+    cursor: pointer;
+    font-size: 19px;
+    line-height: 21px;
+}
+.ramza-pwa-install-banner__icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    object-fit: cover;
+    background: #f3f4f6;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+}
+.ramza-pwa-install-banner__copy {
+    min-width: 0;
+}
+.ramza-pwa-install-banner__copy strong,
+.ramza-pwa-install-banner__copy span,
+.ramza-pwa-install-banner__copy small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ramza-pwa-install-banner__copy strong {
+    color: #111827;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+.ramza-pwa-install-banner__copy span {
+    margin-top: 1px;
+    color: #344054;
+    font-size: 13px;
+}
+.ramza-pwa-install-banner__copy small {
+    margin-top: 2px;
+    color: #667085;
+    font-size: 12px;
+}
+.ramza-pwa-install-banner__install {
+    min-width: 118px;
+    min-height: 46px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 999px;
+    background: <?php echo htmlspecialchars($ramzaPwaThemeColor, ENT_QUOTES, 'UTF-8'); ?>;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 13px 28px rgba(201, 75, 87, 0.26);
+}
+.ramza-pwa-install-banner__install:active {
+    transform: translateY(1px);
+}
+@media (min-width: 992px) {
+    .ramza-pwa-install-banner {
+        left: calc(50% - min(720px, calc(100vw - 36px)) / 2);
+        right: auto;
+        width: min(720px, calc(100vw - 36px));
+    }
+}
+@media (max-width: 640px) {
+    .ramza-pwa-install-banner {
+        grid-template-columns: 24px 42px minmax(0, 1fr);
+        gap: 10px;
+        min-height: 66px;
+        padding: 10px;
+        border-radius: 20px;
+    }
+    .ramza-pwa-install-banner__icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+    }
+    .ramza-pwa-install-banner__copy small {
+        display: none;
+    }
+    .ramza-pwa-install-banner__install {
+        grid-column: 1 / -1;
+        min-height: 42px;
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+(function () {
+    var registerServiceWorker = function () {
+        if (!('serviceWorker' in navigator)) {
+            return;
+        }
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register(<?php echo json_encode($ramzaPwaSiteUrl . '/pwa-service-worker.js.php', JSON_UNESCAPED_SLASHES); ?>, {
+                scope: <?php echo json_encode($ramzaPwaScopePath, JSON_UNESCAPED_SLASHES); ?>
+            }).catch(function () {});
+        });
+    };
+
+    registerServiceWorker();
+
+    var banner = document.querySelector('[data-ramza-pwa-banner]');
+    if (!banner) {
+        return;
+    }
+
+    var dismissKey = 'ramza_pwa_install_dismissed_until';
+    var oneWeek = 7 * 24 * 60 * 60 * 1000;
+    var deferredPrompt = null;
+    var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    var dismissedUntil = parseInt(localStorage.getItem(dismissKey) || '0', 10);
+
+    if (isStandalone || Date.now() < dismissedUntil) {
+        return;
+    }
+
+    var showBanner = function () {
+        banner.classList.add('is-visible');
+    };
+
+    var hideBanner = function () {
+        banner.classList.remove('is-visible');
+    };
+
+    window.addEventListener('beforeinstallprompt', function (event) {
+        event.preventDefault();
+        deferredPrompt = event;
+        showBanner();
+    });
+
+    window.addEventListener('appinstalled', function () {
+        localStorage.setItem(dismissKey, String(Date.now() + oneWeek));
+        hideBanner();
+    });
+
+    setTimeout(function () {
+        if (!deferredPrompt && !isStandalone) {
+            showBanner();
+        }
+    }, 1400);
+
+    var closeButton = banner.querySelector('[data-ramza-pwa-close]');
+    if (closeButton) {
+        closeButton.addEventListener('click', function () {
+            localStorage.setItem(dismissKey, String(Date.now() + oneWeek));
+            hideBanner();
+        });
+    }
+
+    var installButton = banner.querySelector('[data-ramza-pwa-install]');
+    var hint = banner.querySelector('[data-ramza-pwa-hint]');
+    if (installButton) {
+        installButton.addEventListener('click', function () {
+            if (!deferredPrompt) {
+                if (hint) {
+                    hint.textContent = 'If no prompt appears, use your browser menu and choose Add to Home screen.';
+                }
+                return;
+            }
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.finally(function () {
+                deferredPrompt = null;
+                localStorage.setItem(dismissKey, String(Date.now() + oneWeek));
+                hideBanner();
+            });
+        });
+    }
+})();
+</script>

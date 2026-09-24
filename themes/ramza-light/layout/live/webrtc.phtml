@@ -1,0 +1,143 @@
+<?php
+$ramzaLiveBootstrap = [
+    'iceServers' => Ramza_WebRtcIceServers(),
+    'iceTimeout' => max(8, min(45, (int) ($wo['config']['ramza_webrtc_ice_timeout'] ?? 18))),
+    'maxPeers' => max(1, min(12, (int) ($wo['config']['ramza_webrtc_max_live_peers'] ?? 6))),
+    'hash' => Wo_CreateSession(),
+    'endpoint' => Wo_Ajax_Requests_File() . '?f=webrtc',
+];
+?>
+<script>
+(function () {
+    'use strict';
+    const config = <?php echo json_encode($ramzaLiveBootstrap, JSON_UNESCAPED_SLASHES); ?>;
+    let localStream = null;
+    let postId = 0;
+    let pullTimer = null;
+    const peers = new Map();
+
+    function request(action, fields) {
+        const body = new URLSearchParams(Object.assign({
+            hash_id: config.hash,
+            call_type: 'live',
+            call_id: postId
+        }, fields || {}));
+        return fetch(config.endpoint + '&s=' + encodeURIComponent(action), {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+            body: body.toString()
+        }).then(async response => {
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || Number(data.status || 0) >= 400) {
+                throw new Error(data.message || 'Live signaling failed.');
+            }
+            return data;
+        });
+    }
+
+    function send(peerId, type, payload) {
+        return request('push', {
+            peer_id: peerId,
+            message_type: type,
+            payload: JSON.stringify(payload || {})
+        });
+    }
+
+    async function createPeer(viewerId) {
+        if (peers.has(viewerId) || peers.size >= config.maxPeers || !localStream) return;
+        const pc = new RTCPeerConnection({iceServers: config.iceServers});
+        peers.set(viewerId, pc);
+        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+        pc.onicecandidate = event => {
+            if (event.candidate) send(viewerId, 'candidate', event.candidate.toJSON()).catch(() => {});
+        };
+        pc.onconnectionstatechange = () => {
+            if (['failed', 'closed', 'disconnected'].includes(pc.connectionState)) {
+                pc.close();
+                peers.delete(viewerId);
+            }
+        };
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        await send(viewerId, 'offer', pc.localDescription);
+    }
+
+    async function handleSignal(signal) {
+        const viewerId = Number(signal.senderId || 0);
+        if (!viewerId) return;
+        if (signal.type === 'join') {
+            await createPeer(viewerId);
+            return;
+        }
+        const pc = peers.get(viewerId);
+        if (!pc) return;
+        if (signal.type === 'answer') {
+            await pc.setRemoteDescription(new RTCSessionDescription(signal.payload));
+        } else if (signal.type === 'candidate' && signal.payload) {
+            await pc.addIceCandidate(new RTCIceCandidate(signal.payload));
+        } else if (signal.type === 'hangup') {
+            pc.close();
+            peers.delete(viewerId);
+        }
+    }
+
+    async function pull() {
+        if (!postId) return;
+        try {
+            const data = await request('pull');
+            for (const signal of (data.signals || [])) {
+                await handleSignal(signal);
+            }
+        } catch (error) {
+            console.warn(error.message);
+        }
+    }
+
+    async function publish() {
+        if (!localStream || postId) return;
+        const button = document.getElementById('publishBtn');
+        button.disabled = true;
+        const streamName = 'ramza_webrtc_<?php echo (int) $wo['user']['user_id']; ?>_' + Date.now();
+        try {
+            const result = await $.post(Wo_Ajax_Requests_File() + '?f=live&s=create', {stream_name: streamName});
+            if (Number(result.status) !== 200 || !result.post_id) throw new Error(result.message || 'Could not start live stream.');
+            postId = Number(result.post_id);
+            document.getElementById('live_post_id').value = postId;
+            button.classList.add('hidden');
+            document.querySelector('.wow_end_live_btn').classList.remove('hidden');
+            document.querySelector('.live_mic_cam_switch').classList.remove('hidden');
+            pullTimer = window.setInterval(pull, 700);
+            await pull();
+        } catch (error) {
+            button.disabled = false;
+            $('.tag_live_skel').removeClass('hidden').find('.tag_live_skel_innr').text(error.message || 'Could not start live stream.');
+        }
+    }
+
+    window.ready = function () {
+        document.getElementById('publishBtn').onclick = publish;
+        getMedia().then(media => {
+            localStream = media;
+            const video = document.getElementById('basic-stream');
+            if (video) {
+                video.muted = true;
+                video.playsInline = true;
+                video.srcObject = media;
+                video.classList.remove('hidden');
+                video.play().catch(() => {});
+            }
+        }).catch(() => {});
+    };
+
+    window.RamzaWebRtcLiveStop = function () {
+        if (pullTimer) window.clearInterval(pullTimer);
+        peers.forEach((pc, viewerId) => {
+            send(viewerId, 'hangup', {}).catch(() => {});
+            pc.close();
+        });
+        peers.clear();
+        if (localStream) localStream.getTracks().forEach(track => track.stop());
+    };
+})();
+</script>

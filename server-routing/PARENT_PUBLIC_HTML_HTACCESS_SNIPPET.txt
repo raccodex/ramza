@@ -1,0 +1,22 @@
+RAMZA SUBFOLDER ROUTING RULE
+============================
+
+The parent website at ikon.org.in is currently handling /kali itself and returns
+its own Sngine 4.3 404 page. Add the following rule immediately after
+"RewriteEngine On" in /public_html/.htaccess, before the parent application's
+front-controller rules:
+
+    RewriteRule ^kali(?:/|$) - [L,NC]
+
+Then confirm that the Ramza files are physically located at:
+
+    /public_html/kali/index.php
+    /public_html/kali/admincp.php
+    /public_html/kali/.htaccess
+
+The Ramza configuration site_url must be:
+
+    https://ikon.org.in/kali
+
+Clear LiteSpeed cache and PHP OPcache after editing. Do not replace the parent
+Sngine .htaccess with Ramza's .htaccess; only add the single exclusion rule.

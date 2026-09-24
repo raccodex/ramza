@@ -1,0 +1,38 @@
+<?php
+$message_count = Wo_CountMessages(array(
+    'new' => true,
+    'user_id' => $wo['recipient']['user_id']
+));
+$message = Wo_GetMessagesHeader(array('user_id' => $wo['recipient']['user_id']), 1);
+if (!empty($message['from_id'])) {
+   if ($message['seen'] == 0 && $wo['recipient']['user_id'] == $message['from_id']) {
+    $unread_class = ' unread';
+   }
+   if (strlen($message['text']) > 100) {
+   	//$message['text'] = mb_substr( $message['text'], 0, 97, "utf-8") . '...';
+   }
+   $message['text'] = Wo_Emo($message['text']);
+   
+}
+?>
+
+<div class="notification-list pointer messages-list messages-recipients-list mobileopenlist <?php echo (!empty($wo['session_active_background']) && $wo['session_active_background'] == $wo['recipient']['user_id']) ? 'active' : ''; ?>" id="messages-recipient-<?php echo $wo['recipient']['user_id']; ?>" onclick="Wo_GetUserMessages(<?php echo $wo['recipient']['user_id']; ?>,'<?php echo $wo['recipient']['name']; ?>');">
+	<div class="valign">
+		<div class="notification-user-avatar avatar">
+			<span class="new-message-alert <?php echo ($message_count == 0) ? 'hidden' : ''; ?>"></span>
+			<img alt="<?php echo $wo['recipient']['name']; ?>" src="<?php echo $wo['recipient']['avatar'];?>">
+			<?php if ($wo['recipient']['lastseen'] > (time() - 60)) { ?>
+				<div class="valign online_dot"><div class="dot"></div></div>
+			<?php } ?>
+		</div>
+		<div class="notification-text">
+			<div class="ajax-time" title="<?php echo date('c',$message['time']); ?>"><?php echo (!empty($message['time'])) ? Wo_Time_Elapsed_String($message['time']) : '';?></div>
+            <span class="truncate"><?php echo $wo['recipient']['name']; ?>
+				<?php if (!empty($wo['recipient']['is_open_to_work']) && $wo['config']['website_mode'] == 'linkedin') { ?>
+					<span class="wo_open_job_badge" title="<?php echo($wo['lang']['open_to_work']); ?>" data-toggle="tooltip"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"><path fill="currentColor" d="M10,2H14A2,2 0 0,1 16,4V6H20A2,2 0 0,1 22,8V19A2,2 0 0,1 20,21H4C2.89,21 2,20.1 2,19V8C2,6.89 2.89,6 4,6H8V4C8,2.89 8.89,2 10,2M14,6V4H10V6H14Z"></path></svg></span>
+				<?php } ?>
+			</span>
+			<div class="header-message truncate"><?php echo !empty($message['text']) ? $message['text'] : ''; ?></div>
+		</div>
+	</div>
+</div>

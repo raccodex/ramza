@@ -1,0 +1,344 @@
+<div class="page-margin">
+	<div class="container">
+		<div class="wow_content p20">
+			<div class="valign tag_srch_input">
+				<input type="text" class="text-center width-dynamic" onkeyup="Wo_SearchAll(this.value)" placeholder="<?php echo $wo['lang']['search'];?> <?php echo $wo['lang']['keyword']; ?>" id="search_for_text" value="<?php echo (isset($_GET['query'])) ? Wo_Secure($_GET['query']): '';?>">
+			</div>
+			<hr class="mb-4">
+			<div class="valign tag_srch_input">
+				<input type="text" class="text-center width-dynamic" onkeyup="Wo_SearchAllCertifications(this.value)" placeholder="<?php echo $wo['lang']['certifications'];?> <?php echo $wo['lang']['keyword']; ?>" id="search_for_certifications">
+			</div>
+			<div class="valign tag_srch_filters">
+				<?php
+					$checked_array = array('full_time' => '',
+					   'contract' => '',
+					   'part_time' => '',
+					   'internship' => '',
+					   'temporary' => '',
+					   'on_site' => '',
+					   'hybrid' => '',
+					   'remote' => '');
+					if (!empty($_GET['job_type'])) {
+						foreach ($_GET['job_type'] as $key => $value) {
+							if (in_array($value, array_keys($checked_array))) {
+								$checked_array[$value] = 'checked';
+							}
+						}
+					}
+					if (!empty($_GET['workplaces'])) {
+						foreach ($_GET['workplaces'] as $key => $value) {
+							if (in_array($value, array_keys($checked_array))) {
+								$checked_array[$value] = 'checked';
+							}
+						}
+					}
+				?>
+				<div class="dropdown">
+					<div class="valign dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.5,2A2,2 0 0,1 9.5,4A2,2 0 0,1 7.5,6A2,2 0 0,1 5.5,4A2,2 0 0,1 7.5,2M6,7H9A2,2 0 0,1 11,9V14.5H9.5V22H5.5V14.5H4V9A2,2 0 0,1 6,7M14.5,12A2,2 0 0,1 16.5,10A2,2 0 0,1 18.5,12A2,2 0 0,1 16.5,14A2,2 0 0,1 14.5,12M13.5,15H19.5V19H18V22H15V19H13.5V15Z"></path></svg> <?php echo $wo['lang']['job_types']; ?> <span class="caret"></span></div>
+					<div class="dropdown-menu dropdown-static-menu tag_create_menu" role="menu">
+						<div class="round-check">
+							<input type="checkbox" id="full_time" name="job_type[]" value="full_time" <?php echo $checked_array['full_time']; ?>>
+							<label for="full_time" class="radio-inline"><?php echo $wo['lang']['full_time']; ?></label>
+						</div>
+						<div class="round-check">
+							<input type="checkbox" id="contract" name="job_type[]" value="contract" <?php echo $checked_array['contract']; ?>>
+							<label for="contract" class="radio-inline"><?php echo $wo['lang']['contract']; ?></label>
+						</div>
+						<div class="round-check">
+							<input type="checkbox" id="part_time" name="job_type[]" value="part_time" <?php echo $checked_array['part_time']; ?>>
+							<label for="part_time" class="radio-inline"><?php echo $wo['lang']['part_time']; ?></label>
+						</div>
+						<div class="round-check">
+							<input type="checkbox" id="internship" name="job_type[]" value="internship" <?php echo $checked_array['internship']; ?>>
+							<label for="internship" class="radio-inline"><?php echo $wo['lang']['internship']; ?></label>
+						</div>
+						<div class="round-check">
+							<input type="checkbox" id="temporary" name="job_type[]" value="temporary" <?php echo $checked_array['temporary']; ?>>
+							<label for="temporary" class="radio-inline"><?php echo $wo['lang']['temporary']; ?></label>
+						</div>
+					</div>
+				</div>
+				
+				<div class="dropdown">
+					<div class="valign dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.5,2A2,2 0 0,1 9.5,4A2,2 0 0,1 7.5,6A2,2 0 0,1 5.5,4A2,2 0 0,1 7.5,2M6,7H9A2,2 0 0,1 11,9V14.5H9.5V22H5.5V14.5H4V9A2,2 0 0,1 6,7M14.5,12A2,2 0 0,1 16.5,10A2,2 0 0,1 18.5,12A2,2 0 0,1 16.5,14A2,2 0 0,1 14.5,12M13.5,15H19.5V19H18V22H15V19H13.5V15Z"></path></svg> <?php echo $wo['lang']['workplaces']; ?> <span class="caret"></span></div>
+					<div class="dropdown-menu dropdown-static-menu tag_create_menu" role="menu">
+						<div class="round-check">
+							<input type="checkbox" id="on_site" name="workplaces[]" value="on_site" <?php echo $checked_array['on_site']; ?>>
+							<label for="on_site" class="radio-inline"><?php echo $wo['lang']['on_site']; ?></label>
+						</div>
+						<div class="round-check">
+							<input type="checkbox" id="hybrid" name="workplaces[]" value="hybrid" <?php echo $checked_array['hybrid']; ?>>
+							<label for="hybrid" class="radio-inline"><?php echo $wo['lang']['hybrid']; ?></label>
+						</div>
+						<div class="round-check">
+							<input type="checkbox" id="remote" name="workplaces[]" value="remote" <?php echo $checked_array['remote']; ?>>
+							<label for="remote" class="radio-inline"><?php echo $wo['lang']['remote']; ?></label>
+						</div>
+					</div>
+				</div>
+				
+				<div class="dropdown">
+					<div class="valign dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.5,2A2,2 0 0,1 9.5,4A2,2 0 0,1 7.5,6A2,2 0 0,1 5.5,4A2,2 0 0,1 7.5,2M6,7H9A2,2 0 0,1 11,9V14.5H9.5V22H5.5V14.5H4V9A2,2 0 0,1 6,7M14.5,12A2,2 0 0,1 16.5,10A2,2 0 0,1 18.5,12A2,2 0 0,1 16.5,14A2,2 0 0,1 14.5,12M13.5,15H19.5V19H18V22H15V19H13.5V15Z"></path></svg> <?php echo $wo['lang']['experience']; ?> <span class="caret"></span></div>
+					<div class="dropdown-menu dropdown-static-menu tag_create_menu" role="menu">
+						<div class="select-nearby-users-distance">
+							<form class="valign px-2">
+								<input type="range" class="cusrange" id="nearby-users-distance" name="amountRange" onchange="Wo_SearchExperience();" value="0" min="0" max="40" oninput="this.form.amountInput.value=this.value">
+								<input type="number" name="amountInput" min="0" max="40" value="0" oninput="this.form.amountRange.value=this.value" readonly="" id="cusrange-reader">
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="page-margin wow_content">
+			<div class="valign mb-15">
+				<ul class="valign nav nav-tabs tag_switch_noti wo_job_search_tabs">
+					<li class="round_check">
+						<input type="radio" id="search_type_all" name="search_type" value="all" checked>
+						<label for="search_type_all">
+							<a><?php echo $wo['lang']['all'];?></a>
+						</label>
+					</li>
+					<li class="round_check">
+						<input type="radio" id="search_type_users" name="search_type" value="users">
+						<label for="search_type_users">
+							<a><?php echo $wo['lang']['users'];?></a>
+						</label>
+					</li>
+					<li class="round_check">
+						<input type="radio" id="search_type_pages" name="search_type" value="pages">
+						<label for="search_type_pages">
+							<a><?php echo $wo['lang']['pages'];?></a>
+						</label>
+					</li>
+					<li class="round_check">
+						<input type="radio" id="search_type_groups" name="search_type" value="groups">
+						<label for="search_type_groups">
+							<a><?php echo $wo['lang']['groups'];?></a>
+						</label>
+					</li>
+					<li class="round_check">
+						<input type="radio" id="search_type_service" name="search_type" value="service">
+						<label for="search_type_service">
+							<a><?php echo $wo['lang']['services'];?></a>
+						</label>
+					</li>
+				</ul>
+			</div>
+			
+			<div class="wo_search_page wo_job_search_page">
+				<?php
+					$array = array('search_type' => 'all');
+					if (!empty($_GET['query'])) {
+						$array['keyword'] = $_GET['query'];
+					}
+					$info = LinkedinSearch($array);
+					array_multisort( array_column($info, "sort_time"), SORT_DESC, $info );
+					if (count($info) > 20) {
+						$info = array_slice($info, 0, 20, true);
+					}
+					
+				?>
+				<div id="linkedin_data" class="row tag_srch_rslt_usr_row">
+					<?php
+					if (count($info) > 0) {
+						foreach ($info as $key => $wo['result']) {
+							if ($wo['result']['sort_type'] == 'user') {
+								echo Wo_LoadPage('search/linkedin_user_list');
+							}
+							if ($wo['result']['sort_type'] == 'page') {
+								echo Wo_LoadPage('search/linkedin_page_list');
+							}
+							if ($wo['result']['sort_type'] == 'group') {
+								echo Wo_LoadPage('search/linkedin_group_list');
+							}
+							if ($wo['result']['sort_type'] == 'service') {
+								echo Wo_LoadPage('search/linkedin_service_list');
+							}
+						}
+					} else {
+						echo '<div class="empty_state"><svg enable-background="new 0 0 32 32" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m26 32h-20c-3.314 0-6-2.686-6-6v-20c0-3.314 2.686-6 6-6h20c3.314 0 6 2.686 6 6v20c0 3.314-2.686 6-6 6z" fill="#f5e6fe"/><path d="m17.5 8h-7.667c-1.013 0-1.833.82-1.833 1.833v10.333c0 1.014.82 1.834 1.833 1.834h5.427c-.587-.8-.927-1.773-.927-2.833 0-2.667 2.167-4.833 4.833-4.833.053 0 .113 0 .167.007v-4.508c0-1.013-.82-1.833-1.833-1.833zm-6.833 2.667h2.667c.367 0 .667.3.667.667s-.301.666-.668.666h-2.667c-.366 0-.666-.3-.666-.667s.3-.666.667-.666zm3.333 6.666h-3.333c-.367 0-.667-.3-.667-.667s.3-.666.667-.666h3.333c.367 0 .667.3.667.667s-.3.666-.667.666zm2.667-2.666h-6c-.367 0-.667-.3-.667-.667s.3-.667.667-.667h6c.367 0 .667.3.667.667-.001.367-.301.667-.667.667z" fill="#be63f9"/><g fill="#d9a4fc"><path d="m19.167 22.667c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm0-5.667c-1.195 0-2.167.972-2.167 2.167s.972 2.167 2.167 2.167 2.167-.972 2.167-2.167c-.001-1.195-.973-2.167-2.167-2.167z"/><path d="m23.333 24c-.171 0-.341-.065-.471-.195l-2.167-2.167c-.26-.26-.26-.682 0-.943s.682-.26.943 0l2.167 2.167c.26.26.26.682 0 .943-.13.13-.301.195-.472.195z"/></g></svg> ' . $wo["lang"]["no_available_data"] . '</div>';
+					}
+					?>
+				</div>
+
+				<div class="posts_load load-produts">
+					<?php if (count($info) > 0): ?>
+					<div class="load-more">
+						<button class="btn btn-default text-center pointer mb-15" onclick="Wo_LoadLinkedin();"><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg></span> <?php echo $wo['lang']['load_more'] ?></button>
+					</div>
+					<?php endif ?>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+$(document).ready(function() {
+	$(document).on('change', "input[name='search_type']", function(event) {
+		keyword = $('#search_for_text').val();
+		certifications = $('#search_for_certifications').val();
+		search_type = $(this).val();
+		experience = $('#cusrange-reader').val();
+		var job_type = [];
+        $("input[name='job_type[]']:checked").each(function(i){
+          job_type[i] = $(this).val();
+        });
+        var workplaces = [];
+        $("input[name='workplaces[]']:checked").each(function(i){
+          workplaces[i] = $(this).val();
+        });
+		$.post(Wo_Ajax_Requests_File() + '?f=search_linkedin&mode_type=linkedin', {keyword: keyword,search_type:search_type,certifications:certifications,experience:experience,job_type:job_type,workplaces:workplaces}, function (data) {
+			if (data.status == 200) {
+				if (data.html.length > 0) {
+					$('#linkedin_data').html(data.html);
+				} else {
+					$('#linkedin_data').html('<div class="empty_state"><svg enable-background="new 0 0 32 32" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m26 32h-20c-3.314 0-6-2.686-6-6v-20c0-3.314 2.686-6 6-6h20c3.314 0 6 2.686 6 6v20c0 3.314-2.686 6-6 6z" fill="#f5e6fe"/><path d="m17.5 8h-7.667c-1.013 0-1.833.82-1.833 1.833v10.333c0 1.014.82 1.834 1.833 1.834h5.427c-.587-.8-.927-1.773-.927-2.833 0-2.667 2.167-4.833 4.833-4.833.053 0 .113 0 .167.007v-4.508c0-1.013-.82-1.833-1.833-1.833zm-6.833 2.667h2.667c.367 0 .667.3.667.667s-.301.666-.668.666h-2.667c-.366 0-.666-.3-.666-.667s.3-.666.667-.666zm3.333 6.666h-3.333c-.367 0-.667-.3-.667-.667s.3-.666.667-.666h3.333c.367 0 .667.3.667.667s-.3.666-.667.666zm2.667-2.666h-6c-.367 0-.667-.3-.667-.667s.3-.667.667-.667h6c.367 0 .667.3.667.667-.001.367-.301.667-.667.667z" fill="#be63f9"/><g fill="#d9a4fc"><path d="m19.167 22.667c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm0-5.667c-1.195 0-2.167.972-2.167 2.167s.972 2.167 2.167 2.167 2.167-.972 2.167-2.167c-.001-1.195-.973-2.167-2.167-2.167z"/><path d="m23.333 24c-.171 0-.341-.065-.471-.195l-2.167-2.167c-.26-.26-.26-.682 0-.943s.682-.26.943 0l2.167 2.167c.26.26.26.682 0 .943-.13.13-.301.195-.472.195z"/></g></svg><?php echo $wo['lang']['no_available_data'] ?></div>');
+				}
+			}
+		});
+	});
+	$(document).on('change', "input[name='job_type[]']", function(event) {
+		keyword = $('#search_for_text').val();
+		certifications = $('#search_for_certifications').val();
+		search_type = $("input[name='search_type']:checked").val();
+		experience = $('#cusrange-reader').val();
+		var job_type = [];
+        $("input[name='job_type[]']:checked").each(function(i){
+          job_type[i] = $(this).val();
+        });
+        var workplaces = [];
+        $("input[name='workplaces[]']:checked").each(function(i){
+          workplaces[i] = $(this).val();
+        });
+		$.post(Wo_Ajax_Requests_File() + '?f=search_linkedin&mode_type=linkedin', {keyword: keyword,search_type:search_type,certifications:certifications,experience:experience,job_type:job_type,workplaces:workplaces}, function (data) {
+			if (data.status == 200) {
+				if (data.html.length > 0) {
+					$('#linkedin_data').html(data.html);
+				} else {
+					$('#linkedin_data').html('<div class="empty_state"><svg enable-background="new 0 0 32 32" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m26 32h-20c-3.314 0-6-2.686-6-6v-20c0-3.314 2.686-6 6-6h20c3.314 0 6 2.686 6 6v20c0 3.314-2.686 6-6 6z" fill="#f5e6fe"/><path d="m17.5 8h-7.667c-1.013 0-1.833.82-1.833 1.833v10.333c0 1.014.82 1.834 1.833 1.834h5.427c-.587-.8-.927-1.773-.927-2.833 0-2.667 2.167-4.833 4.833-4.833.053 0 .113 0 .167.007v-4.508c0-1.013-.82-1.833-1.833-1.833zm-6.833 2.667h2.667c.367 0 .667.3.667.667s-.301.666-.668.666h-2.667c-.366 0-.666-.3-.666-.667s.3-.666.667-.666zm3.333 6.666h-3.333c-.367 0-.667-.3-.667-.667s.3-.666.667-.666h3.333c.367 0 .667.3.667.667s-.3.666-.667.666zm2.667-2.666h-6c-.367 0-.667-.3-.667-.667s.3-.667.667-.667h6c.367 0 .667.3.667.667-.001.367-.301.667-.667.667z" fill="#be63f9"/><g fill="#d9a4fc"><path d="m19.167 22.667c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm0-5.667c-1.195 0-2.167.972-2.167 2.167s.972 2.167 2.167 2.167 2.167-.972 2.167-2.167c-.001-1.195-.973-2.167-2.167-2.167z"/><path d="m23.333 24c-.171 0-.341-.065-.471-.195l-2.167-2.167c-.26-.26-.26-.682 0-.943s.682-.26.943 0l2.167 2.167c.26.26.26.682 0 .943-.13.13-.301.195-.472.195z"/></g></svg><?php echo $wo['lang']['no_available_data'] ?></div>');
+				}
+			}
+		});
+	});
+	$(document).on('change', "input[name='workplaces[]']", function(event) {
+		keyword = $('#search_for_text').val();
+		certifications = $('#search_for_certifications').val();
+		search_type = $("input[name='search_type']:checked").val();
+		experience = $('#cusrange-reader').val();
+		var workplaces = [];
+        $("input[name='workplaces[]']:checked").each(function(i){
+          workplaces[i] = $(this).val();
+        });
+		var job_type = [];
+        $("input[name='job_type[]']:checked").each(function(i){
+          job_type[i] = $(this).val();
+        });
+		$.post(Wo_Ajax_Requests_File() + '?f=search_linkedin&mode_type=linkedin', {keyword: keyword,search_type:search_type,certifications:certifications,experience:experience,job_type:job_type,workplaces:workplaces}, function (data) {
+			if (data.status == 200) {
+				if (data.html.length > 0) {
+					$('#linkedin_data').html(data.html);
+				} else {
+					$('#linkedin_data').html('<div class="empty_state"><svg enable-background="new 0 0 32 32" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m26 32h-20c-3.314 0-6-2.686-6-6v-20c0-3.314 2.686-6 6-6h20c3.314 0 6 2.686 6 6v20c0 3.314-2.686 6-6 6z" fill="#f5e6fe"/><path d="m17.5 8h-7.667c-1.013 0-1.833.82-1.833 1.833v10.333c0 1.014.82 1.834 1.833 1.834h5.427c-.587-.8-.927-1.773-.927-2.833 0-2.667 2.167-4.833 4.833-4.833.053 0 .113 0 .167.007v-4.508c0-1.013-.82-1.833-1.833-1.833zm-6.833 2.667h2.667c.367 0 .667.3.667.667s-.301.666-.668.666h-2.667c-.366 0-.666-.3-.666-.667s.3-.666.667-.666zm3.333 6.666h-3.333c-.367 0-.667-.3-.667-.667s.3-.666.667-.666h3.333c.367 0 .667.3.667.667s-.3.666-.667.666zm2.667-2.666h-6c-.367 0-.667-.3-.667-.667s.3-.667.667-.667h6c.367 0 .667.3.667.667-.001.367-.301.667-.667.667z" fill="#be63f9"/><g fill="#d9a4fc"><path d="m19.167 22.667c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm0-5.667c-1.195 0-2.167.972-2.167 2.167s.972 2.167 2.167 2.167 2.167-.972 2.167-2.167c-.001-1.195-.973-2.167-2.167-2.167z"/><path d="m23.333 24c-.171 0-.341-.065-.471-.195l-2.167-2.167c-.26-.26-.26-.682 0-.943s.682-.26.943 0l2.167 2.167c.26.26.26.682 0 .943-.13.13-.301.195-.472.195z"/></g></svg><?php echo $wo['lang']['no_available_data'] ?></div>');
+				}
+			}
+		});
+	});
+});
+function Wo_SearchAll(keyword) {
+	search_type = $("input[name='search_type']:checked").val();
+	certifications = $('#search_for_certifications').val(); 
+	experience = $('#cusrange-reader').val();
+	var workplaces = [];
+    $("input[name='workplaces[]']:checked").each(function(i){
+      workplaces[i] = $(this).val();
+    });
+	var job_type = [];
+    $("input[name='job_type[]']:checked").each(function(i){
+      job_type[i] = $(this).val();
+    });
+	$.post(Wo_Ajax_Requests_File() + '?f=search_linkedin&mode_type=linkedin', {keyword: keyword,search_type:search_type,certifications:certifications,experience:experience,workplaces:workplaces,job_type:job_type}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('#linkedin_data').html(data.html);
+			} else {
+				$('#linkedin_data').html('<div class="empty_state"><svg enable-background="new 0 0 32 32" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m26 32h-20c-3.314 0-6-2.686-6-6v-20c0-3.314 2.686-6 6-6h20c3.314 0 6 2.686 6 6v20c0 3.314-2.686 6-6 6z" fill="#f5e6fe"/><path d="m17.5 8h-7.667c-1.013 0-1.833.82-1.833 1.833v10.333c0 1.014.82 1.834 1.833 1.834h5.427c-.587-.8-.927-1.773-.927-2.833 0-2.667 2.167-4.833 4.833-4.833.053 0 .113 0 .167.007v-4.508c0-1.013-.82-1.833-1.833-1.833zm-6.833 2.667h2.667c.367 0 .667.3.667.667s-.301.666-.668.666h-2.667c-.366 0-.666-.3-.666-.667s.3-.666.667-.666zm3.333 6.666h-3.333c-.367 0-.667-.3-.667-.667s.3-.666.667-.666h3.333c.367 0 .667.3.667.667s-.3.666-.667.666zm2.667-2.666h-6c-.367 0-.667-.3-.667-.667s.3-.667.667-.667h6c.367 0 .667.3.667.667-.001.367-.301.667-.667.667z" fill="#be63f9"/><g fill="#d9a4fc"><path d="m19.167 22.667c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm0-5.667c-1.195 0-2.167.972-2.167 2.167s.972 2.167 2.167 2.167 2.167-.972 2.167-2.167c-.001-1.195-.973-2.167-2.167-2.167z"/><path d="m23.333 24c-.171 0-.341-.065-.471-.195l-2.167-2.167c-.26-.26-.26-.682 0-.943s.682-.26.943 0l2.167 2.167c.26.26.26.682 0 .943-.13.13-.301.195-.472.195z"/></g></svg><?php echo $wo['lang']['no_available_data'] ?></div>');
+			}
+		}
+	});
+}
+function Wo_SearchAllCertifications(certifications) {
+	keyword = $('#search_for_text').val();
+	search_type = $("input[name='search_type']:checked").val();
+	experience = $('#cusrange-reader').val();
+	var workplaces = [];
+    $("input[name='workplaces[]']:checked").each(function(i){
+      workplaces[i] = $(this).val();
+    });
+	var job_type = [];
+    $("input[name='job_type[]']:checked").each(function(i){
+      job_type[i] = $(this).val();
+    });
+	$.post(Wo_Ajax_Requests_File() + '?f=search_linkedin&mode_type=linkedin', {keyword: keyword,search_type:search_type,certifications:certifications,experience:experience,workplaces:workplaces,job_type:job_type}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('#linkedin_data').html(data.html);
+			} else {
+				$('#linkedin_data').html('<div class="empty_state"><svg enable-background="new 0 0 32 32" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m26 32h-20c-3.314 0-6-2.686-6-6v-20c0-3.314 2.686-6 6-6h20c3.314 0 6 2.686 6 6v20c0 3.314-2.686 6-6 6z" fill="#f5e6fe"/><path d="m17.5 8h-7.667c-1.013 0-1.833.82-1.833 1.833v10.333c0 1.014.82 1.834 1.833 1.834h5.427c-.587-.8-.927-1.773-.927-2.833 0-2.667 2.167-4.833 4.833-4.833.053 0 .113 0 .167.007v-4.508c0-1.013-.82-1.833-1.833-1.833zm-6.833 2.667h2.667c.367 0 .667.3.667.667s-.301.666-.668.666h-2.667c-.366 0-.666-.3-.666-.667s.3-.666.667-.666zm3.333 6.666h-3.333c-.367 0-.667-.3-.667-.667s.3-.666.667-.666h3.333c.367 0 .667.3.667.667s-.3.666-.667.666zm2.667-2.666h-6c-.367 0-.667-.3-.667-.667s.3-.667.667-.667h6c.367 0 .667.3.667.667-.001.367-.301.667-.667.667z" fill="#be63f9"/><g fill="#d9a4fc"><path d="m19.167 22.667c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm0-5.667c-1.195 0-2.167.972-2.167 2.167s.972 2.167 2.167 2.167 2.167-.972 2.167-2.167c-.001-1.195-.973-2.167-2.167-2.167z"/><path d="m23.333 24c-.171 0-.341-.065-.471-.195l-2.167-2.167c-.26-.26-.26-.682 0-.943s.682-.26.943 0l2.167 2.167c.26.26.26.682 0 .943-.13.13-.301.195-.472.195z"/></g></svg><?php echo $wo['lang']['no_available_data'] ?></div>');
+			}
+		}
+	});
+}
+function Wo_SearchExperience() {
+	experience = $('#cusrange-reader').val();
+	keyword = $('#search_for_text').val();
+	search_type = $("input[name='search_type']:checked").val();
+	certifications = $('#search_for_certifications').val(); 
+	var workplaces = [];
+    $("input[name='workplaces[]']:checked").each(function(i){
+      workplaces[i] = $(this).val();
+    });
+	var job_type = [];
+    $("input[name='job_type[]']:checked").each(function(i){
+      job_type[i] = $(this).val();
+    });
+	$.post(Wo_Ajax_Requests_File() + '?f=search_linkedin&mode_type=linkedin', {keyword: keyword,search_type:search_type,certifications:certifications,experience:experience,workplaces:workplaces,job_type:job_type}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('#linkedin_data').html(data.html);
+			} else {
+				$('#linkedin_data').html('<div class="empty_state"><svg enable-background="new 0 0 32 32" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m26 32h-20c-3.314 0-6-2.686-6-6v-20c0-3.314 2.686-6 6-6h20c3.314 0 6 2.686 6 6v20c0 3.314-2.686 6-6 6z" fill="#f5e6fe"/><path d="m17.5 8h-7.667c-1.013 0-1.833.82-1.833 1.833v10.333c0 1.014.82 1.834 1.833 1.834h5.427c-.587-.8-.927-1.773-.927-2.833 0-2.667 2.167-4.833 4.833-4.833.053 0 .113 0 .167.007v-4.508c0-1.013-.82-1.833-1.833-1.833zm-6.833 2.667h2.667c.367 0 .667.3.667.667s-.301.666-.668.666h-2.667c-.366 0-.666-.3-.666-.667s.3-.666.667-.666zm3.333 6.666h-3.333c-.367 0-.667-.3-.667-.667s.3-.666.667-.666h3.333c.367 0 .667.3.667.667s-.3.666-.667.666zm2.667-2.666h-6c-.367 0-.667-.3-.667-.667s.3-.667.667-.667h6c.367 0 .667.3.667.667-.001.367-.301.667-.667.667z" fill="#be63f9"/><g fill="#d9a4fc"><path d="m19.167 22.667c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm0-5.667c-1.195 0-2.167.972-2.167 2.167s.972 2.167 2.167 2.167 2.167-.972 2.167-2.167c-.001-1.195-.973-2.167-2.167-2.167z"/><path d="m23.333 24c-.171 0-.341-.065-.471-.195l-2.167-2.167c-.26-.26-.26-.682 0-.943s.682-.26.943 0l2.167 2.167c.26.26.26.682 0 .943-.13.13-.301.195-.472.195z"/></g></svg><?php echo $wo['lang']['no_available_data'] ?></div>');
+			}
+		}
+	});
+}
+function Wo_LoadLinkedin() {
+	$('.load-produts').html('<div class="white-loading list-group"><div class="cs-loader"><div class="cs-loader-inner"><label> ●</label><label> ●</label><label> ●</label><label> ●</label><label> ●</label><label> ●</label></div></div></div>');
+	experience = $('#cusrange-reader').val();
+	keyword = $('#search_for_text').val();
+	search_type = $("input[name='search_type']:checked").val();
+	certifications = $('#search_for_certifications').val();
+	offset = $('.linkedin_data:last').attr('data-id');
+	var workplaces = [];
+    $("input[name='workplaces[]']:checked").each(function(i){
+      workplaces[i] = $(this).val();
+    });
+	var job_type = [];
+    $("input[name='job_type[]']:checked").each(function(i){
+      job_type[i] = $(this).val();
+    });
+	$.post(Wo_Ajax_Requests_File() + '?f=search_linkedin&mode_type=linkedin', {keyword: keyword,search_type:search_type,certifications:certifications,experience:experience,workplaces:workplaces,job_type:job_type,offset:offset}, function (data) {
+		if (data.status == 200) {
+			if (data.html.length > 0) {
+				$('.load-produts').html('<div class="load-more"><button class="btn btn-default text-center pointer" onclick="Wo_LoadLinkedin();"><i class="fa fa-arrow-down progress-icon" data-icon="arrow-down"></i> <?php echo $wo['lang']['load_more'] ?></button></div>');
+				$('#linkedin_data').append(data.html);
+			} else {
+				$('.load-produts').html('<div class="load-more"><button class="btn btn-default text-center pointer" onclick="Wo_LoadLinkedin();"><?php echo $wo['lang']['no_available_data'] ?></button></div>');
+			}
+		}
+	});
+}
+</script>

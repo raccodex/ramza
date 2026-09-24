@@ -1,0 +1,584 @@
+<?php
+$rac_pwa_value = static function ($key, $default = '') use ($wo) {
+    return htmlspecialchars((string)($wo['config'][$key] ?? $default), ENT_QUOTES, 'UTF-8');
+};
+
+$rac_pwa_checked = static function ($key, $default = '0') use ($wo) {
+    return ((string)($wo['config'][$key] ?? $default) === '1') ? 'checked' : '';
+};
+
+$rac_pwa_selected = static function ($key, $value, $default = '') use ($wo) {
+    return ((string)($wo['config'][$key] ?? $default) === (string)$value) ? 'selected' : '';
+};
+
+$rac_pwa_icon_url = static function ($key) use ($wo) {
+    if (!empty($wo['config'][$key])) {
+        return Wo_GetMedia($wo['config'][$key]);
+    }
+    return $wo['config']['theme_url'] . '/img/icon.png';
+};
+
+$rac_pwa_site_url = rtrim($wo['config']['site_url'], '/');
+?>
+<div class="container-fluid rac-pwa-page">
+    <div class="rac-pwa-heading">
+        <div>
+            <h3>PWA Settings</h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Settings</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">PWA Settings</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="rac-pwa-status">
+            <span>Progressive Web App</span>
+            <strong><?php echo ((string)($wo['config']['pwa_system'] ?? '0') === '1') ? 'Ready to install' : 'Disabled'; ?></strong>
+        </div>
+    </div>
+
+    <div class="pwa-settings-alert"></div>
+
+    <form class="rac-pwa-settings" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+
+        <div class="card rac-pwa-hero">
+            <div class="card-body">
+                <div class="rac-pwa-hero__copy">
+                    <span class="rac-pwa-eyebrow">PWA</span>
+                    <h4>Installable Ramza app</h4>
+                    <p>Set app identity, icons, and offline access.</p>
+                </div>
+                <div class="rac-pwa-hero__switches">
+                    <div class="rac-pwa-switch-row">
+                        <div>
+                            <strong>PWA enabled</strong>
+                            <small>Enable app install.</small>
+                        </div>
+                        <div class="form-group switcher">
+                            <input type="hidden" name="pwa_system" value="0">
+                            <input type="checkbox" name="pwa_system" id="chck-pwa_system" value="1" <?php echo $rac_pwa_checked('pwa_system', '0'); ?>>
+                            <label for="chck-pwa_system" class="check-trail"><span class="check-handler"></span></label>
+                        </div>
+                    </div>
+                    <div class="rac-pwa-switch-row">
+                        <div>
+                            <strong>Install banner</strong>
+                            <small>Show install banner.</small>
+                        </div>
+                        <div class="form-group switcher">
+                            <input type="hidden" name="pwa_install_banner" value="0">
+                            <input type="checkbox" name="pwa_install_banner" id="chck-pwa_install_banner" value="1" <?php echo $rac_pwa_checked('pwa_install_banner', '1'); ?>>
+                            <label for="chck-pwa_install_banner" class="check-trail"><span class="check-handler"></span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-7 col-md-12">
+                <div class="card rac-pwa-card">
+                    <div class="card-body">
+                        <h6 class="card-title">App identity</h6>
+                        <p class="rac-pwa-note">App install details.</p>
+
+                        <div class="rac-pwa-field-grid">
+                            <label>
+                                <span>App name</span>
+                                <input class="form-control" type="text" name="pwa_app_name" maxlength="80" required value="<?php echo $rac_pwa_value('pwa_app_name', $wo['config']['siteName'] ?? 'Ramza'); ?>">
+                                <small>Full app name.</small>
+                            </label>
+                            <label>
+                                <span>Short name</span>
+                                <input class="form-control" type="text" name="pwa_short_name" maxlength="24" required value="<?php echo $rac_pwa_value('pwa_short_name', $wo['config']['siteName'] ?? 'Ramza'); ?>">
+                                <small>Home screen name.</small>
+                            </label>
+                        </div>
+
+                        <label class="rac-pwa-wide-field">
+                            <span>Description</span>
+                            <textarea class="form-control" name="pwa_description" maxlength="180" required><?php echo $rac_pwa_value('pwa_description', $wo['config']['siteDesc'] ?? 'Ramza social community'); ?></textarea>
+                            <small>Short app summary.</small>
+                        </label>
+
+                        <div class="rac-pwa-field-grid">
+                            <label>
+                                <span>Theme color</span>
+                                <div class="rac-pwa-color-field">
+                                    <input class="form-control" type="text" name="pwa_theme_color" pattern="^#[0-9A-Fa-f]{6}$" required value="<?php echo $rac_pwa_value('pwa_theme_color', '#c94b57'); ?>" data-rac-pwa-color-text="theme">
+                                    <input type="color" value="<?php echo $rac_pwa_value('pwa_theme_color', '#c94b57'); ?>" data-rac-pwa-color-picker="theme" aria-label="Theme color picker">
+                                </div>
+                                <small>Main app color.</small>
+                            </label>
+                            <label>
+                                <span>Background color</span>
+                                <div class="rac-pwa-color-field">
+                                    <input class="form-control" type="text" name="pwa_background_color" pattern="^#[0-9A-Fa-f]{6}$" required value="<?php echo $rac_pwa_value('pwa_background_color', '#f6f7f9'); ?>" data-rac-pwa-color-text="background">
+                                    <input type="color" value="<?php echo $rac_pwa_value('pwa_background_color', '#f6f7f9'); ?>" data-rac-pwa-color-picker="background" aria-label="Background color picker">
+                                </div>
+                                <small>Launch color.</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rac-pwa-card">
+                    <div class="card-body">
+                        <h6 class="card-title">Launch & offline</h6>
+                        <p class="rac-pwa-note">Start path and offline screen.</p>
+
+                        <div class="rac-pwa-field-grid">
+                            <label>
+                                <span>Start URL</span>
+                                <input class="form-control" type="text" name="pwa_start_url" required value="<?php echo $rac_pwa_value('pwa_start_url', '/'); ?>">
+                                <small>Default: <code>/</code></small>
+                            </label>
+                            <label>
+                                <span>Scope</span>
+                                <input class="form-control" type="text" name="pwa_scope" required value="<?php echo $rac_pwa_value('pwa_scope', '/'); ?>">
+                                <small>Default: <code>/</code></small>
+                            </label>
+                            <label>
+                                <span>Display mode</span>
+                                <select class="form-control" name="pwa_display">
+                                    <option value="standalone" <?php echo $rac_pwa_selected('pwa_display', 'standalone', 'standalone'); ?>>Standalone app</option>
+                                    <option value="minimal-ui" <?php echo $rac_pwa_selected('pwa_display', 'minimal-ui'); ?>>Minimal browser controls</option>
+                                    <option value="fullscreen" <?php echo $rac_pwa_selected('pwa_display', 'fullscreen'); ?>>Fullscreen</option>
+                                    <option value="browser" <?php echo $rac_pwa_selected('pwa_display', 'browser'); ?>>Browser tab</option>
+                                </select>
+                                <small>Recommended: standalone.</small>
+                            </label>
+                            <label>
+                                <span>Cache strategy</span>
+                                <select class="form-control" name="pwa_cache_strategy">
+                                    <option value="network_first" <?php echo $rac_pwa_selected('pwa_cache_strategy', 'network_first', 'network_first'); ?>>Network first</option>
+                                    <option value="cache_first" <?php echo $rac_pwa_selected('pwa_cache_strategy', 'cache_first'); ?>>Cache first for static assets</option>
+                                </select>
+                                <small>Recommended: network first.</small>
+                            </label>
+                        </div>
+
+                        <div class="rac-pwa-switch-row rac-pwa-switch-soft">
+                            <div>
+                                <strong>Cache app shell pages</strong>
+                                <small>Cache offline shell.</small>
+                            </div>
+                            <div class="form-group switcher">
+                                <input type="hidden" name="pwa_cache_pages" value="0">
+                                <input type="checkbox" name="pwa_cache_pages" id="chck-pwa_cache_pages" value="1" <?php echo $rac_pwa_checked('pwa_cache_pages', '1'); ?>>
+                                <label for="chck-pwa_cache_pages" class="check-trail"><span class="check-handler"></span></label>
+                            </div>
+                        </div>
+
+                        <div class="rac-pwa-field-grid">
+                            <label>
+                                <span>Offline page title</span>
+                                <input class="form-control" type="text" name="pwa_offline_title" maxlength="90" required value="<?php echo $rac_pwa_value('pwa_offline_title', 'You are offline'); ?>">
+                                <small>Offline heading.</small>
+                            </label>
+                            <label>
+                                <span>Offline page text</span>
+                                <textarea class="form-control" name="pwa_offline_text" maxlength="220" required><?php echo $rac_pwa_value('pwa_offline_text', 'Ramza saved the app shell. Reconnect to refresh your feed and messages.'); ?></textarea>
+                                <small>Offline message.</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 col-md-12">
+                <div class="card rac-pwa-card">
+                    <div class="card-body">
+                        <h6 class="card-title">Required app icons</h6>
+                        <p class="rac-pwa-note">PNG or JPG, exact size.</p>
+
+                        <div class="rac-pwa-icon-stack">
+                            <div class="rac-pwa-icon-field">
+                                <img src="<?php echo htmlspecialchars($rac_pwa_icon_url('pwa_icon_192'), ENT_QUOTES, 'UTF-8'); ?>" alt="PWA 192 icon" data-rac-pwa-preview="pwa_icon_192">
+                                <div>
+                                    <strong>PWA icon 192×192</strong>
+                                    <span>Small install icon.</span>
+                                    <input type="file" name="pwa_icon_192" accept="image/png,image/jpeg" data-rac-pwa-file="pwa_icon_192">
+                                </div>
+                            </div>
+
+                            <div class="rac-pwa-icon-field">
+                                <img src="<?php echo htmlspecialchars($rac_pwa_icon_url('pwa_icon_512'), ENT_QUOTES, 'UTF-8'); ?>" alt="PWA 512 icon" data-rac-pwa-preview="pwa_icon_512">
+                                <div>
+                                    <strong>PWA icon 512×512</strong>
+                                    <span>Large install icon.</span>
+                                    <input type="file" name="pwa_icon_512" accept="image/png,image/jpeg" data-rac-pwa-file="pwa_icon_512">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rac-pwa-card">
+                    <div class="card-body">
+                        <h6 class="card-title">Install banner preview</h6>
+                        <p class="rac-pwa-note">Bottom install banner.</p>
+                        <div class="rac-pwa-banner-preview" data-rac-pwa-preview-banner>
+                            <button type="button" aria-label="Close preview">×</button>
+                            <img src="<?php echo htmlspecialchars($rac_pwa_icon_url('pwa_icon_192'), ENT_QUOTES, 'UTF-8'); ?>" alt="PWA preview icon" data-rac-pwa-preview="banner_icon">
+                            <div>
+                                <strong data-rac-pwa-preview-name><?php echo $rac_pwa_value('pwa_app_name', $wo['config']['siteName'] ?? 'Ramza'); ?></strong>
+                                <span><?php echo htmlspecialchars($rac_pwa_site_url, ENT_QUOTES, 'UTF-8'); ?></span>
+                            </div>
+                            <em data-rac-pwa-preview-button>Install</em>
+                        </div>
+
+                        <div class="rac-pwa-store-preview">
+                            <span>Offline access</span>
+                            <strong>Offline screen</strong>
+                            <p>Installed app fallback.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rac-pwa-card">
+            <div class="card-body rac-pwa-footer">
+                <div>
+                    <h6>PWA ready</h6>
+                    <p>Manifest, service worker, offline page, and banner.</p>
+                </div>
+                <button type="submit" class="btn btn-primary rac-pwa-save">Save PWA Settings</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-status {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 190px;
+    padding: 12px 16px;
+    border: 1px solid rgba(148, 163, 184, 0.34);
+    border-radius: 18px;
+    background: #fffaf3;
+    color: #6b4b2b;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-status span,
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-eyebrow,
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-store-preview span {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-status strong {
+    color: #101820;
+    font-size: 15px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-hero .card-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 430px;
+    gap: 22px;
+    align-items: center;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-hero__copy h4 {
+    margin: 6px 0 8px;
+    color: #07111f;
+    font-size: 24px;
+    font-weight: 780;
+    letter-spacing: -0.035em;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-hero__copy p,
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-note,
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-footer p,
+body.rac-admin-shell[data-admin-page="pwa-settings"] small {
+    color: #667085;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-hero__switches,
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-icon-stack {
+    display: grid;
+    gap: 12px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 15px;
+    border: 1px solid rgba(148, 163, 184, 0.32);
+    border-radius: 18px;
+    background: #fbfcfe;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-switch-row strong {
+    display: block;
+    color: #111827;
+    font-weight: 760;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-switch-row small {
+    display: block;
+    margin-top: 3px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-switch-row .form-group {
+    margin: 0;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-switch-soft {
+    margin-bottom: 18px;
+    background: #fffaf3;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-card .card-title {
+    margin-bottom: 6px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-note {
+    margin-bottom: 18px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-field-grid label,
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-wide-field {
+    display: block;
+    margin-bottom: 16px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-field-grid span,
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-wide-field span {
+    display: block;
+    margin-bottom: 6px;
+    color: #182230;
+    font-size: 12.5px;
+    font-weight: 760;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-field-grid small,
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-wide-field small {
+    display: block;
+    margin-top: 6px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-color-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px;
+    gap: 10px;
+    align-items: center;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-color-field input[type="color"] {
+    width: 44px;
+    height: 40px;
+    padding: 3px;
+    border: 1px solid rgba(148, 163, 184, 0.48);
+    border-radius: 13px;
+    background: #ffffff;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-icon-field {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.32);
+    border-radius: 20px;
+    background: #fbfcfe;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-icon-field img {
+    width: 72px;
+    height: 72px;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 18px;
+    object-fit: cover;
+    background: #ffffff;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-icon-field strong,
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-store-preview strong {
+    display: block;
+    color: #111827;
+    font-weight: 780;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-icon-field span {
+    display: block;
+    margin: 4px 0 10px;
+    color: #667085;
+    font-size: 12px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-icon-field input[type="file"] {
+    width: 100%;
+    color: #475467;
+    font-size: 12px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-banner-preview {
+    display: grid;
+    grid-template-columns: 24px 46px minmax(0, 1fr) 94px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.34);
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 18px 32px rgba(15, 23, 42, 0.08);
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-banner-preview button {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid rgba(17, 24, 39, 0.18);
+    border-radius: 50%;
+    background: #ffffff;
+    color: #111827;
+    line-height: 1;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-banner-preview img {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-banner-preview strong {
+    display: block;
+    color: #111827;
+    font-weight: 780;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-banner-preview span {
+    display: block;
+    color: #475467;
+    font-size: 12px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-banner-preview em {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    border-radius: 999px;
+    background: <?php echo $rac_pwa_value('pwa_theme_color', '#c94b57'); ?>;
+    color: #ffffff;
+    font-style: normal;
+    font-weight: 760;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-store-preview {
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid rgba(34, 132, 91, 0.22);
+    border-radius: 18px;
+    background: #f5fbf8;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-store-preview span {
+    color: #22845b;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-store-preview p {
+    margin: 7px 0 0;
+    color: #475467;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-footer h6 {
+    margin: 0 0 5px;
+    color: #111827;
+}
+body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-footer p {
+    margin: 0;
+}
+@media (max-width: 1199px) {
+    body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-hero .card-body,
+    body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-field-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 767px) {
+    body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-heading,
+    body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-footer {
+        display: block;
+    }
+    body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-status,
+    body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-save {
+        margin-top: 12px;
+        width: 100%;
+    }
+    body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-banner-preview {
+        grid-template-columns: 24px 42px minmax(0, 1fr);
+    }
+    body.rac-admin-shell[data-admin-page="pwa-settings"] .rac-pwa-banner-preview em {
+        grid-column: 1 / -1;
+    }
+}
+</style>
+
+<script>
+$(function () {
+    $('[data-rac-pwa-color-picker]').on('input change', function () {
+        var key = $(this).data('rac-pwa-color-picker');
+        $('[data-rac-pwa-color-text="' + key + '"]').val($(this).val()).trigger('input');
+    });
+
+    $('[data-rac-pwa-color-text]').on('input change', function () {
+        var value = $(this).val();
+        var key = $(this).data('rac-pwa-color-text');
+        if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+            $('[data-rac-pwa-color-picker="' + key + '"]').val(value);
+            if (key === 'theme') {
+                $('[data-rac-pwa-preview-button]').css('background', value);
+            }
+        }
+    });
+
+    $('input[name="pwa_app_name"]').on('input', function () {
+        $('[data-rac-pwa-preview-name]').text($(this).val() || 'Ramza');
+    });
+
+    $('[data-rac-pwa-file]').on('change', function () {
+        var input = this;
+        var previewKey = $(input).data('rac-pwa-file');
+        if (!input.files || !input.files[0]) {
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            $('[data-rac-pwa-preview="' + previewKey + '"]').attr('src', event.target.result);
+            if (previewKey === 'pwa_icon_192') {
+                $('[data-rac-pwa-preview="banner_icon"]').attr('src', event.target.result);
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    });
+
+    $('.rac-pwa-settings').on('submit', function (event) {
+        event.preventDefault();
+        var form = $(this);
+        var button = form.find('.rac-pwa-save');
+        var originalText = button.text();
+        var formData = new FormData(this);
+
+        button.prop('disabled', true).text('Saving...');
+        $('.pwa-settings-alert').html('');
+
+        $.ajax({
+            url: Wo_Ajax_Requests_File() + '?f=admin_setting&s=update_general_setting',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function (data) {
+                if (data.status == 200) {
+                    $('.pwa-settings-alert').html('<div class="alert alert-success">PWA settings saved. Public install banner and offline app metadata will use the new configuration.</div>');
+                } else {
+                    $('.pwa-settings-alert').html('<div class="alert alert-danger">' + (data.message || 'PWA settings could not be saved.') + '</div>');
+                }
+                button.prop('disabled', false).text(originalText);
+            },
+            error: function () {
+                $('.pwa-settings-alert').html('<div class="alert alert-danger">PWA settings could not be saved. Please check the uploaded icon files and try again.</div>');
+                button.prop('disabled', false).text(originalText);
+            }
+        });
+    });
+});
+</script>

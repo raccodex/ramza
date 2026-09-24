@@ -1,6 +1,6 @@
 <?php
-$reactions_types = array_keys($wo['reactions_types']);
-if (!empty($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0 && !empty($_POST['reaction']) && in_array($_POST['reaction'], $reactions_types)) {
+$reactions_types = Ramza_GetActiveReactionIds();
+if (!empty($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0 && !empty($_POST['reaction']) && in_array((int) $_POST['reaction'], $reactions_types, true)) {
 	$message_id = Wo_Secure($_POST['id']);
 	$is_reacted = $db->where('user_id',$wo['user']['user_id'])->where('message_id',$message_id)->getValue(T_REACTIONS,'COUNT(*)');
 	if ($is_reacted > 0) {

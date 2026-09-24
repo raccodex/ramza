@@ -1,6 +1,9 @@
 <?php
 if ($f == "update_general_settings") {
     if (isset($_POST) && Wo_CheckSession($hash_id) === true) {
+        if (!Wo_IsAdmin() || empty($_POST['user_id'])) {
+            $_POST['user_id'] = $wo['user']['user_id'];
+        }
         if (empty($_POST['username']) OR empty($_POST['email'])) {
             $errors[] = $error_icon . $wo['lang']['please_check_details'];
         } else {
@@ -189,7 +192,7 @@ if ($f == "update_general_settings") {
                         ))) {
                             $Update_data['weather_unit'] = Wo_Secure($_POST['weather_unit']);
                         }
-                        if (!empty($_POST['verified'])) {
+                        if (Wo_IsAdmin() && !empty($_POST['verified'])) {
                             if ($_POST['verified'] == 'verified') {
                                 $Verification = 1;
                             } else {

@@ -124,13 +124,79 @@ if (!in_array($f, $allow_array)) {
     }
 }
 if (!in_array($f, $non_login_array)) {
-    if ($wo['loggedin'] == false && ($s != 'load_more_posts' && $s != 'filter_posts')) {
+    if ($wo['loggedin'] == false && ($s != 'load_more_posts' && $s != 'filter_posts' && $s != 'add-post-view' && $s != 'add-video-view' && $s != 'get_post_reacted')) {
         if ($s != 'load-comments') {
             exit("Please login or signup to continue.");
         }
     }
 }
 if ($wo['loggedin'] && $wo['user']['banned'] == 1 && !in_array($f, $non_login_array)) {
+    exit();
+}
+if (function_exists('Ramza_IsDemoMode') && Ramza_IsDemoMode()) {
+    $ramza_demo_blocked = false;
+    $ramza_demo_admin_reads = array(
+        'search_in_pages',
+        'exchange',
+        'get_country_ad',
+        'get_category_langs',
+        'get_custom_field_info',
+        'get_reaction_form',
+        'get_supported_coins',
+        'get_pro',
+        'add_custom_field_form',
+        'edit_custom_field_form'
+    );
+    $ramza_demo_admin_only_endpoints = array(
+        'addons',
+        'new-film',
+        'edit-film',
+        'add-new-forum',
+        'new-forum-section'
+    );
+    $ramza_demo_algorithm_mutations = array(
+        'run_maintenance',
+        'save_topic',
+        'set_topic_status',
+        'save_relation',
+        'delete_relation',
+        'save_boost',
+        'delete_boost'
+    );
+
+    if ($f === 'admin_setting' && !in_array($s, $ramza_demo_admin_reads, true)) {
+        $ramza_demo_blocked = true;
+    }
+    elseif (in_array($f, $ramza_demo_admin_only_endpoints, true)) {
+        $ramza_demo_blocked = true;
+    }
+    elseif ($f === 'ramza_update' && in_array($s, array('install', 'manual', 'rollback'), true)) {
+        $ramza_demo_blocked = true;
+    }
+    elseif ($f === 'algorithm' && in_array($s, $ramza_demo_algorithm_mutations, true)) {
+        $ramza_demo_blocked = true;
+    }
+    elseif ($f === 'site_assistant' && $s === 'activate') {
+        $ramza_demo_blocked = true;
+    }
+    elseif ($f === 'notifications' && $s === 'send') {
+        $ramza_demo_blocked = true;
+    }
+    elseif ($f === 'status' && $s === 'remove_multi_status') {
+        $ramza_demo_blocked = true;
+    }
+}
+if (!empty($ramza_demo_blocked)) {
+    http_response_code(403);
+    header('Cache-Control: no-store, no-cache, must-revalidate');
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode(array(
+        'status' => 403,
+        'demo_mode' => true,
+        'message' => 'Demo mode is enabled. Admin changes are disabled.'
+    ));
+    mysqli_close($sqlConnect);
+    unset($wo);
     exit();
 }
 $files = scandir('xhr');

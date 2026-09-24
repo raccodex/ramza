@@ -1,0 +1,253 @@
+<div class="modal fade" id="AI-modal" role="dialog">
+	<div class="modal-dialog modal-lg wow_mat_mdl">
+		<form method="post">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title"><?php echo $wo['lang']['generate_ai_image']; ?></h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-lg-5">
+							<p class="mb-4"><?php echo(str_replace('{COUNT}', 4, $wo['lang']['can_generate_and_draw'])) ?></p>
+							
+							<?php if ($wo['config']['images_credit_system'] == 1 && $wo['config']['generated_image_price'] > 0) { ?>
+								<div class="ai_alert_balance mb-4">
+									<p><?php echo $wo['lang']['available_balance']?></p>
+									<b id="creditT"><?php echo getAvailableImageBalance() ?></b>
+									<p><?php echo $wo['lang']['images']?></p>
+
+									<button type="button" class="btn btn-mat" id="buy-ai-image-button" onclick="openAICredit('AI-modal')"><?php echo $wo['lang']['buy_credit']; ?></button>
+								</div>
+							<?php } ?>
+						</div>
+						<div class="col-lg-7">
+							<div class="ai_generate_alert"></div>
+							<label class="tag_field">
+								<textarea placeholder=" " dir="auto" rows="4" name="text" id="aiText"></textarea>
+								<span>Describe the image you want</span>
+							</label>
+							<label class="tag_field">
+								<select name="size" id="aiImageSize">
+									<?php if ($wo['config']['images_ai'] == 'openai') { ?>
+										<option value="256x256">256x256</option>
+										<option value="512x512">512x512</option>
+										<option value="1024x1024">1024x1024</option>
+									<?php }else{ ?>
+										<?php foreach (getMidJeournyModels($wo['config']['midjeourny_model']) as $key => $value) { ?>
+											<option value="<?php echo($value) ?>"><?php echo($value) ?></option>
+										<?php } ?>
+									<?php } ?>
+								</select>
+								<span><?php echo $wo['lang']['image_size']?></span>
+							</label>
+							<label class="tag_field">
+								<select id="num_outputs" name="num_outputs">
+									<?php 
+										foreach (getAllowedImagesCount() as $key => $value) {
+									 ?>
+									  <option value="<?php echo($value) ?>"><?php echo($value) ?></option>
+									<?php } ?>
+								</select>
+								<span><?php echo $wo['lang']['images_count']?></span>
+							</label>
+							<div id="productimage-holder" class="ai_alert_images"></div>
+						</div>
+					</div>
+					
+					<input type="hidden" name="user" value="<?php echo $wo['user']['user_id'];?>">
+				</div>
+				
+				<div class="modal-footer">
+					<div class="ball-pulse"><div></div><div></div><div></div></div>
+					<button type="button" class="btn btn-default btn-mat disable_btn" data-dismiss="modal" aria-label="Close"><?php echo $wo['lang']['cancel'] ?></button>
+					<button type="button" class="btn btn-main btn-mat" id="ai-generate-button" onclick="<?php echo($wo['config']['images_ai'] == 'openai' ? 'openAIImages()' : 'generateAIImages()') ?>"><?php echo $wo['lang']['generate']; ?></button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	function addAIImages() {
+		var ii = 0;
+		for (var i = 0; i < $('#AI-modal .delete-checkbox:checked').length; i++) {
+			var id = $('#AI-modal .delete-checkbox:checked')[i].getAttribute('id');
+			var url = $('#image_to_'+$('#'+id).attr('data-image-id')).find('img').attr('src');
+			name = "'"+aiImages[$('#'+id).attr('data-image-id')].name+"'";
+		  $("#image-holder").append('<span class="thumb-image-delete" id="image_to_'+i+'"><span onclick="DeleteImageById('+name+','+i+')" class="btn btn-mat thumb-image-delete-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path></svg></span><img src="'+url+'" class="thumb-image"></span>')
+			imgArray.push(aiImages[$('#'+id).attr('data-image-id')]);
+		}
+		$("#publisher-photos")[0].files = new FileListItems(imgArray);
+		$('#AI-modal').modal('hide');
+		$('#postSticker').val('');
+	  var numFiles = imgArray.length;
+	  $('.create-album').css('display', 'unset');
+	  //let tx = "<?php echo $wo['lang']['photos_selected'];?>";
+	  //$("#photo-form input").val(tx.replace("COUNT", numFiles));
+	  $(".photo-form").show(100);
+		$("#image-holder").show();
+		$("#AI-modal #productimage-holder").html('');
+		$('#ai-selected-button').remove();
+		$('#AI-modal textarea').val('');
+		aiImages = [];
+		$('#isAiPost').val('on');
+	}
+	function checkAIImages(id) {
+		$.post(Wo_Ajax_Requests_File()+'?f=ai&s=check', {id: id}, function(data, textStatus, xhr) {
+			
+			if (data.status == 200) {
+				$("#AI-modal #productimage-holder").html('');
+				$('#ai-selected-button').remove();
+				aiImages = [];
+				if (data.output == null) {
+					$("#AI-modal .ball-pulse").fadeIn();
+					$("#ai-generate-button").html(data.status_text);
+				}
+				else{
+					<?php if ($wo['config']['images_credit_system'] == 1 && $wo['config']['generated_image_price'] > 0) { ?>
+						$('#current_user_credits').val(data.credits);
+						var text = "<?php echo($wo['lang']['available_images_credits']); ?>";
+						$('#creditT').text( getAvailableByType('image'));
+					<?php } ?>
+					$("#ai-generate-button").text("<?php echo($wo['lang']['regenerate']) ?>");
+					$("#ai-generate-button").removeAttr('disabled');
+					$("#AI-modal .ball-pulse").fadeOut();
+					clearInterval(window.checkAI);
+					if ($(".add_more_images").length == 0) {
+						//$("#image-holder").prepend('<span class="wow_prod_imgs add_more_images"><div class="upload-product-image" onclick="document.getElementById(\'publisher-photos\').click(); return false"><div class="upload-image-content"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"></path></svg></div></div></span>')
+					}
+					
+	        		var ii = 0;
+					for (var i = 0; i < data.output.length; i++) {
+						loadImageFromUrl(data.output[i]).then(async dataUrl => {
+					     var fileData = await imageDataToFile(dataUrl, "Ai_image_"+ii+".jpg");
+					     aiImages.push(fileData);
+					     name = "'"+data.output[ii]+"'";
+								$("#AI-modal #productimage-holder").append('<div class="thumb-image-delete" id="image_to_'+ii+'"><label><input type="checkbox" id="check-data-'+ii+'" class="pointer thumb-image-delete-btn delete-checkbox" data-image-id="'+ii+'"><span class="pointer ai_image_abs"></span></label><span data-href="'+dataUrl+'" onclick="Wo_OpenLighteBox(this,event);" ><img src="'+dataUrl+'" class="thumb-image"></span></div>')
+					     
+					     if (ii == data.output.length - 1) {
+					     	$("#AI-modal .modal-footer").prepend('<button type="button" class="btn main btn-mat" id="ai-selected-button" onclick="addAIImages()" disabled><?php echo $wo['lang']['select']; ?></button>');
+								$('#AI-modal .delete-checkbox').change(function(event) {
+									if ($('#AI-modal .delete-checkbox:checked').length == 0) {
+										$('#ai-selected-button').attr('disabled', true);
+									}
+									else{
+										$('#ai-selected-button').attr('disabled', false);
+									    $('#ai-selected-button').text('<?php echo $wo['lang']['select']; ?> (' + $('#AI-modal .delete-checkbox:checked').length + ')');
+									} 
+								});
+					     }
+					     ii = ii + 1;
+					   })
+					}
+				}
+			}
+			else{
+				$("#ai-generate-button").removeAttr('disabled');
+	    	$("#ai-generate-button").text("<?php echo($wo['lang']['generate']) ?>");
+	    	$('.ai_generate_alert').html('<div class="alert alert-danger">' + data.message + '</div>');
+	    	setTimeout(() => {
+		  		$('.ai_generate_alert').html('');
+		  	},3000);
+		  	clearInterval(window.checkAI);
+	    }
+		});
+	}
+	function generateAIImages() {
+		$("#ai-generate-button").text("<?php echo($wo['lang']['please_wait']) ?>");
+		$("#ai-generate-button").attr('disabled',true);
+		$.post(Wo_Ajax_Requests_File()+'?f=ai&s=generate', {text: $('#aiText').val(),size: $('#aiImageSize').val(),num_outputs: $('#num_outputs').val()}, function(data, textStatus, xhr) {
+			$("#ai-generate-button").text("<?php echo($wo['lang']['generate']) ?>");
+	    if (data.status == 200) {
+	    	window.checkAI = setInterval(() => {checkAIImages(data.id)} , 3000);
+	    	$("#ai-generate-button").text(data.status_text);
+	    }
+	    else{
+	    	$("#ai-generate-button").removeAttr('disabled');
+	    	$("#ai-generate-button").text("<?php echo($wo['lang']['generate']) ?>");
+	    	$('.ai_generate_alert').html('<div class="alert alert-danger">' + data.message + '</div>');
+	    }
+	    setTimeout(() => {
+	  		$('.ai_generate_alert').html('');
+	  	},2000);
+	  });
+	}
+	function openAIImages() {
+		$("#AI-modal #productimage-holder").html('');
+		$('#ai-selected-button').remove();
+		aiImages = [];
+		$("#AI-modal .ball-pulse").fadeIn();
+		$("#ai-generate-button").html("<?php echo($wo['lang']['processing']) ?>");
+		$("#ai-generate-button").attr('disabled',true);
+		$.post(Wo_Ajax_Requests_File()+'?f=ai&s=openai', {text: $('#aiText').val(),size: $('#aiImageSize').val(),num_outputs: $('#num_outputs').val()}, function(data, textStatus, xhr) {
+			$("#AI-modal #productimage-holder").html('');
+			$('#ai-selected-button').remove();
+			aiImages = [];
+	    if (data.status == 200) {
+	    	$("#ai-generate-button").text("<?php echo($wo['lang']['regenerate']) ?>");
+			$("#AI-modal .ball-pulse").fadeOut();
+	    	<?php if ($wo['config']['images_credit_system'] == 1 && $wo['config']['generated_image_price'] > 0) { ?>
+				$('#current_user_credits').val(data.credits);
+				var text = "<?php echo($wo['lang']['available_images_credits']); ?>";
+				$('#creditT').text( getAvailableByType('image'));
+			<?php } ?>
+	    	if ($(".add_more_images").length == 0) {
+						//$("#image-holder").prepend('<span class="wow_prod_imgs add_more_images"><div class="upload-product-image" onclick="document.getElementById(\'publisher-photos\').click(); return false"><div class="upload-image-content"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"></path></svg></div></div></span>')
+					}
+					
+	        var ii = 0;
+					for (var i = 0; i < data.output.length; i++) {
+						dataUrl = data.output[i];
+					     var fileData = imageDataToFile(dataUrl, "Ai_image_"+ii+".jpg");
+					     aiImages.push(fileData);
+					     name = "'"+data.output[ii]+"'";
+								$("#AI-modal #productimage-holder").append('<div class="thumb-image-delete" id="image_to_'+ii+'"><label><input type="checkbox" id="check-data-'+ii+'" class="pointer thumb-image-delete-btn delete-checkbox" data-image-id="'+ii+'"><span class="pointer ai_image_abs"></span></label><span data-href="'+dataUrl+'" onclick="Wo_OpenLighteBox(this,event);" ><img src="'+dataUrl+'" class="thumb-image"></span></div>')
+					     
+					     if (ii == data.output.length - 1) {
+					     	$("#AI-modal .modal-footer").prepend('<button type="button" class="btn main btn-mat" id="ai-selected-button" onclick="addAIImages()" disabled><?php echo $wo['lang']['select']; ?></button>');
+								$('#AI-modal .delete-checkbox').change(function(event) {
+									if ($('#AI-modal .delete-checkbox:checked').length == 0) {
+										$('#ai-selected-button').attr('disabled', true);
+									}
+									else{
+									    $('#ai-selected-button').attr('disabled', false);
+									    $('#ai-selected-button').text('<?php echo $wo['lang']['select']; ?> (' + $('#AI-modal .delete-checkbox:checked').length + ')');
+									}
+								});
+					     }
+					     ii = ii + 1;
+					}
+
+	    }
+	    else{
+	    	$("#ai-generate-button").text("<?php echo($wo['lang']['generate']) ?>");
+	    	$('.ai_generate_alert').html('<div class="alert alert-danger">' + data.message + '</div>');
+	    }
+	    $("#ai-generate-button").removeAttr('disabled');
+	    setTimeout(() => {
+	  		$('.ai_generate_alert').html('');
+	  	},2000);
+	  });
+	}
+	function openAIModel() {
+		$("#ai-generate-button").html("<?php echo $wo['lang']['generate']; ?>");
+		$('#aiText').val('');
+		$('#aiImageSize').val($('#aiImageSize option:last').val());
+		$('#num_outputs').val($('#num_outputs option:first').val());
+		$("#AI-modal #productimage-holder").html('');
+		$('#ai-selected-button').remove();
+		aiImages = [];
+		$("#ai-generate-button").removeAttr('disabled');
+		$('.ai_generate_alert').html("");
+		<?php if ($wo['config']['images_credit_system'] == 1 && $wo['config']['generated_image_price'] > 0) { ?>
+			var text = "<?php echo($wo['lang']['available_images_credits']); ?>";
+			$('#creditT').text( getAvailableByType('image'));
+			if ($('#current_user_credits').val() < <?php echo($wo['config']['generated_image_price']) ?>) {
+				$('#ai-generate-button').attr('disabled',true);
+				$('.ai_generate_alert').html("<div class='alert alert-danger'><?php echo $wo["lang"]["you_dont_have_enough_credits"]?></div>");
+			}
+		<?php } ?>
+		$('#AI-modal').modal('show');
+	}
+</script>

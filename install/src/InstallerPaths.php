@@ -10,6 +10,8 @@ final class RACInstallerPaths
     public string $htaccessFile;
     public string $htaccessSource;
     public string $sqlDump;
+    public string $mobileApiMigration;
+    public string $algorithmMigration;
     public string $lockFile;
     public string $logDir;
 
@@ -21,7 +23,9 @@ final class RACInstallerPaths
         $this->nodeConfigFile = $this->rootDir . DIRECTORY_SEPARATOR . 'nodejs' . DIRECTORY_SEPARATOR . 'config.json';
         $this->htaccessFile = $this->rootDir . DIRECTORY_SEPARATOR . '.htaccess';
         $this->htaccessSource = $this->rootDir . DIRECTORY_SEPARATOR . 'htaccess.txt';
-        $this->sqlDump = $this->rootDir . DIRECTORY_SEPARATOR . 'wowonder.sql';
+        $this->sqlDump = $this->rootDir . DIRECTORY_SEPARATOR . 'ramza.sql';
+        $this->mobileApiMigration = $this->rootDir . DIRECTORY_SEPARATOR . 'updates' . DIRECTORY_SEPARATOR . 'ramza_mobile_api_v1.sql';
+        $this->algorithmMigration = $this->rootDir . DIRECTORY_SEPARATOR . 'updates' . DIRECTORY_SEPARATOR . 'ramza_algorithm_advanced.sql';
         $this->lockFile = $this->installDir . DIRECTORY_SEPARATOR . 'install.lock';
 
         $base = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;

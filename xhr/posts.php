@@ -2175,11 +2175,9 @@ if ($f == 'posts') {
                 'html' => '',
                 'title' => $wo['lang']['users_reacted_post']
             );
-            if (!empty($_GET['type']) && !empty($wo['reactions_types'][$_GET['type']]) && !empty($_GET['offset']) && is_numeric($_GET['offset']) && $_GET['offset'] > 0) {
-                $reactedUsers = Wo_GetPostReactionUsers($_GET['post_id'], $_GET['type'], 20, Wo_Secure($_GET['offset']), Wo_Secure($_GET['col']));
-            } else {
-                $reactedUsers = Wo_GetPostReactionUsers($_GET['post_id'], $_GET['type'], 20, 0, Wo_Secure($_GET['col']));
-            }
+            $offset = (!empty($_GET['offset']) && is_numeric($_GET['offset']) && $_GET['offset'] > 0) ? (int)$_GET['offset'] : 0;
+            $type = (!empty($_GET['type'])) ? Wo_Secure($_GET['type']) : 'all';
+            $reactedUsers = Wo_GetPostReactionUsers($_GET['post_id'], $type, 20, $offset, Wo_Secure($_GET['col']));
             $post_info = array();
             if ($_GET['col'] == 'post') {
                 $post_info = $db->where('id', Wo_Secure($_GET['post_id']))->getOne(T_POSTS);
@@ -2419,13 +2417,13 @@ if ($f == 'posts') {
         echo $html;
         exit();
     }
-    if ($s == 'add-video-view' && isset($_GET['post_id']) && is_numeric($_GET['post_id'])) {
+    if (($s == 'add-video-view' || $s == 'add-post-view') && isset($_GET['post_id']) && is_numeric($_GET['post_id'])) {
         $post_id    = Wo_Secure($_GET['post_id']);
         $data       = array(
             'status' => 300
         );
-        $post_views = Wo_AddPostVideoView($post_id);
-        if ($post_views && is_numeric($post_views)) {
+        $post_views = ($s == 'add-post-view') ? Wo_AddPostView($post_id) : Wo_AddPostVideoView($post_id);
+        if ($post_views !== false && is_numeric($post_views)) {
             $data['status'] = 200;
             $data['views']  = $post_views;
         }

@@ -15,7 +15,39 @@ if ($f == 'create_new_video_call') {
     $user_2       = Wo_UserData(Wo_Secure($_GET['user_id2']));
     $room_script  = sha1(rand(1111111, 9999999999));
 
-    if ($wo['config']['agora_chat_video'] == 1) {
+    $ramzaCallProvider = function_exists('Ramza_CallProvider') ? Ramza_CallProvider() : (!empty($wo['config']['agora_chat_video']) ? 'agora' : 'twilio');
+    if ($ramzaCallProvider === 'disabled') {
+        $data['message'] = 'No call provider is ready. Configure native WebRTC, Agora, or Twilio in Video & Audio Settings.';
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
+    }
+    if ($ramzaCallProvider === 'native_webrtc') {
+        $insertData = Wo_CreateNewVideoCall(array(
+            'access_token' => 'native-webrtc',
+            'from_id' => Wo_Secure($_GET['user_id1']),
+            'to_id' => Wo_Secure($_GET['user_id2']),
+            'access_token_2' => 'native-webrtc',
+            'room_name' => $room_script
+        ));
+        if ($insertData > 0) {
+            $wo['calling_user'] = $user_2;
+            $data = array(
+                'status' => 200,
+                'access_token' => '',
+                'id' => $insertData,
+                'url' => $wo['config']['site_url'] . '/video-call/' . $insertData,
+                'html' => Wo_LoadPage('modals/calling'),
+                'text_no_answer' => $wo['lang']['no_answer'],
+                'text_please_try_again_later' => $wo['lang']['please_try_again_later']
+            );
+        }
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
+    }
+
+    if ($ramzaCallProvider === 'agora') {
         $wo['AgoraToken'] = null;
         if (!empty($wo['config']['agora_chat_app_certificate'])) {
             include_once 'assets/libraries/AgoraDynamicKey/src/RtcTokenBuilder.php';
@@ -90,7 +122,7 @@ if ($f == 'create_new_video_call') {
             );
         }
     }
-    else{
+    elseif ($ramzaCallProvider === 'twilio') {
         include_once('assets/libraries/twilio/vendor/autoload.php');
         $accountSid   = $wo['config']['video_accountSid'];
         $apiKeySid    = $wo['config']['video_apiKeySid'];

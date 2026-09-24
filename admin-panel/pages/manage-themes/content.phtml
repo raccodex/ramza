@@ -1,109 +1,127 @@
-<div class="container-fluid">
-    <div>
-        <h3>Themes</h3>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="#">Home</a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="#">Design</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">Themes</li>
-            </ol>
-        </nav>
+<?php
+$rac_theme_profiles = array(
+    'Ramza New' => array(
+        'summary' => 'The next Ramza experience is being prepared and is locked until the upcoming release.',
+        'label' => 'Coming soon',
+        'locked' => true,
+    ),
+    'Ramza Light' => array(
+        'summary' => 'The default Ramza front-end theme for fresh installs and current supported sites.',
+        'label' => 'Default',
+        'locked' => false,
+    ),
+);
+?>
+<div class="container-fluid rac-theme-page">
+    <div class="rac-theme-head">
+        <div>
+            <h3>Ramza themes</h3>
+            <p>Manage the built-in Ramza themes. Only supported Ramza themes are shown in this panel.</p>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="#">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="#">Design</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Themes</li>
+                </ol>
+            </nav>
+        </div>
     </div>
-    <!-- Vertical Layout -->
-		<div class="pro-settings-alert"></div>
-		<form action="#" method="post" class="setting-themes-container">
-			<div class="row">
-                       <?php
-                 foreach (Wo_GetThemes() as $theme_url) {
-                            if (file_exists($theme_url . '/info.php')) {
-                                include($theme_url . '/info.php');
-                                $theme = str_replace('themes/', '', $theme_url);
-                 ?>
-                 <div class="col-lg-6">
-					<div class="card">
-						<div class="card-body">
-							<div class="d-flex align-items=center theme <?php echo ($theme == $wo['config']['theme']) ? ' active' : '';?>">
-								<div class="mr-3">
-									<img src="<?php echo $wo['config']['site_url'].'/themes/'.$themeImg;?>" alt="" width="100">
-								</div>
-								<div>
-									<h5 class="card-title mb-2 themeName"><?php echo $themeName;?> <span class="badge badge-secondary themeVirsion" style="vertical-align: text-bottom;">v<?php echo $themeVirsion;?></span></h5>
-									<p class="card-text themeAuthor"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A1.5,1.5 0 0,0 13.5,19.5C13.5,19.11 13.35,18.76 13.11,18.5C12.88,18.23 12.73,17.88 12.73,17.5A1.5,1.5 0 0,1 14.23,16H16A5,5 0 0,0 21,11C21,6.58 16.97,3 12,3Z"></path></svg> <?php echo $wo['lang']['author'];?> <a href="<?php echo $themeAuthorUrl;?>"><?php echo $themeAuthor;?></a></p>
-									<?php if($theme == $wo['config']['theme']) { ?>
-										<div class="active"><button type="button" class="btn btn-primary" disabled="" style="box-shadow: none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="mr-1"><path fill="currentColor" d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"></path></svg> <?php echo $wo['lang']['activeted'];?></button></div>
-									<?php } else { ?>
-										<div class="active"><a href="#" id="active" value="<?php echo $theme; ?>" class="btn btn-primary">Activate Theme</a></div>
-									<?php } ?>
-									<div class="clearfix"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-                 </div>
-                 <?php } }?>
-			</div>
-			
-			<hr>
-			<h5 class="card-title">3rd Party Themes</h5>
-			<div class="row">
-				<div class="col-lg-6">
-					<div class="card">
-						<div class="card-body">
-							<div class="d-flex align-items=center theme">
-								<div class="mr-3">
-									<img src="https://s3.envato.com/files/304114154/logo.png" alt="" width="80">
-								</div>
-								<div>
-									<h5 class="card-title mb-3 themeName">Wondertag - The Ultimate Theme</h5>
-									<div class="active"><a href="https://bit.ly/Wo-Theme" class="btn btn-primary" target="_blank">Get Theme</a></div>
-									<div class="clearfix"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-6">
-					<div class="card">
-						<div class="card-body">
-							<div class="d-flex align-items=center theme">
-								<div class="mr-3">
-									<img src="https://previews.customer.envatousercontent.com/files/383570789/thumbnail.png" alt="" width="80">
-								</div>
-								<div>
-									<h5 class="card-title mb-3 themeName">Wonderful - Welcome Pages</h5>
-									<div class="active"><a href="https://codecanyon.net/item/wonderful-the-ultimate-welcome-page-themes-for-ramza/36355367" class="btn btn-primary" target="_blank">Get Theme</a></div>
-									<div class="clearfix"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			
-			<input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
-			<input type="hidden" name="theme" value="" id="theme_name" />
-		</form>
-        <div class="clearfix"></div>
-    <!-- #END# Vertical Layout -->
+
+    <div class="pro-settings-alert"></div>
+    <form action="#" method="post" class="setting-themes-container">
+        <div class="row rac-theme-grid">
+            <?php
+            foreach (Wo_GetThemes() as $theme_url) {
+                if (!file_exists($theme_url . '/info.php')) {
+                    continue;
+                }
+
+                $themeName = '';
+                $themeFolder = '';
+                $themeAuthor = 'Ramza';
+                $themeAuthorUrl = 'mailto:ramzasocial@gmail.com';
+                $themeVirsion = '1.0';
+                $themeImg = '';
+                include($theme_url . '/info.php');
+
+                $theme = basename(str_replace('\\', '/', $theme_url));
+                $display_theme_name = !empty($themeName) ? $themeName : 'Ramza Theme';
+                $theme_profile = !empty($rac_theme_profiles[$display_theme_name]) ? $rac_theme_profiles[$display_theme_name] : array(
+                    'summary' => 'A Ramza-compatible theme available in this installation.',
+                    'label' => 'Built-in',
+                    'locked' => false,
+                );
+                $display_theme_summary = $theme_profile['summary'];
+                $display_theme_label = $theme_profile['label'];
+                $display_theme_version = '1.0';
+                $theme_image = !empty($themeImg) ? $themeImg : $theme . '/themeLogo.png';
+                $theme_image_url = $wo['config']['site_url'] . '/themes/' . $theme_image;
+                $is_active_theme = ($theme == $wo['config']['theme']);
+                $is_locked_theme = !empty($theme_profile['locked']);
+            ?>
+            <div class="col-xl-4 col-lg-6 col-md-6">
+                <article class="card rac-theme-card <?php echo ($is_active_theme ? 'is-active' : ''); ?> <?php echo ($is_locked_theme ? 'is-locked' : ''); ?>">
+                    <div class="card-body">
+                        <div class="rac-theme-cover">
+                            <img src="<?php echo $theme_image_url; ?>" alt="<?php echo htmlspecialchars($display_theme_name, ENT_QUOTES, 'UTF-8'); ?> preview">
+                            <span class="rac-theme-status <?php echo ($is_active_theme ? 'is-active' : ''); ?> <?php echo ($is_locked_theme ? 'is-locked' : ''); ?>">
+                                <?php echo ($is_active_theme ? 'Active' : ($is_locked_theme ? 'Coming soon' : 'Ready')); ?>
+                            </span>
+                        </div>
+                        <div class="rac-theme-name">
+                            <h5><?php echo htmlspecialchars($display_theme_name, ENT_QUOTES, 'UTF-8'); ?></h5>
+                            <span class="badge badge-secondary">v<?php echo htmlspecialchars($display_theme_version, ENT_QUOTES, 'UTF-8'); ?></span>
+                            <span class="badge badge-light"><?php echo htmlspecialchars($display_theme_label, ENT_QUOTES, 'UTF-8'); ?></span>
+                        </div>
+                        <p class="rac-theme-copy"><?php echo htmlspecialchars($display_theme_summary, ENT_QUOTES, 'UTF-8'); ?></p>
+                        <div class="rac-theme-meta">
+                            <span>Author: Ramza</span>
+                            <span>Included theme</span>
+                        </div>
+                        <div class="rac-theme-actions">
+                            <?php if ($is_locked_theme) { ?>
+                                <button type="button" class="btn btn-secondary" disabled>
+                                    Coming soon
+                                </button>
+                            <?php } else if ($is_active_theme) { ?>
+                                <button type="button" class="btn btn-primary" disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="mr-1"><path fill="currentColor" d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"></path></svg>
+                                    Active theme
+                                </button>
+                            <?php } else { ?>
+                                <a href="#" data-theme="<?php echo htmlspecialchars($theme, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-primary js-activate-theme">Activate theme</a>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <?php } ?>
+        </div>
+
+        <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession(); ?>">
+        <input type="hidden" name="theme" value="" id="theme_name" />
+    </form>
+    <div class="clearfix"></div>
+</div>
 <script>
-
-
 $(function() {
-   $('a#active').click(function() {
-    $('#theme_name').val($(this).attr('value'));
-     $('form.setting-themes-container').submit();
-   });
-   $('form.setting-themes-container').ajaxForm({
-     url: Wo_Ajax_Requests_File() + '?f=admin_setting&s=updateTheme',
-     success: function(data) {
-       if (data.status == 200) {
-         window.location = "<?php echo Wo_LoadAdminLinkSettings('manage-themes'); ?>";
-       } 
-     }
-  });
+    $(document).on('click', '.js-activate-theme', function(event) {
+        event.preventDefault();
+        $('#theme_name').val($(this).attr('data-theme'));
+        $('form.setting-themes-container').submit();
+    });
+
+    $('form.setting-themes-container').ajaxForm({
+        url: Wo_Ajax_Requests_File() + '?f=admin_setting&s=updateTheme',
+        success: function(data) {
+            if (data.status == 200) {
+                window.location = "<?php echo Wo_LoadAdminLinkSettings('manage-themes'); ?>";
+            }
+        }
+    });
 });
 </script>

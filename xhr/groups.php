@@ -1,6 +1,18 @@
 <?php
 if ($f == 'groups') {
-    if ($s == 'create_group' && $wo['config']['can_use_groups']) {
+    if ($s == 'create_group' && empty($wo['config']['can_use_groups'])) {
+        http_response_code(403);
+        header("Content-type: application/json");
+        echo json_encode(array(
+            'status' => 403,
+            'errors' => array($error_icon . (!empty($wo['lang']['groups_disabled']) ? $wo['lang']['groups_disabled'] : 'Group creation is currently disabled.'))
+        ));
+        exit();
+    }
+    if ($s == 'create_group') {
+        if (isset($_POST['group_name'])) {
+            $_POST['group_name'] = Wo_NormalizeCommunitySlug($_POST['group_name']);
+        }
         if (empty($_POST['group_name']) || empty($_POST['group_title']) || empty(Wo_Secure($_POST['group_title'])) || Wo_CheckSession($hash_id) === false) {
             $errors[] = $error_icon . $wo['lang']['please_check_details'];
         } else {
@@ -75,7 +87,8 @@ if ($f == 'groups') {
                 }
                 $data = array(
                     'status' => 200,
-                    'location' => Wo_SeoLink('index.php?link1=timeline&u=' . Wo_Secure($_POST['group_name']))
+                    'location' => Wo_SeoLink('index.php?link1=timeline&u=' . Wo_Secure($_POST['group_name'])),
+                    'normalized_name' => Wo_Secure($_POST['group_name'])
                 );
             }
         }
@@ -207,6 +220,9 @@ if ($f == 'groups') {
         }
     }
     if ($s == 'update_general_settings') {
+        if (isset($_POST['group_name'])) {
+            $_POST['group_name'] = Wo_NormalizeCommunitySlug($_POST['group_name']);
+        }
         if (!empty($_POST['group_id']) && is_numeric($_POST['group_id']) && $_POST['group_id'] > 0 && Wo_CheckSession($hash_id) === true) {
             $group_data = Wo_GroupData($_POST['group_id']);
             if (empty($_POST['group_name']) OR empty($_POST['group_category']) OR empty($_POST['group_title']) OR empty(Wo_Secure($_POST['group_title']))) {

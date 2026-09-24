@@ -1,0 +1,50 @@
+/*Open to Work Badge*/
+.wo_open_job_badge {height: 17px;border-radius: 3px;background-color: #2196f3;display: inline-block;color: #ffffff;text-align: center;line-height: 14px;padding: 0 3px;}
+.wo_user_profile .event-info-cont-small h3 .wo_open_job_badge {vertical-align: middle;line-height: 19px;}
+
+/*Open to Work Button*/
+.tag_open_to_job {display: inline-block;border: 1px solid #ddd;padding: 12px;border-radius: 10px;margin: 15px 0 2px;}
+.tag_open_to_job input {display: none;}
+.tag_open_to_job label {margin: 0;cursor: pointer;border-radius: 2em;background-color: rgb(0 0 0 / 6%);padding: 3px 10px;}
+.tag_open_to_job label svg {margin-top: -3px;}
+
+/*Job blocks*/
+.wo_job_detail_block {margin-bottom: 20px;position: relative;}
+.wo_job_detail_block_title {display: flex;align-items: center;justify-content: space-between;padding-bottom: 5px;}
+.wo_job_detail_block_title .btn {border: 0;width: 35px;height: 35px;line-height: 35px;padding: 0;border-radius: 50%;}
+.wo_job_detail_item {display: flex;font-family: 'Roboto', sans-serif;padding: 12px 0;position: relative;z-index: 1;}
+.wo_job_detail_item svg {flex: 0 0 auto;width: 16px;height: 16px;margin-top: 2px;}
+.wo_job_detail_item h4 {margin: 0;font-size: 12px;text-transform: uppercase;letter-spacing: 0.4px;word-spacing: 1px;position: relative;display: inline;padding: 0 0 3px;}
+.wo_job_detail_item h4:after {content: '';width: 75%;height: 1.9px;position: absolute;bottom: 0;left: 0;background-color: currentColor;opacity: 0.5;}
+.wo_job_detail_item p {margin: 4px 0 0;}
+
+/*Experience*/
+.wo_job_experience {display: flex;font-family: 'Roboto', sans-serif;padding: 12px 0 2px;}
+.wo_job_experience:last-child {border: 0;}
+.wo_job_experience .avatar {width: 50px;height: 50px;flex: 0 0 auto;}
+.wo_job_experience .avatar img {width: 100%;height: 100%;}
+.wo_job_experience .avatar.bg {text-align: center;line-height: 49px;background-color: rgb(0 0 0 / 8%);}
+.wo_job_experience_info .title {font-size: 15px;line-height: 20px;margin: 0;}
+.wo_job_experience_info .sub-title {margin: 0 0 2px;}
+.wo_job_experience_info hr {margin: 11px 0 !important;}
+.wo_job_experience_info .bold {font-weight: 500 !important;}
+.wo_job_experience_info .btn {line-height: 28px;font-size: 13px;letter-spacing: 0.3px;margin-top: 6px;}
+
+/*certificate*/
+.wo_job_certificate .wo_job_experience_info .title {font-size: 18px;margin: 0 0 3px;}
+
+/*skills*/
+.wo_job_detail_skill {margin: 15px 0;}
+.wo_job_detail_skill .btn-default {padding: 6px 15px;border-radius: 2em;font-family: 'Roboto', sans-serif;}
+
+/*Language Result*/
+.languages_result.dropdown-menu {left: 0 !important;right: 0 !important;width: 100%;overflow-y: auto;max-height: 300px;top: auto;bottom: 56px;display: block;}
+.languages_result.dropdown-menu:empty {display: none;}
+.languages_result.dropdown-menu p {padding: 6px 15px;margin: 0;cursor: pointer;}
+
+/*Search*/
+.wo_job_search_tabs input {display: none;}
+.wo_job_search_tabs label {margin: 0;}
+.wo_job_search_tabs label a {margin: 0;line-height: normal;height: auto;font-weight: 500;font-size: 13px;border-radius: 2em;letter-spacing: 0.3px;display: block;padding: 3px 12px;cursor: pointer;}
+.wo_job_search_tabs input:checked+label a {background-color: #fff;color: #000;-webkit-box-shadow: 0 2px 3px rgb(0 0 0 / 15%);box-shadow: 0 2px 3px rgb(0 0 0 / 15%);}
+.wo_job_search_page .wo_job_experience {padding: 5px;}

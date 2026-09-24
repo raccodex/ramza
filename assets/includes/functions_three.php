@@ -2614,6 +2614,10 @@ function Wo_NotificationWebPushNotifier() {
                                 $sql_get_notification_for_push['type_text'] .= $wo['lang']['reacted_to_your_comment'];
                             } else if ($notificationText == "replay") {
                                 $sql_get_notification_for_push['type_text'] .= $wo['lang']['reacted_to_your_replay'];
+                            } else if ($notificationText == "story") {
+                                $sql_get_notification_for_push['type_text'] .= isset($wo['lang']['reacted_to_your_story'])
+                                    ? $wo['lang']['reacted_to_your_story']
+                                    : 'reacted to your story';
                             }
                         }
                         if ($sql_get_notification_for_push['type'] == "following") {
@@ -2782,6 +2786,7 @@ function Wo_NotificationWebPushNotifier() {
                         $send_array['notification']['notification_data']['story_id'] = $sql_get_notification_for_push['story_id'];
                     }
                     $send_array['notification']['notification_data']['type'] = $sql_get_notification_for_push['type'];
+                    $send = false;
                     if ($wo['config']['android_push_native'] == 1 && !empty($to_data['android_n_device_id'])) {
                         $send_array['send_to']                                      = array(
                             $to_data['android_n_device_id']
@@ -2810,7 +2815,12 @@ function Wo_NotificationWebPushNotifier() {
                         $send                                                       = Wo_SendPushNotification($send_array, 'web');
                     }
                 }
-                $query_get_messages_for_push = mysqli_query($sqlConnect, "UPDATE " . T_NOTIFICATION . " SET `sent_push` = '1' WHERE `notifier_id` = '$user_id' AND `sent_push` = '0'");
+                // Mark only a notification accepted by OneSignal. Failed
+                // requests stay pending and can be retried on the next pass.
+                if (!empty($send)) {
+                    $notification_id = Wo_Secure($notification_id);
+                    mysqli_query($sqlConnect, "UPDATE " . T_NOTIFICATION . " SET `sent_push` = '1' WHERE `id` = '$notification_id'");
+                }
             }
         }
     }
@@ -5749,7 +5759,7 @@ function Wo_GetChatGroups($after_id = false) {
     }
     $sql   = "SELECT * FROM " . T_GROUP_CHAT . "
                 WHERE (`user_id` = {$user} OR `group_id` IN
-                   (SELECT `group_id` FROM Wo_GroupChatUsers  WHERE `user_id` = {$user} AND active = 1)) AND `type` = 'group' {$sub_sql} ORDER BY `time` DESC";
+                   (SELECT `group_id` FROM " . T_GROUP_CHAT_USERS . " WHERE `user_id` = {$user} AND active = 1)) AND `type` = 'group' {$sub_sql} ORDER BY `time` DESC";
     $query = mysqli_query($sqlConnect, $sql);
     if (mysqli_num_rows($query)) {
         while ($fetched_data = mysqli_fetch_assoc($query)) {
@@ -5775,7 +5785,7 @@ function Wo_GetChatGroupData($id = false) {
     $data  = array();
     $sql   = "SELECT * FROM " . T_GROUP_CHAT . "
                 WHERE (`user_id` = {$user} OR `group_id` IN
-                   (SELECT `group_id` FROM Wo_GroupChatUsers  WHERE `user_id` = {$user})) AND `group_id` = {$id}";
+                   (SELECT `group_id` FROM " . T_GROUP_CHAT_USERS . " WHERE `user_id` = {$user})) AND `group_id` = {$id}";
     $query = mysqli_query($sqlConnect, $sql);
     if (mysqli_num_rows($query)) {
         while ($fetched_data = mysqli_fetch_assoc($query)) {
@@ -8377,10 +8387,10 @@ function GetBroadcastChatByUserId($user_id = 0, $limit = 10, $offset = 0) {
 }
 function FFMPEGUpload($data) {
     global $wo, $sqlConnect, $db;
-    if ($wo['loggedin'] == false || $wo['config']['ffmpeg_system'] != 'on' || empty($data) || empty($data['post_data']) || empty($data['filename'])) {
+    if ($wo['loggedin'] == false || !Ramza_FfmpegEnabled() || empty($data) || empty($data['post_data']) || empty($data['filename'])) {
         return false;
     }
-    $ffmpeg_b = $wo['config']['ffmpeg_binary_file'];
+    $ffmpeg_b = Ramza_FfmpegCommand();
     if (!file_exists('upload/videos/' . date('Y'))) {
         @mkdir('upload/videos/' . date('Y'), 0777, true);
     }
@@ -8412,7 +8422,7 @@ function FFMPEGUpload($data) {
     $video_output_full_path_1080 = $dir . "/" . $video_path_1080;
     $video_output_full_path_2048 = $dir . "/" . $video_path_2048;
     $video_output_full_path_4096 = $dir . "/" . $video_path_4096;
-    $video_info                  = shell_exec("$ffmpeg_b -i " . $video_file_full_path . " 2>&1");
+    $video_info                  = shell_exec($ffmpeg_b . ' -i ' . escapeshellarg($video_file_full_path) . ' 2>&1');
     $re                          = '/[0-9]{3}+x[0-9]{3}/m';
     preg_match_all($re, $video_info, $min_str);
     $resolution = 0;
@@ -8437,17 +8447,29 @@ function FFMPEGUpload($data) {
     if ($wo['config']['watermark'] == 1) {
 
         $water = dirname(dirname(__DIR__))."/themes/{$wo['config']['theme']}/img/icon.png";
-        $shell     = shell_exec("{$ffmpeg_b} -i {$video_file_full_path} -i {$water} -filter_complex \"[1]geq=r='r(X,Y)':a='0.5*alpha(X,Y)'[a];[0][a]overlay=(W-w)/2:(H-h)/2\" $video_output_full_path_water");
-        @unlink($video_file_full_path);
-        $video_file_full_path = $video_output_full_path_water;
+        $shell     = shell_exec($ffmpeg_b . ' -i ' . escapeshellarg($video_file_full_path) . ' -i ' . escapeshellarg($water) . ' -filter_complex ' . escapeshellarg("[1]geq=r='r(X,Y)':a='0.5*alpha(X,Y)'[a];[0][a]overlay=(W-w)/2:(H-h)/2") . ' ' . escapeshellarg($video_output_full_path_water) . ' 2>&1');
+        if (is_file($video_output_full_path_water) && filesize($video_output_full_path_water) > 0) {
+            @unlink($video_file_full_path);
+            $video_file_full_path = $video_output_full_path_water;
+        }
     }
 
 
-    $shell                         = shell_exec("$ffmpeg_b -y -i $video_file_full_path -vcodec libx264 -preset " . $wo['config']['convert_speed'] . " -filter:v scale=426:-2 -crf 26 $video_output_full_path_240 2>&1");
+    $shell                         = shell_exec($ffmpeg_b . ' -y -i ' . escapeshellarg($video_file_full_path) . ' -vcodec libx264 -preset ' . escapeshellarg($wo['config']['convert_speed']) . ' -filter:v scale=426:-2 -crf 26 ' . escapeshellarg($video_output_full_path_240) . ' 2>&1');
+    if (!is_file($video_output_full_path_240) || filesize($video_output_full_path_240) < 1) {
+        // Do not lose a valid upload when the host FFmpeg build lacks a codec.
+        $data['post_data']['postFile'] = $data['filename'];
+        $data['post_data']['processing'] = 0;
+        $data['id'] = Wo_RegisterPost($data['post_data']);
+        if (!empty($data['id']) && Wo_IsRemoteStorageEnabled()) {
+            Wo_UploadToS3($data['filename']);
+        }
+        return !empty($data['id']) ? $data['id'] : false;
+    }
     $data['post_data']['postFile'] = $video_path_240;
     $data['id']                    = Wo_RegisterPost($data['post_data']);
     if (file_exists($video_output_full_path_240)) {
-        if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+        if (Wo_IsRemoteStorageEnabled()) {
             $upload_s3 = Wo_UploadToS3($video_path_240);
         }
         $processing = 0;
@@ -8473,8 +8495,8 @@ function FFMPEGUpload($data) {
         $hash       = sha1(time() + time() - rand(9999, 9999)) . Wo_GenerateKey();
         $file_thumb = "upload/photos/" . date('Y') . '/' . date('m') . "/$hash.video_thumb_$uniq_id" . ".jpeg";
         $thumb      = $dir . "/" . $file_thumb;
-        shell_exec("$ffmpeg_b -ss \"$time\" -i $video_file_full_path -vframes 1 -f mjpeg $thumb 2<&1");
-        if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+        shell_exec($ffmpeg_b . ' -ss ' . escapeshellarg((string) $time) . ' -i ' . escapeshellarg($video_file_full_path) . ' -vframes 1 -f mjpeg ' . escapeshellarg($thumb) . ' 2>&1');
+        if (Wo_IsRemoteStorageEnabled()) {
             if (!empty($_POST) && !empty($_POST['postPrivacy']) && $_POST['postPrivacy'] == 6) {
                 $wo['removeFromLocal'] = 1;
                 $blur_url = blur_image($file_thumb);
@@ -8489,9 +8511,9 @@ function FFMPEGUpload($data) {
         ));
     }
     if ($resolution >= 640 || $resolution == 0) {
-        $shell = shell_exec("$ffmpeg_b -y -i $video_file_full_path -vcodec libx264 -preset " . $wo['config']['convert_speed'] . " -filter:v scale=640:-2 -crf 26 $video_output_full_path_360 2>&1");
+        $shell = shell_exec($ffmpeg_b . ' -y -i ' . escapeshellarg($video_file_full_path) . ' -vcodec libx264 -preset ' . escapeshellarg($wo['config']['convert_speed']) . ' -filter:v scale=640:-2 -crf 26 ' . escapeshellarg($video_output_full_path_360) . ' 2>&1');
         if (file_exists($video_output_full_path_360)) {
-            if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+            if (Wo_IsRemoteStorageEnabled()) {
                 $upload_s3 = Wo_UploadToS3($video_path_360);
             }
             $db->where('id', $data['id'])->update(T_POSTS, array(
@@ -8500,9 +8522,9 @@ function FFMPEGUpload($data) {
         }
     }
     if ($resolution >= 854 || $resolution == 0) {
-        $shell = shell_exec("$ffmpeg_b -y -i $video_file_full_path -vcodec libx264 -preset " . $wo['config']['convert_speed'] . " -filter:v scale=854:-2 -crf 26 $video_output_full_path_480 2>&1");
+        $shell = shell_exec($ffmpeg_b . ' -y -i ' . escapeshellarg($video_file_full_path) . ' -vcodec libx264 -preset ' . escapeshellarg($wo['config']['convert_speed']) . ' -filter:v scale=854:-2 -crf 26 ' . escapeshellarg($video_output_full_path_480) . ' 2>&1');
         if (file_exists($video_output_full_path_480)) {
-            if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+            if (Wo_IsRemoteStorageEnabled()) {
                 $upload_s3 = Wo_UploadToS3($video_path_480);
             }
             $db->where('id', $data['id'])->update(T_POSTS, array(
@@ -8511,9 +8533,9 @@ function FFMPEGUpload($data) {
         }
     }
     if ($resolution >= 1280 || $resolution == 0) {
-        $shell = shell_exec("$ffmpeg_b -y -i $video_file_full_path -vcodec libx264 -preset " . $wo['config']['convert_speed'] . " -filter:v scale=1280:-2 -crf 26 $video_output_full_path_720 2>&1");
+        $shell = shell_exec($ffmpeg_b . ' -y -i ' . escapeshellarg($video_file_full_path) . ' -vcodec libx264 -preset ' . escapeshellarg($wo['config']['convert_speed']) . ' -filter:v scale=1280:-2 -crf 26 ' . escapeshellarg($video_output_full_path_720) . ' 2>&1');
         if (file_exists($video_output_full_path_720)) {
-            if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+            if (Wo_IsRemoteStorageEnabled()) {
                 $upload_s3 = Wo_UploadToS3($video_path_720);
             }
             $db->where('id', $data['id'])->update(T_POSTS, array(
@@ -8522,9 +8544,9 @@ function FFMPEGUpload($data) {
         }
     }
     if ($resolution >= 1920 || $resolution == 0) {
-        $shell = shell_exec("$ffmpeg_b -y -i $video_file_full_path -vcodec libx264 -preset " . $wo['config']['convert_speed'] . " -filter:v scale=1920:-2 -crf 26 $video_output_full_path_1080 2>&1");
+        $shell = shell_exec($ffmpeg_b . ' -y -i ' . escapeshellarg($video_file_full_path) . ' -vcodec libx264 -preset ' . escapeshellarg($wo['config']['convert_speed']) . ' -filter:v scale=1920:-2 -crf 26 ' . escapeshellarg($video_output_full_path_1080) . ' 2>&1');
         if (file_exists($video_output_full_path_1080)) {
-            if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+            if (Wo_IsRemoteStorageEnabled()) {
                 $upload_s3 = Wo_UploadToS3($video_path_1080);
             }
             $db->where('id', $data['id'])->update(T_POSTS, array(
@@ -8533,9 +8555,9 @@ function FFMPEGUpload($data) {
         }
     }
     if ($resolution >= 2048 || $resolution == 0) {
-        $shell = shell_exec("$ffmpeg_b -y -i $video_file_full_path -vcodec libx264 -preset " . $wo['config']['convert_speed'] . " -filter:v scale=2048:-2 -crf 26 $video_output_full_path_2048 2>&1");
+        $shell = shell_exec($ffmpeg_b . ' -y -i ' . escapeshellarg($video_file_full_path) . ' -vcodec libx264 -preset ' . escapeshellarg($wo['config']['convert_speed']) . ' -filter:v scale=2048:-2 -crf 26 ' . escapeshellarg($video_output_full_path_2048) . ' 2>&1');
         if (file_exists($video_output_full_path_2048)) {
-            if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+            if (Wo_IsRemoteStorageEnabled()) {
                 $upload_s3 = Wo_UploadToS3($video_path_2048);
             }
             $db->where('id', $data['id'])->update(T_POSTS, array(
@@ -8544,9 +8566,9 @@ function FFMPEGUpload($data) {
         }
     }
     if ($resolution >= 3840 || $resolution == 0) {
-        $shell = shell_exec("$ffmpeg_b -y -i $video_file_full_path -vcodec libx264 -preset " . $wo['config']['convert_speed'] . " -filter:v scale=3840:-2 -crf 26 $video_output_full_path_4096 2>&1");
+        $shell = shell_exec($ffmpeg_b . ' -y -i ' . escapeshellarg($video_file_full_path) . ' -vcodec libx264 -preset ' . escapeshellarg($wo['config']['convert_speed']) . ' -filter:v scale=3840:-2 -crf 26 ' . escapeshellarg($video_output_full_path_4096) . ' 2>&1');
         if (file_exists($video_output_full_path_4096)) {
-            if ($wo['config']['amazone_s3'] == 1 || $wo['config']['wasabi_storage'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1 || $wo['config']['backblaze_storage'] == 1) {
+            if (Wo_IsRemoteStorageEnabled()) {
                 $upload_s3 = Wo_UploadToS3($video_path_4096);
             }
             $db->where('id', $data['id'])->update(T_POSTS, array(
@@ -8584,9 +8606,11 @@ function Check_Recaptcha($recaptcha_data) {
     return json_decode($response);
 }
 function ffmpeg_duration($filename = false) {
-    global $wo;
-    $ffmpeg_b = $wo['config']['ffmpeg_binary_file'];
-    $output   = shell_exec("$ffmpeg_b -i {$filename} 2>&1");
+    if (!Ramza_FfmpegEnabled() || empty($filename)) {
+        return 30;
+    }
+    $ffmpeg_b = Ramza_FfmpegCommand();
+    $output   = shell_exec($ffmpeg_b . ' -i ' . escapeshellarg((string) $filename) . ' 2>&1');
     $ptrn     = '/Duration: ([0-9]{2}):([0-9]{2}):([^ ,])+/';
     $time     = 30;
     if (preg_match($ptrn, $output, $matches)) {
@@ -8720,7 +8744,7 @@ function GetModeBtn($value) {
     if (!empty($wo['website_modes_btn'][$wo['config']['website_mode']]) && !empty($wo['website_modes_btn'][$wo['config']['website_mode']][$value])) {
         return $wo['website_modes_btn'][$wo['config']['website_mode']][$value];
     }
-    if ($wo['config']['theme'] == 'sunshine') {
+    if ($wo['config']['theme'] == 'ramza-light') {
         $btns = array(
             'liked_btn' => "<span class='active-like'><svg xmlns='http://www.w3.org/2000/svg' width='58.553' height='58.266' viewBox='0 0 58.553 58.266' class='feather'> <path d='M-7080.317,1279.764l-26.729-1.173a1.657,1.657,0,0,1-1.55-1.717l1.11-33.374a4.112,4.112,0,0,1,2.361-3.6l.014-.005a13.62,13.62,0,0,1,1.978-.363h.007a9.007,9.007,0,0,0,3.249-.771c2.645-1.845,3.973-4.658,5.259-7.378l.005-.013.031-.061.059-.13.012-.023c.272-.576.61-1.289.944-1.929l0-.007c.576-1.105,2.327-4.46,4.406-5.107a2.3,2.3,0,0,1,.59-.105c.036,0,.072,0,.109,0a2.55,2.55,0,0,1,1.212.324c2.941,1.554,1.212,7.451.561,9.672a38.306,38.306,0,0,1-3.7,8.454l-.71,1.218,18.363.808a3.916,3.916,0,0,1,3.784,3.735,3.783,3.783,0,0,1-1.123,2.834,3.629,3.629,0,0,1-2.559,1.055c-.046,0-.1,0-.145,0h-.027l-2.141-.093-9.331-.41-.075,1.7,9.333.408a3.721,3.721,0,0,1,2.666,1.3,3.855,3.855,0,0,1,.936,2.934,3.779,3.779,0,0,1-3.821,3.38c-.061,0-.122,0-.181-.005l-1.974-.082-8.9-.392-.075,1.7,8.9.39a3.723,3.723,0,0,1,2.666,1.3,3.86,3.86,0,0,1,.937,2.933,3.784,3.784,0,0,1-3.827,3.381c-.057,0-.118,0-.177,0l-1.976-.088-8.472-.372-.075,1.7,8.474.372a3.726,3.726,0,0,1,2.666,1.3,3.857,3.857,0,0,1,.935,2.933,3.782,3.782,0,0,1-3.827,3.381C-7080.2,1279.765-7080.26,1279.765-7080.317,1279.764Zm-38.4,0-.089,0a6.558,6.558,0,0,1-6.193-6.8l.907-27.293a6.446,6.446,0,0,1,2.074-4.553,6.214,6.214,0,0,1,3.954-1.672c.081,0,.17-.005.29-.005s.212,0,.292.005a6.561,6.561,0,0,1,6.192,6.8l-.907,27.293a6.441,6.441,0,0,1-2.072,4.547,6.249,6.249,0,0,1-4.261,1.681Z' transform='translate(7126.251 -1222.75)' fill='none' stroke='currentColor' stroke-width='2.5'/> </svg> " . $wo['lang']['liked'] . "</span>",
             'like_btn' => "<svg xmlns='http://www.w3.org/2000/svg' width='58.553' height='58.266' viewBox='0 0 58.553 58.266' class='feather'> <path d='M-7080.317,1279.764l-26.729-1.173a1.657,1.657,0,0,1-1.55-1.717l1.11-33.374a4.112,4.112,0,0,1,2.361-3.6l.014-.005a13.62,13.62,0,0,1,1.978-.363h.007a9.007,9.007,0,0,0,3.249-.771c2.645-1.845,3.973-4.658,5.259-7.378l.005-.013.031-.061.059-.13.012-.023c.272-.576.61-1.289.944-1.929l0-.007c.576-1.105,2.327-4.46,4.406-5.107a2.3,2.3,0,0,1,.59-.105c.036,0,.072,0,.109,0a2.55,2.55,0,0,1,1.212.324c2.941,1.554,1.212,7.451.561,9.672a38.306,38.306,0,0,1-3.7,8.454l-.71,1.218,18.363.808a3.916,3.916,0,0,1,3.784,3.735,3.783,3.783,0,0,1-1.123,2.834,3.629,3.629,0,0,1-2.559,1.055c-.046,0-.1,0-.145,0h-.027l-2.141-.093-9.331-.41-.075,1.7,9.333.408a3.721,3.721,0,0,1,2.666,1.3,3.855,3.855,0,0,1,.936,2.934,3.779,3.779,0,0,1-3.821,3.38c-.061,0-.122,0-.181-.005l-1.974-.082-8.9-.392-.075,1.7,8.9.39a3.723,3.723,0,0,1,2.666,1.3,3.86,3.86,0,0,1,.937,2.933,3.784,3.784,0,0,1-3.827,3.381c-.057,0-.118,0-.177,0l-1.976-.088-8.472-.372-.075,1.7,8.474.372a3.726,3.726,0,0,1,2.666,1.3,3.857,3.857,0,0,1,.935,2.933,3.782,3.782,0,0,1-3.827,3.381C-7080.2,1279.765-7080.26,1279.765-7080.317,1279.764Zm-38.4,0-.089,0a6.558,6.558,0,0,1-6.193-6.8l.907-27.293a6.446,6.446,0,0,1,2.074-4.553,6.214,6.214,0,0,1,3.954-1.672c.081,0,.17-.005.29-.005s.212,0,.292.005a6.561,6.561,0,0,1,6.192,6.8l-.907,27.293a6.441,6.441,0,0,1-2.072,4.547,6.249,6.249,0,0,1-4.261,1.681Z' transform='translate(7126.251 -1222.75)' fill='none' stroke='currentColor' stroke-width='2.5'/> </svg> " . $wo['lang']['like'],

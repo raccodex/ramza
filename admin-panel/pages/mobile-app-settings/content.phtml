@@ -1,0 +1,122 @@
+<?php
+global $sqlConnect;
+
+if (!Wo_IsAdmin()) {
+    echo '<div class="container-fluid"><div class="alert alert-danger">Administrator access is required.</div></div>';
+    return;
+}
+$ramzaMobileReady = function_exists('Ramza_MobileTablesReady') && Ramza_MobileTablesReady();
+$ramzaMobileValue = static function (string $key, string $default = '') use ($ramzaMobileReady): string {
+    if (!$ramzaMobileReady) {
+        return htmlspecialchars($default, ENT_QUOTES, 'UTF-8');
+    }
+    return htmlspecialchars(Ramza_MobileSetting($key, $default), ENT_QUOTES, 'UTF-8');
+};
+$ramzaMobileChecked = static function (string $key, string $default = '0') use ($ramzaMobileReady): string {
+    return $ramzaMobileReady && Ramza_MobileSetting($key, $default) === '1' ? 'checked' : '';
+};
+$mobileBootstrapUrl = rtrim((string)$wo['config']['site_url'], '/') . '/api/v1/config/mobile';
+?>
+<div class="container-fluid rac-mobile-admin">
+    <div class="rac-mobile-title">
+        <div>
+            <h3>Mobile App</h3>
+            <p>Android, iOS, and API access.</p>
+        </div>
+        <div class="rac-mobile-license" data-mobile-license-status>
+            <span>Edition</span>
+            <strong>Open source</strong>
+        </div>
+    </div>
+
+    <div class="mobile-app-settings-alert">
+        <?php if (!$ramzaMobileReady) { ?>
+            <div class="alert alert-warning">Apply <code>updates/ramza_mobile_api_v1.sql</code> before saving.</div>
+        <?php } ?>
+    </div>
+
+    <form class="rac-mobile-form" method="POST" autocomplete="off">
+        <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession(); ?>">
+        <input type="hidden" name="verify_license" value="0">
+
+        <div class="card rac-mobile-section">
+            <div class="card-body">
+                <div class="rac-mobile-section-head">
+                    <div>
+                        <h5>Application</h5>
+                        <p>Identity and availability.</p>
+                    </div>
+                    <label class="rac-mobile-toggle">
+                        <input type="checkbox" name="mobile_enabled" value="1" <?php echo $ramzaMobileChecked('mobile_enabled'); ?> <?php echo $ramzaMobileReady ? '' : 'disabled'; ?>>
+                        <span></span>
+                        <em>Enabled</em>
+                    </label>
+                </div>
+                <div class="rac-mobile-grid">
+                    <label><span>App name</span><input class="form-control" name="app_name" maxlength="80" required value="<?php echo $ramzaMobileValue('app_name', 'Ramza'); ?>"></label>
+                    <label><span>Public client ID</span><input class="form-control" readonly value="<?php echo $ramzaMobileValue('public_client_id', 'Generated after save'); ?>"></label>
+                    <label class="rac-mobile-wide"><span>Configuration endpoint</span><input class="form-control" readonly value="<?php echo htmlspecialchars($mobileBootstrapUrl, ENT_QUOTES, 'UTF-8'); ?>"></label>
+                    <label><span>Android package</span><input class="form-control" name="android_package" maxlength="190" required value="<?php echo $ramzaMobileValue('android_package', 'com.raccodex.ramza'); ?>"></label>
+                    <label><span>iOS bundle ID</span><input class="form-control" name="ios_bundle_id" maxlength="190" required value="<?php echo $ramzaMobileValue('ios_bundle_id', 'com.raccodex.ramza'); ?>"></label>
+                    <label><span>Primary color</span><input class="form-control" name="primary_color" maxlength="7" required value="<?php echo $ramzaMobileValue('primary_color', '#c64d53'); ?>"></label>
+                    <label><span>Secondary color</span><input class="form-control" name="secondary_color" maxlength="7" required value="<?php echo $ramzaMobileValue('secondary_color', '#1e2321'); ?>"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rac-mobile-section">
+            <div class="card-body">
+                <div class="rac-mobile-section-head"><div><h5>Versions</h5><p>Update and maintenance controls.</p></div></div>
+                <div class="rac-mobile-grid">
+                    <label><span>Minimum Android version</span><input class="form-control" name="minimum_android_version" required value="<?php echo $ramzaMobileValue('minimum_android_version', '1.0.0'); ?>"></label>
+                    <label><span>Latest Android version</span><input class="form-control" name="latest_android_version" required value="<?php echo $ramzaMobileValue('latest_android_version', '1.0.0'); ?>"></label>
+                    <label><span>Minimum iOS version</span><input class="form-control" name="minimum_ios_version" required value="<?php echo $ramzaMobileValue('minimum_ios_version', '1.0.0'); ?>"></label>
+                    <label><span>Latest iOS version</span><input class="form-control" name="latest_ios_version" required value="<?php echo $ramzaMobileValue('latest_ios_version', '1.0.0'); ?>"></label>
+                    <label><span>Android store URL</span><input class="form-control" name="android_store_url" value="<?php echo $ramzaMobileValue('android_store_url'); ?>"></label>
+                    <label><span>iOS store URL</span><input class="form-control" name="ios_store_url" value="<?php echo $ramzaMobileValue('ios_store_url'); ?>"></label>
+                    <label><span>Terms URL</span><input class="form-control" name="terms_url" value="<?php echo $ramzaMobileValue('terms_url'); ?>"></label>
+                    <label><span>Privacy URL</span><input class="form-control" name="privacy_url" value="<?php echo $ramzaMobileValue('privacy_url'); ?>"></label>
+                    <label class="rac-mobile-wide"><span>Maintenance message</span><input class="form-control" name="maintenance_message" maxlength="240" value="<?php echo $ramzaMobileValue('maintenance_message'); ?>"></label>
+                </div>
+                <div class="rac-mobile-options">
+                    <label><input type="checkbox" name="force_update" value="1" <?php echo $ramzaMobileChecked('force_update'); ?>><span>Force update</span></label>
+                    <label><input type="checkbox" name="maintenance_mode" value="1" <?php echo $ramzaMobileChecked('maintenance_mode'); ?>><span>Maintenance mode</span></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="rac-mobile-actions">
+            <button type="button" class="btn btn-default" data-mobile-save <?php echo $ramzaMobileReady ? '' : 'disabled'; ?>>Save settings</button>
+        </div>
+    </form>
+</div>
+
+<style>
+.rac-mobile-admin{max-width:1120px;margin:0 auto 48px}.rac-mobile-title{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:22px}.rac-mobile-title h3{margin:0 0 5px;font-weight:700}.rac-mobile-title p,.rac-mobile-section-head p{margin:0;color:#6d7671}.rac-mobile-license{min-width:150px;border-left:3px solid #c64d53;padding:7px 0 7px 14px}.rac-mobile-license span{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6d7671}.rac-mobile-license strong{display:block;margin-top:2px;font-size:17px}.rac-mobile-section{margin-bottom:16px}.rac-mobile-section .card-body{padding:24px}.rac-mobile-section-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:17px;margin-bottom:18px;border-bottom:1px solid #e1e4e2}.rac-mobile-section-head h5{margin:0 0 4px;font-size:18px}.rac-mobile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 20px}.rac-mobile-grid label>span{display:block;margin:0 0 7px;font-weight:600;color:#202522}.rac-mobile-wide{grid-column:1/-1}.rac-mobile-key-field{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px}.rac-mobile-key-field .btn{min-width:100px}.rac-mobile-license-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0 0}.rac-mobile-license-meta div{border-top:1px solid #e1e4e2;padding-top:12px}.rac-mobile-license-meta dt{font-size:12px;color:#6d7671}.rac-mobile-license-meta dd{margin:3px 0 0;font-weight:600}.rac-mobile-options{display:flex;gap:24px;margin-top:20px}.rac-mobile-options label{display:flex;align-items:center;gap:8px;font-weight:600}.rac-mobile-toggle{display:flex;align-items:center;gap:9px;margin:0}.rac-mobile-toggle input{position:absolute;opacity:0}.rac-mobile-toggle>span{position:relative;width:42px;height:23px;border-radius:20px;background:#c8ceca;transition:.2s}.rac-mobile-toggle>span:after{content:"";position:absolute;width:17px;height:17px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.2s}.rac-mobile-toggle input:checked+span{background:#21865b}.rac-mobile-toggle input:checked+span:after{transform:translateX(19px)}.rac-mobile-toggle em{font-style:normal;font-weight:600}.rac-mobile-actions{display:flex;justify-content:flex-end;gap:10px}.rac-mobile-actions .btn{min-width:150px}.rac-mobile-admin code{color:#a83e44;background:#f5eeee;padding:2px 5px;border-radius:4px}@media(max-width:767px){.rac-mobile-title{display:block}.rac-mobile-license{margin-top:14px}.rac-mobile-grid,.rac-mobile-license-meta{grid-template-columns:1fr}.rac-mobile-wide{grid-column:auto}.rac-mobile-key-field{grid-template-columns:1fr}.rac-mobile-section .card-body{padding:18px}.rac-mobile-options,.rac-mobile-actions{align-items:stretch;flex-direction:column}.rac-mobile-actions .btn,.rac-mobile-key-field .btn{width:100%}.rac-mobile-actions .btn{width:100%}}
+</style>
+
+<script>
+$(function () {
+    function submitMobileSettings() {
+        var form = $('.rac-mobile-form');
+        var buttons = form.find('button');
+        buttons.prop('disabled', true);
+        $('.mobile-app-settings-alert').empty();
+        $.ajax({
+            url: Wo_Ajax_Requests_File() + '?f=admin_setting&s=update_mobile_app_settings',
+            type: 'POST',
+            data: form.serialize(),
+            dataType: 'json'
+        }).done(function (data) {
+            var ok = Number(data.status) === 200;
+            var message = $('<div>').text(data.message || (ok ? 'Mobile settings saved.' : 'Mobile settings could not be saved.')).html();
+            $('.mobile-app-settings-alert').html('<div class="alert alert-' + (ok ? 'success' : 'danger') + '">' + message + '</div>');
+        }).fail(function () {
+            $('.mobile-app-settings-alert').html('<div class="alert alert-danger">Mobile settings could not be saved.</div>');
+        }).always(function () {
+            buttons.prop('disabled', false);
+        });
+    }
+    $('[data-mobile-save]').on('click', submitMobileSettings);
+});
+</script>

@@ -1,0 +1,22 @@
+listening-port=3478
+tls-listening-port=5349
+min-port=49160
+max-port=49200
+fingerprint
+use-auth-secret
+static-auth-secret=REPLACE_WITH_A_LONG_RANDOM_SECRET
+realm=turn.example.com
+server-name=turn.example.com
+stale-nonce=600
+no-multicast-peers
+no-cli
+log-file=stdout
+simple-log
+
+# If the server is behind NAT, set its public/private addresses:
+# external-ip=PUBLIC_IP/PRIVATE_IP
+
+# For TURN over TLS, install a valid certificate and uncomment:
+# cert=/etc/letsencrypt/live/turn.example.com/fullchain.pem
+# pkey=/etc/letsencrypt/live/turn.example.com/privkey.pem
+

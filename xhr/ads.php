@@ -11,6 +11,7 @@ if ($f == 'ads') {
         if (in_array(true, $request)) {
             $error = $error_icon . $wo['lang']['please_check_details'];
         } else {
+            $media_type = Wo_NormalizeUploadedMime($_FILES["media"]["type"], $_FILES['media']['name'], $_FILES["media"]["tmp_name"]);
             if (strlen($_POST['name']) < 3 || strlen($_POST['name']) > 100) {
                 $error = $error_icon . $wo['lang']['invalid_company_name'];
             } else if (!filter_var($_POST['website'], FILTER_VALIDATE_URL) || strlen($_POST['website'])  > 3000) {
@@ -18,7 +19,7 @@ if ($f == 'ads') {
             } else if (strlen($_POST['headline']) < 5 || strlen($_POST['headline']) > 200) {
                 $error = $error_icon . $wo['lang']['enter_valid_title'];
             }
-            if (!in_array($_FILES["media"]["type"], $ad_media_types)) {
+            if (!in_array($media_type, $ad_media_types, true)) {
                 $error = $error_icon . $wo['lang']['select_valid_img_vid'];
             } else if (gettype($_POST['audience-list']) != 'array' || count($_POST['audience-list']) < 1) {
                 $error = $error_icon . $wo['lang']['please_check_details'];
@@ -53,7 +54,7 @@ if ($f == 'ads') {
                     'image/jpeg',
                     'image/gif'
                 );
-                if (!in_array($_FILES["media"]["type"], $img_types)) {
+                if (!in_array($media_type, $img_types, true)) {
                     $error = $error_icon . $wo['lang']['select_valid_img'];
                 }
             } else if (in_array($_POST['appears'], array(
@@ -62,9 +63,13 @@ if ($f == 'ads') {
                 $img_types = array(
                     'video/mp4',
                     'video/mov',
-                    'video/avi'
+                    'video/avi',
+                    'video/webm',
+                    'video/quicktime',
+                    'video/mpeg',
+                    'video/flv'
                 );
-                if (!in_array($_FILES["media"]["type"], $img_types)) {
+                if (!in_array($media_type, $img_types, true)) {
                     $error = $error_icon . $wo['lang']['select_valid_vid'];
                 }
             } else if ($_FILES["media"]["size"] > $wo['config']['maxUpload'] || true) {
@@ -115,8 +120,8 @@ if ($f == 'ads') {
                 'file' => $_FILES["media"]["tmp_name"],
                 'name' => $_FILES['media']['name'],
                 'size' => $_FILES["media"]["size"],
-                'type' => $_FILES["media"]["type"],
-                'types' => 'jpg,png,bmp,gif,mp4,avi,mov',
+                'type' => $media_type,
+                'types' => 'jpg,jpeg,png,bmp,gif,mp4,m4v,avi,mov,webm,flv,mpeg,mkv',
                 'compress' => false
             );
             $media                         = Wo_ShareFile($fileInfo);
@@ -194,9 +199,14 @@ if ($f == 'ads') {
             $video_types = array(
                     'video/mp4',
                     'video/mov',
-                    'video/avi'
+                    'video/avi',
+                    'video/webm',
+                    'video/quicktime',
+                    'video/mpeg',
+                    'video/flv'
                 );
-            if (!empty($_FILES["media"]) && (!in_array($_FILES["media"]["type"], $img_types) && !in_array($_FILES["media"]["type"], $video_types)) ) {
+            $media_type = !empty($_FILES["media"]) ? Wo_NormalizeUploadedMime($_FILES["media"]["type"], $_FILES['media']['name'], $_FILES["media"]["tmp_name"]) : '';
+            if (!empty($_FILES["media"]) && (!in_array($media_type, $img_types, true) && !in_array($media_type, $video_types, true)) ) {
                 $error = $error_icon . $wo['lang']['select_valid_img'];
             }
             if (!empty($_FILES["media"]) && $_FILES["media"]["size"] > $wo['config']['maxUpload']) {
@@ -224,8 +234,8 @@ if ($f == 'ads') {
                     'file' => $_FILES["media"]["tmp_name"],
                     'name' => $_FILES['media']['name'],
                     'size' => $_FILES["media"]["size"],
-                    'type' => $_FILES["media"]["type"],
-                    'types' => 'jpg,png,bmp,gif,mp4,avi,mov',
+                    'type' => $media_type,
+                    'types' => 'jpg,jpeg,png,bmp,gif,mp4,m4v,avi,mov,webm,flv,mpeg,mkv',
                     'compress' => false
                 );
                 $media                         = Wo_ShareFile($fileInfo);

@@ -1,0 +1,120 @@
+<div class="modal fade" id="AI-post-modal" role="dialog">
+	<div class="modal-dialog modal-lg wow_mat_mdl">
+		<form method="post">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title"><?php echo TextForMode('generate_ai_post') ?></h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="<?php if ($wo['config']['text_credit_system'] == 1 && $wo['config']['generated_word_price'] > 0) { ?>col-lg-5<?php } else { ?>col-lg-12<?php } ?>">
+							<?php if ($wo['config']['text_credit_system'] == 1 && $wo['config']['generated_word_price'] > 0) { ?>
+								<div class="ai_alert_balance mb-4">
+									<p><?php echo $wo['lang']['available_balance']?></p>
+									<b id="creditTT"><?php echo getAvailableWordBalance() ?></b>
+									<p><?php echo $wo['lang']['ai_words']?></p>
+
+									<button type="button" class="btn btn-mat" id="buy-ai-image-button" onclick="openAICredit('AI-post-modal')"><?php echo $wo['lang']['buy_credit']; ?></button>
+								</div>
+							<?php } ?>
+						</div>
+						<div class="<?php if ($wo['config']['text_credit_system'] == 1 && $wo['config']['generated_word_price'] > 0) { ?>col-lg-7<?php } else { ?>col-lg-12<?php } ?>">
+							<div class="ai_generate_post_alert"></div>
+							<label class="tag_field">
+								<textarea dir="auto" rows="6" name="text" id="aiPostText" placeholder=" "></textarea>
+								<span>Describe your post</span>
+							</label>
+							<label class="tag_field">
+								<input type="number" name="count" max="<?php echo($wo['config']['maxCharacters']); ?>" placeholder=" " id="aiPostCount" oninput="checkMaxAllowedPostWords(this)">
+								<span><?php echo $wo['lang']['max_result_length']?></span>
+							</label>
+							<label class="tag_field" id="generatedAiPostText-prnt" style="display: none;">
+								<textarea dir="auto" rows="6" name="text" id="generatedAiPostText" placeholder=" " readonly></textarea>
+								<span><?php echo $wo['lang']['generated_post']?></span>
+							</label>
+						</div>
+					</div>
+					<input type="hidden" name="user" value="<?php echo $wo['user']['user_id'];?>">
+				</div>
+				<div class="modal-footer">
+					<div class="ball-pulse"><div></div><div></div><div></div></div>
+					<button type="button" class="btn btn-default btn-mat disable_btn" data-dismiss="modal" aria-label="Close"><?php echo $wo['lang']['cancel'] ?></button>
+					<button type="button" class="btn btn-main btn-mat" id="ai-generate-post-button" onclick="openAIPost()"><?php echo $wo['lang']['generate']; ?></button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	function checkMaxAllowedPostWords(self) {
+		let max = parseInt("<?php echo($wo['config']['maxCharacters']); ?>");
+		<?php if ($wo['config']['text_credit_system'] == 1 && $wo['config']['generated_word_price'] > 0) { ?>
+			let paid = parseInt(parseInt($('#current_user_credits').val()) / parseInt("<?php echo($wo['config']['generated_word_price']) ?>"));
+			if (paid < max) {
+				max = paid;
+			}
+		<?php } ?>
+
+		if (parseInt($(self).val()) > max) {
+			$(self).val(max);
+			$(self).attr('max',max);
+		}
+	}
+	function openAIPost() {
+		$("#ai-generate-post-button").text("<?php echo($wo['lang']['please_wait']) ?>");
+		$("#ai-generate-post-button").attr('disabled',true);
+		$('#ai-selected-post-button').remove();
+		$.post(Wo_Ajax_Requests_File()+'?f=ai&s=openai_post', {text: $('#aiPostText').val(),count: $('#aiPostCount').val()}, function(data, textStatus, xhr) {
+			if (data.status == 200) {
+				$('#generatedAiPostText-prnt').show();
+				<?php if ($wo['config']['text_credit_system'] == 1 && $wo['config']['generated_word_price'] > 0) { ?>
+					$('#current_user_credits').val(data.credits);
+					var text = "<?php echo($wo['lang']['available_words_credits']); ?>";
+					$('#creditTT').text( getAvailableByType('text'));
+					checkMaxAllowedPostWords('#aiPostCount');
+				<?php } ?>
+
+				$("#ai-generate-post-button").text("<?php echo $wo['lang']['regenerate']; ?>");
+				$("#ai-generate-post-button").removeAttr('disabled');
+				$('#generatedAiPostText').val(data.output);
+				$("#AI-post-modal .modal-footer").prepend('<button type="button" class="btn main btn-mat" id="ai-selected-post-button" onclick="addAIPost()"><?php echo $wo['lang']['use_text']; ?></button>');
+			}
+			else{
+				$("#ai-generate-post-button").removeAttr('disabled');
+				$("#ai-generate-post-button").text("<?php echo($wo['lang']['generate']) ?>");
+		    	$('.ai_generate_post_alert').html('<div class="alert alert-danger">' + data.message + '</div>');
+		    	setTimeout(() => {
+			  		$('.ai_generate_post_alert').html('');
+			  	},3000);
+			}
+		});
+	}
+
+	function addAIPost() {
+		$('#post-textarea .postText').val($('#generatedAiPostText').val());
+		$('#AI-post-modal').modal('hide');
+		$('#postSticker').val('');
+		$('#isAiPost').val('on');
+		$('#ai-selected-post-button').remove();
+		$('#AI-post-modal textarea').val('');
+	}
+	function openPostModel() {
+		$('#ai-selected-post-button').remove();
+		$('#generatedAiPostText-prnt').slideUp();
+		$("#ai-generate-post-button").html("<?php echo $wo['lang']['generate']; ?>");
+		$('#aiPostText').val('');
+		$('#aiPostCount').val('');
+		$('#generatedAiPostText').val('');
+		$("#ai-generate-post-button").removeAttr('disabled');
+		$('.ai_generate_post_alert').html("");
+		<?php if ($wo['config']['text_credit_system'] == 1 && $wo['config']['generated_word_price'] > 0) { ?>
+			var text = "<?php echo($wo['lang']['available_words_credits']); ?>";
+			$('#creditTT').text( getAvailableByType('text'));
+			if ($('#current_user_credits').val() < <?php echo($wo['config']['generated_word_price']) ?>) {
+				$('#ai-generate-post-button').attr('disabled',true);
+				$('.ai_generate_post_alert').html("<div class='alert alert-danger'><?php echo $wo["lang"]["you_dont_have_enough_credits"]?></div>");
+			}
+		<?php } ?>
+		$('#AI-post-modal').modal('show');
+	}
+</script>

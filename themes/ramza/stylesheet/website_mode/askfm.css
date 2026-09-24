@@ -1,0 +1,399 @@
+/* ════════════════════════════════════════════════════════════════════
+   RACSocial — Ask.fm Mode v2.5
+   Clean Q&A experience. Warm tones, soft cards, pink-coral accents.
+   ════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --ask-bg:        #f8f5fa;
+  --ask-surface:   #ffffff;
+  --ask-pink:      #e84393;
+  --ask-pink-dark: #c2185b;
+  --ask-purple:    #6c5ce7;
+  --ask-purple-2:  #a29bfe;
+  --ask-text:      #2d3436;
+  --ask-text-2:    #636e72;
+  --ask-text-mute: #b2bec3;
+  --ask-border:    #eee;
+  --ask-radius:    16px;
+  --ask-radius-lg: 24px;
+  --ask-shadow:    0 2px 12px rgba(0,0,0,0.06);
+  --ask-shadow-hover: 0 4px 20px rgba(232,67,147,0.12);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────── */
+html[data-mode="askfm"] body,
+body.askfm-mode-active {
+  background-color: var(--ask-bg) !important;
+  color: var(--ask-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html[data-mode="askfm"] a { color: var(--ask-pink); text-decoration: none; }
+html[data-mode="askfm"] a:hover { text-decoration: underline; }
+
+/* ── Layout: hide left col ───────────────────────────────────────── */
+html[data-mode="askfm"] .col-md-2.leftcol { display: none; }
+
+html[data-mode="askfm"] .main-content,
+html[data-mode="askfm"] #main-content {
+  max-width: 640px;
+  margin: 0 auto;
+  background: transparent !important;
+}
+
+html[data-mode="askfm"] .col-md-8.middlecol {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+/* ── Navbar ──────────────────────────────────────────────────────── */
+html[data-mode="askfm"] .navbar,
+html[data-mode="askfm"] #navbar {
+  background-color: var(--ask-surface) !important;
+  border-bottom: 1px solid var(--ask-border);
+  border-radius: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04) !important;
+  min-height: 56px;
+}
+
+html[data-mode="askfm"] .navbar .logo img {
+  max-height: 32px;
+}
+
+html[data-mode="askfm"] .navbar .search-form input,
+html[data-mode="askfm"] .navbar input[type="search"] {
+  background-color: var(--ask-bg);
+  border: 1px solid var(--ask-border);
+  border-radius: var(--ask-radius-lg);
+  color: var(--ask-text);
+  padding: 8px 20px;
+  height: 40px;
+}
+
+html[data-mode="askfm"] .navbar .search-form input:focus {
+  border-color: var(--ask-pink);
+  background-color: #fff;
+}
+
+/* ── Sidebar nav ─────────────────────────────────────────────────── */
+html[data-mode="askfm"] .sidebar-list li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: var(--ask-radius);
+  color: var(--ask-text-2);
+  font-size: 15px;
+  font-weight: 500;
+  transition: background-color 200ms, color 200ms;
+}
+
+html[data-mode="askfm"] .sidebar-list li a:hover {
+  background-color: rgba(232,67,147,0.08);
+  color: var(--ask-pink);
+  text-decoration: none;
+}
+
+html[data-mode="askfm"] .sidebar-list li.active a,
+html[data-mode="askfm"] .sidebar-list li a.active {
+  color: var(--ask-pink);
+  font-weight: 700;
+}
+
+/* ── Posts: Q&A cards ────────────────────────────────────────────── */
+html[data-mode="askfm"] .post .panel {
+  background: var(--ask-surface) !important;
+  border: none !important;
+  border-left: 4px solid var(--ask-pink) !important;
+  border-radius: var(--ask-radius) !important;
+  box-shadow: var(--ask-shadow) !important;
+  margin-bottom: 16px !important;
+  padding: 20px 24px;
+  transition: box-shadow 200ms, transform 200ms;
+}
+
+html[data-mode="askfm"] .post .panel:hover {
+  box-shadow: var(--ask-shadow-hover) !important;
+  transform: translateY(-1px);
+}
+
+/* Post heading */
+html[data-mode="askfm"] .post .post-heading {
+  height: auto;
+  padding: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+}
+
+html[data-mode="askfm"] .post .post-heading .avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--ask-purple-2);
+  margin-right: 12px;
+}
+
+html[data-mode="askfm"] .post .post-heading .meta .title a {
+  color: var(--ask-text);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+html[data-mode="askfm"] .post .post-heading .meta .time {
+  color: var(--ask-text-mute);
+  font-size: 13px;
+}
+
+/* Question text */
+html[data-mode="askfm"] .post .post-text,
+html[data-mode="askfm"] .askfm-question-text {
+  color: var(--ask-text);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.45;
+  padding: 0 0 12px 0;
+  border-bottom: 1px solid var(--ask-border);
+  margin-bottom: 12px;
+}
+
+/* Answer indicator (comment area) */
+html[data-mode="askfm"] .post .post-footer {
+  background: transparent !important;
+  border-top: none !important;
+  border-radius: 0 !important;
+  padding: 8px 0 0;
+}
+
+html[data-mode="askfm"] .post .post-footer .comments-list .comment-heading {
+  background: rgba(108,92,231,0.06);
+  border-left: 3px solid var(--ask-purple);
+  border-radius: 0 var(--ask-radius) var(--ask-radius) 0;
+}
+
+html[data-mode="askfm"] .post .post-footer .comments-list .comment-heading .user {
+  color: var(--ask-purple);
+}
+
+/* ── Like / action buttons ───────────────────────────────────────── */
+html[data-mode="askfm"] .post .post-footer .social-btn,
+html[data-mode="askfm"] .post .post-footer .btn {
+  background: none !important;
+  border: none !important;
+  color: var(--ask-text-2) !important;
+  padding: 8px 12px !important;
+  font-size: 14px;
+  border-radius: var(--ask-radius) !important;
+  transition: color 200ms, background-color 200ms;
+}
+
+html[data-mode="askfm"] .post .post-footer .social-btn-like:hover {
+  color: var(--ask-pink) !important;
+  background-color: rgba(232,67,147,0.08) !important;
+}
+
+html[data-mode="askfm"] .post .post-footer .social-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ── "Ask me anything" button ────────────────────────────────────── */
+html[data-mode="askfm"] .ask-anon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--ask-pink), var(--ask-purple));
+  color: #fff !important;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 16px 0;
+  box-shadow: 0 4px 15px rgba(232,67,147,0.3);
+  transition: transform 150ms, box-shadow 150ms;
+}
+
+html[data-mode="askfm"] .ask-anon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(232,67,147,0.4);
+}
+
+/* ── Compose / textarea ──────────────────────────────────────────── */
+html[data-mode="askfm"] .post-textarea textarea,
+html[data-mode="askfm"] #postTextarea {
+  background-color: var(--ask-surface) !important;
+  border: 2px solid var(--ask-border) !important;
+  border-radius: var(--ask-radius-lg) !important;
+  color: var(--ask-text) !important;
+  font-size: 16px;
+  padding: 16px 20px;
+  box-shadow: none !important;
+  transition: border-color 200ms, box-shadow 200ms;
+}
+
+html[data-mode="askfm"] .post-textarea textarea:focus,
+html[data-mode="askfm"] #postTextarea:focus {
+  border-color: var(--ask-pink) !important;
+  box-shadow: 0 0 0 4px rgba(232,67,147,0.1) !important;
+}
+
+html[data-mode="askfm"] .post-textarea textarea::placeholder {
+  color: var(--ask-text-mute);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+html[data-mode="askfm"] .btn-primary,
+html[data-mode="askfm"] .btn-mat.btn-mat-raised {
+  background: linear-gradient(135deg, var(--ask-pink), var(--ask-pink-dark)) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 999px !important;
+  font-weight: 600;
+  padding: 10px 28px;
+}
+
+html[data-mode="askfm"] .btn-default {
+  background: var(--ask-surface) !important;
+  color: var(--ask-text) !important;
+  border: 1px solid var(--ask-border) !important;
+  border-radius: 999px !important;
+}
+
+/* ── Profile ─────────────────────────────────────────────────────── */
+html[data-mode="askfm"] .wo_user_profile .cover {
+  border-radius: var(--ask-radius);
+}
+
+html[data-mode="askfm"] .wo_user_profile .user-avatar img,
+html[data-mode="askfm"] .wo_user_profile .avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid var(--ask-surface);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+html[data-mode="askfm"] .wo_user_profile h2,
+html[data-mode="askfm"] .wo_user_profile .user-name {
+  color: var(--ask-text);
+  font-weight: 700;
+  font-size: 24px;
+}
+
+/* ── Right sidebar ───────────────────────────────────────────────── */
+html[data-mode="askfm"] .rightcol .panel,
+html[data-mode="askfm"] .rightcol .sidebar-widget {
+  background: var(--ask-surface) !important;
+  border: none !important;
+  border-radius: var(--ask-radius) !important;
+  box-shadow: var(--ask-shadow) !important;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+html[data-mode="askfm"] .rightcol .panel h4 {
+  color: var(--ask-pink);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ── Dropdowns ───────────────────────────────────────────────────── */
+html[data-mode="askfm"] .dropdown-menu {
+  background: var(--ask-surface) !important;
+  border: 1px solid var(--ask-border) !important;
+  border-radius: var(--ask-radius) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
+}
+
+html[data-mode="askfm"] .dropdown-menu li a:hover {
+  background-color: rgba(232,67,147,0.06) !important;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+html[data-mode="askfm"] footer,
+html[data-mode="askfm"] .footer {
+  background: var(--ask-surface) !important;
+  color: var(--ask-text-2);
+  border-top: 1px solid var(--ask-border);
+  font-size: 13px;
+  padding: 20px;
+}
+
+/* ── Modals ──────────────────────────────────────────────────────── */
+html[data-mode="askfm"] .modal-content {
+  background: var(--ask-surface) !important;
+  border: none !important;
+  border-radius: var(--ask-radius) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15) !important;
+}
+
+/* ── Welcome / Login ─────────────────────────────────────────────── */
+html[data-mode="askfm"] #welcomeheader {
+  background: var(--ask-surface);
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--ask-border);
+}
+
+html[data-mode="askfm"] .login {
+  background: linear-gradient(180deg, #f8f0f6 0%, #f3f0fa 50%, #fff 100%) !important;
+}
+
+html[data-mode="askfm"] .login .title {
+  color: var(--ask-text) !important;
+  font-weight: 700;
+}
+
+html[data-mode="askfm"] .login_left_combo_parent {
+  background: linear-gradient(135deg, rgba(232,67,147,0.08), rgba(108,92,231,0.08));
+}
+
+html[data-mode="askfm"] .login_left_combo h1 {
+  background: linear-gradient(135deg, var(--ask-pink), var(--ask-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+html[data-mode="askfm"] .wow_form_fields input,
+html[data-mode="askfm"] .wow_form_fields textarea {
+  border-radius: 12px !important;
+}
+
+html[data-mode="askfm"] .wow_form_fields input:focus {
+  border-color: var(--ask-pink) !important;
+  box-shadow: 0 0 0 4px rgba(232,67,147,0.1) !important;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────── */
+html[data-mode="askfm"] ::-webkit-scrollbar { width: 8px; height: 8px; }
+html[data-mode="askfm"] ::-webkit-scrollbar-track { background: var(--ask-bg); }
+html[data-mode="askfm"] ::-webkit-scrollbar-thumb {
+  background: var(--ask-purple-2);
+  border-radius: 4px;
+}
+
+/* ── No answer placeholder ───────────────────────────────────────── */
+html[data-mode="askfm"] .askfm-no-answer {
+  padding: 8px 0;
+}
+
+/* ── Hide non-AskFM sections ─────────────────────────────────────── */
+html[data-mode="askfm"] .movies-section,
+html[data-mode="askfm"] .games-section,
+html[data-mode="askfm"] .poke-section,
+html[data-mode="askfm"] .funding-section {
+  display: none !important;
+}
+
+/* ── Mobile ──────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  html[data-mode="askfm"] .col-md-3.rightcol { display: none; }
+  html[data-mode="askfm"] .main-content,
+  html[data-mode="askfm"] #main-content,
+  html[data-mode="askfm"] .col-md-8.middlecol {
+    max-width: 100%;
+    padding: 0 8px;
+  }
+}

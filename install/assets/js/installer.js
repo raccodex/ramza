@@ -15,10 +15,10 @@ document.addEventListener('DOMContentLoaded', function () {
             var button = installForm.querySelector('button[type="submit"]');
             if (button) {
                 button.disabled = true;
-                button.textContent = 'Installing…';
+                button.textContent = 'Installing...';
             }
             var live = installForm.querySelector('[data-install-live]');
-            if (live) live.textContent = 'Validated installation is running on the server. Keep this page open.';
+            if (live) live.textContent = 'Installing on the server. Keep this page open.';
         });
     }
     var strengthInput = document.querySelector('[data-password-strength]');

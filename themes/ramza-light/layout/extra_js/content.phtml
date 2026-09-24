@@ -1,0 +1,1792 @@
+<script>
+	function showMonetizationModel() {
+		$('#monetization_modal').modal('show');
+	}
+  
+	function CheckIfCanUse() {
+		<?php if(!$wo['config']['can_use_chat']){ ?>
+			$("body").snackbar({
+				message: "<?php echo $wo['lang']['can_not_use_feature'] ?>"
+			});
+		<?php } ?>
+	}
+  
+  $(document).ready(function() {
+    $('form.edit-offer-form').ajaxForm({
+          url: Wo_Ajax_Requests_File() + '?f=offer&s=edit_offer',
+          beforeSend: function() {
+            $('.edit-offer-form').find('.disable_btn').attr('disabled','disabled');
+          },
+          success: function(data) {
+           if (data.status == 200) {
+             $('.edit-offer-form').find('.app-general-alert').html("<div class='alert alert-success'><?php echo($wo['lang']['offer_successfully_edited']) ?></div>");
+               $('.edit-offer-form').find('.alert-success').fadeIn(300);
+               setTimeout(function (argument) {
+                $('.edit-offer-form').find('.alert-success').fadeOut(300);
+                window.location.reload(true);
+
+               },3000);
+           } else {
+            $('.edit-offer-form').animate({
+              scrollTop: $('html, body').offset().top //#DIV_ID is an example. Use the id of your destination on the page
+          });
+               $('.edit-offer-form').find('.app-general-alert').html('<div class="alert alert-danger">' + data.error + '</div>');
+               $('.edit-offer-form').find('.alert-danger').fadeIn(300);
+               setTimeout(function (argument) {
+                $('.edit-offer-form').find('.alert-danger').fadeOut(300);
+
+               },3000);
+           }
+           $('.edit-offer-form').find('.disable_btn').removeAttr("disabled");
+          }
+      });
+    
+  });
+function Wo_RegisterReactionLike(element,reaction_icon,is_html){
+
+    var reaction = parseInt($(element).attr('data-reaction-id'));
+    var post_id = $(element).attr('data-post-id');
+	
+    if ($('#react_'+post_id).attr('data_react') == 1) {
+      return false;
+    }
+    
+    var path = "<?php echo $wo['config']['theme_url']?>";
+    var lang = $(element).attr('data-reaction-lang');
+    if (!post_id || !reaction) {
+      return false;
+    }
+
+    $('.reactions-box-container-'+post_id).fadeOut(1);
+
+    var reaction_color = '';
+
+	switch (reaction) {
+		case 1:
+			reaction_color = '#1eb2c4';
+			break;
+		case 2:
+			reaction_color = '#f25268';
+			break;
+		case 3:
+			reaction_color = '#f3b715';
+			break;
+		case 4:
+			reaction_color = '#f3b715';
+			break;
+		case 5:
+			reaction_color = '#f3b715';
+			break;
+		case 6:
+			reaction_color = '#f7806c';
+			break;
+	}
+
+	console.log(reaction_color);
+
+	reaction_html = '<div class="inline_post_emoji no_anim"><div class="reaction"><img src="'+reaction_icon+'"></div></div>';
+
+    $('.status-reaction-'+post_id).html(''+reaction_html+'&nbsp;&nbsp;' + lang).css({"color": reaction_color});
+    $('.status-reaction-'+post_id).addClass("active-like");
+    $.get(Wo_Ajax_Requests_File(), {f: 'posts', s: 'register_reaction', post_id: post_id, reaction: reaction}, function (data) {
+      if(data.status == 200) {
+		  <?php if ($wo['config']['node_socket_flow'] == 1) { ?>
+      if ($('#react_'+post_id).attr('data_react') == 0) {
+        socket.emit("post_notification", { post_id: post_id, user_id: _getCookie("user_id"), type: "added" });
+      }
+      <?php } ?>
+        $('.post-reactions-icons-'+post_id).html(data.reactions);
+        
+      }
+      if (data.can_send == 1) {
+        Wo_SendMessages();
+      }
+      $('#react_'+post_id).attr('data_react','1');
+    });
+}
+
+function Wo_RegisterStoryReaction(element,reaction_icon,is_html) {
+  var reaction = parseInt($(element).attr('data-reaction-id'));
+  var post_id = $(element).attr('data-post-id');
+  var path = "<?php echo $wo['config']['theme_url']?>";
+  var lang = $(element).attr('data-reaction-lang');
+  if (!post_id || !reaction) {
+    return false;
+  }
+  $('.tag_story_react .reaction').removeClass('active');
+  $(element).addClass('active');
+  $.get(Wo_Ajax_Requests_File(), {f: 'status', s: 'register_reaction', story_id: post_id, reaction: reaction}, function (data) {
+    if(data.status == 200) {
+      <?php if ($wo['config']['node_socket_flow'] == 1) { ?>
+  if ($('#react_'+post_id).attr('data_react') == 0) {
+  }
+  <?php } ?>
+      $('.post-reactions-icons-'+post_id).html(data.reactions);
+    }
+    if (data.can_send == 1) {
+      Wo_SendMessages();
+    }
+  });
+}
+
+function Wo_RegisterMessageReaction(element,reaction_icon,is_html) {
+  var reaction = parseInt($(element).attr('data-reaction-id'));
+  var post_id = $(element).attr('data-post-id');
+  var path = "<?php echo $wo['config']['theme_url']?>";
+  var lang = $(element).attr('data-reaction-lang');
+  if (!post_id || !reaction) {
+    return false;
+  }
+   <?php if ($wo['config']['node_socket_flow'] == 1) { ?>
+    socket.emit("register_reaction", {
+        type: 'messages',
+        id: post_id,
+        reaction: reaction,
+        user_id: _getCookie("user_id")
+      })
+    
+  <?php }else{ ?>
+    $.get(Wo_Ajax_Requests_File(), {f: 'messages', s: 'register_reaction', message_id: post_id, reaction: reaction}, function (data) {
+        if(data.status == 200) {
+          $('.post-reactions-icons-m-'+post_id).html(data.reactions);
+        }
+        if (data.can_send == 1) {
+          Wo_SendMessages();
+        }
+      });
+  <?php } ?>
+}
+
+function Wo_RegisterReaction(element,reaction_icon,is_html){
+    var reaction = parseInt($(element).attr('data-reaction-id'));
+    var post_id = $(element).attr('data-post-id');
+    var path = "<?php echo $wo['config']['theme_url']?>";
+    var lang = $(element).attr('data-reaction-lang');
+    if (!post_id || !reaction) {
+      return false;
+    }
+
+    $('.reactions-box-container-'+post_id).fadeOut(1);
+
+    var reaction_color = '';
+    switch (reaction) {
+		case 1:
+			reaction_color = '#1da1f2';
+			break;
+		case 2:
+			reaction_color = '#f25268';
+			break;
+		case 3:
+			reaction_color = '#f3b715';
+			break;
+		case 4:
+			reaction_color = '#f3b715';
+			break;
+		case 5:
+			reaction_color = '#f3b715';
+			break;
+		case 6:
+			reaction_color = '#f7806c';
+			break;
+	}
+
+    reaction_html = '<div class="inline_post_count_emoji reaction"><img src="'+reaction_icon+'"></div>&nbsp;&nbsp;';
+    reaction_color = '';
+	
+	$('.status-reaction-'+post_id).removeClass (function (index, css) {
+       return (css.match (/(^|\s)active-like\S+/g) || []).join(' ');
+    });
+    $('.status-reaction-'+post_id).removeClass('active-like');
+    $('.status-reaction-'+post_id).html(''+reaction_html+'&nbsp;&nbsp;' + lang).css({"color": reaction_color});
+    $('.status-reaction-'+post_id).addClass("active-like");
+	$('.status-reaction-'+post_id).addClass("active-like-" + reaction);
+    $.get(Wo_Ajax_Requests_File(), {f: 'posts', s: 'register_reaction', post_id: post_id, reaction: reaction}, function (data) {
+      if(data.status == 200) {
+		  <?php if ($wo['config']['node_socket_flow'] == 1) { ?>
+    //if ($('#react_'+post_id).attr('data_react') == 0) {
+      socket.emit("post_notification", { post_id: post_id, user_id: _getCookie("user_id"), type: "added" });
+    //}
+    <?php } ?>
+        $('.post-reactions-icons-'+post_id).html(data.reactions);
+		    
+      }
+      if (data.can_send == 1) {
+        Wo_SendMessages();
+      }
+      $('#react_'+post_id).attr('data_react','1');
+    });
+}
+
+function Wo_RegisterFollowNotify(id, type) {
+  var _follow_con = $('[id=Notify-' + id + ']');
+  data_next = $('[id=Notify-' + id + ']').attr('title');
+  title = $('[id=Notify-' + id + ']').attr('data_next');
+  html_ = '<span id="Notify-' + id + '" title="'+title+'" data_next="'+data_next+'"><button type="button" onclick="Wo_RegisterFollowNotify(' + id + ',0)" class="btn-active btn btn-default btn-mat tag_user_notif"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M18 16v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.68-1.5-1.51-1.5S10.5 3.17 10.5 4v.68C7.63 5.36 6 7.92 6 11v5l-1.3 1.29c-.63.63-.19 1.71.7 1.71h13.17c.89 0 1.34-1.08.71-1.71L18 16zm-6.01 6c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zM6.77 4.73c.42-.38.43-1.03.03-1.43-.38-.38-1-.39-1.39-.02C3.7 4.84 2.52 6.96 2.14 9.34c-.09.61.38 1.16 1 1.16.48 0 .9-.35.98-.83.3-1.94 1.26-3.67 2.65-4.94zM18.6 3.28c-.4-.37-1.02-.36-1.4.02-.4.4-.38 1.04.03 1.42 1.38 1.27 2.35 3 2.65 4.94.07.48.49.83.98.83.61 0 1.09-.55.99-1.16-.38-2.37-1.55-4.48-3.25-6.05z"/></svg></button></span>';
+  if (type == 0) {
+    html_ = '<span id="Notify-' + id + '" title="'+title+'" data_next="'+data_next+'"><button type="button" onclick="Wo_RegisterFollowNotify(' + id + ',1)" class="btn btn-default btn-mat tag_user_notif"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-1.29 1.29c-.63.63-.19 1.71.7 1.71h13.17c.89 0 1.34-1.08.71-1.71L18 16z"/></svg></button></span>';
+  }
+
+  _follow_con.replaceWith(html_);
+
+  $.get(Wo_Ajax_Requests_File(), {f: 'notify_user', following_id: id}, function(data) {});
+
+}
+
+function Wo_RegisterFollow(id, is_confirm,show_modal= false) {
+  var _follow_con = $('[id=Follow-' + id + ']');
+  is_confirm_f    = 0;
+
+  if (is_confirm == 1) {
+    is_confirm_f = 1;
+  }
+  if (show_modal == true) {
+    $('#unfriend_btn').attr('onclick', 'Wo_RegisterFollow('+id+')');
+    $('#un_friend_modal').modal('show');
+    return false;
+  }
+  $('#un_friend_modal').modal('hide');
+
+  <?php if ($wo['config']['connectivitySystem'] == 0): ?>
+    html_ = '<button type="button" onclick="Wo_RegisterFollow(' + id + ', ' + is_confirm_f + ')" class="btn-active btn btn-main btn-mat"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M12 20l-.86-.86c-1.18-1.18-1.17-3.1.02-4.26l.84-.82c-.39-.04-.68-.06-1-.06-2.67 0-8 1.34-8 4v2h9zm-1-8c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4"/><path fill="currentColor" d="M16.18 19.78c-.39.39-1.03.39-1.42 0l-2.07-2.09c-.38-.39-.38-1.01 0-1.39l.01-.01c.39-.39 1.02-.39 1.4 0l1.37 1.37 4.43-4.46c.39-.39 1.02-.39 1.41 0l.01.01c.38.39.38 1.01 0 1.39l-5.14 5.18z"/></svg><span class="button-text"> <?php echo $wo["lang"]["following_btn"];?></span></button>';
+    if (is_confirm_f == 1) {
+      html_ = '<button type="button" onclick="Wo_RegisterFollow(' + id + ', ' + is_confirm_f + ')" class="btn btn-default btn-mat"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.22-13h-.06c-.4 0-.72.32-.72.72v4.72c0 .35.18.68.49.86l4.15 2.49c.34.2.78.1.98-.24.21-.34.1-.79-.25-.99l-3.87-2.3V7.72c0-.4-.32-.72-.72-.72z"/></svg><span class="button-text"> <?php echo $wo["lang"]["requested"];?></span></button>';
+    }
+    if (_follow_con.find('button').hasClass('btn-active') || _follow_con.find('button').hasClass('btn-requested')) {
+      html_ = '<button type="button" onclick="Wo_RegisterFollow(' + id + ', ' + is_confirm_f + ')" class="btn btn-mat btn-main-rev"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V8c0-.55-.45-1-1-1s-1 .45-1 1v2H2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1H6zm9 4c-2.67 0-8 1.34-8 4v1c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-1c0-2.66-5.33-4-8-4z"/></svg><span class="button-text"> <?php echo $wo["lang"]["follow"];?></span></button>';
+    }
+  <?php else: ?>
+    // if (_follow_con.find('button').hasClass('btn-active')) {
+    //   if (!confirm("<?php echo $wo['lang']['are_you_sure_unfriend'] ?>")) {
+    //       return false;
+    //   }
+    // }
+    html_ = '<button type="button" onclick="Wo_RegisterFollow(' + id + ')" class="btn btn-default btn-mat"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.22-13h-.06c-.4 0-.72.32-.72.72v4.72c0 .35.18.68.49.86l4.15 2.49c.34.2.78.1.98-.24.21-.34.1-.79-.25-.99l-3.87-2.3V7.72c0-.4-.32-.72-.72-.72z"/></svg><span class="button-text"> <?php echo $wo["lang"]["requested"];?></span></button>';
+    if (_follow_con.find('button').hasClass('btn-requested') || _follow_con.find('button').hasClass('btn-active')) {
+      html_ = '<button type="button" onclick="Wo_RegisterFollow(' + id + ')" class="btn btn-mat btn-main-rev"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V8c0-.55-.45-1-1-1s-1 .45-1 1v2H2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1H6zm9 4c-2.67 0-8 1.34-8 4v1c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-1c0-2.66-5.33-4-8-4z"/></svg><span class="button-text"> <?php echo $wo["lang"]["add_friend"];?></span></button>';
+    }
+
+  <?php endif; ?>
+
+  _follow_con.html(html_);
+
+  $.get(Wo_Ajax_Requests_File(), {f: 'follow_user', following_id: id}, function(data) {
+	  
+	  <?php if ($wo['config']['connectivitySystem'] == 0): ?>
+    
+    if (_follow_con.find('button').hasClass('btn-active') || _follow_con.find('button').hasClass('btn-requested')) {
+      if (node_socket_flow == "1") {
+        if (is_confirm_f == 1) {
+          socket.emit("user_notification", { to_id: id, user_id: _getCookie("user_id"), type: "request" });
+        } else {
+          socket.emit("user_notification", { to_id: id, user_id: _getCookie("user_id"), type: "added" });
+        }
+        
+      }
+    } else {
+      if (node_socket_flow == "1") {
+        if (is_confirm_f == 1) {
+         socket.emit("user_notification", { to_id: id, user_id: _getCookie("user_id"), type: "removed" });
+          } else {
+            socket.emit("user_notification", { to_id: id, user_id: _getCookie("user_id"), type: "request_removed" });
+          }
+      }
+    }
+  <?php else: ?>
+    if (_follow_con.find('button').hasClass('btn-requested') || _follow_con.find('button').hasClass('btn-active')) {
+      if (node_socket_flow == "1") {
+         socket.emit("user_notification", { to_id: id, user_id: _getCookie("user_id"), type: "request" });
+      }
+    } else {
+      if (node_socket_flow == "1") {
+         socket.emit("user_notification", { to_id: id, user_id: _getCookie("user_id"), type: "request_removed" });
+      }
+    }
+  <?php endif; ?>
+	  
+    if (data.can_send == 1) {
+      Wo_SendMessages();
+    }
+
+    else if(data.status == 400){
+      html_ = '<button type="button" onclick="Wo_RegisterFollow(' + id + ')" class="btn btn-mat btn-main-rev"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V8c0-.55-.45-1-1-1s-1 .45-1 1v2H2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1H6zm9 4c-2.67 0-8 1.34-8 4v1c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-1c0-2.66-5.33-4-8-4z"/></svg><span class="button-text"> <?php echo $wo["lang"]["add_friend"];?></span></button>';
+      _follow_con.html(html_);
+		$("body").snackbar({
+			message: "<?php $limit = $wo['config']['connectivitySystemLimit']; $text = preg_replace("/\{\{CNTC_LIMIT\}\}/", $limit, $wo['lang']['cntc_limit_reached']); echo $text; ?>"
+		});
+    }
+  });
+
+}
+
+function Wo_RegisterGroupJoin(id, is_confirm) {
+  var _join_con = $('[id=join-' + id + ']');
+  is_confirm_ = 0;
+  if (is_confirm == 1) {
+    is_confirm_ = 1;
+  }
+  html_join = '<button type="button" onclick="Wo_RegisterGroupJoin(' + id + ', ' + is_confirm_ + ')" class="btn-active btn btn-main btn-mat"><span class="button-text"> <?php echo $wo["lang"]["joined"];?></span></button>';
+  if (is_confirm_ == 1) {
+    html_join = '<button type="button" onclick="Wo_RegisterGroupJoin(' + id + ', ' + is_confirm_ + ')" class="btn-requested btn btn-default btn-mat"><span class="button-text"> <?php echo $wo["lang"]["requested"];?></span></button>';
+  }
+  if (_join_con.find('button').hasClass('btn-requested') || _join_con.find('button').hasClass('btn-active')) {
+    html_join = '<button type="button" onclick="Wo_RegisterGroupJoin(' + id + ', ' + is_confirm_ + ')" class="btn btn-main-rev btn-mat"><span class="button-text"> <?php echo $wo["lang"]["join"];?></span></button>';
+  }
+  _join_con.html(html_join);
+  $.get(Wo_Ajax_Requests_File(), {f: 'join_group', group_id: id}, function (data) {
+	  if (node_socket_flow == "1") {
+      if (_join_con.find('button').hasClass('btn-active') || _join_con.find('button').hasClass('btn-requested')) {
+          socket.emit("group_notification", { to_id: id, user_id: _getCookie("user_id"), type: "added" });
+      } else {
+          socket.emit("group_notification", { to_id: id, user_id: _getCookie("user_id"), type: "removed" });
+      }
+    }
+    if (data.can_send == 1) {
+      Wo_SendMessages();
+    }
+  });
+}
+
+function Wo_RegisterEventGoing(id) {
+  var _join_con = $('[id=going-' + id + ']');
+  var _join_con_small = $('[id=small-going-' + id + ']');
+  html_join = '<button type="button" onclick="Wo_RegisterEventGoing(' + id + ')" class="btn btn-main btn-mat"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M0.41,13.41L6,19L7.41,17.58L1.83,12M22.24,5.58L11.66,16.17L7.5,12L6.07,13.41L11.66,19L23.66,7M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7Z" /></svg> <span class="button-text"> <?php echo $wo["lang"]["going"];?></span></button>';
+  if (_join_con.find('button').hasClass('btn-main')) {
+    html_join = '<button type="button" onclick="Wo_RegisterEventGoing(' + id + ')" class="btn btn-main-rev btn-mat"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10.74,11.72C11.21,12.95 11.16,14.23 9.75,14.74C6.85,15.81 6.2,13 6.16,12.86L10.74,11.72M5.71,10.91L10.03,9.84C9.84,8.79 10.13,7.74 10.13,6.5C10.13,4.82 8.8,1.53 6.68,2.06C4.26,2.66 3.91,5.35 4,6.65C4.12,7.95 5.64,10.73 5.71,10.91M17.85,19.85C17.82,20 17.16,22.8 14.26,21.74C12.86,21.22 12.8,19.94 13.27,18.71L17.85,19.85M20,13.65C20.1,12.35 19.76,9.65 17.33,9.05C15.22,8.5 13.89,11.81 13.89,13.5C13.89,14.73 14.17,15.78 14,16.83L18.3,17.9C18.38,17.72 19.89,14.94 20,13.65Z" /></svg> <span class="button-text"> <?php echo $wo["lang"]["go"];?></span></button>';
+  }
+  if (_join_con_small.find('button').hasClass('btn-main')) {
+    html_join = '<button type="button" onclick="Wo_RegisterEventGoing(' + id + ')" class="btn btn-main-rev btn-mat"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10.74,11.72C11.21,12.95 11.16,14.23 9.75,14.74C6.85,15.81 6.2,13 6.16,12.86L10.74,11.72M5.71,10.91L10.03,9.84C9.84,8.79 10.13,7.74 10.13,6.5C10.13,4.82 8.8,1.53 6.68,2.06C4.26,2.66 3.91,5.35 4,6.65C4.12,7.95 5.64,10.73 5.71,10.91M17.85,19.85C17.82,20 17.16,22.8 14.26,21.74C12.86,21.22 12.8,19.94 13.27,18.71L17.85,19.85M20,13.65C20.1,12.35 19.76,9.65 17.33,9.05C15.22,8.5 13.89,11.81 13.89,13.5C13.89,14.73 14.17,15.78 14,16.83L18.3,17.9C18.38,17.72 19.89,14.94 20,13.65Z" /></svg> <span class="button-text"> <?php echo $wo["lang"]["go"];?></span></button>';
+  }
+  _join_con.html(html_join);
+  _join_con_small.html(html_join);
+  $.get(Wo_Ajax_Requests_File(), {f: 'go_event', event_id: id}, function (data) {
+	  if (node_socket_flow == "1") {
+      if (_join_con.find('button').hasClass('btn-main')) {
+          socket.emit("event_notification", { to_id: id, user_id: _getCookie("user_id"), type: "added" });
+      } else {
+          socket.emit("event_notification", { to_id: id, user_id: _getCookie("user_id"), type: "removed" });
+      }
+    }
+    if (data.can_send == 1) {
+      Wo_SendMessages();
+    }
+  });
+}
+
+function Wo_RegisterEventInterested(id) {
+  var _join_con = $('[id=interested-' + id + ']');
+  html_join = '<button type="button" onclick="Wo_RegisterEventInterested(' + id + ')" class="btn btn-main btn-mat" title="<?php echo $wo["lang"]["interested"];?>"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12,17.27l4.15,2.51c0.76,0.46,1.69-0.22,1.49-1.08l-1.1-4.72l3.67-3.18c0.67-0.58,0.31-1.68-0.57-1.75l-4.83-0.41 l-1.89-4.46c-0.34-0.81-1.5-0.81-1.84,0L9.19,8.63L4.36,9.04c-0.88,0.07-1.24,1.17-0.57,1.75l3.67,3.18l-1.1,4.72 c-0.2,0.86,0.73,1.54,1.49,1.08L12,17.27z" /></svg></button>';
+  if (_join_con.find('button').hasClass('btn-main')) {
+    html_join = '<button type="button" onclick="Wo_RegisterEventInterested(' + id + ')" class="btn btn-default btn-mat" title="<?php echo $wo["lang"]["interested"];?>"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19.65 9.04l-4.84-.42-1.89-4.45c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18-1.1 4.72c-.2.86.73 1.54 1.49 1.08l4.15-2.5 4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.73 3.67-3.18c.67-.58.32-1.68-.56-1.75zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z" /></svg></button>';
+  }
+  _join_con.html(html_join);
+  $.get(Wo_Ajax_Requests_File(), {f: 'interested_event', event_id: id}, function (data) {
+	  if (node_socket_flow == "1") {
+      if (_join_con.find('button').hasClass('btn-main')) {
+          socket.emit("event_notification", { to_id: id, user_id: _getCookie("user_id"), type: "added" });
+      } else {
+          socket.emit("event_notification", { to_id: id, user_id: _getCookie("user_id"), type: "removed" });
+      }
+    }
+    if (data.can_send == 1) {
+      Wo_SendMessages();
+    }
+  });
+}
+
+
+function Wo_RegisterPageLike(id) {
+  element_like = $('[id=like-' + id + ']');
+  html_like = '<button type="button" onclick="Wo_RegisterPageLike(' + id + ')" class="btn-active btn btn-mat btn-main"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M2 9h3v12H2a1 1 0 0 1-1-1V10a1 1 0 0 1 1-1zm5.293-1.293l6.4-6.4a.5.5 0 0 1 .654-.047l.853.64a1.5 1.5 0 0 1 .553 1.57L14.6 8H21a2 2 0 0 1 2 2v2.104a2 2 0 0 1-.15.762l-3.095 7.515a1 1 0 0 1-.925.619H8a1 1 0 0 1-1-1V8.414a1 1 0 0 1 .293-.707z"/></svg> <span class="button-text"><?php echo $wo["lang"]["liked"];?></span></button>';
+  if (element_like.find('button').hasClass('btn-active')) {
+  	html_like = '<button type="button" onclick="Wo_RegisterPageLike(' + id + ')" class="btn btn-default btn-mat"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M2 9h3v12H2a1 1 0 0 1-1-1V10a1 1 0 0 1 1-1zm5.293-1.293l6.4-6.4a.5.5 0 0 1 .654-.047l.853.64a1.5 1.5 0 0 1 .553 1.57L14.6 8H21a2 2 0 0 1 2 2v2.104a2 2 0 0 1-.15.762l-3.095 7.515a1 1 0 0 1-.925.619H8a1 1 0 0 1-1-1V8.414a1 1 0 0 1 .293-.707z"/></svg> <span class="button-text"><?php echo $wo["lang"]["like"];?></span></button>';
+  }
+  element_like.html(html_like);
+  $.get(Wo_Ajax_Requests_File(), {f: 'like_page', page_id: id}, function (data) {
+    if(data.status == 200) {
+		if (node_socket_flow == "1") {
+        if (element_like.find('button').hasClass('btn-active')) {
+           socket.emit("page_notification", { to_id: id, user_id: _getCookie("user_id"), type: "added"});
+        } else {
+          socket.emit("page_notification", { to_id: id, user_id: _getCookie("user_id"), type: "removed"});
+        }
+      }
+      if ($('.sidebar-listed-page-like').attr('data-type') == "sidebar") {
+        setTimeout(function () {
+          Wo_ReloadSideBarPages();
+        }, 500);
+      }
+    }
+    if (data.can_send == 1) {
+      Wo_SendMessages();
+    }
+  });
+}
+
+function Wo_RegisterReelsLike(post_id,self) {
+  let removed = true;
+    if ($(self).hasClass('active-like')) {
+      $(self).removeClass('active-like');
+    }
+    else{
+      removed = false;
+      $(self).addClass('active-like');
+    }
+  $.get(Wo_Ajax_Requests_File(), {f: 'posts', s: 'register_like', post_id: post_id}, function (data) {
+    if (removed == false) {
+      if (node_socket_flow == "1") { socket.emit("post_notification", { post_id: post_id, user_id: _getCookie("user_id"), type: "added" }); }
+    } else {
+      if (node_socket_flow == "1") { socket.emit("post_notification", { post_id: post_id, user_id: _getCookie("user_id"), type: "removed" });}
+    }
+    if(data.status == 200) {
+      $(self).find('.short_likes').text(data.likes);
+    } else {
+      $(self).find('.short_likes').text(data.likes);
+    }
+    if (data.can_send == 1) {
+      Wo_SendMessages();
+    }
+  });
+}
+
+function Wo_RegisterLike(post_id) {
+  var post = $('[id=post-' + post_id + ']');
+  
+	html_like = "<?php echo GetModeBtn('liked_btn'); ?>";
+	if (post.find("[id^=like-button]").parent().find('.active-like').length > 0) {
+		html_like = "<?php echo GetModeBtn('like_btn'); ?>";
+	}
+  
+  <?php if ($wo['config']['second_post_button'] == 'dislike') { ?>
+   post.find("[id^=wonder-button]").html('<span class="icoo"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-thumbs-down"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg></span><span class="like-btn-mobile"><?php echo $wo["lang"]["dislike"];?></span>');
+  <?php } ?>
+  post.find("[id^=like-button]").html(html_like);
+  $.get(Wo_Ajax_Requests_File(), {f: 'posts', s: 'register_like', post_id: post_id}, function (data) {
+	if (post.find("[id^=like-button]").parent().find('.active-like').length > 0) {
+      if (node_socket_flow == "1") { socket.emit("post_notification", { post_id: post_id, user_id: _getCookie("user_id"), type: "added" }); }
+    } else {
+      if (node_socket_flow == "1") { socket.emit("post_notification", { post_id: post_id, user_id: _getCookie("user_id"), type: "removed" });}
+    }
+    if(data.status == 200) {
+	  if (post.find('.tag_hid_e_lik').hasClass("d-none")) {
+		post.find('.tag_hid_e_lik').removeClass("d-none");
+	  }
+      post.find("[id^=likes]").text(data.likes);
+      post.find("[id^=wonders]").text(data.wonders);
+    } else {
+	  if (post.find('.tag_hid_e_lik').hasClass("d-none")) {
+		post.find('.tag_hid_e_lik').removeClass("d-none");
+	  }
+      post.find("[id^=likes]").text(data.likes);
+      post.find("[id^=wonders]").text(data.wonders);
+    }
+    if (data.can_send == 1) {
+      Wo_SendMessages();
+    }
+  });
+}
+
+function Wo_RegisterWonder(post_id) {
+  var post = $('[id=post-' + post_id + ']');
+  wonder_icon = '<?php echo $wo["second_post_button_icon"]?>';
+  wonder_lang = "<?php echo $wo['lang']['wonder']; ?>";
+  wonder_lang_2 = "<?php echo $wo['lang']['wondered']; ?>";
+  <?php if ($wo['config']['second_post_button'] == 'dislike') { ?>
+  wonder_lang = "<?php echo $wo['lang']['dislike']; ?>";
+  wonder_lang_2 = "<?php echo $wo['lang']['disliked']; ?>";
+  <?php } ?>
+  html_wonder = '<span class="valign active-wonder"><span class="icoo">' + wonder_icon + '</span><span class="like-btn-mobile">' + wonder_lang_2 + '</span></span>';
+  if (post.find("[id^=wonder-button]").parent().find('.active-wonder').length > 0) {
+  	html_wonder = '<span class="icoo">' + wonder_icon + '</span><span class="like-btn-mobile">' + wonder_lang + '</span>';
+  } 
+  post.find("[id^=wonder-button]").html(html_wonder);
+  <?php if ($wo['config']['second_post_button'] == 'dislike') { ?>
+   post.find("[id^=like-button]").html('<span class="icoo"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M4 21h1V8H4c-1.104 0-2 .896-2 2v9C2 20.104 2.896 21 4 21zM20 8h-7l1.122-3.368C14.554 3.337 13.59 2 12.225 2H12L7 7.438V21h11l3.912-8.596C21.937 12.291 21.976 12.114 22 12v-2C22 8.896 21.104 8 20 8z"/></svg></span><span class="like-btn-mobile"><?php echo $wo["lang"]["like"];?></span>');
+  <?php } ?>
+  $.get(Wo_Ajax_Requests_File(), {f: 'posts', s: 'register_wonder', post_id: post_id}, function (data) {
+	if (post.find("[id^=wonder-button]").parent().find('.active-wonder').length > 0) {
+      if (node_socket_flow == "1") { socket.emit("post_notification", { post_id: post_id, user_id: _getCookie("user_id"), type: "added" }); }
+    } else {
+      if (node_socket_flow == "1") { socket.emit("post_notification", { post_id: post_id, user_id: _getCookie("user_id"), type: "removed" });}
+    }
+    if(data.status == 200) {
+	  if (post.find('.tag_hid_e_wnd').hasClass("d-none")) {
+		post.find('.tag_hid_e_wnd').removeClass("d-none");
+	  }
+      post.find("[id^=wonders]").text(data.wonders);
+      post.find("[id^=likes]").text(data.likes);
+    } else {
+	  if (post.find('.tag_hid_e_wnd').hasClass("d-none")) {
+		post.find('.tag_hid_e_wnd').removeClass("d-none");
+	  }
+      post.find("[id^=wonders]").text(data.wonders);
+      post.find("[id^=likes]").text(data.likes);
+    }
+    if (data.can_send == 1) {
+      Wo_SendMessages();
+    }
+  });
+}
+function Wo_IsLangValid(lang){
+  var langs = [ "en", "tr","fr","es","nl","de","it","pt","ru","ar"]; 
+  if (lang && langs.indexOf(lang) != -1) {
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+function Wo_DetectTextLang(text){
+  var lcode = false;
+  if (text || typeof(text) == 'string') {
+    guessLanguage.info(text, function(lang) {
+    lcode = lang[0];
+    });
+  }
+  return lcode;
+}
+function Wo_Translate(id,lang){
+  if (!id || !lang && Wo_IsLangValid(lang)) {
+    return false;
+  }else{
+    <?php if ($wo['config']['google_translate'] != 1 && $wo['config']['yandex_translate'] != 1) { ?>
+      return false;
+    <?php } ?>
+    var translatable_text = $("[data-translate-text="+id+"]").text();
+    if (lang == Wo_DetectTextLang(translatable_text)) {
+      // $("[data-trans-btn=" + id + "]").removeAttr('onclick')
+      // return false;
+    }
+    $("[data-trans-btn="+id+"]").text("<?php echo($wo['lang']['loading']); ?>");
+    if ($("[data-translate-text="+id+"]").parents('.post-description').find('.data_translated').length > 0) {
+      let tx = $("[data-translate-text="+id+"]").parents('.post-description').find('.data_translated').text();
+      $("[data-translate-text="+id+"]").parents('.post-description').find('.data_translated').remove();
+      $("[data-translate-text="+id+"]").text(tx);
+      $("[data-trans-btn="+id+"]").text("<?php echo($wo['lang']['translate']); ?>");
+      return false;
+    }
+    $("[data-translate-text="+id+"]").parents('.post-description').append('<span class="hidden data_translated">'+translatable_text+'</span>');
+    
+    <?php if ($wo['config']['google_translate'] == 1) { ?>
+      let url = "https://translation.googleapis.com/language/translate/v2?key=<?php echo($wo['config']['google_translation_api']); ?>";
+      let method = "POST";
+      let r_data = {
+          q:String(translatable_text),
+          target:String(lang)
+      };
+    <?php }else if($wo['config']['yandex_translate'] == 1){ ?>
+      let url = "https://translate.yandex.net/api/v1.5/tr.json/translate";
+      let method = "GET";
+      let r_data = {
+          key:'<?php echo $wo['config']['yandex_translation_api']; ?>',
+          text:String(translatable_text),
+          lang:String(lang)
+      };
+    <?php } ?>
+    $.ajax({
+      url: url,
+      type: method,
+      dataType: 'json',
+      data: r_data
+    }).done(function(data) {
+      <?php if ($wo['config']['google_translate'] == 1) { ?>
+      let translation = data.data.translations[0].translatedText;
+      $("[data-translate-text="+id+"]").text(translation)
+      <?php }else if($wo['config']['yandex_translate'] == 1){ ?>
+      if (data.code == 200) {
+        $("[data-translate-text="+id+"]").text(data.text[0])
+      }
+    <?php } ?>
+    $("[data-trans-btn="+id+"]").text("<?php echo($wo['lang']['show_original']); ?>");
+    }).fail(function() {
+      let tx = $("[data-translate-text="+id+"]").parents('.post-description').find('.data_translated').text();
+      $("[data-translate-text="+id+"]").parents('.post-description').find('.data_translated').remove();
+      $("[data-translate-text="+id+"]").text(tx);
+      $("[data-trans-btn="+id+"]").text("<?php echo($wo['lang']['translate']); ?>");
+      console.log("translation error");
+    })
+  }
+}
+
+$(document).on('click', '#night_mode_toggle', function(event) {
+  mode = $(this).attr('data-mode');
+  if (mode == 'night') {
+      $('head').append('<link rel="stylesheet" href="<?php echo $wo['config']['theme_url'];?>/stylesheet/dark.css<?php echo $wo['update_cache']; ?>" id="night-mode-css">');
+	  $('head').append('<meta name="theme-color" content="#212121" id="night-mode-meta">');
+      $('#night_mode_toggle').attr('data-mode', 'day');
+      $('#night-mode-text').addClass('active');
+  } else {
+      $('#night-mode-css').remove();
+	  $('#night-mode-meta').remove();
+      $('#night_mode_toggle').attr('data-mode', 'night');
+      $('#night-mode-text').removeClass('active');
+  }
+  $.post(Wo_Ajax_Requests_File() + '?mode=' + mode);
+});
+
+$(document).on('click', '#share_post_on_btn', function(event) {
+  text = $('#share_post_text').val();
+  type = $('#SearchForInputType').val();
+  post_id = $('#SearchForInputPostId').val();
+  type_id = $('#SearchForInputTypeId').val();
+  self = this;
+  $(this).text('<?php echo($wo['lang']['please_wait']) ?>');
+  $(this).attr('disabled', 'true');
+    $.ajax({
+      url: Wo_Ajax_Requests_File(),
+      type: 'GET',
+      dataType: 'json',
+      data: {f: 'share_post_on',s:type,type_id:type_id,post_id:post_id,text:text},
+    })
+    .done(function(data) {
+		if (node_socket_flow == "1") {
+          socket.emit("post_notification", { post_id: post_id, user_id: _getCookie("user_id")});
+        }
+      $(self).text('<?php echo($wo['lang']['share']) ?>');
+      $(self).removeAttr('disabled');
+      if (data.status == 200) {
+        $('.share_post_modal_alert').html('<div class="alert alert-success"><?php echo($wo['lang']['post_shared_successfully']) ?></div>');
+
+        setTimeout(function () {
+          $('#share_post_modal').modal('hide');
+        },2000);
+      }
+      else{
+        $('.share_post_modal_alert').html("<div class='alert alert-danger'><?php echo($wo['lang']['cant_share_own']) ?></div>");
+        setTimeout(function () {
+          $('.share_post_modal_alert').html('');
+        },2000);
+      }
+    })
+    .fail(function() {
+    })
+    .always(function() {
+    });
+});
+
+$(document).on('change', '.share_type_select', function(event) {
+  var type = $(this).val();
+  if (type == 'user') {
+    $('.search_for_form').addClass('hidden');
+    $('#type_user_name').removeClass('hidden');
+    $('#SearchForInputType').val('user');
+  }
+  else if(type == 'page'){
+    $('.search_for_form').addClass('hidden');
+    $('#type_page_name').removeClass('hidden');
+    $('#SearchForInputType').val('page');
+  }
+  else if(type == 'group'){
+    $('.search_for_form').addClass('hidden');
+    $('#type_group_name').removeClass('hidden');
+    $('#SearchForInputType').val('group');
+  }
+  else if(type == 'timeline'){
+    $('.search_for_form').addClass('hidden');
+    $('#SearchForInputType').val('timeline');
+  }
+});
+
+function Wo_LoadViewsInfo(self) {
+  $('#load_more_info_btn').html('<?php echo $wo['lang']['please_wait'] ?>');
+  var type = $(self).attr('data-type');
+  var table = $(self).attr('table-type');
+  var post_id = $(self).attr('post-id');
+  var id   = $('.views_info_count').last().attr('data-row-id');
+  var request = '';
+  if (type == 'like') {
+    request = 'get_post_likes';
+  }
+  if (type == 'wonder') {
+    request = 'get_post_wonders';
+  }
+  if (type == 'share') {
+    request = 'get_post_shared';
+  }
+  $.get(Wo_Ajax_Requests_File(), {
+    f: 'posts',
+    s: request,
+    type:type,
+    post_id: post_id,
+    offset: id,
+    table:table
+  }, function (data) {
+    if(data.status == 200) {
+      if(data.html.length == 0) {
+        $(self).css('display', 'none');
+      } else {
+        $('#views_info').append(data.html);
+        $('#load_more_info_btn').html('<?php echo $wo['lang']['load_more'] ?>');
+      }
+    }
+    $('#load_more_info_btn').html('<?php echo $wo['lang']['load_more'] ?>');
+  });
+}
+
+function Wo_LoadReactedUsers(type) {
+  var post_id = $('.reacted_users_load_more').attr('post-id');
+  var col = $('.reacted_users_load_more').attr('col-type');
+  $.get(Wo_Ajax_Requests_File(), {
+    f: 'posts',
+    s: 'get_post_reacted',
+    type:type,
+    post_id: post_id,
+    col:col
+  }, function (data) {
+    if(data.status == 200) {
+      if(data.html.length == 0) {
+        $('.reacted_users_load_more').css('display', 'none');
+        $('.reacted_users_load_more').attr('data-type', '');
+        $('#reacted_users_box').html('<div class="empty_state"><svg height="512pt" viewBox="0 0 512 512" width="512pt" xmlns="http://www.w3.org/2000/svg"><path d="m416 512h-320c-53.023438 0-96-42.976562-96-96v-320c0-53.023438 42.976562-96 96-96h320c53.023438 0 96 42.976562 96 96v320c0 53.023438-42.976562 96-96 96zm0 0" fill="#ffe6e2"/><path d="m271.089844 256 64.109375-64.113281c4.160156-4.160157 4.160156-10.910157 0-15.085938-4.160157-4.175781-10.910157-4.160156-15.085938 0l-64.113281 64.109375-64.113281-64.109375c-4.160157-4.160156-10.910157-4.160156-15.085938 0-4.175781 4.160157-4.160156 10.910157 0 15.085938l64.109375 64.113281-64.109375 64.113281c-4.160156 4.160157-4.160156 10.910157 0 15.085938 2.078125 2.082031 4.816407 3.121093 7.535157 3.121093 2.734374 0 5.457031-1.039062 7.535156-3.121093l64.128906-64.109375 64.113281 64.109375c2.078125 2.082031 4.816407 3.121093 7.535157 3.121093s5.457031-1.039062 7.535156-3.121093c4.160156-4.160157 4.160156-10.910157 0-15.085938zm0 0" fill="#fc573b"/></svg>' + data.message + '</div>');
+      } else {
+        $('.reacted_users_load_more').attr('data-type', type);
+        $('.reacted_users_load_more').attr('post-id', post_id);
+        $('.reacted_users_load_more').attr('col-type', col);
+        $('#load_more_reacted_btn').html('<?php echo $wo['lang']['load_more'] ?>');
+        $('.reacted_users_load_more').css('display', 'inline');
+        $('#reacted_users_box').html(data.html);
+      }
+    }
+    //$('#load_more_info_btn').html('<?php echo $wo['lang']['load_more'] ?>');
+  });
+}
+
+function Wo_LoadMoreReactedUsers(self) {
+  $('.reacted_users_load_more').find('#load_more_reacted_btn').html('<?php echo $wo['lang']['please_wait'] ?>');
+  var type = $(self).attr('data-type') || 'all';
+  var post_id = $(self).attr('post-id');
+  var id = $('#reacted_users_box .views_info_count[data-row-id]').last().attr('data-row-id');
+  var col = $('.reacted_users_load_more').attr('col-type') || 'post';
+  var request = 'get_post_reacted';
+  $.get(Wo_Ajax_Requests_File(), {
+    f: 'posts',
+    s: request,
+    type: type,
+    post_id: post_id,
+    offset: id,
+    col: col
+  }, function (data) {
+    if(data.status == 200) {
+      if(!data.html || data.html.trim().length === 0) {
+        $('.reacted_users_load_more, #reacted_users_load').css('display', 'none');
+      } else {
+        $('#reacted_users_box').append(data.html);
+        $('.reacted_users_load_more').find('#load_more_reacted_btn').html('<?php echo $wo['lang']['load_more'] ?>');
+        var newCount = $(data.html).filter('.who_react_to_this_user').length || 0;
+        if (newCount < 20) {
+          $('.reacted_users_load_more, #reacted_users_load').css('display', 'none');
+        }
+      }
+    } else {
+      $('.reacted_users_load_more, #reacted_users_load').css('display', 'none');
+    }
+    $('.reacted_users_load_more').find('#load_more_reacted_btn').html('<?php echo $wo['lang']['load_more'] ?>');
+  });
+}
+
+$(document).on('click', '#users-reacted-modal, #views-info-modal', function(e) {
+  if (e.target === this) {
+    $(this).modal('hide');
+  }
+});
+
+function Wo_SortComments(type,post_id) {
+	if (type == 'top') {
+		$('.order-text-'+post_id).text('<?php echo($wo['lang']['top']) ?>');
+	}
+	else{
+		$('.order-text-'+post_id).text('<?php echo($wo['lang']['latest']) ?>');
+	}
+	main_wrapper = $('#post-' + post_id);
+	$('#post-' + post_id).find('.post-comments .msg_progress').show();
+	$.get(Wo_Ajax_Requests_File(), {
+		f: 'posts',
+		s: 'load_more_comments_sort',
+		post_id: post_id,
+		type: type
+	}, function (data) {
+		if(data.status == 200) {
+			main_wrapper.find('.comments-list').html(data.html);
+			$('#post-' + post_id).find('.post-comments .msg_progress').hide();
+		}
+	});
+}
+
+function count_char(self,id) {
+  <?php if ($wo['config']['maxCharacters'] != 10000) { ?>
+  $(self).limit("<?php echo $wo['config']['maxCharacters']?>", '#charsLeft_'+id);
+  <?php } ?>
+}
+
+function ApplyJobNow(job_id) {
+  $.post(Wo_Ajax_Requests_File()+'?f=job&s=get_apply_modal', {job_id: job_id}, function(data, textStatus, xhr) {
+    if (data.status == 200) {
+      $('#apply-job-modal').html(data.html);
+      $('#apply-job-modal').modal('show');
+    }
+  });
+}
+
+$(document).on('change', '#i_currently_work', function(event) {
+  if ($('#i_currently_work').is(":checked")) {
+    $('#experience_end_date').css('display', 'none');
+  }
+  else{
+    $('#experience_end_date').css('display', 'block');
+  }
+});
+
+
+
+function Wo_GetPaymentMethods(self) {
+  var amount = $('#fund_donate_amount').val();
+  var fund_id = $('#fund_donate_id').val();
+  if (!amount || !fund_id) {
+    $('#fund_donate_amount').attr('style', 'border-color: red !important');
+    return false;
+  }
+  $('#fund_donate_amount').attr('style', 'border-color: unset');
+  $(self).attr('disabled', 'true');
+  $.get(Wo_Ajax_Requests_File() + '?f=funding&s=get_payment_donate_method&fund_id=' + fund_id + '&amount=' + amount, function (data) {
+      if (data.status == 200) {
+          $('#donate_for_fund_modal').html(data.html);
+		  $('#dont_modal').modal('hide');
+          $('#fund_payment_donate_modal').modal({
+           show: true
+          });
+      }
+      else{
+        $('#amount_fund_alert').html('<div class="alert alert-danger">' + data['message'] + '</div>');
+        setTimeout(function (argument) {
+          $('#amount_fund_alert').html('');
+        },2000);
+      }
+      $(self).removeAttr('disabled');
+  });
+}
+
+function Wo_StripeDonate(fund_id,amount,type = 'credit_card') {
+  if (!amount || !fund_id) {
+    return false;
+  }
+
+  if (type == 'credit_card') {
+    $('.btn-cart').attr('disabled', true).text("<?php echo $wo["lang"]["please_wait"]?>");
+  }
+  else{
+    $('.btn-alipay').attr('disabled', true).text("<?php echo $wo["lang"]["please_wait"]?>");
+  }
+  var stripe = Stripe('<?php echo $wo['config']['stripe_id'];?>');
+  $.post(Wo_Ajax_Requests_File() + '?f=stripe&s=session', {amount: amount,type:'fund',fund_id:fund_id,payment_type:type}, function(data, textStatus, xhr) {
+    if (data.status == 200) {
+      return stripe.redirectToCheckout({ sessionId: data.sessionId });
+    }
+  });
+}
+
+function Wo_BankTransferDonate(fund_id,amount) {
+  if (!amount || !fund_id) {
+    return false;
+  }
+
+  $('.bank_payment').attr('disabled', true).text("<?php echo $wo["lang"]["please_wait"]?>");
+
+  $('#configreset').click();
+  $(".prv-img").html('<div class="thumbnail-rendderer"><div><h4 class="bold"><?php echo $wo['lang']['drop_img_here']; ?></h4><div class="error-text-renderer"></div><div><span><?php echo $wo['lang']['or']; ?></span><p><?php echo $wo['lang']['browse_to_upload']; ?></p></div></div> </div>');
+  $("#blog-alert").html('');
+  $('#bank_donate_price').val(amount);
+  $('#bank_donate_fund_id').val(fund_id);
+  $('#pay-go-pro').modal('hide');
+  $('#bank_transfer_donate_modal').modal({
+         show: true
+        });
+}
+
+function Wo_BitcoinDonate(fund_id,amount) {
+  if (!amount || !fund_id) {
+    return false;
+  }
+
+  $('.btn-bitcoin').attr('disabled', true).text("<?php echo $wo["lang"]["please_wait"]?>");
+  $('#pay-go-pro').modal('hide');
+  $.get(Wo_Ajax_Requests_File() + '?f=donate_with_bitcoin&amount=' + amount+"&fund_id="+fund_id, function (data) {
+    if (data.status == 200) {
+      $(data.html).appendTo('body').submit();
+    }
+  });
+}
+
+function openInNewTab(url, id) {
+   var myWindow = window.open(url, "", "width=600,height=700");
+   return false;
+}
+
+function Wo_LiveComment(text,event,post_id,insert = 0) {
+	text = $('[id=post-' + post_id + ']').find('.comment-textarea').val();
+	if (text && (event.keyCode == 13 || insert == 1)) {
+		if ($('#live_post_comments_'+post_id+' .live_comments').length >= 3) {
+			$('#live_post_comments_'+post_id+' .live_comments').first().remove();
+		}
+		$('#live_post_comments_'+post_id).append('<div class="live_comments" live_comment_id=""><a class="<?php echo Wo_RightToLeft('pull-left'); ?>" href="<?php echo($wo['user']['url']) ?>"><img class="avatar" src="<?php echo($wo['user']['avatar']) ?>" alt="avatar"></a><div class="comment-body"><div class="comment-heading"><div class="tag_comm_body"><div><span><a href="<?php echo($wo['user']['url']) ?>" data-ajax="?link1=timeline&amp;u=<?php echo($wo['user']['username']) ?>"><h4 class="user"><?php echo($wo['user']['name']) ?></h4></a></span><?php if ($wo['user']['verified'] == 1) { ?><span class="verified-color" data-toggle="tooltip" title="<?php echo $wo['lang']['verified_user'];?>"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 512 512"><path d="m256 0c-141.164062 0-256 114.835938-256 256s114.835938 256 256 256 256-114.835938 256-256-114.835938-256-256-256zm0 0" fill="#2196f3"></path><path d="m385.75 201.75-138.667969 138.664062c-4.160156 4.160157-9.621093 6.253907-15.082031 6.253907s-10.921875-2.09375-15.082031-6.253907l-69.332031-69.332031c-8.34375-8.339843-8.34375-21.824219 0-30.164062 8.339843-8.34375 21.820312-8.34375 30.164062 0l54.25 54.25 123.585938-123.582031c8.339843-8.34375 21.820312-8.34375 30.164062 0 8.339844 8.339843 8.339844 21.820312 0 30.164062zm0 0" fill="#fff"></path></svg></span><?php } ?></div><div class="valign"><div class="comment-text">'+text+'</div></div></div><div class="clear"></div></div></div><div class="clear"></div></div>');
+	}
+}
+
+function Wo_SharePost(post_id, owner_id, self){
+  if (!post_id || !owner_id || !self) {
+    return false;
+  }
+  $.ajax({
+    url: Wo_Ajax_Requests_File(),
+    type: 'GET',
+    dataType: 'json',
+    data: {f: 'posts',s:'share-post',id:post_id,usr:owner_id},
+  })
+  .done(function(data) {
+    if (data.status == 200) {
+		$("body").snackbar({
+			message: "<?php echo $wo['lang']['post_shared']; ?>"
+		});
+        setTimeout(function(){
+        $('#post-' + post_id).find('.post-share').slideUp('fast')
+      },3000); 
+    }
+  })
+  .fail(function() {
+    console.log("error");
+  })
+}
+
+function Wo_ReplyChatMessage(chat_id,id) {
+	$('.message_reply_id_'+chat_id).val(id);
+	$('.message_reply_text_'+chat_id+' span').find('.reply_content').remove();
+	if ($("#message_text_reply_"+id).length > 0 && $("#message_text_reply_"+id).html() != '') {
+		$('.message_reply_text_'+chat_id+' span').append('<p class="reply_content">'+$("#message_text_reply_"+id).html()+'</p>')
+	} else if ($('#message_media_reply_'+id).length > 0 && $('#message_media_reply_'+id).find('img').length > 0){
+		$('.message_reply_text_'+chat_id+' span').append('<p class="message-user-image reply_content"><img src="'+$('#message_media_reply_'+id).find('img').attr('src')+'" alt="User image"></p>')
+	} else if ($('#message_media_reply_'+id).length > 0 && $('#message_media_reply_'+id).find('video').length > 0){
+		$('.message_reply_text_'+chat_id+' span').append('<p class="reply_content"><?php echo $wo['lang']['video'];?></p>')
+	}
+	$('.message_reply_text_'+chat_id).fadeIn(50);
+}
+function Wo_ClearReplyChatMessage(chat_id) {
+	$('.message_reply_id_'+chat_id).val(0);
+	$('.message_reply_text_'+chat_id).find('.reply_content').remove();
+	$('.message_reply_text_'+chat_id).hide();
+}
+function Wo_ReplyMessage(id) {
+	$('.message_reply_id').val(id);
+	$('.message_reply_text span').find('.reply_content').remove();
+	if ($("#message_text_reply_"+id).length > 0 && $("#message_text_reply_"+id).html() != '') {
+		$('.message_reply_text span').append('<p class="reply_content">'+$("#message_text_reply_"+id).html()+'</p>')
+	} else if($('#message_media_reply_'+id).length > 0 && $('#message_media_reply_'+id).find('img').length > 0){
+		$('.message_reply_text span').append('<p class="message-user-image reply_content"><img src="'+$('#message_media_reply_'+id).find('img').attr('src')+'" alt="User image"></p>')
+	} else if($('#message_media_reply_'+id).length > 0 && $('#message_media_reply_'+id).find('video').length > 0){
+		$('.message_reply_text span').append('<p class="reply_content"><?php echo $wo['lang']['video'];?></p>')
+	}
+	$('.message_reply_text').fadeIn(50);
+}
+function Wo_ClearReplyMessage() {
+	$('.message_reply_id').val(0);
+	$('.message_reply_text').find('.reply_content').remove();
+	$('.message_reply_text').hide();
+}
+
+$(window).on('load', function() {
+  //reactions
+  $('body').delegate('.wo-reaction-post','mouseenter', function() {
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+      if ($('#post-' + id + ' .wo-reaction-post:hover').length != 0) {
+          $('.reactions-box-container-'+id).fadeIn(50);
+      }
+    }, 300);
+  });
+
+  $('body').delegate('.wo-reaction-post','mouseleave', function() {
+    var id = $( this ).attr( 'data-id' );
+      setTimeout( function () {
+      if ($('.reactions-box-container-'+id + ':hover').length == 0 && $('#post-' + id + ' .wo-reaction-post:hover').length == 0) {
+          $('.reactions-box-container-'+id).fadeOut(50);
+      }
+    }, 500);
+  });
+
+  $('body').delegate('.like-btn-post','click', function() {
+    if ($( this ).attr( 'data_react' ) == 0) {
+      return false;
+    }
+    var self = this;
+    var post_id = $( this ).attr( 'data-id' );
+   
+    $.get(Wo_Ajax_Requests_File(), {f: 'posts', s: 'delete_reaction', post_id: post_id}, function (data) {
+      if(data.status == 200) {
+        <?php if ($wo['config']['node_socket_flow'] == 1) { ?>
+        socket.emit("post_notification", { post_id: post_id, user_id: _getCookie("user_id"), type: "removed" });
+        <?php } ?>
+        $('.reactions-box-container-'+post_id).toggle();
+        $('.post-reactions-icons-'+post_id).html(data.reactions);
+        $('.status-reaction-'+post_id).removeClass("active-like");
+        $('.status-reaction-'+post_id).html('<svg xmlns="http://www.w3.org/2000/svg" width="58.553" height="58.266" viewBox="0 0 58.553 58.266"> <path d="M-7080.317,1279.764l-26.729-1.173a1.657,1.657,0,0,1-1.55-1.717l1.11-33.374a4.112,4.112,0,0,1,2.361-3.6l.014-.005a13.62,13.62,0,0,1,1.978-.363h.007a9.007,9.007,0,0,0,3.249-.771c2.645-1.845,3.973-4.658,5.259-7.378l.005-.013.031-.061.059-.13.012-.023c.272-.576.61-1.289.944-1.929l0-.007c.576-1.105,2.327-4.46,4.406-5.107a2.3,2.3,0,0,1,.59-.105c.036,0,.072,0,.109,0a2.55,2.55,0,0,1,1.212.324c2.941,1.554,1.212,7.451.561,9.672a38.306,38.306,0,0,1-3.7,8.454l-.71,1.218,18.363.808a3.916,3.916,0,0,1,3.784,3.735,3.783,3.783,0,0,1-1.123,2.834,3.629,3.629,0,0,1-2.559,1.055c-.046,0-.1,0-.145,0h-.027l-2.141-.093-9.331-.41-.075,1.7,9.333.408a3.721,3.721,0,0,1,2.666,1.3,3.855,3.855,0,0,1,.936,2.934,3.779,3.779,0,0,1-3.821,3.38c-.061,0-.122,0-.181-.005l-1.974-.082-8.9-.392-.075,1.7,8.9.39a3.723,3.723,0,0,1,2.666,1.3,3.86,3.86,0,0,1,.937,2.933,3.784,3.784,0,0,1-3.827,3.381c-.057,0-.118,0-.177,0l-1.976-.088-8.472-.372-.075,1.7,8.474.372a3.726,3.726,0,0,1,2.666,1.3,3.857,3.857,0,0,1,.935,2.933,3.782,3.782,0,0,1-3.827,3.381C-7080.2,1279.765-7080.26,1279.765-7080.317,1279.764Zm-38.4,0-.089,0a6.558,6.558,0,0,1-6.193-6.8l.907-27.293a6.446,6.446,0,0,1,2.074-4.553,6.214,6.214,0,0,1,3.954-1.672c.081,0,.17-.005.29-.005s.212,0,.292.005a6.561,6.561,0,0,1,6.192,6.8l-.907,27.293a6.441,6.441,0,0,1-2.072,4.547,6.249,6.249,0,0,1-4.261,1.681Z" transform="translate(7126.251 -1222.75)" fill="none" stroke="currentColor" stroke-width="2.5"></path> </svg> ' + data.like_lang).css({"color": "inherit"});
+      }
+      $(self).attr('data_react','0');
+    });
+  });
+  
+   $('body').delegate('.reactions-box','mouseleave', function() {
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+      if ($('.reactions-box-container-'+id + ':hover').length == 0 && $('#post-' + id + ' .wo-reaction-post:hover').length == 0) {
+          $('.reactions-box-container-'+id).fadeOut(50);
+      }
+    }, 500);
+  });
+
+  //reactions lightbox
+  $('body').delegate('.wo-reaction-lightbox','mouseenter', function() {
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+      if ($('#post-' + id + ' .wo-reaction-lightbox:hover').length != 0) {
+        $('.reactions-lightbox-container-'+id).fadeIn(50);
+      }
+    }, 500);
+  });
+
+  $('body').delegate('.wo-reaction-lightbox','mouseleave', function() {
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+      if ($('.reactions-lightbox-container-'+id + ':hover').length == 0 && $('#post-' + id + ' .wo-reaction-lightbox:hover').length == 0) {
+          $('.reactions-lightbox-container-'+id).fadeOut(50);
+      }
+    }, 500);
+  });
+
+  $('body').delegate('.like-btn-lightbox','click', function() {
+    var post_id = $( this ).attr( 'data-id' );
+   
+    $.get(Wo_Ajax_Requests_File(), {f: 'posts', s: 'delete_reaction', post_id: post_id}, function (data) {
+      if(data.status == 200) {
+         <?php if ($wo['config']['node_socket_flow'] == 1) { ?>
+        socket.emit("post_notification", { post_id: post_id, user_id: _getCookie("user_id"), type: "removed" });
+        <?php } ?>
+        $('.reactions-lightbox-container-'+post_id).toggle();
+        $('.post-reactions-icons-'+post_id).html("");
+        $('.status-reaction-'+post_id).removeClass("active-like");
+        $('.status-reaction-'+post_id).html('<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M4 21h1V8H4c-1.104 0-2 .896-2 2v9C2 20.104 2.896 21 4 21zM20 8h-7l1.122-3.368C14.554 3.337 13.59 2 12.225 2H12L7 7.438V21h11l3.912-8.596C21.937 12.291 21.976 12.114 22 12v-2C22 8.896 21.104 8 20 8z"></path></svg> ' + data.like_lang).css({"color": "inherit"});
+      }
+    });
+  });
+
+  //reactions comment
+  $('body').delegate('.like-btn-comment','mouseenter', function() {
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+        $('.reactions-comment-container-'+id).fadeIn(50);
+    }, 500);
+  });
+
+  $('body').delegate('.like-btn-comment','mouseleave', function() {
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+      if( $('.reactions-comment-container-'+id+':hover').length == 0 && $('#comment-' + id + ' .wo-reaction-comment:hover').length == 0 ){
+        $('.reactions-comment-container-'+id).fadeOut(50);
+      }
+    }, 500);
+  });
+
+  $('body').delegate('.reactions-box','mouseleave', function() {
+    if( !$( this ).hasClass( 'reactions-comment-container-' + $( this ).attr( 'data-id' ) ) ){
+      return false;
+    }
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+        $('.reactions-comment-container-'+id).fadeOut(50);
+    }, 500);
+  });
+  
+  $('body').delegate('.like-btn-comment','click', function() {
+    var comment_id = $( this ).attr( 'data-id' );
+    
+    $.get(Wo_Ajax_Requests_File(), {f: 'posts', s: 'delete_comment_reaction', comment_id: comment_id}, function (data) {
+      if(data.status == 200) {
+        <?php if ($wo['config']['node_socket_flow'] == 1) { ?>
+        socket.emit("comment_notification", { comment_id: comment_id, user_id: _getCookie("user_id"), type: "removed" });
+        <?php } ?>
+        $('.reactions-comment-container-'+comment_id).toggle();
+        $('.comment-reactions-icons-'+comment_id).html(data.reactions);
+        $('.comment-status-reaction-'+comment_id).removeClass("active-like");
+      }
+    });
+  });
+  
+  //reactions replay
+  $('body').delegate('.like-btn-replay','mouseenter', function() {
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+        $('.reactions-box-comment-replay-container-'+id).fadeIn(50);
+    }, 500);
+  });
+  $('body').delegate('.reactions-box','mouseenter', function() {
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+        $('.reactions-box-comment-replay-container-'+id).fadeIn(50);
+    }, 500);
+  });
+
+  $('body').delegate('.like-btn-replay','mouseleave', function() {
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+      if( $('.reactions-comment-replay-container-'+id+':hover').length == 0 && $('#comment_reply_' + id + ' .wo-reaction-replay:hover').length == 0 ){
+        $('.reactions-box-comment-replay-container-'+id).fadeOut(50);
+      }
+    }, 500);
+  });
+
+  $('body').delegate('.reactions-box','mouseleave', function() {
+    if( !$( this ).hasClass( 'reactions-box-comment-replay-container-' + $( this ).attr( 'data-id' ) ) ){
+      return false;
+    }
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+        $('.reactions-box-comment-replay-container-'+id).fadeOut(50);
+    }, 500);
+  });
+
+  $('body').delegate('.like-btn-replay','click', function() {
+    var replay_id = $( this ).attr( 'data-id' );
+    
+    $.get(Wo_Ajax_Requests_File(), {f: 'posts', s: 'delete_replay_reaction', replay_id: replay_id}, function (data) {
+      if(data.status == 200) {
+        if (node_socket_flow == "1") {
+          socket.emit("reply_notification", { reply_id: replay_id, user_id: _getCookie("user_id"), type: "removed" });
+        }
+        $('.reactions-box-comment-replay-container-'+replay_id).toggle();
+        $('.replay-reactions-icons-'+replay_id).html(data.reactions);
+        $('.replay-status-reaction-'+replay_id).removeClass("active-like");
+      }
+    });
+  });
+
+
+  //reactions comment lightbox
+  $('body').delegate('.like-btn-lightbox-comment','mouseenter', function() {
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+        $('.reactions-lightbox-comment-container-'+id).fadeIn(50);
+    }, 500);
+  });
+
+  $('body').delegate('.like-btn-lightbox-comment','mouseleave', function() {
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+      if( $('.reactions-lightbox-comment-container-'+id+':hover').length == 0 && $('#comment_' + id + ' .wo-reaction-lightbox-comment:hover').length == 0 ){
+        $('.reactions-lightbox-comment-container-'+id).fadeOut(50);
+      }
+    }, 500);
+  });
+  
+  $('body').delegate('.reactions-box','mouseleave', function() {
+    if( !$( this ).hasClass( 'reactions-lightbox-comment-container-' + $( this ).attr( 'data-id' ) ) ){
+      return false;
+    }
+    var id = $( this ).attr( 'data-id' );
+    setTimeout( function () {
+        $('.reactions-lightbox-comment-container-'+id).fadeOut(50);
+    }, 500);
+  });
+
+  $('body').delegate('.like-btn-lightbox-comment','click', function() {
+    var comment_id = $( this ).attr( 'data-id' );
+    
+    $.get(Wo_Ajax_Requests_File(), {f: 'posts', s: 'delete_comment_reaction', comment_id: comment_id}, function (data) {
+      if(data.status == 200) {
+        <?php if ($wo['config']['node_socket_flow'] == 1) { ?>
+    socket.emit("comment_notification", { comment_id: comment_id, user_id: _getCookie("user_id"), type: "removed" });
+    <?php } ?>
+        $('.reactions-box-comment-replay-container-'+comment_id).toggle();
+        $('.lightbox-comment-reactions-icons-'+comment_id).html(data.reactions);
+        $('.lightbox-comment-status-reaction-'+comment_id).removeClass("active-like");
+      }
+    });
+  });
+
+});
+
+function ProcessingVideo(id) {
+  $.get(Wo_Ajax_Requests_File(), {f: 'posts', s: 'processing_video', post_id: id}, function (data) {
+    $('.processing_alert_'+id).remove();
+  });
+}
+function SendSeen(recipient_id) {
+  var chat_container = $('.chat-tab').find('.chat_main_'+recipient_id);
+  var last_id = chat_container.find('.messages-text:last').attr('data-message-id');
+    <?php if ($wo['config']['node_socket_flow'] == "1"){ ?>
+      socket.emit("seen_messages", {user_id: _getCookie("user_id"), recipient_id: recipient_id,message_id: last_id}, (data)=>{})
+    <?php }else{ ?>
+      $.post( Wo_Ajax_Requests_File() + '?f=chat&s=seen&hash=' + $('.main_session').val(), {recipient_id: recipient_id}, function(data, textStatus, xhr) {});
+    <?php } ?>
+}
+
+function AddProductToCart(self,id,type) {
+  // if (type == 'add') {
+  //   $(self).text("<?php echo $wo['lang']['remove_from_cart'] ?>");
+  //   $(self).attr('onclick', "AddProductToCart(this,'"+id+"','remove')");
+  // }
+  // else{
+  //   $(self).text("<?php echo $wo['lang']['add_to_cart'] ?>");
+  //   $(self).attr('onclick', "AddProductToCart(this,'"+id+"','add')");
+  // }
+  qty = 1;
+  if ($('#cart_product_qty').length > 0) {
+    qty = $('#cart_product_qty').val();
+  }
+  $.post(Wo_Ajax_Requests_File() + '?f=products&s=add_cart&hash=' + $('.main_session').val(), {product_id: id,qty:qty}, function(data, textStatus, xhr) {
+    if (data.status == 200) {
+      LoadCheckout();
+    }
+  });
+}
+function ChangeQty(self,product_id) {
+  qty = $(self).val();
+  $.post(Wo_Ajax_Requests_File() + '?f=products&s=change_qty&hash=' + $('.main_session').val(), {product_id: product_id,qty: qty}, function(data, textStatus, xhr) {
+    LoadCheckout();
+  });
+}
+function LoadCheckout() {
+  $('#load_checkout').click();
+}
+function RemoveProductFromCart(id) {
+  // $('#cart_product_'+id).remove();
+  // $('#checkout_product_'+id).remove();
+  $.post(Wo_Ajax_Requests_File() + '?f=products&s=remove_cart&hash=' + $('.main_session').val(), {product_id: id}, function(data, textStatus, xhr) {
+    // if (data.status == 200) {
+    //   $('.unread_cart_count').html(data.count);
+    // }
+  });
+}
+function NewAddress() {
+  $('.modal_add_address_modal_alert').empty();
+  $("#add_address_modal").find('.btn-main').removeAttr('disabled')
+  $("#add_address_modal").find('.btn-main').text("<?php echo $wo['lang']['add'] ?>");
+  $('#add_address_modal').modal('show');
+}
+$(document).ready(function() { 
+    var options = { 
+      url: Wo_Ajax_Requests_File() + '?f=address&s=add&hash=' + $('.main_session').val(),
+        beforeSubmit:  function () {
+          $('.modal_add_address_modal_alert').empty();
+          $("#add_address_modal").find('.btn-main').attr('disabled', 'true');
+          $("#add_address_modal").find('.btn-main').text("<?php echo($wo['lang']['please_wait']) ?>");
+        }, 
+        success: function (data) {
+          $("#add_address_modal").find('.btn-main').text("<?php echo $wo['lang']['add'] ?>");
+          $("#add_address_modal").find('.btn-main').removeAttr('disabled')
+          if (data.status == 200) {
+            $('.modal_add_address_modal_alert').html('<div class="alert alert-success">'+
+              data.message
+              +'</div>');
+              if (data.url && data.url != '') {
+                if ($('#setting_address_page').length > 0) {
+                  setTimeout(function () {
+                    location.href = data.url;
+                  },2000);
+                }
+                else{
+                  setTimeout(function () {
+                    $('.modal_add_address_modal_alert').empty();
+              $("#add_address_modal").find('.btn-main').removeAttr('disabled')
+              $("#add_address_modal").find('.btn-main').text("<?php echo $wo['lang']['add'] ?>");
+              $('#add_address_modal').modal('hide');
+              $('#load_checkout').click();
+                  },2000);
+                }
+              }
+          } else {
+            $('.modal_add_address_modal_alert').html('<div class="alert alert-danger"> '+
+            data.message
+            +'</div>');
+          } 
+        }
+    }; 
+    $('.address_form').ajaxForm(options); 
+});
+
+function NewMonetization() {
+	$('.modal_add_monetization_modal_alert').empty();
+	$("#add_monetization_modal").find('.btn-mat').removeAttr('disabled')
+	$("#add_monetization_modal").find('.btn-mat').text("<?php echo $wo['lang']['add'] ?>");
+	$('#add_monetization_modal').modal('show');
+}
+  
+$(document).ready(function() {
+	var options = {
+		  url: Wo_Ajax_Requests_File() + '?f=monetization&s=add&hash=' + $('.main_session').val(),
+		  beforeSubmit:  function () {
+			  $('.modal_add_monetization_modal_alert').empty();
+			  $("#add_monetization_modal").find('.btn-mat').attr('disabled', 'true');
+			  $("#add_monetization_modal").find('.btn-mat').text("<?php echo($wo['lang']['please_wait']) ?>");
+		  },
+		  success: function (data) {
+			  $("#add_monetization_modal").find('.btn-mat').text("<?php echo $wo['lang']['add'] ?>");
+			  $("#add_monetization_modal").find('.btn-mat').removeAttr('disabled')
+			  if (data.status == 200) {
+				  $('.modal_add_monetization_modal_alert').html('<div class="alert alert-success">'+
+					  data.message
+					  +'</div>');
+				  if (data.url && data.url != '') {
+						  setTimeout(function () {
+							  location.href = data.url;
+						  },2000);
+				  }
+			  } else {
+				  $('.modal_add_monetization_modal_alert').html('<div class="alert alert-danger">'+
+					  data.message
+					  +'</div>');
+			  }
+		  }
+	};
+	$('.monetization_form').ajaxForm(options);
+});
+  
+function BuyProducts(type = 'show',price) {
+  if ($('.payment_address').length < 1) {
+    $('.checkout_alert').html("<div class='alert alert-danger'><?php echo($wo['lang']['please_add_address']); ?></div>");
+    return false;
+  }
+  if ($('input[name=choose-address]:checked').length < 1) {
+    $('.checkout_alert').html("<div class='alert alert-danger'><?php echo($wo['lang']['please_select_address']); ?></div>");
+    return false;
+  }
+  address_id = $('input[name=choose-address]:checked').val();
+  if (type == 'hide') {
+		$('#buy_product_modal').find('.btn-main').html("<?php echo $wo['lang']['pay'].' '.$wo['config']['currency_symbol_array'][$wo['config']['currency']]; ?>"+price);
+        $('#buy_product_modal').find('.btn-main').attr('onclick', "BuyProducts('show','"+price+"')");
+        $('#buy_product_modal').modal('show');
+        return false;
+    }
+    $('#buy_product_modal').find('.btn-main').html("<?php echo($wo['lang']['please_wait']) ?>");
+    $('#buy_product_modal').find('.btn-main').attr('disabled', "true");
+  $.post(Wo_Ajax_Requests_File() + '?f=products&s=buy&hash=' + $('.main_session').val(),{address_id: address_id}, function(data, textStatus, xhr) {
+    $('#buy_product_modal').find('.btn-main').removeAttr('disabled');
+    $('#buy_product_modal').find('.btn-main').text("<?php echo $wo['lang']['pay'].' '.$wo['config']['classified_currency_s']; ?>"+price);
+    if (data.status == 200) {
+      <?php if ($wo['config']['node_socket_flow'] == 1) { ?>
+        socket.emit("checkout_notification", {user_id: _getCookie("user_id"), type: "added",users: data.users });
+      <?php } ?>
+      $('#buy_product_modal').find('.modal_product_pay_alert').html("<div class='alert alert-success'><i class='fa fa-check'></i> "+data.message+"</div>");
+      setTimeout(function () {
+        $('#buy_product_modal').find('.modal_product_pay_alert').html("");
+        location.href = "<?php echo $wo['config']['site_url'];?>/purchased";
+      },2000);
+    }
+    else{
+      $('#buy_product_modal').find('.modal_product_pay_alert').html("<div class='alert alert-danger'><i class='fa fa-info-circle'></i> "+data.message+"</div>");
+    }
+  });
+}
+function DownloadPurchased(id,type = 'order') {
+  if (type == 'order') {
+    url = '?f=products&s=download&hash=' + $('.main_session').val();
+  }
+  $.post(Wo_Ajax_Requests_File() + url,{id,id}, function(data, textStatus, xhr) {
+    $('body').append(data.html);
+    setTimeout(function () {
+      $('.ticket_card_'+id).remove();
+    },10000);
+  });
+}
+function ChangeStatus(self,hash_id) {
+  status = $(self).val();
+  $.post(Wo_Ajax_Requests_File() + '?f=products&s=change_status&hash=' + $('.main_session').val(), {hash_order: hash_id,status: status}, function(data, textStatus, xhr) {
+    if (data.status == 200) {
+      <?php if ($wo['config']['node_socket_flow'] == 1) { ?>
+          socket.emit("main_notification", {user_id: _getCookie("user_id"), type: "added",to_id: data.recipient_id });
+      <?php } ?>
+    }
+    $('#load_order').click();
+  });
+}
+function RefundOrder(hash_id,type = 'show') {
+  if (type == 'hide') {
+        $('#refund_order').find('.get_refnd').attr('onclick', "RefundOrder('"+hash_id+"')");
+        $('#refund_order').modal('show');
+        return false;
+    }
+    $('#refund_order').find('.get_refnd').html("<?php echo($wo['lang']['please_wait']) ?>");
+    $('#refund_order').find('.get_refnd').attr('disabled', "true");
+    message = $('#refund_order_message').val();
+    $.post(Wo_Ajax_Requests_File() + '?f=products&s=refund&hash=' + $('.main_session').val(), {hash_order: hash_id,message: message}, function(data, textStatus, xhr) {
+      $('#refund_order').find('.get_refnd').removeAttr('disabled');
+    $('#refund_order').find('.get_refnd').text("<?php echo($wo['lang']['request']) ?>");
+    if (data.status == 200) {
+      $('#refund_order').find('.modal_refund_order_modal_alert').html("<div class='alert alert-success'><i class='fa fa-check'></i> "+data.message+"</div>");
+      setTimeout(function () {
+        $('#refund_order').modal('hide');
+              $('#refund_order').find('.modal_refund_order_modal_alert').html("");
+              $('#load_order').click();
+            },2000);
+    }
+    else{
+      $('#refund_order').find('.modal_refund_order_modal_alert').html("<div class='alert alert-danger'><i class='fa fa-info-circle'></i> "+data.message+"</div>");
+    }
+  });
+}
+function OpenWriteReview(product_id) {
+  $('#write_product_review_product_id').val(product_id)
+  $('#write_product_review').modal('show');
+}
+function Wo_LoadPurchase(){
+  $.post(Wo_Ajax_Requests_File() + '?f=products&s=load_purchase&hash=' + $('.main_session').val(), {id: $("[data-purchase-id]:last").attr('data-purchase-id')}, function(data, textStatus, xhr) {
+    if (data.status == 200) {
+      $('.purchased_table').find('tbody').append(data.html);
+    }
+    else{
+      $('.purchased_posts_load').remove();
+    }
+  });
+}
+function Wo_LoadOrders(){
+  $.post(Wo_Ajax_Requests_File() + '?f=products&s=load_orders&hash=' + $('.main_session').val(), {id: $("[data-orders-id]:last").attr('data-orders-id')}, function(data, textStatus, xhr) {
+    if (data.status == 200) {
+      $('.orders_table').find('tbody').append(data.html);
+    }
+    else{
+      $('.orders_posts_load').remove();
+    }
+  });
+}
+function Wo_LoadReviews(){
+  $('#show_product_reviews_load_text').html("<?php echo($wo['lang']['please_wait']) ?>");
+  $.post(Wo_Ajax_Requests_File() + '?f=products&s=load_reviews&hash=' + $('.main_session').val(), {id: $(".review_list:last").attr('id'),product_id: $(".review_list:last").attr('product_id')}, function(data, textStatus, xhr) {
+    $('#show_product_reviews_load_text').html("<?php echo($wo['lang']['load_more']) ?>");
+    if (data.status == 200) {
+      $('#show_product_reviews_modal_info').append(data.html);
+    }
+    else{
+      $('#show_product_reviews_modal_info_load').slideUp();
+    }
+  });
+}
+function Wo_GetPaymentLink(type,price,type2 = 'pro',type3 = 'show') {
+  if (type3 == 'hide') {
+    $('.pay_modal_wallet_text').html('');
+    $('.pay_modal_wallet_alert').html('');
+    if (type2 == 'pro') {
+      $('.pay_modal_wallet_text').html("<?php echo $wo['lang']['pay_to_upgrade']; ?>");
+    }
+    else if(type2 == 'fund'){
+      price = $('#fund_donate_amount').val();
+      type = $('#fund_donate_id').val();
+      $('.pay_modal_wallet_text').html("<?php echo $wo['lang']['pay_to_fund']; ?>");
+      $('#dont_modal').modal('hide');
+    }
+    $('#pay_modal_wallet_btn').attr('onclick', "Wo_GetPaymentLink('"+type+"','"+price+"','"+type2+"')");
+    if (parseInt(<?php echo $wo['user']['wallet'] ?>) < parseInt(price) ) {
+      $('.pay_modal_wallet_alert').html("<div class='alert alert-danger'><a href='<?php echo $wo['config']['site_url'];?>/wallet'><?php echo $wo["lang"]["please_top_up_wallet"]?></a></div>");
+      $('#pay_modal_wallet_btn').html("<?php echo $wo['lang']['pay']; ?> <?php echo Wo_GetCurrency($wo['config']['currency']);?>"+price).attr('disabled',true);
+      $('.pay_modal_wallet_text').html("");
+      $('#pay-go-pro').modal({
+              show: true
+          });
+    }
+    else{
+      $('#pay_modal_wallet_btn').html("<?php echo $wo['lang']['pay']; ?> <?php echo Wo_GetCurrency($wo['config']['currency']);?>"+price).removeAttr('disabled');
+      $('#pay-go-pro').modal({
+              show: true
+          });
+    }
+  }
+  else{
+    $('#pay_modal_wallet_btn').html("<?php echo($wo['lang']['please_wait']) ?>");
+    $('#pay_modal_wallet_btn').attr('disabled','true');
+    link = '';
+    if (type2 == 'pro') {
+      link = '&pro_type=' + type+'&price='+price+'&type='+type2;
+    }
+    else if(type2 == 'fund'){
+      link = '&fund_id=' + type+'&price='+price+'&type='+type2;
+    }
+    $.get(Wo_Ajax_Requests_File() + '?f=wallet&s=pay'+link, function (data) {
+      $('#pay_modal_wallet_btn').html("<?php echo $wo['lang']['pay']; ?> <?php echo Wo_GetCurrency($wo['config']['currency']);?>"+price);
+          if (data.status == 200) {
+            $('.pay_modal_wallet_alert').html("<div class='alert alert-success'><?php echo $wo['lang']['payment_successfully_done']; ?></div>");
+            setTimeout( function (){
+              location.href = data.url;
+            } ,3000);
+          }
+          else{
+			$('#pay_modal_wallet_btn').removeAttr('disabled');
+            $('.pay_modal_wallet_alert').html("<div class='alert alert-danger'>"+data.message+"</div>");
+          }
+      });
+  }
+}
+// register comment like
+function Wo_RegisterCommentLike(comment_id) {
+  var comment = $('[id=comment_' + comment_id + ']');
+  comment_text = comment.find('div.comment-text').text();
+  Wo_progressIconLoader(comment.find('#LikeComment'));
+  $.post(Wo_Ajax_Requests_File() + '?f=posts&s=register_comment_like', {
+    comment_id: comment_id,
+    comment_text: comment_text
+  }, function (data) {
+    if(data.status == 200) {
+      if (node_socket_flow == "1") {
+        socket.emit("comment_notification", { comment_id: comment_id, user_id: _getCookie("user_id"), type: "added" });
+      }
+      <?php if ($wo['config']['website_mode'] != 'twitter' && $wo['config']['website_mode'] != 'instagram' && $wo['config']['website_mode'] != 'askfm') { ?>
+      if (data.dislike == 1) {
+          comment.find("#comment-wonders").text(data.wonders_c);
+          comment.find("#WonderComment").html('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-thumbs-down"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>');
+      }
+      <?php } ?>
+
+	comment.find("#LikeComment").html("<?php echo GetModeBtn('liked_comment'); ?>").fadeIn(150);
+      comment.find("#comment-likes").text(data.likes);
+    } else {
+      if (node_socket_flow == "1") {
+        socket.emit("comment_notification", { comment_id: comment_id, user_id: _getCookie("user_id"), type: "removed" });
+      }
+
+	comment.find("#LikeComment").html("<?php echo GetModeBtn('like_comment'); ?>").fadeIn(150);
+      comment.find("#comment-likes").text(data.likes);
+    }
+  });
+}
+
+<?php if ($wo['config']['website_mode'] == 'linkedin') { ?>
+function OpenToModal(self){
+  $('#finding_a_job_modal').modal('hide');
+  $('#providing_services_modal').modal('hide');
+  $('#create_hiring_modal').modal('hide');
+
+  if (self == '#finding_a_job_modal') {
+    $('#finding_a_job_modal').modal('show');
+  }
+  else if(self == '#providing_services_modal'){
+    $('#providing_services_modal').modal('show');
+    $('#providing_services_input').tagsinput({});
+  }
+  else if(self == '#create_hiring_modal'){
+    $('#create_hiring_modal').modal('show');
+  }
+}
+<?php } ?>
+function SubmitAjaxForm(name){
+  $(name).submit();
+}
+function Wo_LoadMoreApplyJobs(){
+    var after_id = ($(".job_apply").length > 0) ? $(".job_apply").last().attr('data-job-apply') : 0;
+    var job_id = $('.apply_job_info').attr('data_apply_job');
+    if (!after_id) { return false;}
+    Wo_progressIconLoader($('#load_more_nearby_users'));
+    $.ajax({
+      url: Wo_Ajax_Requests_File(),
+      type: 'GET',
+      dataType: 'json',
+      data: {
+        f:'job',
+        s:'load',
+        offset:after_id,
+        job_id:job_id
+      },
+    })
+    .done(function(data) {
+
+          if (data['status'] == 200){
+            $(".apply_job_container").append(data.html);
+            $("[data-toggle]").tooltip();
+            $("#load_more_nearby_users").html('<span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg></span> <?php echo $wo['lang']['load_more']; ?>');
+            
+          } 
+          else{
+            $("#load_more_nearby_users").html('<?php echo $wo['lang']['no_result']; ?>');
+          } 
+    })
+    .fail(function() {
+      console.log("error");
+    })
+  }
+  var create_bar = $('.create-product-bar');
+  var create_percent = $('.create-product-percent');
+
+  $('form.edit-job-form').ajaxForm({
+      url: Wo_Ajax_Requests_File() + '?f=job&s=edit_job',
+      beforeSend: function() {
+       var percentVal = '0%';
+       create_bar.width(percentVal);
+       create_percent.html(percentVal);
+       
+       
+        $('.edit-job-form').find('.last-sett-btn .ball-pulse').fadeIn(100);
+      },
+      uploadProgress: function (event, position, total, percentComplete) {
+         var percentVal = percentComplete + '%';
+         create_bar.width(percentVal);
+         $('.edit-job-form').find('.create-product-progress').slideDown(200);
+         create_percent.html(percentVal);
+      },
+      success: function(data) {
+       if (data.status == 200) {
+         $('.edit-job-form').find('.app-general-alert').html("<div class='alert alert-success'><?php echo($wo['lang']['job_successfully_edited']) ?></div>");
+           $('.edit-job-form').find('.alert-success').fadeIn(300);
+           setTimeout(function (argument) {
+            $('.edit-job-form').find('.alert-success').fadeOut(300);
+            window.location.reload(true);
+
+           },3000);
+       } else {
+        $('.edit-job-form').find('#create-job-modal').animate({
+          scrollTop: $('html, body').offset().top //#DIV_ID is an example. Use the id of your destination on the page
+      });
+           $('.edit-job-form').find('.app-general-alert').html('<div class="alert alert-danger">' + data.error + '</div>');
+           $('.edit-job-form').find('.alert-danger').fadeIn(300);
+           setTimeout(function (argument) {
+            $('.edit-job-form').find('.alert-danger').fadeOut(300);
+
+           },3000);
+       }
+       $('.edit-job-form').find('.last-sett-btn .ball-pulse').fadeOut(100);
+      }
+  });
+  // update post privacy
+function Wo_UpdatePostPrivacy(post_id, privacy_type, event) {
+  var post = $('#post-' + post_id);
+  event.preventDefault();
+  var post_privacy_container = post.find('.post-privacy');
+  Wo_progressIconLoader(post_privacy_container);
+  post.find('.wo_post_privacy_menu .dropdown-toggle').dropdown('toggle');
+  $.get(Wo_Ajax_Requests_File(), {
+    f: 'posts',
+    s: 'update_post_privacy',
+    post_id: post_id,
+    privacy_type: privacy_type
+  }, function (data) {
+    if(data.status == 200) {
+		
+      if(data.privacy_type == 0) {
+        post_privacy_container.html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" opacity=".8"><path fill="currentColor" d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"></path></svg>');
+      } else if(data.privacy_type == 1) {
+        post_privacy_container.html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" opacity=".8"><path fill="currentColor" d="M16,13C15.71,13 15.38,13 15.03,13.05C16.19,13.89 17,15 17,16.5V19H23V16.5C23,14.17 18.33,13 16,13M8,13C5.67,13 1,14.17 1,16.5V19H15V16.5C15,14.17 10.33,13 8,13M8,11A3,3 0 0,0 11,8A3,3 0 0,0 8,5A3,3 0 0,0 5,8A3,3 0 0,0 8,11M16,11A3,3 0 0,0 19,8A3,3 0 0,0 16,5A3,3 0 0,0 13,8A3,3 0 0,0 16,11Z"></path></svg>');
+      } else if(data.privacy_type == 2) {
+        post_privacy_container.html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" opacity=".8"><path fill="currentColor" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"></path></svg>');
+      } else if(data.privacy_type == 3) {
+        post_privacy_container.html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" opacity=".8"><path fill="currentColor" d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"></path></svg>');
+      } else if(data.privacy_type == 4) {
+        post_privacy_container.html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" opacity=".8"><path fill="currentColor" d="M12,3C9.31,3 7.41,4.22 7.41,4.22L6,9H18L16.59,4.22C16.59,4.22 14.69,3 12,3M12,11C9.27,11 5.39,11.54 5.13,11.59C4.09,11.87 3.25,12.15 2.59,12.41C1.58,12.75 1,13 1,13H23C23,13 22.42,12.75 21.41,12.41C20.75,12.15 19.89,11.87 18.84,11.59C18.84,11.59 14.82,11 12,11M7.5,14A3.5,3.5 0 0,0 4,17.5A3.5,3.5 0 0,0 7.5,21A3.5,3.5 0 0,0 11,17.5C11,17.34 11,17.18 10.97,17.03C11.29,16.96 11.63,16.9 12,16.91C12.37,16.91 12.71,16.96 13.03,17.03C13,17.18 13,17.34 13,17.5A3.5,3.5 0 0,0 16.5,21A3.5,3.5 0 0,0 20,17.5A3.5,3.5 0 0,0 16.5,14C15.03,14 13.77,14.9 13.25,16.19C12.93,16.09 12.55,16 12,16C11.45,16 11.07,16.09 10.75,16.19C10.23,14.9 8.97,14 7.5,14M7.5,15A2.5,2.5 0 0,1 10,17.5A2.5,2.5 0 0,1 7.5,20A2.5,2.5 0 0,1 5,17.5A2.5,2.5 0 0,1 7.5,15M16.5,15A2.5,2.5 0 0,1 19,17.5A2.5,2.5 0 0,1 16.5,20A2.5,2.5 0 0,1 14,17.5A2.5,2.5 0 0,1 16.5,15Z"></path></svg>');
+      } else if(data.privacy_type == 5) {
+        <?php if ($wo['config']['website_mode'] == 'linkedin') { ?>
+          post_privacy_container.html('<svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16" opacity=".8" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>');
+        <?php } ?>
+	  } else if(data.privacy_type == 6) {
+        <?php if ($wo['config']['monetization'] == 1) { ?>
+          post_privacy_container.html('<svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" opacity=".8"><path fill="currentColor" d="M880-720v480q0 33-23.5 56.5T800-160H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-720 80h640v-80H160v80Zm0 160v240h640v-240H160Zm0 240v-480 480Z"></path></svg>');
+        <?php } ?>
+      } else {
+        return false;
+      }
+    }
+  });
+}
+function SearchSkill(word){
+  $.post(Wo_Ajax_Requests_File()+"?f=get_skills", {
+    word: word
+  }, function (data) {
+    if (data.status == 200 && data.html != '') {
+      $('.skills_result').html(data.html);
+    }
+    else{
+      $('.skills_result').html('');
+    }
+  });
+}
+function AddToSkill(self){
+  setTimeout(function(){
+    $($('.skills_div .bootstrap-tagsinput .label-info span')[$('.skills_div .bootstrap-tagsinput .label-info span').length - 1]).click();
+    $('.skills_result').html('');
+    $('#skills').tagsinput('add', $(self).text());
+  }, 200);
+}
+function SearchLanguages(word){
+  $.post(Wo_Ajax_Requests_File()+"?f=get_languages", {
+    word: word
+  }, function (data) {
+    if (data.status == 200 && data.html != '') {
+      $('.languages_result').html(data.html);
+    }
+    else{
+      $('.languages_result').html('');
+    }
+  });
+}
+function AddToLang(self){
+  setTimeout(function(){
+    $($('.languages_div .bootstrap-tagsinput .label-info span')[$('.languages_div .bootstrap-tagsinput .label-info span').length - 1]).click();
+    $('.languages_result').html('');
+    $('#languages').tagsinput('add', $(self).text());
+  }, 200);
+}
+function ShowProductReviews(id){
+  $('#show_product_reviews_modal').modal('show');
+  $.post(Wo_Ajax_Requests_File() + '?f=products&s=get_reviews&hash=' + $('.main_session').val(), {
+    id: id
+  }, function (data) {
+    if (data.status == 200 && data.html != '') {
+      $('#show_product_reviews_modal_info_load').slideDown();
+      $('#show_product_reviews_modal_info').html(data.html);
+    }
+    else{
+      $('#show_product_reviews_modal_info').html('<div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z"></path></svg> <?php echo $wo['lang']['no_available_data']; ?></div>');
+    }
+  });
+}
+function Wo_LoadMoreUserProducts(user_id){
+  id = $('.load_user_products:last').attr('id');
+  $('#load_more_users_products').html('<?php echo($wo['lang']['please_wait']) ?>');
+  $('#load_more_users_products').attr('disabled', 'true');
+  $.post(Wo_Ajax_Requests_File() + '?f=products&s=load_users_products&hash=' + $('.main_session').val(), {
+    id: id,
+    user_id: user_id,
+  }, function (data) {
+    $('#load_more_users_products').html('<?php echo($wo['lang']['load_more']) ?>');
+    $('#load_more_users_products').removeAttr('disabled');
+    if (data.status == 200 && data.html != '') {
+      $('#products-list').append(data.html);
+    }
+    else{
+      $('#load_more_users_products').slideUp();
+    }
+  });
+}
+function Wo_OpenBannedMenu(type = 'notification'){
+  if (type == 'notification') {
+    $('.turn-off-sound').remove();
+    $('#notification-list').html("<div class='empty_state'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'><path d='M18.586 20H4a.5.5 0 0 1-.4-.8l.4-.533V10c0-1.33.324-2.584.899-3.687L1.393 2.808l1.415-1.415 19.799 19.8-1.415 1.414L18.586 20zM6.408 7.822A5.985 5.985 0 0 0 6 10v8h10.586L6.408 7.822zM20 15.786l-2-2V10a6 6 0 0 0-8.99-5.203L7.56 3.345A8 8 0 0 1 20 10v5.786zM9.5 21h5a2.5 2.5 0 1 1-5 0z' fill='currentColor'/></svg><?php echo($wo['lang']['your_notifications_because_you_were_banned']); ?></div>");
+  }
+  else if(type == 'message'){
+    $('#messages-list').html("<div class='empty_state'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'><path d='M6.455 19L2 22.5V4a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6.455zM4 18.385L5.763 17H20V5H4v13.385zM13.414 11l2.475 2.475-1.414 1.414L12 12.414 9.525 14.89l-1.414-1.414L10.586 11 8.11 8.525l1.414-1.414L12 9.586l2.475-2.475 1.414 1.414L13.414 11z' fill='currentColor'/></svg><?php echo($wo['lang']['your_messages_because_you_were_banned']); ?></div>");
+  }
+  else if(type == 'requests'){
+    $('#requests-list').html("<div class='empty_state'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'><path d='M14 14.252v2.09A6 6 0 0 0 6 22l-2-.001a8 8 0 0 1 10-7.748zM12 13c-3.315 0-6-2.685-6-6s2.685-6 6-6 6 2.685 6 6-2.685 6-6 6zm0-2c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm7 6.586l2.121-2.122 1.415 1.415L20.414 19l2.122 2.121-1.415 1.415L19 20.414l-2.121 2.122-1.415-1.415L17.586 19l-2.122-2.121 1.415-1.415L19 17.586z' fill='currentColor'/></svg><?php echo($wo['lang']['your_requests_because_you_were_banned']); ?></div>");
+  }
+}
+function AddYandexResult(target,self,result_co) {
+  $(target).val($(self).text());
+  $(result_co).html('');
+}
+
+const loadImageFromUrl = url => fetch(url)
+                            .then(response => response.blob())
+                            .then(blob => new Promise((resolve, reject) => {
+                            const reader = new FileReader()
+                            reader.onloadend = () => resolve(reader.result)
+                            reader.onerror = reject
+                            reader.readAsDataURL(blob)
+                           }));
+function imageDataToFile(dataurl, filename) {
+   var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+   bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+   while(n--){
+   u8arr[n] = bstr.charCodeAt(n);
+   }
+  return new File([u8arr], filename, {type:mime});
+}
+</script>

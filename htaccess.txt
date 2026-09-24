@@ -1,11 +1,12 @@
 RewriteEngine On
+DirectoryIndex index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^password-reset/([^\/]+)(\/|)$  index.php?link1=welcome&link2=password_reset&user_id=$1 [NC,QSA]
-RewriteRule ^admin-cp$ admincp.php [NC,QSA]
-RewriteRule ^admin-cp/(.*)$ admincp.php?page=$1 [NC,QSA]
-RewriteRule ^admincp$ admincp.php [NC,QSA]
-RewriteRule ^admincp/(.*)$ admincp.php?page=$1 [NC,QSA]
+RewriteRule ^admin-cp$ admincp.php [L,NC,QSA]
+RewriteRule ^admin-cp/(.*)$ admincp.php?page=$1 [L,NC,QSA]
+RewriteRule ^admincp$ admincp.php [L,NC,QSA]
+RewriteRule ^admincp/(.*)$ admincp.php?page=$1 [L,NC,QSA]
 RewriteRule ^adminPages/(.*)$ admin-panel/$1 [L]
 RewriteRule ^start-up(/?|)$ index.php?link1=start-up [NC,QSA]
 RewriteRule ^watch/(.*)$ index.php?link1=watch&id=$1 [NC,QSA]

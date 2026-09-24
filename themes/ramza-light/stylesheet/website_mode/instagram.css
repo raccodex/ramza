@@ -1,0 +1,21 @@
+.user_media_list_section.insta {margin: 5px -10px 0;}
+.user_media_list_section.insta .photo-data {padding: 10px;width: 33.3333333%;}
+.user_media_list_section.insta .photo-data:nth-child(2) {width: 66.6666667%;float: right;}
+.user_media_list_section.insta .photo-data:nth-child(10) {width: 66.6666667%;}
+.user_media_list_section.insta .photo-data .ico {position: absolute;top: 0;left: 0;right: 0;text-align: initial;padding: 25px;z-index: 1;color: #fff;pointer-events: none;}
+.user_media_list_section.insta .photo-data .ico svg {filter: drop-shadow(0 0 .75px rgba(0, 0, 0, .42)) drop-shadow(0 1px .5px rgba(0, 0, 0, .18)) drop-shadow(0 2px 3px rgba(0, 0, 0, .2));}
+.tag_post_actions .stat-item > svg, .tag_post_actions .stat-item > .active-like > svg {padding: 9px;border-radius: 40%;background-color: rgba(0, 0, 0, 0.06);width: 40px;height: 40px;margin: 0 7px;}
+.tag_post_actions .stat-item > svg path {fill: currentColor;}
+.tag_post_actions .stat-item > .active-like > svg path {fill: #f44336;}
+
+
+
+@media (max-width: 992px) {
+.user_media_list_section.insta .photo-data, .user_media_list_section.insta .video-data {width: 33.3333333%;}
+}
+
+@media (max-width: 600px) {
+.user_media_list_section.insta {margin: 5px -4px 0;}
+.user_media_list_section.insta .photo-data {padding: 4px;}
+.user_media_list_section.insta .photo-data .ico {padding: 10px;}
+}

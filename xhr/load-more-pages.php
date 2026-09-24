@@ -11,7 +11,7 @@ if ($f == 'load-more-pages') {
         $groups = Wo_GetSearchAdv($query, 'pages', $offset);
         if (count($groups) > 0) {
             foreach ($groups as $wo['result']) {
-                // if ($wo['config']['theme'] == 'sunshine') {
+                // if ($wo['config']['theme'] == 'ramza-light') {
                 //     $html .= Wo_LoadPage('search/page-result');
                 // }
                 // else{

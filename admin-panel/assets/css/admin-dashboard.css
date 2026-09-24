@@ -1,0 +1,1010 @@
+/* RACSocial Dashboard Redesign CSS */
+
+/* Scoped to dashboard page to prevent polluting other admin pages */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--rac-space);
+    margin-bottom: var(--rac-space);
+    border-bottom: 1px solid var(--rac-border);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header-left h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--rac-text);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header-left p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--rac-text-2);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--rac-text);
+    background-color: var(--rac-surface);
+    border: 1px solid var(--rac-border);
+    border-radius: var(--rac-radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-filter-btn:hover {
+    background-color: var(--rac-hover);
+    border-color: var(--rac-border-strong);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-filter-btn svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    color: var(--rac-muted);
+}
+
+/* Summary Panel - CSS Grid Layout */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: var(--rac-surface);
+    border: 1px solid var(--rac-border);
+    border-radius: var(--rac-radius-md);
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric {
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    border-right: 1px solid var(--rac-border);
+    border-bottom: 1px solid var(--rac-border);
+}
+
+/* Remove right border from last item in row */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary .rac-dash-metric:nth-child(4n) {
+    border-right: none;
+}
+
+/* Remove bottom border from last row */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary .rac-dash-metric:nth-last-child(-n+4) {
+    border-bottom: none;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__content {
+    flex: 1;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--rac-muted);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__value {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--rac-text);
+    line-height: 1.2;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--rac-radius-sm);
+    margin-left: 12px;
+    flex-shrink: 0;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon svg,
+.rac-dash-metric__icon svg,
+.rac-dash-metric svg,
+.rac-dash-summary svg {
+    width: 18px !important;
+    height: 18px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+    display: block !important;
+}
+
+/* Icon Colors - Restrained */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon--users {
+    background-color: rgba(34, 132, 91, 0.1);
+    color: var(--rac-success);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon--posts {
+    background-color: rgba(37, 111, 156, 0.1);
+    color: var(--rac-info);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon--pages {
+    background-color: rgba(162, 99, 0, 0.1);
+    color: var(--rac-warning);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon--groups {
+    background-color: rgba(119, 128, 140, 0.1);
+    color: var(--rac-muted);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon--online {
+    background-color: rgba(34, 132, 91, 0.15);
+    color: var(--rac-success);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon--comments {
+    background-color: rgba(37, 111, 156, 0.15);
+    color: var(--rac-info);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon--games {
+    background-color: rgba(195, 46, 58, 0.1);
+    color: var(--rac-accent);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon--messages {
+    background-color: rgba(162, 99, 0, 0.15);
+    color: var(--rac-warning);
+}
+
+/* Chart Panel */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel {
+    background: var(--rac-surface);
+    border: 1px solid var(--rac-border);
+    border-radius: var(--rac-radius-md);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rac-border);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rac-text);
+    margin: 0;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel__body {
+    min-height: 400px;
+}
+
+/* Daterangepicker Reset within Dashboard */
+body.rac-admin-shell[data-admin-page="dashboard"] .daterangepicker {
+    border: 1px solid var(--rac-border);
+    border-radius: var(--rac-radius-md);
+    box-shadow: var(--rac-shadow-dropdown);
+    background-color: var(--rac-surface);
+    color: var(--rac-text);
+}
+
+/* Responsive Design */
+@media (max-width: 1199.98px) {
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary .rac-dash-metric:nth-child(2n) {
+        border-right: none;
+    }
+    
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary .rac-dash-metric:nth-child(4n) {
+        border-right: none;
+    }
+    
+    /* Reset bottom border for 2-col layout */
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary .rac-dash-metric {
+        border-bottom: 1px solid var(--rac-border);
+    }
+    
+    /* Remove bottom border from last row (now last 2 items) */
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary .rac-dash-metric:nth-last-child(-n+2) {
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 767.98px) {
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary .rac-dash-metric {
+        border-right: none !important;
+        border-bottom: 1px solid var(--rac-border);
+    }
+    
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary .rac-dash-metric:last-child {
+        border-bottom: none;
+    }
+}
+
+/* RTL Support */
+html[dir="rtl"] body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric {
+    border-right: none;
+    border-left: 1px solid var(--rac-border);
+}
+
+html[dir="rtl"] body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary .rac-dash-metric:nth-child(4n) {
+    border-left: none;
+}
+
+html[dir="rtl"] body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon {
+    margin-left: 0;
+    margin-right: 12px;
+}
+
+html[dir="rtl"] body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-filter-btn svg {
+    margin-right: 0;
+    margin-left: 6px;
+}
+
+@media (max-width: 1199.98px) {
+    html[dir="rtl"] body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary .rac-dash-metric:nth-child(2n) {
+        border-left: none;
+    }
+}
+
+/* Final RACSocial dashboard home polish: quiet, rounded, flat colors */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dashboard-home {
+    --rac-dash-radius: 20px;
+    --rac-dash-soft-border: #dce2ea;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header {
+    align-items: flex-start;
+    gap: 18px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    border: 1px solid var(--rac-dash-soft-border);
+    border-radius: 24px;
+    background: var(--rac-surface);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header-left {
+    max-width: 680px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-kicker {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 6px;
+    color: var(--rac-accent);
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header-left h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 26px;
+    font-weight: 720;
+    letter-spacing: -0.035em;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header-left p {
+    max-width: 620px;
+    margin: 7px 0 0;
+    color: #5b6573;
+    font-size: 13.5px;
+    line-height: 1.55;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header-right {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-action,
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0 13px;
+    border: 1px solid var(--rac-dash-soft-border);
+    border-radius: 999px;
+    background: #ffffff;
+    color: #263241;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: none;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-action:hover,
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-filter-btn:hover {
+    border-color: #c6ced9;
+    background: #f8fafc;
+    color: var(--rac-accent);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-filter-btn svg {
+    width: 15px;
+    height: 15px;
+    margin-right: 7px;
+    color: #667085;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-alert {
+    margin-bottom: 16px;
+    border-radius: 18px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric {
+    position: relative;
+    min-height: 112px;
+    padding: 18px;
+    border: 1px solid var(--rac-dash-soft-border) !important;
+    border-radius: var(--rac-dash-radius);
+    background: var(--rac-surface);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric:hover {
+    border-color: #cbd3df !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__label {
+    margin-bottom: 8px;
+    color: #667085;
+    font-size: 11px;
+    font-weight: 760;
+    letter-spacing: 0.065em;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__value {
+    color: #101828;
+    font-size: 31px;
+    font-weight: 760;
+    letter-spacing: -0.04em;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon {
+    width: 38px;
+    height: 38px;
+    margin-left: 14px;
+    border-radius: 14px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel {
+    padding: 22px;
+    border: 1px solid var(--rac-dash-soft-border);
+    border-radius: 24px;
+    background: var(--rac-surface);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+/* Ramza dashboard paper cards */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header,
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel {
+    position: relative;
+    border-color: #d9dde3 !important;
+    border-radius: 30px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: var(--rac-shadow-card) !important;
+    overflow: hidden;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header::before,
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel::before {
+    content: "";
+    position: absolute;
+    inset-inline: 26px;
+    top: 0;
+    height: 4px;
+    border-radius: 0 0 999px 999px;
+    background: #ba3441;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary {
+    gap: 18px !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric {
+    position: relative;
+    min-height: 142px !important;
+    padding: 26px 22px 22px 26px !important;
+    border: 1px solid #d9dde3 !important;
+    border-radius: 30px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: var(--rac-shadow-card) !important;
+    overflow: hidden;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric::before {
+    content: "";
+    position: absolute;
+    top: 22px;
+    left: 26px;
+    width: 42px;
+    height: 5px;
+    border-radius: 999px;
+    background: #ba3441;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric:nth-child(3n + 2)::before {
+    background: #8a6a3f;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric:nth-child(3n + 3)::before {
+    background: #2f6f5f;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__content {
+    padding-top: 30px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__label {
+    color: #665746 !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__value {
+    color: #19130f !important;
+    font-size: 34px !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+    width: 46px !important;
+    height: 46px !important;
+    margin: 0 !important;
+    border: 1px solid #eadfce;
+    border-radius: 20px !important;
+    background: #faf4ea !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-action,
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-filter-btn {
+    border-color: #d9dde3 !important;
+    background: #ffffff !important;
+    background-image: none !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel__header {
+    align-items: flex-start;
+    margin-bottom: 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rac-dash-soft-border);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel__title {
+    margin: 0;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 720;
+    letter-spacing: -0.025em;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel__subtitle {
+    margin: 6px 0 0;
+    color: #667085;
+    font-size: 12.5px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel__body {
+    min-height: 360px;
+    padding-top: 8px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] #admin-chart-container {
+    min-width: 100%;
+    height: 360px !important;
+    margin: 0 auto;
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dashboard-home {
+    --rac-dash-soft-border: rgba(255, 255, 255, 0.1);
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-header,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-metric,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-chart-panel,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-action,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-filter-btn {
+    background: #1f242b;
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-header-left h3,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-metric__value,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-chart-panel__title,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-action,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-filter-btn {
+    color: #f3f4f6;
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-header-left p,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-metric__label,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-chart-panel__subtitle {
+    color: #a8b0bd;
+}
+
+@media (max-width: 1199.98px) {
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header {
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header-right {
+        justify-content: flex-start;
+    }
+
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary {
+        grid-template-columns: 1fr;
+    }
+
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric {
+        min-height: 96px;
+    }
+
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel {
+        padding: 18px;
+        border-radius: 20px;
+    }
+}
+
+/* Ramza dashboard enterprise pass: professional tiles, no cream cards or decorative AI-style bars */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dashboard-home {
+    --rac-dash-soft-border: #d9dee7;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header,
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel {
+    position: relative;
+    border: 1px solid #d9dee7 !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.04), 0 12px 28px rgba(20, 26, 35, 0.045) !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-header::before,
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel::before,
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric::before {
+    content: none !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-summary {
+    gap: 18px !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 118px !important;
+    padding: 24px 24px 22px !important;
+    border: 1px solid #d9dee7 !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.04), 0 12px 28px rgba(20, 26, 35, 0.045) !important;
+    overflow: hidden;
+    text-decoration: none !important;
+    color: inherit !important;
+    cursor: pointer !important;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric:hover {
+    border-color: #cbd5e1 !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04) !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric:active {
+    transform: translateY(-1px) scale(0.99) !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__content {
+    padding-top: 0 !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__label {
+    margin-bottom: 12px;
+    color: #566173 !important;
+    font-size: 11px !important;
+    font-weight: 760 !important;
+    letter-spacing: 0.065em !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__value {
+    color: #111827 !important;
+    font-size: 31px !important;
+    font-weight: 780 !important;
+    letter-spacing: -0.035em !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__icon {
+    position: static !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    margin: 0 0 0 16px !important;
+    border: 1px solid #dce3ed !important;
+    border-radius: 12px !important;
+    background: #f7f9fc !important;
+    color: #405066 !important;
+    box-shadow: none !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric:nth-child(4n + 1) .rac-dash-metric__icon {
+    color: #2f6f5f !important;
+    background: #f1f8f5 !important;
+    border-color: #d4e6de !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric:nth-child(4n + 2) .rac-dash-metric__icon {
+    color: #2d6f99 !important;
+    background: #f1f7fb !important;
+    border-color: #d4e4ef !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric:nth-child(4n + 3) .rac-dash-metric__icon {
+    color: #90652d !important;
+    background: #fbf7ef !important;
+    border-color: #eadfc9 !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric:nth-child(4n + 4) .rac-dash-metric__icon {
+    color: #9a3340 !important;
+    background: #fbf2f3 !important;
+    border-color: #ecd4d8 !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-action,
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-filter-btn {
+    border-color: #d9dee7 !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #273142 !important;
+    box-shadow: none !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel__header {
+    border-bottom: 1px solid #e7ebf1 !important;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel__title {
+    color: #111827 !important;
+    font-size: 17px !important;
+    font-weight: 740 !important;
+}
+
+@media (max-width: 767.98px) {
+    body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric {
+        min-height: 108px !important;
+        padding: 20px !important;
+    }
+}
+
+/* Clickable Metric Arrow */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric__arrow {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: #94a3b8;
+    opacity: 0;
+    transform: translate(-3px, 3px);
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric:hover .rac-dash-metric__arrow {
+    opacity: 1;
+    transform: translate(0, 0);
+    color: #0f172a;
+}
+
+/* Online Users Live Badge & Pulse Animation */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-metric--live .rac-dash-metric__label {
+    display: flex;
+    align-items: center;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 8px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #10b981;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: racPulse 1.8s infinite;
+}
+
+@keyframes racPulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+/* Chart Header & Controls */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #e7ebf1 !important;
+    padding-bottom: 18px;
+    margin-bottom: 16px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-panel__titles {
+    flex: 1;
+    min-width: 260px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Timeframe Filter Tabs */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-time-filter {
+    display: inline-flex;
+    align-items: center;
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    gap: 2px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-time-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-decoration: none !important;
+    transition: all 0.18s ease;
+    cursor: pointer;
+    line-height: 1;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-time-btn:hover {
+    color: #0f172a;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-time-btn.active {
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 750;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+/* Chart Mode Switcher: Area / Bar */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-type-toggle {
+    display: inline-flex;
+    align-items: center;
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    gap: 2px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-chart-type-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    line-height: 1;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-chart-type-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-chart-type-btn:hover {
+    color: #0f172a;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-chart-type-btn.active {
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 750;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+/* Selected Period Mini Stats */
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-dash-chart-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-chart-stat-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-chart-stat-item strong {
+    color: #0f172a;
+    font-weight: 750;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-stat-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-stat-dot--users { background-color: #10b981; }
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-stat-dot--posts { background-color: #3b82f6; }
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-stat-dot--pages { background-color: #f59e0b; }
+body.rac-admin-shell[data-admin-page="dashboard"] .rac-stat-dot--groups { background-color: #8b5cf6; }
+
+/* Dark Mode Extensions */
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-metric {
+    background: #1e242d !important;
+    border-color: #2c3542 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-metric:hover {
+    background: #232a35 !important;
+    border-color: #3e4b5d !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35) !important;
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-metric:hover .rac-dash-metric__arrow {
+    color: #f1f5f9;
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-live-badge {
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-chart-panel__header {
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-time-filter,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-dash-chart-type-toggle {
+    background: #14181f;
+    border-color: #27303e;
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-time-btn,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-chart-type-btn {
+    color: #94a3b8;
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-time-btn:hover,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-chart-type-btn:hover {
+    color: #f1f5f9;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-time-btn.active,
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-chart-type-btn.active {
+    background: #252e3c;
+    color: #f8fafc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-chart-stat-item {
+    color: #94a3b8;
+}
+
+body.rac-admin-shell.dark[data-admin-page="dashboard"] .rac-chart-stat-item strong {
+    color: #f1f5f9;
+}

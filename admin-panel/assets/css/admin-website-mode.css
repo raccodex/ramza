@@ -1,0 +1,223 @@
+/* RACSocial Website Mode Redesign CSS */
+
+.rac-mode-container,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.rac-mode-card,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-card {
+    min-width: 0;
+    background: #ffffff !important;
+    border: 1px solid #d9dee7 !important;
+    border-radius: 16px !important;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.04), 0 12px 28px rgba(20, 26, 35, 0.045) !important;
+    transition: all 0.2s ease;
+}
+
+body.dark .rac-mode-card,
+body.dark.rac-admin-shell .rac-mode-card {
+    background: #1e2633 !important;
+    border-color: #2e3848 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.rac-mode-card:hover,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-card:hover {
+    border-color: #c6ceda !important;
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.05), 0 16px 32px rgba(20, 26, 35, 0.055) !important;
+    transform: translateY(-1px);
+}
+
+.rac-mode-header,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #e7ebf1 !important;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+body.dark .rac-mode-header {
+    border-bottom-color: #2e3848 !important;
+}
+
+.rac-mode-title,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-title {
+    font-size: 15px;
+    font-weight: 740;
+    color: #111827 !important;
+    letter-spacing: -0.015em;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+body.dark .rac-mode-title {
+    color: #f3f4f6 !important;
+}
+
+.rac-mode-features,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rac-feature-item,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-feature-item {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #394456 !important;
+    font-weight: 620;
+    overflow-wrap: anywhere;
+    min-width: 0;
+}
+
+body.dark .rac-feature-item {
+    color: #cbd5e1 !important;
+}
+
+.rac-feature-icon,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-feature-icon {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    max-width: 16px !important;
+    margin-right: 8px;
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.rac-feature-icon--active,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-feature-icon--active {
+    color: #23775b !important;
+}
+
+body.dark .rac-feature-icon--active {
+    color: #63c69e !important;
+}
+
+.rac-feature-icon--inactive,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-feature-icon--inactive {
+    color: #8b95a3 !important;
+}
+
+.rac-feature-item--disabled,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-feature-item--disabled {
+    color: #7c8798 !important;
+}
+
+body.dark .rac-feature-item--disabled {
+    color: #64748b !important;
+}
+
+.rac-mode-card--upcoming,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-card--upcoming {
+    opacity: 1;
+    filter: none;
+}
+
+.rac-mode-card--locked,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-card--locked {
+    background: #f9fafc !important;
+}
+
+body.dark .rac-mode-card--locked {
+    background: #18202c !important;
+}
+
+.rac-mode-card--locked:hover,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-card--locked:hover {
+    transform: none;
+    box-shadow: 0 1px 2px rgba(20, 26, 35, 0.04) !important;
+}
+
+.rac-mode-badge,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-badge {
+    border: 1px solid #d9dee7;
+    border-radius: 7px;
+    background: #f2f5f9;
+    color: #5a6576;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    letter-spacing: 0.06em;
+}
+
+body.dark .rac-mode-badge {
+    background: #232e3d;
+    border-color: #334155;
+    color: #94a3b8;
+}
+
+.rac-mode-lock-note,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-lock-note {
+    margin: -7px 0 16px;
+    padding: 10px 12px;
+    border: 1px solid #d8dee8;
+    border-radius: 10px;
+    background: #f2f5f9;
+    color: #566173;
+    font-size: 12px;
+    font-weight: 680;
+}
+
+body.dark .rac-mode-lock-note {
+    background: #232e3d;
+    border-color: #334155;
+    color: #cbd5e1;
+}
+
+.rac-mode-header .switcher,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-header .switcher {
+    margin: 0;
+}
+
+.rac-mode-card--locked .switcher,
+body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-card--locked .switcher {
+    opacity: 1;
+}
+
+.rac-mode-card--locked input[type="checkbox"],
+.rac-mode-card--locked label.check-trail {
+    cursor: not-allowed;
+}
+
+@media (max-width: 1199.98px) {
+    .rac-mode-container,
+    body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .rac-mode-container,
+    body.rac-admin-shell[data-admin-page="website_mode"] .rac-mode-container {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+html[dir="rtl"] .rac-feature-icon,
+html[dir="rtl"] body.rac-admin-shell[data-admin-page="website_mode"] .rac-feature-icon {
+    margin-right: 0;
+    margin-left: 8px;
+}

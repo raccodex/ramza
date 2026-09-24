@@ -34,8 +34,10 @@ class ApplePayGateway
     {
         $path = $this->_config->merchantPath() . '/processing/apple_pay/validate_domains';
         $response = $this->_http->post($path, ['url' => $domain]);
+        // phpcs:ignore
         if (array_key_exists('response', $response) && $response['response']['success']) {
             return new Result\Successful();
+        // phpcs:ignore
         } elseif (array_key_exists('apiErrorResponse', $response)) {
             return new Result\Error($response['apiErrorResponse']);
         }
@@ -64,13 +66,73 @@ class ApplePayGateway
     {
         $path = $this->_config->merchantPath() . '/processing/apple_pay/registered_domains';
         $response = $this->_http->get($path);
+        // // phpcs:ignore
         if (array_key_exists('response', $response) && array_key_exists('domains', $response['response'])) {
             $options = ApplePayOptions::factory($response['response']);
             return new Result\Successful($options, 'applePayOptions');
+        // phpcs:ignore
         } elseif (array_key_exists('apiErrorResponse', $response)) {
             return new Result\Error($response['apiErrorResponse']);
         } else {
             throw new Exception\Unexpected('expected response or apiErrorResponse');
         }
+    }
+
+    /**
+     * creates the signature array for create operations
+     *
+     * @return array
+     */
+    public static function createSignature()
+    {
+        return self::baseSignature([]);
+    }
+
+    /**
+     * creates the signature array for update operations
+     *
+     * @return array
+     */
+    public static function updateSignature()
+    {
+        return self::baseSignature(['makeDefault']);
+    }
+
+    /**
+     * creates the base signature for Apple Pay card operations
+     *
+     * @param array $additionalOptions additional options to merge with baseOptions
+     *
+     * @return array
+     */
+    public static function baseSignature($additionalOptions = [])
+    {
+        return [
+            'cardholderName',
+            'cryptogram',
+            'eciIndicator',
+            'expirationMonth',
+            'expirationYear',
+            'networkTransactionId',
+            'number',
+            'token',
+            ['billingAddress' => AddressGateway::createSignature()],
+            ['options' => array_merge(self::baseOptions(), $additionalOptions)]
+        ];
+    }
+
+    /**
+     * creates the base options for Apple Pay card operations
+     *
+     * @return array
+     */
+    public static function baseOptions()
+    {
+        return [
+            "verificationAccountType",
+            "verificationAmount",
+            "verificationMerchantAccountId",
+            "verifyCard",
+        ];
     }
 }

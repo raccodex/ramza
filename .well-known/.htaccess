@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteRule ^apple-app-site-association$ apple-app-site-association.php [L]
+
+<Files "apple-app-site-association.php">
+    Header set Content-Type "application/json"
+</Files>

@@ -1,6 +1,7 @@
 <?php 
-$storages = ['amazon', 'digitalocean', 'backblaze', 'wasabi'];
-$stroageAjax = ['amazon' => 'test_s3', 'digitalocean'  => 'test_spaces', 'backblaze' => 'test_backblaze', 'wasabi' => 'test_wasabi'];
+$storages = ['amazon', 'digitalocean', 'backblaze', 'wasabi', 'cloudflare-r2', 'custom-s3'];
+$storageLabels = ['amazon' => 'Amazon', 'digitalocean' => 'Digitalocean', 'backblaze' => 'Backblaze', 'wasabi' => 'Wasabi', 'cloudflare-r2' => 'Cloudflare R2', 'custom-s3' => 'S3 Compatible'];
+$stroageAjax = ['amazon' => 'test_s3', 'digitalocean'  => 'test_spaces', 'backblaze' => 'test_backblaze', 'wasabi' => 'test_wasabi', 'cloudflare-r2' => 'test_cloudflare_r2', 'custom-s3' => 'test_s3_compatible'];
 
 if(empty($_GET['storage'])) {
     header("Location: " . Wo_LoadAdminLinkSettings(''));
@@ -24,6 +25,16 @@ if ($_GET['storage'] == 'wasabi') {
         $error = "Wasabi is disabled or not configured, please configure it first.";
     }
 }
+if ($_GET['storage'] == 'cloudflare-r2') {
+    if (empty($wo['config']['cloudflare_r2_storage'])) {
+        $error = "Cloudflare R2 is disabled or not configured, please configure it first.";
+    }
+}
+if ($_GET['storage'] == 'custom-s3') {
+    if (empty($wo['config']['s3_compatible_storage'])) {
+        $error = "S3 Compatible storage is disabled or not configured, please configure it first.";
+    }
+}
 
 if ($_GET['storage'] == 'backblaze') {
     if ($wo['config']['backblaze_storage'] == "0") {
@@ -39,14 +50,14 @@ if ($_GET['storage'] == 'digitalocean') {
 ?>
 <div class="container-fluid">
     <div>
-        <h3>Upload Files To <?php echo ucfirst($_GET["storage"]); ?></h3>
+        <h3>Upload Files To <?php echo $storageLabels[$_GET["storage"]]; ?></h3>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
                     <a href="#">Admin Panel</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="#">Upload To <?php echo ucfirst($_GET["storage"]); ?></a>
+                    <a href="#">Upload To <?php echo $storageLabels[$_GET["storage"]]; ?></a>
                 </li>
             </ol>
         </nav>
@@ -56,7 +67,7 @@ if ($_GET['storage'] == 'digitalocean') {
         <div class="col-lg-12 col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Upload Files To <?php echo ucfirst($_GET["storage"]); ?></h6>
+                    <h6 class="card-title">Upload Files To <?php echo $storageLabels[$_GET["storage"]]; ?></h6>
                     
                     <?php if (empty($error)) { ?>
                      <div class="alert alert-warning">This feature is used to upload files from server to cloud only if you have videos and images on the server and moved to cloud storage, <strong>ignore this step if you are using a fresh installation.</strong></div>
@@ -64,12 +75,11 @@ if ($_GET['storage'] == 'digitalocean') {
                     <div class="alert alert-info">Total files found: <strong><span id="files-count"><?php echo count($files);?></span> media files</strong>.</div>
                     <?php } ?>
                     <?php if (!empty($error)) { ?> <div class="alert alert-danger"><?php echo $error;?></div><?php } ?>
-                    <!-- <a href="https://docs.playtubescript.com/api" target="_blank">PlayTube API Docs</a> -->
                     <div class="clearfix"></div>
                     <div class="email-settings-alert"></div>
                     <?php if (empty($error)) { ?>
                     <div class="wo_install_wiz">
-                        <ul class="wo_update_changelog"><?php if (count($files) > 0) { ?>Click Start to upload files from server to <?php echo ucfirst($_GET["storage"]); ?><?php } else { ?>No files found to upload<?php }?>.</ul>
+                        <ul class="wo_update_changelog"><?php if (count($files) > 0) { ?>Click Start to upload files from server to <?php echo $storageLabels[$_GET["storage"]]; ?><?php } else { ?>No files found to upload<?php }?>.</ul>
                     </div>
                     <div class="clearfix"></div>
                         <?php if (count($files) > 0) { ?>
@@ -115,7 +125,7 @@ var count = 0;
 function startUpload(file) {
     count = count + 1;
     if (count > totalFiles) {
-        $('.wo_update_changelog').append('<li><span class="added">FINISIHED</span> ~$ Upload successfull, more than (<?php echo count($files);?>) file(s) were uploaded to <?php echo ucfirst($_GET["storage"]); ?></li>');
+        $('.wo_update_changelog').append('<li><span class="added">FINISIHED</span> ~$ Upload successfull, more than (<?php echo count($files);?>) file(s) were uploaded to <?php echo $storageLabels[$_GET["storage"]]; ?></li>');
         $('#button-update').hide();
         return false;
     }
@@ -140,7 +150,7 @@ $(document).on('click', '#button-update', function(event) {
         background: '#1e2321',
         color: '#fff'
     });
-    $('.wo_update_changelog').append('<li><span class="fixed">COMMAND</span> ~$ Connecting to <?php echo ucfirst($_GET["storage"]); ?>..</li>');
+    $('.wo_update_changelog').append('<li><span class="fixed">COMMAND</span> ~$ Connecting to <?php echo $storageLabels[$_GET["storage"]]; ?>..</li>');
     $(this).attr('disabled', true);
     $.get(Wo_Ajax_Requests_File(), {f:'admin_setting', s: '<?php echo $stroageAjax[$_GET['storage']]?>'}, function (data) {
         if (data.status == 200) {
@@ -159,7 +169,7 @@ $(document).on('click', '#button-update', function(event) {
             $('.wo_update_changelog').append('<li><span class="changed">FAILED</span> ~$ Error! '+data.message+'.</li>');
             $(this).attr('disabled', false);
         } else  {
-            $('.wo_update_changelog').append('<li><span class="changed">FAILED</span> ~$ Error found, please check your <?php echo ucfirst($_GET["storage"]); ?> settings.</li>');
+            $('.wo_update_changelog').append('<li><span class="changed">FAILED</span> ~$ Error found, please check your <?php echo $storageLabels[$_GET["storage"]]; ?> settings.</li>');
             $(this).attr('disabled', false);
         }
     });

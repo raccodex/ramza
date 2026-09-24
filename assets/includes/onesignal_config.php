@@ -35,8 +35,8 @@ function Wo_SendPushNotification($data = array(), $push_type = 'chat') {
     $data['notification']['notification_content'] = Wo_EditMarkup($data['notification']['notification_content']);
     $final_request_data                           = array(
         'app_id' => $app_id,
-        'include_player_ids' => $data['send_to'],
-        'send_after' => new \DateTime('1 second'),
+        'include_subscription_ids' => array_values(array_unique($data['send_to'])),
+        'target_channel' => 'push',
         'isChrome' => false,
         'contents' => array(
             'en' => $data['notification']['notification_content']
@@ -55,20 +55,24 @@ function Wo_SendPushNotification($data = array(), $push_type = 'chat') {
     }
     $fields = json_encode($final_request_data);
     $ch     = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+    curl_setopt($ch, CURLOPT_URL, "https://api.onesignal.com/notifications");
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'Content-Type: application/json; charset=utf-8',
-        'Authorization: Basic ' . $app_key
+        'Accept: application/json',
+        'Authorization: Key ' . $app_key
     ));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_HEADER, FALSE);
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
     $response = curl_exec($ch);
+    $http_code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    $response = json_decode($response);
-    if ($response->id) {
+    $response = json_decode((string) $response);
+    if ($http_code >= 200 && $http_code < 300 && !empty($response->id)) {
         return $response->id;
     }
     return false;

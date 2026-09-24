@@ -1,0 +1,13 @@
+<div class="col-6 col-md-4 col-lg-4 col-xl-3 product tag_prods_list" id="product_<?php echo $wo['product']['id'];?>">
+	<div class="wow_content product_main">
+		<a href="<?php echo $wo['product']['url']?>" data-ajax="?link1=post&id=<?php echo $wo['product']['seo_id'];?>" class="product_image"><img src="<?php echo $wo['product']['images'][0]['image_org'];?>"></a>
+		<div class="product_info">
+			<h2 class="truncate"><a href="<?php echo $wo['product']['url']?>" data-ajax="?link1=post&id=<?php echo $wo['product']['seo_id'];?>" title="<?php echo $wo['product']['name']?>"><?php echo $wo['product']['name']?></a></h2>
+			<b class="truncate"><?php echo (!empty($wo['currencies'][$wo['product']['currency']]['symbol'])) ? $wo['currencies'][$wo['product']['currency']]['symbol'] : $wo['config']['classified_currency_s'];?><?php echo $wo['product']['price_format']; ?></b>
+		</div>
+		<?php if ($wo['loggedin'] && $wo['product']['user_id'] == $wo['user']['user_id']) { ?>
+			<a onclick="RemoveUserProduct(<?php echo $wo['product']['id'];?>,'hide')" class="edit btn btn-success btn-mat"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"></path></svg></a> 
+		<?php } ?>
+	</div>
+	<div class="clear"></div>
+</div>

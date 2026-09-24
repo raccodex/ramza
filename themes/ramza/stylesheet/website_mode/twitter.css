@@ -1,0 +1,532 @@
+/* ════════════════════════════════════════════════════════════════════
+   RACSocial — X / Twitter Mode v2.0
+   Sharp, dark, minimal. Real product feel — not generic AI gradients.
+   ════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --x-bg:          #000000;
+  --x-bg-hover:    #0a0a0a;
+  --x-surface:     #16181c;
+  --x-border:      #2f3336;
+  --x-border-soft: rgba(231,233,234,0.08);
+  --x-blue:        #1d9bf0;
+  --x-blue-hover:  #1a8cd8;
+  --x-red:         #f4212e;
+  --x-green:       #00ba7c;
+  --x-text:        #e7e9ea;
+  --x-text-2:      #71767b;
+  --x-radius:      16px;
+  --x-radius-pill: 9999px;
+}
+
+/* ── Base ─────────────────────────────────────────────────────────── */
+html[data-mode="twitter"] body,
+body.twitter-dark-mode {
+  background-color: var(--x-bg) !important;
+  color: var(--x-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html[data-mode="twitter"] a { color: var(--x-blue); text-decoration: none; }
+html[data-mode="twitter"] a:hover { text-decoration: underline; }
+
+/* ── Layout: hide left col, narrow sidebar, center feed ──────────── */
+html[data-mode="twitter"] .col-md-2.leftcol { display: none; }
+
+html[data-mode="twitter"] .main-content,
+html[data-mode="twitter"] #main-content {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--x-bg) !important;
+}
+
+html[data-mode="twitter"] .col-md-8.middlecol {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+html[data-mode="twitter"] .col-md-3.rightcol {
+  max-width: 350px;
+  margin-left: 24px;
+}
+
+html[data-mode="twitter"] .timeline-container {
+  background: var(--x-bg) !important;
+  border: none;
+}
+
+/* ── Navbar ──────────────────────────────────────────────────────── */
+html[data-mode="twitter"] .navbar,
+html[data-mode="twitter"] #navbar {
+  background-color: rgba(0,0,0,0.85) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--x-border-soft);
+  border-radius: 0;
+  box-shadow: none !important;
+  min-height: 53px;
+}
+
+html[data-mode="twitter"] .navbar .logo img,
+html[data-mode="twitter"] .navbar img[src*="logo"] {
+  filter: brightness(0) invert(1);
+  max-height: 26px;
+}
+
+html[data-mode="twitter"] .navbar .search-form input,
+html[data-mode="twitter"] .navbar input[type="search"] {
+  background-color: var(--x-surface);
+  border: 1px solid transparent;
+  border-radius: var(--x-radius-pill);
+  color: var(--x-text);
+  padding: 10px 20px 10px 44px;
+  height: 40px;
+  transition: background-color 200ms, border-color 200ms;
+}
+
+html[data-mode="twitter"] .navbar .search-form input:focus,
+html[data-mode="twitter"] .navbar input[type="search"]:focus {
+  background-color: var(--x-bg);
+  border-color: var(--x-blue);
+  box-shadow: none;
+}
+
+/* ── Sidebar / nav lists ─────────────────────────────────────────── */
+html[data-mode="twitter"] .sidebar {
+  background: transparent !important;
+  border: none !important;
+  max-width: 275px;
+  position: sticky;
+  top: 53px;
+}
+
+html[data-mode="twitter"] .sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+html[data-mode="twitter"] .sidebar-list li {
+  margin-bottom: 2px;
+}
+
+html[data-mode="twitter"] .sidebar-list li a {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 18px;
+  border-radius: var(--x-radius-pill);
+  color: var(--x-text);
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.4;
+  transition: background-color 200ms ease, color 200ms ease;
+  text-decoration: none !important;
+}
+
+html[data-mode="twitter"] .sidebar-list li a:hover {
+  background-color: rgba(231,233,234,0.06);
+  border-radius: var(--x-radius-pill);
+}
+
+html[data-mode="twitter"] .sidebar-list li.active a,
+html[data-mode="twitter"] .sidebar-list li a.active {
+  font-weight: 700;
+}
+
+html[data-mode="twitter"] .sidebar-list li a svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+/* ── Posts: hairline-separated cards, no shadow ──────────────────── */
+html[data-mode="twitter"] .post .panel {
+  background: var(--x-bg) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--x-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin-bottom: 0 !important;
+  padding: 8px 16px;
+  transition: background-color 150ms;
+}
+
+html[data-mode="twitter"] .post .panel:hover {
+  background-color: rgba(231,233,234,0.025);
+}
+
+/* Post heading — compact */
+html[data-mode="twitter"] .post .post-heading {
+  height: auto;
+  padding: 0 0 8px 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+html[data-mode="twitter"] .post .post-heading .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  margin-right: 12px;
+}
+
+html[data-mode="twitter"] .post .post-heading .meta .title a {
+  color: var(--x-text);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+html[data-mode="twitter"] .post .post-heading .meta .title a:hover {
+  text-decoration: underline;
+  color: var(--x-text);
+}
+
+html[data-mode="twitter"] .post .post-heading .meta .time {
+  color: var(--x-text-2);
+  font-size: 14px;
+}
+
+/* Post text */
+html[data-mode="twitter"] .post .post-text {
+  color: var(--x-text);
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 0 0 8px 52px;
+  word-wrap: break-word;
+}
+
+html[data-mode="twitter"] .post .post-text a {
+  color: var(--x-blue);
+}
+
+/* Post media */
+html[data-mode="twitter"] .post .post-media img,
+html[data-mode="twitter"] .post .post-file img,
+html[data-mode="twitter"] .post .post-media video,
+html[data-mode="twitter"] .post .post-file video {
+  border: 1px solid var(--x-border);
+  border-radius: var(--x-radius);
+  max-width: 100%;
+}
+
+/* ── Post footer: icon-only actions ──────────────────────────────── */
+html[data-mode="twitter"] .post .post-footer {
+  background: transparent !important;
+  border-top: none !important;
+  border-radius: 0 !important;
+  padding: 4px 0 8px 52px;
+  display: flex;
+  justify-content: space-between;
+  max-width: 425px;
+}
+
+html[data-mode="twitter"] .post .post-footer .social-btn,
+html[data-mode="twitter"] .post .post-footer .reaction-btn,
+html[data-mode="twitter"] .post .post-footer .btn {
+  background: none !important;
+  border: none !important;
+  color: var(--x-text-2) !important;
+  padding: 8px !important;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: var(--x-radius-pill) !important;
+  transition: color 200ms, background-color 200ms;
+}
+
+html[data-mode="twitter"] .post .post-footer .social-btn:hover {
+  background-color: rgba(29,155,240,0.1) !important;
+  color: var(--x-blue) !important;
+}
+
+html[data-mode="twitter"] .post .post-footer .social-btn-like:hover,
+html[data-mode="twitter"] .post .post-footer .reaction-btn:hover {
+  background-color: rgba(244,33,46,0.1) !important;
+  color: var(--x-red) !important;
+}
+
+html[data-mode="twitter"] .post .post-footer .social-btn svg,
+html[data-mode="twitter"] .post .post-footer .reaction-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* ── Compose / textarea ──────────────────────────────────────────── */
+html[data-mode="twitter"] .post-textarea textarea,
+html[data-mode="twitter"] #postTextarea {
+  background-color: var(--x-bg) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--x-border) !important;
+  border-radius: 0 !important;
+  color: var(--x-text) !important;
+  font-size: 20px;
+  padding: 12px 0;
+  resize: none;
+  box-shadow: none !important;
+  font-family: inherit;
+}
+
+html[data-mode="twitter"] .post-textarea textarea:focus,
+html[data-mode="twitter"] #postTextarea:focus {
+  border-bottom-color: var(--x-blue) !important;
+}
+
+html[data-mode="twitter"] .post-textarea textarea::placeholder {
+  color: var(--x-text-2);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+html[data-mode="twitter"] .btn-mat,
+html[data-mode="twitter"] .btn-primary {
+  background-color: var(--x-blue) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: var(--x-radius-pill) !important;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 8px 24px;
+  transition: background-color 200ms;
+}
+
+html[data-mode="twitter"] .btn-mat:hover,
+html[data-mode="twitter"] .btn-primary:hover {
+  background-color: var(--x-blue-hover) !important;
+}
+
+html[data-mode="twitter"] .btn-default {
+  background-color: transparent !important;
+  color: var(--x-text) !important;
+  border: 1px solid var(--x-border) !important;
+  border-radius: var(--x-radius-pill) !important;
+}
+
+html[data-mode="twitter"] .btn-default:hover {
+  background-color: var(--x-bg-hover) !important;
+}
+
+/* ── Dropdowns ───────────────────────────────────────────────────── */
+html[data-mode="twitter"] .dropdown-menu {
+  background-color: var(--x-bg) !important;
+  border: 1px solid var(--x-border) !important;
+  border-radius: var(--x-radius) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
+}
+
+html[data-mode="twitter"] .dropdown-menu li a {
+  color: var(--x-text) !important;
+  transition: background-color 150ms;
+}
+
+html[data-mode="twitter"] .dropdown-menu li a:hover {
+  background-color: rgba(231,233,234,0.08) !important;
+}
+
+/* ── Right sidebar widgets ───────────────────────────────────────── */
+html[data-mode="twitter"] .rightcol .panel,
+html[data-mode="twitter"] .rightcol .sidebar-widget {
+  background: var(--x-surface) !important;
+  border: 1px solid var(--x-border-soft) !important;
+  border-radius: var(--x-radius) !important;
+  box-shadow: none !important;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+html[data-mode="twitter"] .rightcol .panel h4,
+html[data-mode="twitter"] .rightcol .panel .panel-title {
+  color: var(--x-text);
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+html[data-mode="twitter"] .rightcol .panel a {
+  color: var(--x-text);
+}
+
+/* ── Avatars ─────────────────────────────────────────────────────── */
+html[data-mode="twitter"] .avatar,
+html[data-mode="twitter"] .user-avatar {
+  border-radius: 50%;
+  border: none;
+}
+
+/* ── Profile / timeline ──────────────────────────────────────────── */
+html[data-mode="twitter"] .wo_user_profile .user-info {
+  color: var(--x-text);
+}
+
+html[data-mode="twitter"] .wo_user_profile .cover {
+  border-radius: 0;
+}
+
+html[data-mode="twitter"] .wo_user_profile h2,
+html[data-mode="twitter"] .wo_user_profile .user-name {
+  color: var(--x-text);
+  font-weight: 800;
+}
+
+html[data-mode="twitter"] .user_media_list_section {
+  border-top: 1px solid var(--x-border);
+}
+
+html[data-mode="twitter"] .user_media_list_section .photo-data img {
+  border-radius: 0;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+html[data-mode="twitter"] footer,
+html[data-mode="twitter"] .footer {
+  background: var(--x-bg) !important;
+  color: var(--x-text-2);
+  border-top: 1px solid var(--x-border-soft);
+  font-size: 13px;
+  padding: 16px;
+}
+
+html[data-mode="twitter"] footer a {
+  color: var(--x-text-2);
+}
+
+/* ── Modals ──────────────────────────────────────────────────────── */
+html[data-mode="twitter"] .modal-content {
+  background-color: var(--x-bg) !important;
+  border: 1px solid var(--x-border) !important;
+  border-radius: var(--x-radius) !important;
+  color: var(--x-text);
+}
+
+html[data-mode="twitter"] .modal-header {
+  border-bottom: 1px solid var(--x-border);
+}
+
+html[data-mode="twitter"] .modal-header .modal-title,
+html[data-mode="twitter"] .modal-header h4 {
+  color: var(--x-text);
+}
+
+html[data-mode="twitter"] .modal-footer {
+  border-top: 1px solid var(--x-border);
+}
+
+/* ── Welcome / Login page ────────────────────────────────────────── */
+html[data-mode="twitter"] #welcomeheader {
+  background: var(--x-bg);
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--x-border-soft);
+}
+
+html[data-mode="twitter"] .login {
+  background: var(--x-bg) !important;
+}
+
+html[data-mode="twitter"] .login .title {
+  color: var(--x-text) !important;
+  font-size: 42px;
+  font-weight: 800;
+}
+
+html[data-mode="twitter"] .login .desc {
+  color: var(--x-text-2);
+}
+
+html[data-mode="twitter"] .login_left_combo_parent {
+  background: var(--x-bg);
+}
+
+html[data-mode="twitter"] .login_left_combo h1 {
+  color: var(--x-text);
+  font-weight: 800;
+}
+
+html[data-mode="twitter"] .login_left_combo p {
+  color: var(--x-text-2);
+}
+
+html[data-mode="twitter"] .wow_form_fields input,
+html[data-mode="twitter"] .wow_form_fields textarea {
+  background-color: transparent !important;
+  color: var(--x-text) !important;
+  border: 1px solid var(--x-border) !important;
+  border-radius: 4px !important;
+}
+
+html[data-mode="twitter"] .wow_form_fields input:focus,
+html[data-mode="twitter"] .wow_form_fields textarea:focus {
+  border-color: var(--x-blue) !important;
+  box-shadow: none !important;
+}
+
+html[data-mode="twitter"] .wow_form_fields input::placeholder,
+html[data-mode="twitter"] .wow_form_fields textarea::placeholder {
+  color: var(--x-text-2);
+}
+
+html[data-mode="twitter"] .social_btns a {
+  background-color: transparent;
+  border: 1px solid var(--x-border);
+}
+
+/* ── Chat bar ────────────────────────────────────────────────────── */
+html[data-mode="twitter"] #chat-bar {
+  background: var(--x-bg);
+  border: 1px solid var(--x-border);
+  border-radius: var(--x-radius);
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────── */
+html[data-mode="twitter"] ::-webkit-scrollbar { width: 8px; height: 8px; }
+html[data-mode="twitter"] ::-webkit-scrollbar-track { background: var(--x-bg); }
+html[data-mode="twitter"] ::-webkit-scrollbar-thumb {
+  background: var(--x-surface);
+  border-radius: 4px;
+}
+html[data-mode="twitter"] ::-webkit-scrollbar-thumb:hover { background: var(--x-border); }
+
+/* ── Hide non-Twitter sections ───────────────────────────────────── */
+html[data-mode="twitter"] .movies-section,
+html[data-mode="twitter"] .games-section,
+html[data-mode="twitter"] .poke-section,
+html[data-mode="twitter"] .common-things-section,
+html[data-mode="twitter"] .memories-section {
+  display: none !important;
+}
+
+/* ── Tabs / filter ───────────────────────────────────────────────── */
+html[data-mode="twitter"] .nav-tabs {
+  border-bottom: 1px solid var(--x-border);
+}
+
+html[data-mode="twitter"] .nav-tabs > li > a {
+  color: var(--x-text-2);
+  border: none !important;
+  border-bottom: 3px solid transparent !important;
+  border-radius: 0;
+  font-weight: 600;
+  padding: 16px;
+  transition: background-color 200ms, color 200ms;
+}
+
+html[data-mode="twitter"] .nav-tabs > li > a:hover,
+html[data-mode="twitter"] .nav-tabs > li.active > a {
+  background-color: transparent;
+  color: var(--x-text);
+  border-bottom-color: var(--x-blue) !important;
+}
+
+/* ── Mobile ──────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  html[data-mode="twitter"] .col-md-3.rightcol { display: none; }
+  html[data-mode="twitter"] .main-content,
+  html[data-mode="twitter"] #main-content,
+  html[data-mode="twitter"] .col-md-8.middlecol {
+    max-width: 100%;
+    padding: 0;
+  }
+  html[data-mode="twitter"] .post .panel { padding: 8px 12px; }
+}

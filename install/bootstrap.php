@@ -1,7 +1,17 @@
 <?php
 declare(strict_types=1);
 
-const RACSOCIAL_INSTALLER_VERSION = '2.0.0-php82';
+const RACSOCIAL_INSTALLER_VERSION = '2.1.0-php82';
+
+if (!defined('RACSOCIAL_LICENSE_ENDPOINT')) {
+    $endpoint = getenv('RAMZA_LICENSE_ENDPOINT');
+    define('RACSOCIAL_LICENSE_ENDPOINT', is_string($endpoint) && trim($endpoint) !== '' ? trim($endpoint) : '');
+}
+
+if (!defined('RACSOCIAL_ENVATO_ITEM_ID')) {
+    $itemId = getenv('RAMZA_ENVATO_ITEM_ID');
+    define('RACSOCIAL_ENVATO_ITEM_ID', is_string($itemId) ? trim($itemId) : '');
+}
 
 error_reporting(E_ALL);
 ini_set('display_errors', '0');

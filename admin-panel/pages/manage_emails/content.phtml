@@ -1,5 +1,10 @@
 <script src="<?php echo Wo_LoadAdminLink('vendors/tinymce/js/tinymce/tinymce.min.js'); ?>"></script>
-<?php $wo['emails'] = Wo_GetHtmlEmails(); ?>
+<?php
+$wo['emails'] = Wo_GetHtmlEmails();
+$emailTemplateValue = static function ($key) use (&$wo) {
+    return htmlspecialchars((string) ($wo['emails'][$key] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+};
+?>
 <div class="container-fluid">
     <div>
         <h3>Manage Emails</h3>
@@ -28,7 +33,7 @@
                             <div class="form-line">
                                 <label class="form-label">Activate Account (HTML Allowed)</label>
                                 <div class="alert alert-warning">Make sure to add {{USERNAME}} , {{SITE_URL}} , {{EMAIL}} , {{CODE}} , {{SITE_NAME}} in the right place</div>
-                                <textarea name="activate" id="activate" class="form-control" cols="30" rows="10"><?php echo $wo['emails']['activate'];?></textarea>
+                                <textarea name="activate" id="activate" class="form-control" cols="30" rows="10"><?php echo $emailTemplateValue('activate');?></textarea>
                             </div>
                         </div>
                         <br>
@@ -36,7 +41,7 @@
                             <div class="form-line">
                                 <label class="form-label">Invite Email (HTML Allowed)</label>
                                 <div class="alert alert-warning">Make sure to add {{USERNAME}} , {{SITE_URL}} , {{NAME}} , {{URL}} , {{SITE_NAME}} , {{BACKGOUND_COLOR}} in the right place</div>
-                                <textarea name="invite" id="invite" class="form-control" cols="30" rows="10"><?php echo $wo['emails']['invite'];?></textarea>
+                                <textarea name="invite" id="invite" class="form-control" cols="30" rows="10"><?php echo $emailTemplateValue('invite');?></textarea>
                             </div>
                         </div>
                         <br>
@@ -44,7 +49,7 @@
                             <div class="form-line">
                                 <label class="form-label">Login With (HTML Allowed)</label>
                                 <div class="alert alert-warning">Make sure to add {{FIRST_NAME}} , {{SITE_NAME}} , {{USERNAME}} , {{EMAIL}} in the right place</div>
-                                <textarea name="login_with" id="login_with" class="form-control" cols="30" rows="10"><?php echo $wo['emails']['login_with'];?></textarea>
+                                <textarea name="login_with" id="login_with" class="form-control" cols="30" rows="10"><?php echo $emailTemplateValue('login_with');?></textarea>
                             </div>
                         </div>
                         <br>
@@ -52,7 +57,7 @@
                             <div class="form-line">
                                 <label class="form-label">Notification (HTML Allowed)</label>
                                 <div class="alert alert-warning">Make sure to add {{SITE_NAME}} , {{NOTIFY_URL}} , {{NOTIFY_AVATAR}} , {{NOTIFY_NAME}} , {{TEXT_TYPE}} , {{TEXT}} , {{URL}} in the right place</div>
-                                <textarea name="notification" id="notification" class="form-control" cols="30" rows="10"><?php echo $wo['emails']['notification'];?></textarea>
+                                <textarea name="notification" id="notification" class="form-control" cols="30" rows="10"><?php echo $emailTemplateValue('notification');?></textarea>
                             </div>
                         </div>
                         <br>
@@ -60,7 +65,7 @@
                             <div class="form-line">
                                 <label class="form-label">Payment Declined (HTML Allowed)</label>
                                 <div class="alert alert-warning">Make sure to add {{name}} , {{amount}} , {{site_name}} in the right place</div>
-                                <textarea name="payment_declined" id="payment_declined" class="form-control" cols="30" rows="10"><?php echo $wo['emails']['payment_declined'];?></textarea>
+                                <textarea name="payment_declined" id="payment_declined" class="form-control" cols="30" rows="10"><?php echo $emailTemplateValue('payment_declined');?></textarea>
                             </div>
                         </div>
                         <br>
@@ -68,7 +73,7 @@
                             <div class="form-line">
                                 <label class="form-label">Payment Approved (HTML Allowed)</label>
                                 <div class="alert alert-warning">Make sure to add {{name}} , {{amount}} , {{site_name}} in the right place</div>
-                                <textarea name="payment_approved" id="payment_approved" class="form-control" cols="30" rows="10"><?php echo $wo['emails']['payment_approved'];?></textarea>
+                                <textarea name="payment_approved" id="payment_approved" class="form-control" cols="30" rows="10"><?php echo $emailTemplateValue('payment_approved');?></textarea>
                             </div>
                         </div>
                         <br>
@@ -76,7 +81,7 @@
                             <div class="form-line">
                                 <label class="form-label">Recover (HTML Allowed)</label>
                                 <div class="alert alert-warning">Make sure to add {{USERNAME}} , {{SITE_NAME}} , {{LINK}} in the right place</div>
-                                <textarea name="recover" id="recover" class="form-control" cols="30" rows="10"><?php echo $wo['emails']['recover'];?></textarea>
+                                <textarea name="recover" id="recover" class="form-control" cols="30" rows="10"><?php echo $emailTemplateValue('recover');?></textarea>
                             </div>
                         </div>
                         <br>
@@ -84,19 +89,19 @@
                             <div class="form-line">
                                 <label class="form-label">Unusual Login (HTML Allowed)</label>
                                 <div class="alert alert-warning">Make sure to add {{USERNAME}} , {{SITE_NAME}} , {{CODE}} , {{DATE}} , {{EMAIL}} , {{COUNTRY_CODE}} , {{IP_ADDRESS}} , {{CITY}} in the right place</div>
-                                <textarea name="unusual_login" id="unusual_login" class="form-control" cols="30" rows="10"><?php echo $wo['emails']['unusual_login'];?></textarea>
+                                <textarea name="unusual_login" id="unusual_login" class="form-control" cols="30" rows="10"><?php echo $emailTemplateValue('unusual_login');?></textarea>
                             </div>
                         </div>
                         <div class="form-group form-float">
                             <div class="form-line">
                                 <label class="form-label">Account Deleted (HTML Allowed)</label>
                                 <div class="alert alert-warning">Make sure to add {{USERNAME}} , {{SITE_NAME}} in the right place</div>
-                                <textarea name="account_deleted" id="account_deleted" class="form-control" cols="30" rows="10"><?php echo $wo['emails']['account_deleted'];?></textarea>
+                                <textarea name="account_deleted" id="account_deleted" class="form-control" cols="30" rows="10"><?php echo $emailTemplateValue('account_deleted');?></textarea>
                             </div>
                         </div>
                         <br>
                         <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
-                        <button type="submit" class="btn btn-primary m-t-15 waves-effect">Save</button>
+                        <button type="submit" class="btn btn-primary m-t-15 waves-effect" data-label="Save">Save</button>
                     </form>
                 </div>
             </div>
@@ -108,60 +113,79 @@
 
 $(function() {
     var form_add_settings = $('form.add-settings');
-    form_add_settings.ajaxForm({
-        url: Wo_Ajax_Requests_File() + '?f=admin_setting&s=update_html_emails',
-        beforeSend: function() {
-            form_add_settings.find('.waves-effect').text('Please wait..');
-        },
-        beforeSubmit : function(arr, $form, options){
-            // for (var i = 0; i < arr.length; i++) {
-            //     if (arr[i].name == "activate") {
-            //         arr[i].value = btoa(unescape(encodeURIComponent($('#activate').value=tinymce.editors[$('#activate').attr('id')].getContent())));
-            //     }
-            //     if (arr[i].name == 'invite') {
-            //         arr[i].value = btoa(unescape(encodeURIComponent($('#invite').value=tinymce.editors[$('#invite').attr('id')].getContent())));
-            //     }
-            //     if (arr[i].name == 'login_with') {
-            //         arr[i].value = btoa(unescape(encodeURIComponent($('#login_with').value=tinymce.editors[$('#login_with').attr('id')].getContent())));
-            //     }
-            //     if (arr[i].name == 'notification') {
-            //         arr[i].value = btoa(unescape(encodeURIComponent($('#notification').value=tinymce.editors[$('#notification').attr('id')].getContent())));
-            //     }
-            //     if (arr[i].name == 'payment_declined') {
-            //         arr[i].value = btoa(unescape(encodeURIComponent($('#payment_declined').value=tinymce.editors[$('#payment_declined').attr('id')].getContent())));
-            //     }
-            //     if (arr[i].name == 'payment_approved') {
-            //         arr[i].value = btoa(unescape(encodeURIComponent($('#payment_approved').value=tinymce.editors[$('#payment_approved').attr('id')].getContent())));
-            //     }
-            //     if (arr[i].name == 'recover') {
-            //         arr[i].value = btoa(unescape(encodeURIComponent($('#recover').value=tinymce.editors[$('#recover').attr('id')].getContent())));
-            //     }
-            //     if (arr[i].name == 'unusual_login') {
-            //         arr[i].value = btoa(unescape(encodeURIComponent($('#unusual_login').value=tinymce.editors[$('#unusual_login').attr('id')].getContent())));
-            //     }
-            //     if (arr[i].name == 'account_deleted') {
-            //         arr[i].value = btoa(unescape(encodeURIComponent($('#account_deleted').value=tinymce.editors[$('#account_deleted').attr('id')].getContent())));
-            //     }
-            // }
-        },
-        success: function(data) {
-            if (data.status == 200) {
-                $("html, body").animate({ scrollTop: 0 }, "slow");
-                $('.add-settings-alert').html('<div class="alert alert-success"><i class="fa fa-check"></i> Emails saved successfully</div>');
-            } else if (data.status == 400) {
-            $('.add-settings-alert').html('<div class="alert alert-danger">'+data.message+'</div>');
-                setTimeout(function () {
-                    $('.add-settings-alert').empty();
-                }, 2000);
-          }
-          form_add_settings.find('.waves-effect').text('Save');
+    var save_button = form_add_settings.find('button[type="submit"]');
+    var syncEmailEditors = function() {
+        if (!window.tinymce) {
+            return;
         }
+        form_add_settings.find('textarea[id]').each(function() {
+            var editor = tinymce.get(this.id);
+            if (editor) {
+                var content = editor.getContent({format: 'html'});
+                this.value = content;
+                $(this).val(content);
+            }
+        });
+    };
+    var encodeTemplatePayload = function() {
+        var payload = {
+            hash_id: form_add_settings.find('input[name="hash_id"]').val(),
+            template_encoding: 'base64'
+        };
+        form_add_settings.find('textarea[name]').each(function() {
+            payload[this.name] = window.btoa(unescape(encodeURIComponent(this.value || '')));
+        });
+        return payload;
+    };
+    form_add_settings.off('submit.ramzaEmailTemplates').on('submit.ramzaEmailTemplates', function(event) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        syncEmailEditors();
+        var templatePayload;
+        try {
+            templatePayload = encodeTemplatePayload();
+        } catch (encodingError) {
+            $('.add-settings-alert').html('<div class="alert alert-danger">The template contains text that could not be prepared for saving.</div>');
+            return;
+        }
+        save_button.prop('disabled', true).text('Please wait..');
+        $.ajax({
+            url: Wo_Ajax_Requests_File() + '?f=admin_setting&s=update_html_emails',
+            type: 'POST',
+            data: templatePayload,
+            dataType: 'json',
+            timeout: 60000
+        }).done(function(data) {
+            if (data && Number(data.status) === 200) {
+                $("html, body").animate({scrollTop: 0}, "slow");
+                $('.add-settings-alert').html('<div class="alert alert-success"><i class="fa fa-check"></i> '+(data.message || 'Email templates saved successfully.')+'</div>');
+                return;
+            }
+            var responseMessage = data && data.message ? data.message : 'Email templates could not be saved.';
+            $('.add-settings-alert').html('<div class="alert alert-danger">'+$('<div>').text(responseMessage).html()+'</div>');
+        }).fail(function(xhr, status) {
+            var message = 'Email templates could not be saved.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                message = xhr.responseJSON.message;
+            } else if (status === 'timeout') {
+                message = 'The save request timed out. Please try again.';
+            } else if (Number(xhr.status) === 403) {
+                message = 'The server security firewall rejected the save request (HTTP 403).';
+            } else if (Number(xhr.status) === 413) {
+                message = 'The email templates exceed the server request-size limit (HTTP 413).';
+            } else if (xhr.status) {
+                message = 'The server could not save the templates (HTTP '+xhr.status+').';
+            }
+            $('.add-settings-alert').html('<div class="alert alert-danger">'+$('<div>').text(message).html()+'</div>');
+        }).always(function() {
+            save_button.prop('disabled', false).text(save_button.data('label') || 'Save');
+        });
     });
   tinymce.init({
       selector: '#activate',
       height: 270,
-      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      plugins: 'anchor autolink charmap code codesample emoticons image link lists media preview searchreplace table visualblocks wordcount',
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code preview | removeformat',
       tinycomments_mode: 'embedded',
       tinycomments_author: 'Author name',
       mergetags_list: [
@@ -178,8 +202,8 @@ $(function() {
   tinymce.init({
       selector: '#invite',
       height: 270,
-      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      plugins: 'anchor autolink charmap code codesample emoticons image link lists media preview searchreplace table visualblocks wordcount',
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code preview | removeformat',
       tinycomments_mode: 'embedded',
       tinycomments_author: 'Author name',
       mergetags_list: [
@@ -196,8 +220,8 @@ $(function() {
   tinymce.init({
       selector: '#login_with',
       height: 270,
-      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      plugins: 'anchor autolink charmap code codesample emoticons image link lists media preview searchreplace table visualblocks wordcount',
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code preview | removeformat',
       tinycomments_mode: 'embedded',
       tinycomments_author: 'Author name',
       mergetags_list: [
@@ -214,8 +238,8 @@ $(function() {
   tinymce.init({
       selector: '#notification',
       height: 270,
-      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      plugins: 'anchor autolink charmap code codesample emoticons image link lists media preview searchreplace table visualblocks wordcount',
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code preview | removeformat',
       tinycomments_mode: 'embedded',
       tinycomments_author: 'Author name',
       mergetags_list: [
@@ -232,8 +256,8 @@ $(function() {
   tinymce.init({
       selector: '#payment_declined',
       height: 270,
-      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      plugins: 'anchor autolink charmap code codesample emoticons image link lists media preview searchreplace table visualblocks wordcount',
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code preview | removeformat',
       tinycomments_mode: 'embedded',
       tinycomments_author: 'Author name',
       mergetags_list: [
@@ -250,8 +274,8 @@ $(function() {
   tinymce.init({
       selector: '#payment_approved',
       height: 270,
-      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      plugins: 'anchor autolink charmap code codesample emoticons image link lists media preview searchreplace table visualblocks wordcount',
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code preview | removeformat',
       tinycomments_mode: 'embedded',
       tinycomments_author: 'Author name',
       mergetags_list: [
@@ -268,8 +292,8 @@ $(function() {
   tinymce.init({
       selector: '#recover',
       height: 270,
-      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      plugins: 'anchor autolink charmap code codesample emoticons image link lists media preview searchreplace table visualblocks wordcount',
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code preview | removeformat',
       tinycomments_mode: 'embedded',
       tinycomments_author: 'Author name',
       mergetags_list: [
@@ -286,8 +310,8 @@ $(function() {
   tinymce.init({
       selector: '#unusual_login',
       height: 270,
-      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      plugins: 'anchor autolink charmap code codesample emoticons image link lists media preview searchreplace table visualblocks wordcount',
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code preview | removeformat',
       tinycomments_mode: 'embedded',
       tinycomments_author: 'Author name',
       mergetags_list: [
@@ -304,8 +328,8 @@ $(function() {
   tinymce.init({
       selector: '#account_deleted',
       height: 270,
-      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      plugins: 'anchor autolink charmap code codesample emoticons image link lists media preview searchreplace table visualblocks wordcount',
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code preview | removeformat',
       tinycomments_mode: 'embedded',
       tinycomments_author: 'Author name',
       mergetags_list: [

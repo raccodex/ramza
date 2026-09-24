@@ -1,0 +1,46 @@
+<?php
+$ramzaRtc = is_array($wo['ramza_webrtc'] ?? null) ? $wo['ramza_webrtc'] : [];
+if ($ramzaRtc === []) { return; }
+?>
+<script>
+(function(){
+    'use strict';
+    var cfg=<?php echo json_encode($ramzaRtc, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+    var pc=null, stream=null, stopped=false, pollTimer=null, pendingCandidates=[];
+    var remote=document.getElementById('remote-media'), local=document.getElementById('local-media')||document.getElementById('me');
+    function status(message){if(remote&&!remote.querySelector('video,audio'))remote.innerHTML='<div class="alert alert-info"></div>',remote.firstChild.textContent=message;}
+    function request(action,data){data=data||{};data.call_id=cfg.callId;data.call_type=cfg.callType;data.hash_id=cfg.hash;return $.ajax({url:cfg.endpoint+'&s='+action,method:'POST',dataType:'json',data:data});}
+    function send(type,payload){return request('push',{message_type:type,payload:JSON.stringify(payload)});}
+    function mediaElement(trackStream,muted){var el=document.createElement(cfg.callType==='video'?'video':'audio');el.autoplay=true;el.playsInline=true;el.muted=!!muted;el.srcObject=trackStream;return el;}
+    async function applyCandidate(candidate){if(pc.remoteDescription&&pc.remoteDescription.type){await pc.addIceCandidate(new RTCIceCandidate(candidate));}else{pendingCandidates.push(candidate);}}
+    async function flushCandidates(){while(pendingCandidates.length){await pc.addIceCandidate(new RTCIceCandidate(pendingCandidates.shift()));}}
+    async function handle(signal){
+        if(!signal||!signal.type)return;
+        if(signal.type==='offer'&&!cfg.isCaller){await pc.setRemoteDescription(new RTCSessionDescription(signal.payload));await flushCandidates();var answer=await pc.createAnswer();await pc.setLocalDescription(answer);await send('answer',pc.localDescription);}
+        else if(signal.type==='answer'&&cfg.isCaller&&!pc.remoteDescription){await pc.setRemoteDescription(new RTCSessionDescription(signal.payload));await flushCandidates();}
+        else if(signal.type==='candidate'&&signal.payload){await applyCandidate(signal.payload);}
+        else if(signal.type==='hangup'){stop(false);}
+    }
+    function poll(){if(stopped)return;request('pull').done(async function(data){for(var i=0;i<(data.signals||[]).length;i++){try{await handle(data.signals[i]);}catch(e){status('Call connection failed.');}}}).always(function(){if(!stopped)pollTimer=setTimeout(poll,700);});}
+    function stop(notify){if(stopped)return;stopped=true;clearTimeout(pollTimer);if(notify)send('hangup',{at:Date.now()});if(pc)pc.close();if(stream)stream.getTracks().forEach(function(t){t.stop();});setTimeout(function(){window.location.href=cfg.homeUrl;},250);}
+    async function start(){
+        if(!window.RTCPeerConnection||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){status('WebRTC is not available in this browser.');return;}
+        try{
+            stream=await navigator.mediaDevices.getUserMedia({audio:true,video:cfg.callType==='video'});
+            if(local){local.innerHTML='';local.appendChild(mediaElement(stream,true));}
+            pc=new RTCPeerConnection({iceServers:cfg.iceServers,iceCandidatePoolSize:4});
+            stream.getTracks().forEach(function(track){pc.addTrack(track,stream);});
+            pc.ontrack=function(event){if(remote){remote.innerHTML='';remote.appendChild(mediaElement(event.streams[0],false));}};
+            pc.onicecandidate=function(event){if(event.candidate)send('candidate',event.candidate.toJSON());};
+            pc.onconnectionstatechange=function(){if(pc.connectionState==='connected'){$('.end_vdo_call').removeClass('hidden');}if(['failed','closed'].indexOf(pc.connectionState)!==-1)status('Call ended.');};
+            poll();
+            if(cfg.isCaller){var offer=await pc.createOffer({offerToReceiveAudio:true,offerToReceiveVideo:cfg.callType==='video'});await pc.setLocalDescription(offer);await send('offer',pc.localDescription);}
+            setTimeout(function(){if(pc&&['new','connecting'].indexOf(pc.connectionState)!==-1)status('Still connecting. Check TURN settings if this continues.');},cfg.iceTimeout*1000);
+        }catch(e){status(e&&e.name==='NotAllowedError'?'Camera or microphone permission was denied.':'Unable to start the call.');}
+    }
+    $(document).on('click','.end_vdo_call,.decline-call',function(event){event.preventDefault();stop(true);});
+    window.addEventListener('beforeunload',function(){if(stream)stream.getTracks().forEach(function(t){t.stop();});});
+    start();
+})();
+</script>
+

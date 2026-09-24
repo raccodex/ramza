@@ -50,7 +50,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
 			$id = Wo_Secure($_POST['id']);
 			$all = array();
 			foreach (explode(",", $_POST['reaction']) as $i => $react) {
-				if (in_array($react,array_keys($wo['reactions_types']))) {
+				if (in_array((int) $react, Ramza_GetActiveReactionIds(), true)) {
 					$users = Wo_GetPostReactionUsers($id, $react ,$limit,$offset_array[$react],$col);
 					// if ($react == 'like') {
 					// 	$users = Wo_GetPostReactionUsers($id, $react_array[$react] ,$limit,$like,$col);

@@ -1,0 +1,694 @@
+<?php
+$rac_algorithm_value = static function ($key, $default = '') use ($wo) {
+    return htmlspecialchars((string)($wo['config'][$key] ?? $default), ENT_QUOTES, 'UTF-8');
+};
+
+$rac_algorithm_checked = static function ($key, $default = '0') use ($wo) {
+    return ((string)($wo['config'][$key] ?? $default) === '1') ? 'checked' : '';
+};
+
+$rac_algorithm_selected = static function ($key, $value, $default = '') use ($wo) {
+    return ((string)($wo['config'][$key] ?? $default) === (string)$value) ? 'selected' : '';
+};
+
+$rac_signal_switches = array(
+    array('key' => 'algorithm_track_behavior', 'title' => 'Behavior feedback', 'text' => 'Use hidden-post feedback and repeat engagement to reduce unwanted creators and topics.'),
+    array('key' => 'algorithm_track_search', 'title' => 'Search intent', 'text' => 'Boost topics and creators that match what a user searches for.'),
+    array('key' => 'algorithm_track_video_watch', 'title' => 'Video interest', 'text' => 'Give stronger category affinity to videos and reels a user actively engages with.'),
+    array('key' => 'algorithm_track_likes', 'title' => 'Liked post categories', 'text' => 'Learn from categories, pages, groups, and creators the user likes.'),
+    array('key' => 'algorithm_track_comments', 'title' => 'Comment intent', 'text' => 'Treat comments and replies as stronger interest signals than passive views.'),
+    array('key' => 'algorithm_track_shares', 'title' => 'Share / save intent', 'text' => 'Boost content similar to posts a user shares, saves, or forwards.'),
+    array('key' => 'algorithm_track_follows', 'title' => 'Following graph', 'text' => 'Prioritize followed users, pages, groups, and close network activity.'),
+    array('key' => 'algorithm_track_categories', 'title' => 'Category profile', 'text' => 'Build a category profile across posts, videos, reels, blogs, groups, and pages.'),
+    array('key' => 'algorithm_track_location', 'title' => 'Location relevance', 'text' => 'Boost nearby, same-city, and same-country posts when user location data is available.'),
+    array('key' => 'algorithm_track_impressions', 'title' => 'Seen history', 'text' => 'Avoid repeatedly showing posts already seen in the recent feed session.'),
+    array('key' => 'algorithm_track_dwell', 'title' => 'Dwell and completion', 'text' => 'Learn from meaningful reading time and completed video or reel views.'),
+    array('key' => 'algorithm_track_quick_skips', 'title' => 'Quick skips', 'text' => 'Treat fast scrolling past a post as a small negative signal.')
+);
+
+$rac_weight_controls = array(
+    array('key' => 'algorithm_signal_following', 'title' => 'Following graph', 'default' => '35'),
+    array('key' => 'algorithm_signal_interest', 'title' => 'Personal interest', 'default' => '30'),
+    array('key' => 'algorithm_signal_trending', 'title' => 'Trending pressure', 'default' => '20'),
+    array('key' => 'algorithm_signal_freshness', 'title' => 'Freshness / recency', 'default' => '10'),
+    array('key' => 'algorithm_signal_exploration', 'title' => 'Discovery / exploration', 'default' => '5'),
+    array('key' => 'algorithm_signal_location', 'title' => 'Location relevance', 'default' => '12')
+);
+
+$rac_multiplier_controls = array(
+    array('key' => 'algorithm_multiplier_search', 'title' => 'Search match multiplier', 'hint' => 'Higher means recent searches strongly affect the feed.', 'default' => '1.20'),
+    array('key' => 'algorithm_multiplier_video', 'title' => 'Watched video multiplier', 'hint' => 'Higher means watched video categories shape feed more.', 'default' => '1.35'),
+    array('key' => 'algorithm_multiplier_like_category', 'title' => 'Liked category multiplier', 'hint' => 'Higher means liked post categories are repeated more.', 'default' => '1.30'),
+    array('key' => 'algorithm_multiplier_trending', 'title' => 'Trending multiplier', 'hint' => 'Higher means viral posts enter feeds faster.', 'default' => '1.15')
+);
+
+$rac_advanced_rank_controls = array(
+    array('key' => 'algorithm_rank_topic_match', 'title' => 'Topic match', 'default' => '34'),
+    array('key' => 'algorithm_rank_related_topic', 'title' => 'Related-topic match', 'default' => '18'),
+    array('key' => 'algorithm_rank_collaborative', 'title' => 'Similar-audience match', 'default' => '10'),
+    array('key' => 'algorithm_rank_negative_topic', 'title' => 'Negative topic penalty', 'default' => '42'),
+    array('key' => 'algorithm_rank_creator_affinity', 'title' => 'Creator affinity', 'default' => '20'),
+    array('key' => 'algorithm_rank_quality', 'title' => 'Content quality', 'default' => '12'),
+    array('key' => 'algorithm_rank_network', 'title' => 'Network relevance', 'default' => '18'),
+    array('key' => 'algorithm_rank_seen_penalty', 'title' => 'Seen-post penalty', 'default' => '35'),
+    array('key' => 'algorithm_rank_boost_cap', 'title' => 'Editorial boost cap', 'default' => '8')
+);
+
+$rac_pool_controls = array(
+    array('key' => 'algorithm_pool_followed', 'title' => 'Following', 'default' => '40'),
+    array('key' => 'algorithm_pool_interest', 'title' => 'Direct interests', 'default' => '30'),
+    array('key' => 'algorithm_pool_related', 'title' => 'Related topics', 'default' => '10'),
+    array('key' => 'algorithm_pool_collaborative', 'title' => 'Similar audiences', 'default' => '5'),
+    array('key' => 'algorithm_pool_trending', 'title' => 'Trending', 'default' => '5'),
+    array('key' => 'algorithm_pool_new_creator', 'title' => 'New creators', 'default' => '5'),
+    array('key' => 'algorithm_pool_exploration', 'title' => 'Exploration', 'default' => '5')
+);
+
+$rac_event_controls = array(
+    array('key' => 'algorithm_signal_impression_event', 'title' => 'Impression', 'default' => '0.10'),
+    array('key' => 'algorithm_signal_click_event', 'title' => 'Click', 'default' => '1.00'),
+    array('key' => 'algorithm_signal_open_post_event', 'title' => 'Open post', 'default' => '1.50'),
+    array('key' => 'algorithm_signal_like_event', 'title' => 'Like', 'default' => '3.00'),
+    array('key' => 'algorithm_signal_reaction_event', 'title' => 'Reaction', 'default' => '3.00'),
+    array('key' => 'algorithm_signal_comment_event', 'title' => 'Comment', 'default' => '5.00'),
+    array('key' => 'algorithm_signal_reply_event', 'title' => 'Reply', 'default' => '5.00'),
+    array('key' => 'algorithm_signal_share_event', 'title' => 'Share', 'default' => '7.00'),
+    array('key' => 'algorithm_signal_repost_event', 'title' => 'Repost', 'default' => '8.00'),
+    array('key' => 'algorithm_signal_save_event', 'title' => 'Save', 'default' => '8.00'),
+    array('key' => 'algorithm_signal_follow_after_view_event', 'title' => 'Follow creator', 'default' => '10.00'),
+    array('key' => 'algorithm_signal_profile_visit_event', 'title' => 'Profile visit', 'default' => '3.00'),
+    array('key' => 'algorithm_signal_watch_25_event', 'title' => 'Watch 25%', 'default' => '1.00'),
+    array('key' => 'algorithm_signal_watch_50_event', 'title' => 'Watch 50%', 'default' => '3.00'),
+    array('key' => 'algorithm_signal_watch_75_event', 'title' => 'Watch 75%', 'default' => '5.00'),
+    array('key' => 'algorithm_signal_watch_complete_event', 'title' => 'Watch complete', 'default' => '8.00'),
+    array('key' => 'algorithm_signal_rewatch_event', 'title' => 'Rewatch', 'default' => '10.00'),
+    array('key' => 'algorithm_signal_sound_on_event', 'title' => 'Enable sound', 'default' => '1.50'),
+    array('key' => 'algorithm_signal_dwell_event', 'title' => 'Dwell', 'default' => '0.80'),
+    array('key' => 'algorithm_signal_expand_text_event', 'title' => 'Expand text', 'default' => '1.50'),
+    array('key' => 'algorithm_signal_open_comments_event', 'title' => 'Open comments', 'default' => '1.50'),
+    array('key' => 'algorithm_signal_search_topic_event', 'title' => 'Search topic', 'default' => '6.00'),
+    array('key' => 'algorithm_signal_hashtag_click_event', 'title' => 'Hashtag click', 'default' => '4.00'),
+    array('key' => 'algorithm_signal_send_post_event', 'title' => 'Send post', 'default' => '7.00'),
+    array('key' => 'algorithm_signal_topic_preference_event', 'title' => 'Selected interest', 'default' => '8.00'),
+    array('key' => 'algorithm_signal_quick_skip_event', 'title' => 'Quick skip', 'default' => '-2.00'),
+    array('key' => 'algorithm_signal_short_watch_event', 'title' => 'Short watch', 'default' => '-2.00'),
+    array('key' => 'algorithm_signal_hide_event', 'title' => 'Hide', 'default' => '-8.00'),
+    array('key' => 'algorithm_signal_not_interested_event', 'title' => 'Not interested', 'default' => '-12.00'),
+    array('key' => 'algorithm_signal_unfollow_event', 'title' => 'Unfollow', 'default' => '-10.00'),
+    array('key' => 'algorithm_signal_mute_event', 'title' => 'Mute', 'default' => '-15.00'),
+    array('key' => 'algorithm_signal_report_event', 'title' => 'Report', 'default' => '-25.00'),
+    array('key' => 'algorithm_signal_block_event', 'title' => 'Block', 'default' => '-100.00')
+);
+
+$rac_algorithm_status = function_exists('Wo_RamzaAlgorithmStatus') ? Wo_RamzaAlgorithmStatus() : array('available' => false, 'tables' => array(), 'last_cron' => null);
+$rac_algorithm_admin_data = function_exists('Wo_RamzaAlgorithmAdminData') ? Wo_RamzaAlgorithmAdminData(100) : array('topics' => array(), 'relations' => array(), 'boosts' => array(), 'event_totals' => array());
+$rac_algorithm_licensed = function_exists('Ramza_AddonLicensed') && Ramza_AddonLicensed('algorithm_pro');
+?>
+<div class="container-fluid rac-algorithm-page">
+    <div class="rac-algorithm-heading">
+        <div>
+            <h3>Algorithm Control</h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Algorithm Control</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="rac-algorithm-stage">
+            <span>Home and reels</span>
+            <strong><?php echo !empty($rac_algorithm_status['available']) ? 'Advanced engine ready' : 'Base engine active'; ?></strong>
+        </div>
+    </div>
+
+    <div class="algorithm-settings-alert"></div>
+
+    <?php echo function_exists('Ramza_AddonAdminBanner') ? Ramza_AddonAdminBanner('algorithm_pro') : ''; ?>
+
+    <form class="rac-algorithm-settings <?php echo $rac_algorithm_licensed ? '' : 'is-addon-locked'; ?>" method="POST">
+        <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+        <input type="hidden" name="algorithm_admin_stage" value="advanced_recommendation_connected">
+
+        <div class="rac-algorithm-hero card">
+            <div class="card-body">
+                <div class="rac-algorithm-hero__content">
+                    <span class="rac-algorithm-eyebrow">Feed ranking</span>
+                    <h4>Recommendation algorithm</h4>
+                    <p>Personalize the home feed and reels with network, topic, behavior, quality, freshness and discovery signals.</p>
+                </div>
+                <div class="rac-algorithm-hero__controls">
+                    <div class="rac-algorithm-mode">
+                        <label for="algorithm_profile_mode">Ranking profile</label>
+                        <select class="form-control" name="algorithm_profile_mode" id="algorithm_profile_mode">
+                            <option value="balanced" <?php echo $rac_algorithm_selected('algorithm_profile_mode', 'balanced', 'balanced'); ?>>Balanced</option>
+                            <option value="following_first" <?php echo $rac_algorithm_selected('algorithm_profile_mode', 'following_first'); ?>>Following first</option>
+                            <option value="interest_first" <?php echo $rac_algorithm_selected('algorithm_profile_mode', 'interest_first'); ?>>Interest first</option>
+                            <option value="trending_first" <?php echo $rac_algorithm_selected('algorithm_profile_mode', 'trending_first'); ?>>Trending first</option>
+                            <option value="fresh_first" <?php echo $rac_algorithm_selected('algorithm_profile_mode', 'fresh_first'); ?>>Newest first</option>
+                        </select>
+                    </div>
+                    <div class="rac-algorithm-mode">
+                        <label for="algorithm_relevance_mode">Interest strictness</label>
+                        <select class="form-control" name="algorithm_relevance_mode" id="algorithm_relevance_mode">
+                            <option value="broad" <?php echo $rac_algorithm_selected('algorithm_relevance_mode', 'broad'); ?>>Broad</option>
+                            <option value="balanced" <?php echo $rac_algorithm_selected('algorithm_relevance_mode', 'balanced', 'balanced'); ?>>Balanced</option>
+                            <option value="strict" <?php echo $rac_algorithm_selected('algorithm_relevance_mode', 'strict'); ?>>Strict</option>
+                            <option value="very_strict" <?php echo $rac_algorithm_selected('algorithm_relevance_mode', 'very_strict'); ?>>Very strict</option>
+                        </select>
+                    </div>
+                    <div class="rac-algorithm-master">
+                        <span>Algorithm system</span>
+                        <div class="form-group switcher">
+                            <input type="hidden" name="algorithm_system" value="0" />
+                            <input type="checkbox" name="algorithm_system" id="chck-algorithm_system" value="1" <?php echo $rac_algorithm_checked('algorithm_system', '1'); ?>>
+                            <label for="chck-algorithm_system" class="check-trail"><span class="check-handler"></span></label>
+                        </div>
+                    </div>
+                    <div class="rac-algorithm-master">
+                        <span>Topic graph</span>
+                        <div class="form-group switcher">
+                            <input type="hidden" name="algorithm_advanced_topics" value="0" />
+                            <input type="checkbox" name="algorithm_advanced_topics" id="chck-algorithm_advanced_topics" value="1" <?php echo $rac_algorithm_checked('algorithm_advanced_topics', '1'); ?>>
+                            <label for="chck-algorithm_advanced_topics" class="check-trail"><span class="check-handler"></span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rac-algorithm-health" data-algorithm-health>
+            <?php foreach (array('topics' => 'Topics', 'post_topics' => 'Indexed posts', 'interests' => 'Interest profiles', 'events' => 'Events', 'impressions' => 'Seen records') as $status_key => $status_label) {
+                $status_item = $rac_algorithm_status['tables'][$status_key] ?? array('ready' => false, 'count' => 0);
+            ?>
+                <div>
+                    <span><?php echo $status_label; ?></span>
+                    <strong><?php echo !empty($status_item['ready']) ? number_format((int)$status_item['count']) : 'Not installed'; ?></strong>
+                </div>
+            <?php } ?>
+            <button type="button" class="btn btn-default rac-algorithm-maintenance">Run maintenance</button>
+        </div>
+
+        <div class="rac-algorithm-tabs" role="tablist" aria-label="Algorithm settings sections">
+            <button type="button" class="is-active" role="tab" aria-selected="true" data-algorithm-tab="essentials">Essentials</button>
+            <button type="button" role="tab" aria-selected="false" data-algorithm-tab="advanced">Advanced tuning</button>
+            <?php if (!empty($rac_algorithm_status['available'])) { ?>
+                <button type="button" role="tab" aria-selected="false" data-algorithm-tab="catalog">Content tools</button>
+            <?php } ?>
+        </div>
+
+        <div class="row rac-algorithm-panel is-active" data-algorithm-panel="essentials">
+            <div class="col-lg-7 col-md-12">
+                <div class="card rac-algorithm-card">
+                    <div class="card-body">
+                        <h6 class="card-title">User signal tracking</h6>
+                        <p class="rac-algorithm-note">Choose which user behavior signals the future feed ranking system is allowed to consider.</p>
+                        <div class="rac-signal-grid">
+                            <?php foreach ($rac_signal_switches as $signal) { ?>
+                                <div class="rac-signal-item">
+                                    <div>
+                                        <strong><?php echo htmlspecialchars($signal['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
+                                        <span><?php echo htmlspecialchars($signal['text'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                    </div>
+                                    <div class="form-group switcher">
+                                        <input type="hidden" name="<?php echo $signal['key']; ?>" value="0" />
+                                        <input type="checkbox" name="<?php echo $signal['key']; ?>" id="chck-<?php echo $signal['key']; ?>" value="1" <?php echo $rac_algorithm_checked($signal['key'], '1'); ?>>
+                                        <label for="chck-<?php echo $signal['key']; ?>" class="check-trail"><span class="check-handler"></span></label>
+                                    </div>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 col-md-12">
+                <div class="card rac-algorithm-card">
+                    <div class="card-body">
+                        <h6 class="card-title">Ranking weights</h6>
+                        <p class="rac-algorithm-note">Set how much each signal family affects the home feed order. These values are used by the live home-feed scorer.</p>
+                        <div class="rac-weight-stack">
+                            <?php foreach ($rac_weight_controls as $control) { ?>
+                                <label class="rac-weight-control">
+                                    <span>
+                                        <strong><?php echo htmlspecialchars($control['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
+                                        <output data-rac-range-output="<?php echo $control['key']; ?>"><?php echo $rac_algorithm_value($control['key'], $control['default']); ?>%</output>
+                                    </span>
+                                    <input type="range" min="0" max="100" step="1" name="<?php echo $control['key']; ?>" value="<?php echo $rac_algorithm_value($control['key'], $control['default']); ?>" data-rac-range="<?php echo $control['key']; ?>">
+                                </label>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row rac-algorithm-panel is-active" data-algorithm-panel="essentials">
+            <div class="col-lg-6 col-md-12">
+                <div class="card rac-algorithm-card">
+                    <div class="card-body">
+                        <h6 class="card-title">Signal multipliers</h6>
+                        <p class="rac-algorithm-note">Use multipliers to make specific signals stronger without changing the whole ranking profile.</p>
+                        <div class="rac-field-grid">
+                            <?php foreach ($rac_multiplier_controls as $control) { ?>
+                                <label>
+                                    <span><?php echo htmlspecialchars($control['title'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                    <input class="form-control" type="number" min="0" max="5" step="0.05" name="<?php echo $control['key']; ?>" value="<?php echo $rac_algorithm_value($control['key'], $control['default']); ?>">
+                                    <small><?php echo htmlspecialchars($control['hint'], ENT_QUOTES, 'UTF-8'); ?></small>
+                                </label>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-12">
+                <div class="card rac-algorithm-card">
+                    <div class="card-body">
+                        <h6 class="card-title">Freshness, diversity & safety</h6>
+                        <p class="rac-algorithm-note">These controls prevent the feed from becoming repetitive while keeping trending and fresh content visible.</p>
+                        <div class="rac-field-grid">
+                            <label>
+                                <span>Trending window</span>
+                                <input class="form-control" type="number" min="1" max="168" step="1" name="algorithm_trending_window_hours" value="<?php echo $rac_algorithm_value('algorithm_trending_window_hours', '24'); ?>">
+                                <small>Hours of engagement counted for trending posts.</small>
+                            </label>
+                            <label>
+                                <span>Freshness window</span>
+                                <input class="form-control" type="number" min="1" max="720" step="1" name="algorithm_freshness_hours" value="<?php echo $rac_algorithm_value('algorithm_freshness_hours', '72'); ?>">
+                                <small>Hours before content loses strong freshness value.</small>
+                            </label>
+                            <label>
+                                <span>Max posts from same author</span>
+                                <input class="form-control" type="number" min="1" max="20" step="1" name="algorithm_max_same_author" value="<?php echo $rac_algorithm_value('algorithm_max_same_author', '3'); ?>">
+                                <small>Limits repeated creator blocks inside one feed batch.</small>
+                            </label>
+                            <label>
+                                <span>Max posts from same category</span>
+                                <input class="form-control" type="number" min="1" max="30" step="1" name="algorithm_max_same_category" value="<?php echo $rac_algorithm_value('algorithm_max_same_category', '5'); ?>">
+                                <small>Limits repeated topic/category blocks inside one feed batch.</small>
+                            </label>
+                            <label>
+                                <span>Minimum discovery percent</span>
+                                <input class="form-control" type="number" min="0" max="60" step="1" name="algorithm_min_exploration_percent" value="<?php echo $rac_algorithm_value('algorithm_min_exploration_percent', '10'); ?>">
+                                <small>Forces a small amount of new content outside known interests.</small>
+                            </label>
+                            <label>
+                                <span>Negative feedback penalty</span>
+                                <input class="form-control" type="number" min="0" max="1" step="0.05" name="algorithm_negative_feedback_penalty" value="<?php echo $rac_algorithm_value('algorithm_negative_feedback_penalty', '0.65'); ?>">
+                                <small>Reduces similar creators and topics after a user hides posts.</small>
+                            </label>
+                            <label>
+                                <span>Diversity scan window</span>
+                                <input class="form-control" type="number" min="2" max="20" step="1" name="algorithm_diversity_window" value="<?php echo $rac_algorithm_value('algorithm_diversity_window', '8'); ?>">
+                                <small>Looks ahead within top results to avoid repetitive sequences.</small>
+                            </label>
+                            <label>
+                                <span>Max consecutive author posts</span>
+                                <input class="form-control" type="number" min="1" max="5" step="1" name="algorithm_max_author_streak" value="<?php echo $rac_algorithm_value('algorithm_max_author_streak', '1'); ?>">
+                                <small>Applies to both the home feed and reels ranking.</small>
+                            </label>
+                            <label>
+                                <span>Max consecutive content type</span>
+                                <input class="form-control" type="number" min="1" max="6" step="1" name="algorithm_max_category_streak" value="<?php echo $rac_algorithm_value('algorithm_max_category_streak', '2'); ?>">
+                                <small>Mixes text, photo, video, blog, market, and other post types.</small>
+                            </label>
+                            <label>
+                                <span>Max consecutive topic</span>
+                                <input class="form-control" type="number" min="1" max="6" step="1" name="algorithm_max_topic_streak" value="<?php echo $rac_algorithm_value('algorithm_max_topic_streak', '2'); ?>">
+                                <small>Prevents one learned topic from taking over a feed sequence.</small>
+                            </label>
+                            <div class="rac-inline-switch">
+                                <div>
+                                    <strong>Sensitive content filter</strong>
+                                    <small>Keep adult/unsafe/blocked categories out of ranking candidates.</small>
+                                </div>
+                                <div class="form-group switcher">
+                                    <input type="hidden" name="algorithm_sensitive_filter" value="0" />
+                                    <input type="checkbox" name="algorithm_sensitive_filter" id="chck-algorithm_sensitive_filter" value="1" <?php echo $rac_algorithm_checked('algorithm_sensitive_filter', '1'); ?>>
+                                    <label for="chck-algorithm_sensitive_filter" class="check-trail"><span class="check-handler"></span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row rac-algorithm-panel" data-algorithm-panel="advanced" hidden>
+            <div class="col-lg-4 col-md-12">
+                <div class="card rac-algorithm-card">
+                    <div class="card-body">
+                        <h6 class="card-title">Advanced relevance</h6>
+                        <p class="rac-algorithm-note">Weights added to the existing scorer.</p>
+                        <div class="rac-field-grid rac-field-grid--single">
+                            <?php foreach ($rac_advanced_rank_controls as $control) { ?>
+                                <label>
+                                    <span><?php echo htmlspecialchars($control['title'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                    <input class="form-control" type="number" min="0" max="100" step="1" name="<?php echo $control['key']; ?>" value="<?php echo $rac_algorithm_value($control['key'], $control['default']); ?>">
+                                </label>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="card rac-algorithm-card">
+                    <div class="card-body">
+                        <h6 class="card-title">Candidate mix</h6>
+                        <p class="rac-algorithm-note">Target share for each authorized candidate pool.</p>
+                        <div class="rac-weight-stack">
+                            <?php foreach ($rac_pool_controls as $control) { ?>
+                                <label class="rac-weight-control">
+                                    <span>
+                                        <strong><?php echo htmlspecialchars($control['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
+                                        <output data-rac-range-output="<?php echo $control['key']; ?>"><?php echo $rac_algorithm_value($control['key'], $control['default']); ?>%</output>
+                                    </span>
+                                    <input type="range" min="0" max="100" step="1" name="<?php echo $control['key']; ?>" value="<?php echo $rac_algorithm_value($control['key'], $control['default']); ?>" data-rac-range="<?php echo $control['key']; ?>">
+                                </label>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="card rac-algorithm-card">
+                    <div class="card-body">
+                        <h6 class="card-title">Behavior strength</h6>
+                        <p class="rac-algorithm-note">Positive values raise interest; negative values reduce it.</p>
+                        <div class="rac-event-grid">
+                            <?php foreach ($rac_event_controls as $control) { ?>
+                                <label>
+                                    <span><?php echo htmlspecialchars($control['title'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                    <input class="form-control" type="number" min="-100" max="25" step="0.05" name="<?php echo $control['key']; ?>" value="<?php echo $rac_algorithm_value($control['key'], $control['default']); ?>">
+                                </label>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row rac-algorithm-panel" data-algorithm-panel="advanced" hidden>
+            <div class="col-lg-7 col-md-12">
+                <div class="card rac-algorithm-card">
+                    <div class="card-body">
+                        <h6 class="card-title">Processing and retention</h6>
+                        <div class="rac-field-grid">
+                            <label><span>Interest half-life</span><input class="form-control" type="number" min="1" max="365" name="algorithm_interest_decay_days" value="<?php echo $rac_algorithm_value('algorithm_interest_decay_days', '21'); ?>"><small>Days until an interest loses half its strength.</small></label>
+                            <label><span>Seen window</span><input class="form-control" type="number" min="1" max="720" name="algorithm_candidate_seen_hours" value="<?php echo $rac_algorithm_value('algorithm_candidate_seen_hours', '48'); ?>"><small>Hours used for repeated-post penalties.</small></label>
+                            <label><span>Event retention</span><input class="form-control" type="number" min="7" max="365" name="algorithm_event_retention_days" value="<?php echo $rac_algorithm_value('algorithm_event_retention_days', '45'); ?>"><small>Processed event history in days.</small></label>
+                            <label><span>Seen retention</span><input class="form-control" type="number" min="2" max="90" name="algorithm_impression_retention_days" value="<?php echo $rac_algorithm_value('algorithm_impression_retention_days', '14'); ?>"><small>Impression history in days.</small></label>
+                            <label><span>Batch limit</span><input class="form-control" type="number" min="1" max="100" name="algorithm_event_batch_limit" value="<?php echo $rac_algorithm_value('algorithm_event_batch_limit', '40'); ?>"><small>Maximum validated events per request.</small></label>
+                            <label><span>Topics per post</span><input class="form-control" type="number" min="1" max="20" name="algorithm_topic_limit_per_post" value="<?php echo $rac_algorithm_value('algorithm_topic_limit_per_post', '8'); ?>"><small>Maximum stored topic matches.</small></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-12">
+                <div class="card rac-algorithm-card">
+                    <div class="card-body">
+                        <h6 class="card-title">User ranking inspector</h6>
+                        <p class="rac-algorithm-note">Inspect learned topics and recent signals without exposing private post content.</p>
+                        <div class="rac-algorithm-debug-form">
+                            <input class="form-control" type="number" min="1" data-algorithm-debug-user placeholder="User ID">
+                            <button type="button" class="btn btn-default rac-algorithm-debug">Inspect</button>
+                        </div>
+                        <div class="rac-algorithm-debug-result" aria-live="polite"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rac-algorithm-card">
+            <div class="card-body rac-algorithm-footer">
+                <div>
+                    <h6>Implementation stage</h6>
+                    <p>These controls are saved now and used by the main home feed plus load-more batches. Profile, page, group, event, hashtag, and saved-post feeds keep their original order.</p>
+                </div>
+                <button type="submit" class="btn btn-primary rac-algorithm-save">Save Algorithm Controls</button>
+            </div>
+        </div>
+    </form>
+
+    <?php if (!empty($rac_algorithm_status['available'])) { ?>
+    <div class="row rac-algorithm-operations rac-algorithm-panel" data-algorithm-panel="catalog" hidden>
+        <div class="col-lg-6 col-md-12">
+            <div class="card rac-algorithm-card">
+                <div class="card-body">
+                    <div class="rac-algorithm-section-head">
+                        <div><h6 class="card-title">Topic catalog</h6><p class="rac-algorithm-note">Names, aliases and classification used by the live scorer.</p></div>
+                        <button type="button" class="btn btn-default rac-topic-clear">New topic</button>
+                    </div>
+                    <form class="rac-algorithm-action rac-topic-form" data-algorithm-action="save_topic">
+                        <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession(); ?>">
+                        <input type="hidden" name="topic_id" value="0">
+                        <div class="rac-field-grid">
+                            <label><span>Name</span><input class="form-control" name="name" maxlength="190" required></label>
+                            <label><span>Slug</span><input class="form-control" name="slug" maxlength="160" placeholder="generated-from-name"></label>
+                            <label><span>Type</span><select class="form-control" name="topic_type"><option value="topic">Topic</option><option value="category">Category</option><option value="entity">Entity</option><option value="creator">Public figure</option><option value="brand">Brand</option><option value="hashtag">Hashtag</option><option value="keyword">Keyword</option></select></label>
+                            <label><span>Language</span><input class="form-control" name="language" maxlength="16" value="und"></label>
+                            <label class="rac-field-span"><span>Aliases</span><input class="form-control" name="aliases" maxlength="1200" placeholder="Tesla Motors, Tesla Car"></label>
+                        </div>
+                        <label class="rac-plain-check"><input type="checkbox" name="status" value="1" checked> Enabled</label>
+                        <button type="submit" class="btn btn-primary">Save topic</button>
+                    </form>
+                    <div class="rac-algorithm-table-wrap">
+                        <table class="table rac-algorithm-table"><thead><tr><th>Topic</th><th>Type</th><th>Posts</th><th></th></tr></thead><tbody>
+                        <?php foreach (array_slice($rac_algorithm_admin_data['topics'], 0, 30) as $topic) { ?>
+                            <tr>
+                                <td><strong><?php echo htmlspecialchars($topic['name'], ENT_QUOTES, 'UTF-8'); ?></strong><small><?php echo htmlspecialchars($topic['slug'], ENT_QUOTES, 'UTF-8'); ?></small></td>
+                                <td><?php echo htmlspecialchars($topic['topic_type'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo number_format((int)$topic['post_count']); ?></td>
+                                <td class="rac-table-actions">
+                                    <button type="button" class="btn btn-default rac-topic-edit" data-topic='<?php echo htmlspecialchars(json_encode(array('id' => (int)$topic['id'], 'name' => $topic['name'], 'slug' => $topic['slug'], 'topic_type' => $topic['topic_type'], 'language' => $topic['language'], 'aliases' => $topic['aliases'], 'status' => (int)$topic['status']), JSON_HEX_APOS | JSON_HEX_QUOT), ENT_QUOTES, 'UTF-8'); ?>'>Edit</button>
+                                    <button type="button" class="btn btn-default rac-topic-status" data-id="<?php echo (int)$topic['id']; ?>" data-enabled="<?php echo empty($topic['status']) ? 1 : 0; ?>"><?php echo empty($topic['status']) ? 'Enable' : 'Disable'; ?></button>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                        </tbody></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-12">
+            <div class="card rac-algorithm-card">
+                <div class="card-body">
+                    <h6 class="card-title">Topic relationships</h6>
+                    <p class="rac-algorithm-note">Connect exact interests to directly related subjects.</p>
+                    <form class="rac-algorithm-action" data-algorithm-action="save_relation">
+                        <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession(); ?>">
+                        <div class="rac-field-grid">
+                            <label><span>From</span><select class="form-control" name="topic_id" required><option value="">Choose topic</option><?php foreach ($rac_algorithm_admin_data['topics'] as $topic) { if (!empty($topic['status'])) { ?><option value="<?php echo (int)$topic['id']; ?>"><?php echo htmlspecialchars($topic['name'], ENT_QUOTES, 'UTF-8'); ?></option><?php }} ?></select></label>
+                            <label><span>Related to</span><select class="form-control" name="related_topic_id" required><option value="">Choose topic</option><?php foreach ($rac_algorithm_admin_data['topics'] as $topic) { if (!empty($topic['status'])) { ?><option value="<?php echo (int)$topic['id']; ?>"><?php echo htmlspecialchars($topic['name'], ENT_QUOTES, 'UTF-8'); ?></option><?php }} ?></select></label>
+                            <label><span>Relation</span><select class="form-control" name="relation_type"><option value="related">Related</option><option value="similar">Similar</option><option value="category">Category</option><option value="parent">Parent</option><option value="brand">Brand</option><option value="creator">Creator</option></select></label>
+                            <label><span>Strength</span><input class="form-control" type="number" name="weight" min="0" max="1" step="0.01" value="0.80"></label>
+                        </div>
+                        <label class="rac-plain-check"><input type="checkbox" name="two_way" value="1"> Add reverse relationship</label>
+                        <button type="submit" class="btn btn-primary">Save relationship</button>
+                    </form>
+                    <div class="rac-algorithm-table-wrap">
+                        <table class="table rac-algorithm-table"><thead><tr><th>From</th><th>To</th><th>Strength</th><th></th></tr></thead><tbody>
+                        <?php foreach (array_slice($rac_algorithm_admin_data['relations'], 0, 30) as $relation) { ?>
+                            <tr><td><?php echo htmlspecialchars($relation['topic_name'], ENT_QUOTES, 'UTF-8'); ?></td><td><?php echo htmlspecialchars($relation['related_name'], ENT_QUOTES, 'UTF-8'); ?></td><td><?php echo number_format((float)$relation['weight'] * 100); ?>%</td><td class="rac-table-actions"><button type="button" class="btn btn-default rac-algorithm-delete" data-action="delete_relation" data-key="relation_id" data-id="<?php echo (int)$relation['id']; ?>">Remove</button></td></tr>
+                        <?php } ?>
+                        </tbody></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card rac-algorithm-card">
+        <div class="card-body">
+            <div class="rac-algorithm-section-head"><div><h6 class="card-title">Editorial boosts</h6><p class="rac-algorithm-note">Timed post or topic priority. Privacy, blocks and moderation still win.</p></div></div>
+            <form class="rac-algorithm-action rac-boost-form" data-algorithm-action="save_boost">
+                <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession(); ?>">
+                <div class="rac-field-grid rac-field-grid--boost">
+                    <label><span>Post ID</span><input class="form-control" type="number" min="1" name="post_id"></label>
+                    <label><span>Topic</span><select class="form-control" name="topic_id"><option value="">No topic</option><?php foreach ($rac_algorithm_admin_data['topics'] as $topic) { if (!empty($topic['status'])) { ?><option value="<?php echo (int)$topic['id']; ?>"><?php echo htmlspecialchars($topic['name'], ENT_QUOTES, 'UTF-8'); ?></option><?php }} ?></select></label>
+                    <label><span>Weight</span><input class="form-control" type="number" min="0" max="25" step="0.1" name="weight" value="3"></label>
+                    <label><span>Starts</span><input class="form-control" type="datetime-local" name="starts_at"></label>
+                    <label><span>Ends</span><input class="form-control" type="datetime-local" name="ends_at"></label>
+                </div>
+                <button type="submit" class="btn btn-primary">Add boost</button>
+            </form>
+            <div class="rac-algorithm-table-wrap">
+                <table class="table rac-algorithm-table"><thead><tr><th>Target</th><th>Weight</th><th>Window</th><th></th></tr></thead><tbody>
+                <?php foreach (array_slice($rac_algorithm_admin_data['boosts'], 0, 20) as $boost) { ?>
+                    <tr><td><?php echo !empty($boost['post_id']) ? 'Post #' . (int)$boost['post_id'] : htmlspecialchars((string)$boost['topic_name'], ENT_QUOTES, 'UTF-8'); ?></td><td><?php echo htmlspecialchars((string)$boost['weight'], ENT_QUOTES, 'UTF-8'); ?></td><td><?php echo !empty($boost['ends_at']) ? date('Y-m-d', (int)$boost['ends_at']) : 'Ongoing'; ?></td><td class="rac-table-actions"><button type="button" class="btn btn-default rac-algorithm-delete" data-action="delete_boost" data-key="boost_id" data-id="<?php echo (int)$boost['id']; ?>">Remove</button></td></tr>
+                <?php } ?>
+                </tbody></table>
+            </div>
+        </div>
+    </div>
+    <?php } ?>
+</div>
+
+<script>
+$(function () {
+    $('[data-algorithm-tab]').on('click', function () {
+        var selected = String($(this).data('algorithm-tab') || 'essentials');
+        $('[data-algorithm-tab]').each(function () {
+            var active = String($(this).data('algorithm-tab')) === selected;
+            $(this).toggleClass('is-active', active).attr('aria-selected', active ? 'true' : 'false');
+        });
+        $('[data-algorithm-panel]').each(function () {
+            var active = String($(this).data('algorithm-panel')) === selected;
+            $(this).toggleClass('is-active', active).prop('hidden', !active);
+        });
+    });
+
+    $('[data-rac-range]').on('input change', function () {
+        $('[data-rac-range-output="' + $(this).data('rac-range') + '"]').text($(this).val() + '%');
+    });
+
+    $('.rac-algorithm-settings').on('submit', function (event) {
+        event.preventDefault();
+        var form = $(this);
+        var button = form.find('.rac-algorithm-save');
+        var originalText = button.text();
+
+        button.prop('disabled', true).text('Saving...');
+        $('.algorithm-settings-alert').html('');
+
+        $.post(Wo_Ajax_Requests_File() + '?f=admin_setting&s=update_general_setting', form.serialize(), function (data) {
+            if (data.status == 200) {
+                $('.algorithm-settings-alert').html('<div class="alert alert-success">Algorithm control settings saved. Home feed ranking will use the updated signal weights.</div>');
+            } else {
+                $('.algorithm-settings-alert').html('<div class="alert alert-danger">' + (data.message || 'Settings could not be saved.') + '</div>');
+            }
+            button.prop('disabled', false).text(originalText);
+        });
+    });
+
+    $('.rac-algorithm-maintenance').on('click', function () {
+        var button = $(this);
+        var label = button.text();
+        button.prop('disabled', true).text('Running...');
+        $.post(Wo_Ajax_Requests_File() + '?f=algorithm&s=run_maintenance', {hash_id: '<?php echo Wo_CreateSession(); ?>'}, function (data) {
+            if (data && data.status == 200 && data.data) {
+                $('.algorithm-settings-alert').html('<div class="alert alert-success">Maintenance completed. Indexed ' + (data.data.indexed || 0) + ', processed ' + (data.data.aggregated || 0) + ' events.</div>');
+                window.setTimeout(function () { window.location.reload(); }, 700);
+            } else {
+                $('.algorithm-settings-alert').html('<div class="alert alert-danger">Maintenance could not be completed.</div>');
+            }
+        }, 'json').always(function () {
+            button.prop('disabled', false).text(label);
+        });
+    });
+
+    $('.rac-algorithm-debug').on('click', function () {
+        var userId = parseInt($('[data-algorithm-debug-user]').val(), 10) || 0;
+        var result = $('.rac-algorithm-debug-result');
+        if (userId < 1) {
+            result.html('<p class="rac-debug-empty">Enter a user ID.</p>');
+            return;
+        }
+        result.html('<p class="rac-debug-empty">Loading...</p>');
+        $.post(Wo_Ajax_Requests_File() + '?f=algorithm&s=debug_user', {hash_id: '<?php echo Wo_CreateSession(); ?>', user_id: userId}, function (data) {
+            if (!data || data.status != 200 || !data.data) {
+                result.html('<p class="rac-debug-empty">No ranking data found.</p>');
+                return;
+            }
+            var escapeHtml = function (value) { return $('<div>').text(value == null ? '' : value).html(); };
+            var html = '<div class="rac-debug-section"><h4>Learned topics</h4><div class="rac-debug-list">';
+            (data.data.interests || []).forEach(function (item) {
+                html += '<div><span>' + escapeHtml(item.name || item.slug || ('Topic ' + item.topic_id)) + '</span><strong>' + escapeHtml(item.score) + '</strong></div>';
+            });
+            html += '</div></div>';
+            if (!(data.data.interests || []).length) {
+                html = '<div class="rac-debug-section"><h4>Learned topics</h4><p class="rac-debug-empty">No learned topics yet.</p></div>';
+            }
+            html += '<div class="rac-debug-section"><h4>Recent ranking examples</h4><div class="rac-debug-list">';
+            (data.data.ranked_examples || []).forEach(function (item) {
+                var details = item.breakdown || {};
+                var summary = 'Post ' + item.post_id + ' · ' + (item.pool || 'relevant') + ' · ' + (item.reason || 'ranked');
+                var score = 'Score ' + item.score + ' (topic ' + (details.topic || 0) + ', related ' + (details.related || 0) + ', quality ' + (details.quality || 0) + ')';
+                html += '<div><span>' + escapeHtml(summary) + '</span><strong>' + escapeHtml(score) + '</strong></div>';
+            });
+            html += '</div></div>';
+            if (!(data.data.ranked_examples || []).length) {
+                html += '<p class="rac-debug-empty">No recent ranked posts.</p>';
+            }
+            result.html(html);
+        }, 'json');
+    });
+
+    var algorithmActionUrl = function (action) {
+        return Wo_Ajax_Requests_File() + '?f=algorithm&s=' + encodeURIComponent(action);
+    };
+    var showAlgorithmMessage = function (ok, message) {
+        $('.algorithm-settings-alert').html('<div class="alert alert-' + (ok ? 'success' : 'danger') + '">' + $('<div>').text(message || (ok ? 'Algorithm data updated.' : 'The action failed.')).html() + '</div>');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    };
+
+    $('.rac-algorithm-action').on('submit', function (event) {
+        event.preventDefault();
+        var form = $(this);
+        var action = form.data('algorithm-action');
+        var button = form.find('[type="submit"]');
+        button.prop('disabled', true);
+        $.post(algorithmActionUrl(action), form.serialize(), function (data) {
+            if (data && data.status == 200) {
+                showAlgorithmMessage(true, data.message);
+                window.setTimeout(function () { window.location.reload(); }, 500);
+            } else {
+                showAlgorithmMessage(false, data && data.message);
+            }
+        }, 'json').fail(function (xhr) {
+            var data = xhr.responseJSON || {};
+            showAlgorithmMessage(false, data.message || 'The algorithm action failed.');
+        }).always(function () {
+            button.prop('disabled', false);
+        });
+    });
+
+    $('.rac-topic-edit').on('click', function () {
+        var topic = $(this).data('topic') || {};
+        var form = $('.rac-topic-form');
+        form.find('[name="topic_id"]').val(topic.id || 0);
+        form.find('[name="name"]').val(topic.name || '');
+        form.find('[name="slug"]').val(topic.slug || '');
+        form.find('[name="topic_type"]').val(topic.topic_type || 'topic');
+        form.find('[name="language"]').val(topic.language || 'und');
+        form.find('[name="aliases"]').val(topic.aliases || '');
+        form.find('[name="status"]').prop('checked', !!parseInt(topic.status, 10));
+        form.get(0).scrollIntoView({behavior: 'smooth', block: 'center'});
+    });
+    $('.rac-topic-clear').on('click', function () {
+        var form = $('.rac-topic-form').get(0);
+        if (form) {
+            form.reset();
+            $(form).find('[name="topic_id"]').val(0);
+        }
+    });
+    $('.rac-topic-status').on('click', function () {
+        $.post(algorithmActionUrl('set_topic_status'), {hash_id: '<?php echo Wo_CreateSession(); ?>', topic_id: $(this).data('id'), enabled: $(this).data('enabled')}, function (data) {
+            if (data && data.status == 200) {
+                window.location.reload();
+            } else {
+                showAlgorithmMessage(false, data && data.message);
+            }
+        }, 'json');
+    });
+    $('.rac-algorithm-delete').on('click', function () {
+        if (!window.confirm('Remove this algorithm item?')) {
+            return;
+        }
+        var payload = {hash_id: '<?php echo Wo_CreateSession(); ?>'};
+        payload[$(this).data('key')] = $(this).data('id');
+        $.post(algorithmActionUrl($(this).data('action')), payload, function (data) {
+            if (data && data.status == 200) {
+                window.location.reload();
+            } else {
+                showAlgorithmMessage(false, data && data.message);
+            }
+        }, 'json');
+    });
+});
+</script>
+<?php if (!$rac_algorithm_licensed) { ?>
+<style>.ramza-addon-banner{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 18px;padding:16px 18px;border:1px solid #d8dde1;border-left:4px solid #293d4c;border-radius:7px;background:#fff}.ramza-addon-banner strong,.ramza-addon-banner span{display:block}.ramza-addon-banner span{margin-top:3px;color:#6d7780;font-size:12px}.ramza-addon-status{display:flex;align-items:center;gap:10px}.ramza-addon-status em{font-style:normal;font-size:11px;font-weight:850;text-transform:uppercase}.ramza-addon-action{padding:8px 13px;border-radius:5px;background:#293d4c;color:#fff!important;font-weight:800}.rac-algorithm-settings.is-addon-locked{opacity:.58;filter:saturate(.5);pointer-events:none}</style>
+<?php } ?>

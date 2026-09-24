@@ -343,8 +343,8 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             $comment = Wo_GetPostComment($comment_id);
             if (!empty($comment)) {
 
-                $reactions_types = array_keys($wo['reactions_types']);
-                if (!empty($_POST['reaction']) && in_array($_POST['reaction'], $reactions_types)) {
+                $reactions_types = Ramza_GetActiveReactionIds();
+                if (!empty($_POST['reaction']) && in_array((int) $_POST['reaction'], $reactions_types, true)) {
                     $reaction = Wo_Secure($_POST['reaction']);
                     Wo_AddCommentReactions($comment_id, $reaction);
 
@@ -382,8 +382,8 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             $reply = Wo_GetCommentReply($reply_id);
             if (!empty($reply)) {
 
-                $reactions_types = array_keys($wo['reactions_types']);
-                if (!empty($_POST['reaction']) && in_array($_POST['reaction'], $reactions_types)) {
+                $reactions_types = Ramza_GetActiveReactionIds();
+                if (!empty($_POST['reaction']) && in_array((int) $_POST['reaction'], $reactions_types, true)) {
                     $reaction = Wo_Secure($_POST['reaction']);
                     Wo_AddReplayReactions($wo['user']['id'],$reply_id, $reaction);
 

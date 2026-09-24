@@ -202,6 +202,38 @@ if (!empty($posts)) {
     }
 }
 // ********** Live **********
+$ramza_algorithm_cron = null;
+if (function_exists('Wo_RamzaAlgorithmCronRun')) {
+    try {
+        $ramza_algorithm_cron = Wo_RamzaAlgorithmCronRun();
+    } catch (Throwable $e) {
+        $ramza_algorithm_cron = array('status' => 'error', 'message' => 'Recommendation maintenance failed safely.');
+    }
+}
+$ramza_diagnostics_cron = null;
+if (function_exists('Ramza_DiagnosticsMaybeSend')) {
+    try {
+        $ramza_diagnostics_cron = Ramza_DiagnosticsMaybeSend();
+    } catch (Throwable $e) {
+        $ramza_diagnostics_cron = array('ok' => false, 'message' => 'Diagnostic reporting failed safely.');
+    }
+}
+$ramza_mobile_cron = null;
+if (function_exists('Ramza_MobileTablesReady') && Ramza_MobileTablesReady()) {
+    try {
+        $now = time();
+        mysqli_query($sqlConnect, 'DELETE FROM `Ramza_MobileRateLimits` WHERE `expires_at` < ' . $now);
+        mysqli_query(
+            $sqlConnect,
+            'DELETE FROM `Ramza_MobileSessions` WHERE (`refresh_expires_at` < ' . $now
+            . ' OR (`revoked_at` IS NOT NULL AND `revoked_at` < ' . ($now - 2592000) . '))'
+        );
+        mysqli_query($sqlConnect, 'DELETE FROM `Ramza_MobileAuditLog` WHERE `created_at` < ' . ($now - 7776000));
+        $ramza_mobile_cron = Ramza_MobileRefreshLicense(false);
+    } catch (Throwable $e) {
+        $ramza_mobile_cron = array('success' => false, 'code' => 'MOBILE_MAINTENANCE_FAILED');
+    }
+}
 header("Content-type: application/json");
-echo json_encode(["status" => 200, "message" => "success"]);
+echo json_encode(["status" => 200, "message" => "success", "algorithm" => $ramza_algorithm_cron, "diagnostics" => $ramza_diagnostics_cron, "mobile" => $ramza_mobile_cron]);
 exit();

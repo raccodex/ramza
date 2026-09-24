@@ -1,5 +1,6 @@
 <?php
-$wo['config']['ffmpeg']  = is_executable($wo['config']['ffmpeg_binary_file']);
+$ramzaFfmpegStatus = function_exists('Ramza_FfmpegStatus') ? Ramza_FfmpegStatus() : array('available' => false, 'resolved' => '', 'message' => 'FFmpeg status is unavailable.');
+$wo['config']['ffmpeg'] = !empty($ramzaFfmpegStatus['available']);
 function isEnabled($func) {
     return is_callable($func) && false === stripos(ini_get('disable_functions'), $func);
 }
@@ -338,7 +339,7 @@ if (!isEnabled('shell_exec')) {
         <div class="col-lg-12 col-md-12">
             <h3>Storage & CDN Configuration <br><hr></h3>
              <div class="alert alert-warning">
-                <i class="fa fa-fw fa-exclamation-triangle"></i> <strong>Important:</strong> You can't enable two or three storages at the same time, if you enable FTP, amazon s3 will be automatically disabled, same for amazon s3, Digitalocean and Google.
+                <i class="fa fa-fw fa-exclamation-triangle"></i> <strong>Important:</strong> Only one remote storage can be active at a time. Enabling FTP, Amazon S3, Cloudflare R2, DigitalOcean Spaces, Google Cloud, Wasabi, or Backblaze will automatically disable the others.
             </div>
             <div class="alert alert-info">
                <i class="fa fa-fw fa-exclamation-triangle"></i> <strong>Info: </strong> For more information on how to setup third party storage, please visit our <a href="https://docs.ramza.com/#idocs_storage" target="_blank">Documentation</a> page.
@@ -589,6 +590,151 @@ if (!isEnabled('shell_exec')) {
                         <button type="button" class="btn btn-success m-t-15 waves-effect" onclick="Wo_TestWasabi()">Test & Verify Connection</button>
                         <a href="<?php echo Wo_LoadAdminLinkSettings('upload-to-storage?storage=wasabi'); ?>" class="btn btn-info m-t-15 waves-effect">Upload Files To Wasabi</a>
 
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Cloudflare R2 Configuration</h6>
+                    <form class="cloudflare_r2_storage-settings" method="POST">
+                         <div class="float-left">
+                            <label for="cloudflare_r2_storage" class="main-label">Cloudflare R2 Storage</label>
+                            <br><small class="admin-info">Enable R2 to store uploads on Cloudflare's S3-compatible object storage.</small>
+                        </div>
+                        <div class="form-group float-right switcher">
+                            <input type="hidden" name="cloudflare_r2_storage" value="0" />
+                            <input type="checkbox" name="cloudflare_r2_storage" id="chck-cloudflare_r2_storage" value="1" <?php echo (!empty($wo['config']['cloudflare_r2_storage']) && $wo['config']['cloudflare_r2_storage'] == 1) ? 'checked': '';?>>
+                            <label for="chck-cloudflare_r2_storage" class="check-trail"><span class="check-handler"></span></label>
+                        </div>
+                        <div class="clearfix"></div>
+                        <hr>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Cloudflare Account ID</label>
+                                <input type="text" id="cloudflare_r2_account_id" name="cloudflare_r2_account_id" class="form-control" value="<?php echo $wo['config']['cloudflare_r2_account_id']?>">
+                                <small class="admin-info">Used to build the private API endpoint: https://ACCOUNT_ID.r2.cloudflarestorage.com</small>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">R2 Bucket Name</label>
+                                <input type="text" id="cloudflare_r2_bucket_name" name="cloudflare_r2_bucket_name" class="form-control" value="<?php echo $wo['config']['cloudflare_r2_bucket_name']?>">
+                                <small class="admin-info">Your Cloudflare R2 bucket name.</small>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">R2 Access Key ID</label>
+                                <input type="text" id="cloudflare_r2_access_key" name="cloudflare_r2_access_key" class="form-control" value="<?php echo $wo['config']['cloudflare_r2_access_key']?>">
+                                <small class="admin-info">Create this from Cloudflare R2 API tokens.</small>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">R2 Secret Access Key</label>
+                                <input type="password" id="cloudflare_r2_secret_key" name="cloudflare_r2_secret_key" class="form-control" value="" autocomplete="new-password">
+                                <small class="admin-info">Stored as a protected secret like the other storage providers.</small>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">R2 Public URL / Custom Domain</label>
+                                <input type="url" id="cloudflare_r2_public_url" name="cloudflare_r2_public_url" class="form-control" required value="<?php echo $wo['config']['cloudflare_r2_public_url']?>">
+                                <small class="admin-info">Required for images, videos and reels. Use the public r2.dev URL or an R2 custom domain.</small>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="alert alert-info">
+                            R2 uses the S3-compatible API with region <strong>auto</strong>. Before disabling R2, make sure you download or migrate the whole <strong>upload/</strong> folder back to your server.<br><br>
+                            For public media delivery, configure an R2 public bucket/custom domain and paste that URL above.
+                        </div>
+                        <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+                        <div class="cloudflare_r2_storage_alert"></div>
+                        <button type="submit" class="btn btn-success m-t-15 waves-effect">Save & Verify</button>
+                        <a href="<?php echo Wo_LoadAdminLinkSettings('upload-to-storage?storage=cloudflare-r2'); ?>" class="btn btn-info m-t-15 waves-effect">Upload Files To Cloudflare R2</a>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">S3-Compatible Storage Configuration</h6>
+                    <form class="s3_compatible_storage-settings" method="POST">
+                         <div class="float-left">
+                            <label for="s3_compatible_storage" class="main-label">Custom S3-Compatible Storage</label>
+                            <br><small class="admin-info">Use MinIO, Linode/Akamai, Vultr, Scaleway, Bunny, or another S3-compatible provider.</small>
+                        </div>
+                        <div class="form-group float-right switcher">
+                            <input type="hidden" name="s3_compatible_storage" value="0" />
+                            <input type="checkbox" name="s3_compatible_storage" id="chck-s3_compatible_storage" value="1" <?php echo (!empty($wo['config']['s3_compatible_storage']) && $wo['config']['s3_compatible_storage'] == 1) ? 'checked': '';?>>
+                            <label for="chck-s3_compatible_storage" class="check-trail"><span class="check-handler"></span></label>
+                        </div>
+                        <div class="clearfix"></div>
+                        <hr>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Provider Label</label>
+                                <input type="text" id="s3_compatible_name" name="s3_compatible_name" class="form-control" value="<?php echo $wo['config']['s3_compatible_name']?>">
+                                <small class="admin-info">Optional admin label, e.g. MinIO, Linode, Vultr or Scaleway.</small>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">S3 API Endpoint</label>
+                                <input type="text" id="s3_compatible_endpoint" name="s3_compatible_endpoint" class="form-control" value="<?php echo $wo['config']['s3_compatible_endpoint']?>">
+                                <small class="admin-info">Example: https://s3.us-east-005.backblazeb2.com, https://s3.us-west-1.wasabisys.com, or your MinIO endpoint.</small>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Region</label>
+                                <input type="text" id="s3_compatible_region" name="s3_compatible_region" class="form-control" value="<?php echo $wo['config']['s3_compatible_region']?>">
+                                <small class="admin-info">Use the provider region. If the provider ignores regions, keep us-east-1.</small>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Bucket Name</label>
+                                <input type="text" id="s3_compatible_bucket" name="s3_compatible_bucket" class="form-control" value="<?php echo $wo['config']['s3_compatible_bucket']?>">
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Access Key ID</label>
+                                <input type="text" id="s3_compatible_access_key" name="s3_compatible_access_key" class="form-control" value="<?php echo $wo['config']['s3_compatible_access_key']?>">
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Secret Access Key</label>
+                                <input type="text" id="s3_compatible_secret_key" name="s3_compatible_secret_key" class="form-control" value="<?php echo $wo['config']['s3_compatible_secret_key']?>">
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">Public CDN URL / Custom Domain</label>
+                                <input type="text" id="s3_compatible_public_url" name="s3_compatible_public_url" class="form-control" value="<?php echo $wo['config']['s3_compatible_public_url']?>">
+                                <small class="admin-info">Recommended for public media delivery, e.g. https://cdn.yourdomain.com.</small>
+                            </div>
+                        </div>
+                        <div class="float-left">
+                            <label for="s3_compatible_path_style" class="main-label">Path-style requests</label>
+                            <br><small class="admin-info">Keep enabled for most S3-compatible providers and local MinIO.</small>
+                        </div>
+                        <div class="form-group float-right switcher">
+                            <input type="hidden" name="s3_compatible_path_style" value="0" />
+                            <input type="checkbox" name="s3_compatible_path_style" id="chck-s3_compatible_path_style" value="1" <?php echo (!empty($wo['config']['s3_compatible_path_style']) && $wo['config']['s3_compatible_path_style'] == 1) ? 'checked': '';?>>
+                            <label for="chck-s3_compatible_path_style" class="check-trail"><span class="check-handler"></span></label>
+                        </div>
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="alert alert-info">
+                            This adapter uses Signature V4 and the bundled AWS S3 SDK, so modern S3-compatible providers can be used without custom code.
+                        </div>
+                        <input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+                        <div class="s3_compatible_storage_alert"></div>
+                        <button type="button" class="btn btn-success m-t-15 waves-effect" onclick="Wo_TestS3Compatible()">Test & Verify Connection</button>
+                        <a href="<?php echo Wo_LoadAdminLinkSettings('upload-to-storage?storage=custom-s3'); ?>" class="btn btn-info m-t-15 waves-effect">Upload Files To S3-Compatible Storage</a>
                     </form>
                 </div>
             </div>
@@ -867,6 +1013,25 @@ function Wo_TestWasabi() {
         $('form.wasabi_storage-settings').find('.btn-success').text('Test & Verify Connection');
     });
 }
+function Wo_TestS3Compatible() {
+    $('form.s3_compatible_storage-settings').find('.btn-success').text('Please wait..');
+    $('.s3_compatible_storage_alert').empty();
+    $.get(Wo_Ajax_Requests_File(), {f:'admin_setting', s: 'test_s3_compatible'}, function (data) {
+        if (data.status == 200) {
+            $('.s3_compatible_storage_alert').html('<div class="alert alert-success"><i class="fa fa-check"></i> Connection established!</div>');
+            setTimeout(function () {
+                $('.s3_compatible_storage_alert').empty();
+            }, 5000);
+        } else if (data.status == 300) {
+            $('.s3_compatible_storage_alert').html('<div class="alert alert-danger">Bucket doesn\'t exist or this key cannot access it.</div>');
+        } else if (data.status == 400) {
+            $('.s3_compatible_storage_alert').html('<div class="alert alert-danger">'+data.message+'</div>');
+        } else {
+            $('.s3_compatible_storage_alert').html('<div class="alert alert-danger">Error while connecting to S3-compatible storage, please check endpoint, bucket and keys.</div>');
+        }
+        $('form.s3_compatible_storage-settings').find('.btn-success').text('Test & Verify Connection');
+    });
+}
 function Wo_TestCloud() {
     $('form.drive-settings').find('.btn-success').text('Please wait..');
     $('.drive-settings-alert').empty();
@@ -972,6 +1137,32 @@ function Wo_TestFTP() {
 }
 
 $(function() {
+    var cloudflareR2Form = $('form.cloudflare_r2_storage-settings');
+    cloudflareR2Form.ajaxForm({
+        url: Wo_Ajax_Requests_File() + '?f=admin_setting&s=save_cloudflare_r2',
+        beforeSend: function() {
+            cloudflareR2Form.find('.btn-success').prop('disabled', true).text('Saving...');
+            $('.cloudflare_r2_storage_alert').empty();
+        },
+        success: function(data) {
+            var isSuccess = data && parseInt(data.status, 10) === 200;
+            var alertClass = isSuccess ? 'alert-success' : 'alert-danger';
+            var message = data && data.message ? data.message : 'Cloudflare R2 settings could not be saved.';
+            $('.cloudflare_r2_storage_alert').html('<div class="alert ' + alertClass + '">' + $('<div>').text(message).html() + '</div>');
+            if (isSuccess) {
+                setTimeout(function() {
+                    window.location.reload();
+                }, 900);
+            }
+        },
+        error: function(xhr) {
+            var response = xhr.responseJSON || {};
+            $('.cloudflare_r2_storage_alert').html('<div class="alert alert-danger">' + $('<div>').text(response.message || 'Cloudflare R2 settings could not be saved.').html() + '</div>');
+        },
+        complete: function() {
+            cloudflareR2Form.find('.btn-success').prop('disabled', false).text('Save & Verify');
+        }
+    });
 
     $('.switcher input[type=checkbox]').click(function () {
         setToTrue = 0;
@@ -1041,7 +1232,7 @@ $(function() {
         });
     });
 	
-    $('input[type=text], input[type=number]').on('input', delay(function() {
+    $('input[type=text], input[type=url], input[type=number]').on('input', delay(function() {
             clearTimeout(setTimeOutColor);
             var thisElement = $(this);
             var configName = thisElement.attr('name');

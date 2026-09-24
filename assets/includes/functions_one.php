@@ -259,14 +259,22 @@ function Wo_SaveConfig($update_name, $value)
     if ($wo['loggedin'] == false) {
         return false;
     }
-    if (!array_key_exists($update_name, $config)) {
-        return false;
-    }
     $update_name = Wo_Secure($update_name);
-    $value = mysqli_real_escape_string($sqlConnect, $value);
-    $query_one = " UPDATE " . T_CONFIG . " SET `value` = '{$value}' WHERE `name` = '{$update_name}'";
+    $value = mysqli_real_escape_string($sqlConnect, (string)$value);
+    $check = mysqli_query($sqlConnect, "SELECT `id` FROM " . T_CONFIG . " WHERE `name` = '{$update_name}' LIMIT 1");
+    if ($check && mysqli_num_rows($check) > 0) {
+        $query_one = "UPDATE " . T_CONFIG . " SET `value` = '{$value}' WHERE `name` = '{$update_name}'";
+    } else {
+        $query_one = "INSERT INTO " . T_CONFIG . " (`name`, `value`) VALUES ('{$update_name}', '{$value}')";
+    }
     $query = mysqli_query($sqlConnect, $query_one);
     if ($query) {
+        if (isset($config) && is_array($config)) {
+            $config[$update_name] = $value;
+        }
+        if (isset($wo['config']) && is_array($wo['config'])) {
+            $wo['config'][$update_name] = $value;
+        }
         return true;
     } else {
         return false;
@@ -3870,8 +3878,8 @@ function Wo_GetMessages($data = array(), $limit = 50)
     } else {
         $query_one .= " WHERE ((`from_id` = {$user_id} AND `to_id` = {$logged_user_id} AND `deleted_two` = '0') OR (`from_id` = {$logged_user_id} AND `to_id` = {$user_id} AND `deleted_one` = '0'))";
     }
-    if (!empty($data['message_id'])) {
-        $data['message_id'] = Wo_Secure($data['message_id']);
+    if (!empty($data['message_id']) && is_numeric($data['message_id']) && $data['message_id'] > 0) {
+        $data['message_id'] = (int)Wo_Secure($data['message_id']);
         $query_one .= " AND `id` = " . $data['message_id'];
     } else if (!empty($data['before_message_id']) && is_numeric($data['before_message_id']) && $data['before_message_id'] > 0) {
         $data['before_message_id'] = Wo_Secure($data['before_message_id']);
@@ -4227,8 +4235,8 @@ function Wo_GetMessagesHeader($data = array(), $type = '')
     } else {
         $query_one .= " WHERE ((`from_id` = {$user_id} AND `to_id` = {$logged_user_id} AND `deleted_two` = '0') OR (`from_id` = {$logged_user_id} AND `to_id` = {$user_id} AND `deleted_one` = '0'))";
     }
-    if (!empty($data['message_id'])) {
-        $data['message_id'] = Wo_Secure($data['message_id']);
+    if (!empty($data['message_id']) && is_numeric($data['message_id']) && $data['message_id'] > 0) {
+        $data['message_id'] = (int)Wo_Secure($data['message_id']);
         $query_one .= " AND `id` = " . $data['message_id'];
     } else if (!empty($data['before_message_id']) && is_numeric($data['before_message_id']) && $data['before_message_id'] > 0) {
         $data['before_message_id'] = Wo_Secure($data['before_message_id']);
@@ -6420,8 +6428,9 @@ function Wo_PostData($post_id, $placement = '', $limited = '', $comments_limit =
             $story['postFile_full'] = $new_target;
             $story['can_not_see_monetized'] = 1;
         }
-        }
+    }
 
+    $story['views'] = !empty($story['views']) ? (int)$story['views'] : (!empty($story['videoViews']) ? (int)$story['videoViews'] : 0);
     return $story;
 }
 
@@ -8638,22 +8647,31 @@ function Wo_GetPostReactionUsers($post_id = 0, $type = "1", $limit = 20, $offset
     if (empty($post_id) or !is_numeric($post_id) or $post_id < 1) {
         return false;
     }
-    $post_id = Wo_Secure($post_id);
+    $post_id = (int)Wo_Secure($post_id);
+    $col = in_array($col, array('post', 'comment', 'replay'), true) ? $col : 'post';
+    $limit = (!empty($limit) && is_numeric($limit) && $limit > 0) ? (int)$limit : 20;
     $data = array();
+
     $offset_query = '';
-    if (!empty($offset)) {
-        $offset_query = " AND `id` > '" . $offset . "'";
+    if (!empty($offset) && is_numeric($offset) && (int)$offset > 0) {
+        $offset_query = " AND `id` > '" . (int)$offset . "'";
     }
-    $query_one = "SELECT `id`,`user_id`,`reaction` FROM " . T_REACTIONS . " WHERE `{$col}_id` = {$post_id} AND `reaction` = '" . $type . "' {$offset_query} ORDER BY `id` ASC LIMIT {$limit}";
+
+    $type_query = '';
+    if (!empty($type) && $type !== 'all' && $type !== '0') {
+        $type_query = " AND `reaction` = '" . Wo_Secure($type) . "'";
+    }
+
+    $query_one = "SELECT `id`,`user_id`,`reaction` FROM " . T_REACTIONS . " WHERE `{$col}_id` = {$post_id} {$type_query} {$offset_query} ORDER BY `id` ASC LIMIT {$limit}";
     $sql_query_one = mysqli_query($sqlConnect, $query_one);
-    if (mysqli_num_rows($sql_query_one)) {
+    if ($sql_query_one && mysqli_num_rows($sql_query_one)) {
         while ($fetched_data = mysqli_fetch_assoc($sql_query_one)) {
-            //if( strtolower( $fetched_data['reaction'] ) == $type ){
             $ud = Wo_UserData($fetched_data['user_id']);
-            $ud['reaction'] = $fetched_data['reaction'];
-            $ud['row_id'] = $fetched_data['id'];
-            $data[] = $ud;
-            //}
+            if (!empty($ud)) {
+                $ud['reaction'] = $fetched_data['reaction'];
+                $ud['row_id'] = $fetched_data['id'];
+                $data[] = $ud;
+            }
         }
     }
     return $data;
@@ -9933,8 +9951,8 @@ function Wo_GetMessagesAPPN($data = array(), $limit = 50)
     } else {
         $query_one .= " WHERE ((`from_id` = {$user_id} AND `to_id` = {$logged_user_id} AND `deleted_two` = '0') OR (`from_id` = {$logged_user_id} AND `to_id` = {$user_id} AND `deleted_one` = '0'))";
     }
-    if (!empty($data['message_id'])) {
-        $data['message_id'] = Wo_Secure($data['message_id']);
+    if (!empty($data['message_id']) && is_numeric($data['message_id']) && $data['message_id'] > 0) {
+        $data['message_id'] = (int)Wo_Secure($data['message_id']);
         $query_one .= " AND `id` = " . $data['message_id'];
     } else if (!empty($data['before_message_id']) && is_numeric($data['before_message_id']) && $data['before_message_id'] > 0) {
         $data['before_message_id'] = Wo_Secure($data['before_message_id']);

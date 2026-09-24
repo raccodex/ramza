@@ -1,5 +1,8 @@
 <?php
+
 declare(strict_types=1);
+
+namespace Services;
 
 use PayFast\Exceptions\InvalidRequestException;
 use PayFast\PayFastApi;
@@ -7,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 
 final class CreditCardTransactionsTest extends TestCase
 {
-
     private static $api;
 
     public static function setUpBeforeClass(): void
@@ -17,11 +19,11 @@ final class CreditCardTransactionsTest extends TestCase
                 [
                     'merchantId' => '10026755',
                     'passPhrase' => 'test_sandbox',
-                    'testMode' => true
+                    'testMode'   => true
                 ]
             );
         } catch (InvalidRequestException $e) {
-            echo 'Caught exception: ',  $e->getMessage(), "\n";
+            echo 'Caught exception: ', $e->getMessage(), "\n";
         }
     }
 
@@ -44,5 +46,4 @@ final class CreditCardTransactionsTest extends TestCase
 
         self::$api->creditCardTransactions->fetch('test');
     }
-
 }

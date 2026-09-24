@@ -5,19 +5,22 @@
 [![Total Downloads](https://poser.pugx.org/stripe/stripe-php/downloads.svg)](https://packagist.org/packages/stripe/stripe-php)
 [![License](https://poser.pugx.org/stripe/stripe-php/license.svg)](https://packagist.org/packages/stripe/stripe-php)
 
+> [!TIP]
+> Want to chat live with Stripe engineers? Join us on our [Discord server](https://stripe.com/go/discord/php).
+
 The Stripe PHP library provides convenient access to the Stripe API from
 applications written in the PHP language. It includes a pre-defined set of
 classes for API resources that initialize themselves dynamically from API
 responses which makes it compatible with a wide range of versions of the Stripe
 API.
 
-## Support
-
-New features and bug fixes are released on the latest major version of the Stripe PHP library. If you are on an older major version, we recommend that you upgrade to the latest in order to use the new features and bug fixes including those for security vulnerabilities. Older major versions of the package will continue to be available for use, but will not be receiving any updates.
-
 ## Requirements
 
-PHP 5.6.0 and later.
+PHP 7.2.0 and later.
+
+Note that per our [language version support policy](https://docs.stripe.com/sdks/versioning?lang=php#stripe-sdk-language-version-support-policy), support for PHP 7.2 and 7.3 will be removed soon, so upgrade your runtime if you're able to.
+
+Additional PHP versions will be dropped in future major versions, so upgrade to supported versions if possible.
 
 ## Composer
 
@@ -30,7 +33,7 @@ composer require stripe/stripe-php
 To use the bindings, use Composer's [autoload](https://getcomposer.org/doc/01-basic-usage.md#autoloading):
 
 ```php
-require_once('vendor/autoload.php');
+require_once 'vendor/autoload.php';
 ```
 
 ## Manual Installation
@@ -38,16 +41,16 @@ require_once('vendor/autoload.php');
 If you do not wish to use Composer, you can download the [latest release](https://github.com/stripe/stripe-php/releases). Then, to use the bindings, include the `init.php` file.
 
 ```php
-require_once('/path/to/stripe-php/init.php');
+require_once '/path/to/stripe-php/init.php';
 ```
 
 ## Dependencies
 
 The bindings require the following extensions in order to work properly:
 
--   [`curl`](https://secure.php.net/manual/en/book.curl.php), although you can use your own non-cURL client if you prefer
--   [`json`](https://secure.php.net/manual/en/book.json.php)
--   [`mbstring`](https://secure.php.net/manual/en/book.mbstring.php) (Multibyte String)
+- [`curl`](https://secure.php.net/manual/en/book.curl.php), although you can use your own non-cURL client if you prefer
+- [`json`](https://secure.php.net/manual/en/book.json.php)
+- [`mbstring`](https://secure.php.net/manual/en/book.mbstring.php) (Multibyte String)
 
 If you use Composer, these dependencies should be handled automatically. If you install manually, you'll want to make sure that these extensions are available.
 
@@ -73,8 +76,6 @@ You can continue to use the legacy integration patterns used prior to version [7
 
 See the [PHP API docs](https://stripe.com/docs/api/?lang=php#intro).
 
-See [video demonstrations][youtube-playlist] covering how to use the library.
-
 ## Legacy Version Support
 
 ### PHP 5.4 & 5.5
@@ -89,7 +90,8 @@ Otherwise, you can download v5.9.2 ([zip](https://github.com/stripe/stripe-php/a
 
 ## Custom Request Timeouts
 
-_NOTE:_ We do not recommend decreasing the timeout for non-read-only calls (e.g. charge creation), since even if you locally timeout, the request on Stripe's side can still complete. If you are decreasing timeouts on these calls, make sure to use [idempotency tokens](https://stripe.com/docs/api/?lang=php#idempotent_requests) to avoid executing the same transaction twice as a result of timeout retry logic.
+> **Note**
+> We do not recommend decreasing the timeout for non-read-only calls (e.g. charge creation), since even if you locally timeout, the request on Stripe's side can still complete. If you are decreasing timeouts on these calls, make sure to use [idempotency tokens](https://stripe.com/docs/api/?lang=php#idempotent_requests) to avoid executing the same transaction twice as a result of timeout retry logic.
 
 To modify request timeouts (connect or total, in seconds) you'll need to tell the API client to use a CurlClient other than its default. You'll set the timeouts in that CurlClient.
 
@@ -192,10 +194,11 @@ an intermittent network problem:
 [Idempotency keys][idempotency-keys] are added to requests to guarantee that
 retries are safe.
 
-### Request latency telemetry
+### Telemetry
 
-By default, the library sends request latency telemetry to Stripe. These
-numbers help Stripe improve the overall latency of its API for all users.
+By default, the library sends telemetry to Stripe regarding request latency and feature usage. These
+numbers help Stripe improve the overall latency of its API for all users, and
+improve popular features.
 
 You can disable this behavior if you prefer:
 
@@ -203,9 +206,72 @@ You can disable this behavior if you prefer:
 \Stripe\Stripe::setEnableTelemetry(false);
 ```
 
+### How to use undocumented parameters and properties
+
+In some cases, you might encounter parameters on an API request or fields on an API response that aren’t available in the SDKs.
+This might happen when they’re undocumented or when they’re in preview and you aren’t using a preview SDK.
+See [undocumented params and properties](https://docs.stripe.com/sdks/server-side?lang=php#undocumented-params-and-fields) to send those parameters or access those fields.
+
+### Public Preview SDKs
+
+Stripe has features in the [public preview phase](https://docs.stripe.com/release-phases) that can be accessed via versions of this package that have the `-beta.X` suffix like `12.2.0-beta.2`.
+We would love for you to try these as we incrementally release new features and improve them based on your feedback.
+
+The public preview SDKs are a different version of the same package as the stable SDKs. These versions are appended with `-beta.X` such as `15.0.0-beta.1`. To install, pick the latest version with the `beta` suffix by reviewing the [releases page](https://github.com/stripe/stripe-dotnet/releases/) and then use it in the `composer require` command:
+
+```bash
+composer require stripe/stripe-php:v<replace-with-the-version-of-your-choice>
+```
+
+> **Note**
+> There can be breaking changes between two versions of the public preview SDKs without a bump in the major version. Therefore we recommend pinning the package version to a specific version in your composer.json file. This way you can install the same version each time without breaking changes unless you are intentionally looking for the latest version of the public preview SDK.
+
+Some preview features require a name and version to be set in the `Stripe-Version` header like `feature_beta=v3`. If the preview feature you are interested in has this requirement, use the function `addBetaVersion` (available only in the public preview SDKs):
+
+```php
+Stripe::addBetaVersion("feature_beta", "v3");
+```
+
+### Private Preview SDKs
+
+Stripe has features in the [private preview phase](https://docs.stripe.com/release-phases) that can be accessed via versions of this package that have the `-alpha.X` suffix like `12.2.0-alpha.2`. You can install the private preview SDKs by following the same instructions as for the [public preview SDKs](https://github.com/stripe/stripe-php?tab=readme-ov-file#public-preview-sdks) above and replacing the term `beta` with `alpha`. Note that access to specific private preview API features may require separate approval.
+
+### Custom requests
+
+> This feature is only available from version 16 of this SDK.
+
+If you would like to send a request to an undocumented API (for example you are in a private beta), or if you prefer to bypass the method definitions in the library and specify your request details directly, you can use the `rawRequest` method on the StripeClient.
+
+```php
+$stripe = new \Stripe\StripeClient('sk_test_xyz');
+$response = $stripe->rawRequest('post', '/v1/beta_endpoint', [
+  "caveat": "emptor"
+], [
+  "stripe_version" => "2022-11_15",
+]);
+// $response->body is a string, you can call $stripe->deserialize to get a \Stripe\StripeObject.
+$obj = $stripe->deserialize($response->body);
+
+// For GET requests, the params argument must be null, and you should write the query string explicitly.
+$get_response = $stripe->rawRequest('get', '/v1/beta_endpoint?caveat=emptor', null, [
+  "stripe_version" => "2022-11_15",
+]);
+```
+
+## Support
+
+New features and bug fixes are released on the latest major version of the Stripe PHP library. If you are on an older major version, we recommend that you upgrade to the latest in order to use the new features and bug fixes including those for security vulnerabilities. Older major versions of the package will continue to be available for use, but will not be receiving any updates.
+
 ## Development
 
-Get [Composer][composer]. For example, on Mac OS:
+> [!WARNING]
+> External contributions to this repo from first-time contributors are currently on hiatus. If you'd like to see a change made to the package, please open an issue.
+
+[Contribution guidelines for this project](CONTRIBUTING.md)
+
+We use [just](https://github.com/casey/just) for conveniently running development tasks. You can use them directly, or copy the commands out of the `justfile`. To our help docs, run `just`.
+
+To get started, install [Composer][composer]. For example, on Mac OS:
 
 ```bash
 brew install composer
@@ -214,7 +280,8 @@ brew install composer
 Install dependencies:
 
 ```bash
-composer install
+just install
+# or: composer install
 ```
 
 The test suite depends on [stripe-mock], so make sure to fetch and run it from a
@@ -222,20 +289,22 @@ background terminal ([stripe-mock's README][stripe-mock] also contains
 instructions for installing via Homebrew and other methods):
 
 ```bash
-go get -u github.com/stripe/stripe-mock
+go install github.com/stripe/stripe-mock@latest
 stripe-mock
 ```
 
 Install dependencies as mentioned above (which will resolve [PHPUnit](http://packagist.org/packages/phpunit/phpunit)), then you can run the test suite:
 
 ```bash
-./vendor/bin/phpunit
+just test
+# or: ./vendor/bin/phpunit
 ```
 
 Or to run an individual test file:
 
 ```bash
-./vendor/bin/phpunit tests/Stripe/UtilTest.php
+just test tests/Stripe/UtilTest.php
+# or: ./vendor/bin/phpunit tests/Stripe/UtilTest.php
 ```
 
 Update bundled CA certificates from the [Mozilla cURL release][curl]:
@@ -247,7 +316,8 @@ Update bundled CA certificates from the [Mozilla cURL release][curl]:
 The library uses [PHP CS Fixer][php-cs-fixer] for code formatting. Code must be formatted before PRs are submitted, otherwise CI will fail. Run the formatter with:
 
 ```bash
-./vendor/bin/php-cs-fixer fix -v .
+just format
+# or: ./vendor/bin/php-cs-fixer fix -v .
 ```
 
 ## Attention plugin developers
@@ -271,4 +341,3 @@ See the "SSL / TLS compatibility issues" paragraph above for full context. If yo
 [php-cs-fixer]: https://github.com/FriendsOfPHP/PHP-CS-Fixer
 [psr3]: http://www.php-fig.org/psr/psr-3/
 [stripe-mock]: https://github.com/stripe/stripe-mock
-[youtube-playlist]: https://www.youtube.com/playlist?list=PLy1nL-pvL2M6cUbiHrfMkXxZ9j9SGBxFE

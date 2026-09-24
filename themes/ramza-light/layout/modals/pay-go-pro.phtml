@@ -1,0 +1,153 @@
+<?php
+    $can_buy = false;
+    $price = 0;
+    if( $wo['config']['point_level_system']  == 1 ){
+        switch ($_GET['type']) {
+            case 1:
+                $price = $wo['config']['weekly_price'];
+                break;
+            case 2:
+                $price = $wo['config']['monthly_price'];
+                break;
+            case 3:
+                $price = $wo['config']['yearly_price'];
+                break;
+            case 4:
+                $price = $wo['config']['lifetime_price'];
+                break;
+        }
+        if( $wo["user"]["wallet"] >= $price ){ $can_buy = true; }
+        $wallet  = $wo["user"]["wallet"];
+        //if( $wo["user"]["balance"] >= $price ){ $can_buy = true; }
+        //$balance = $wo["user"]["balance"];
+    }
+?>
+<div class="modal fade wow_mat_pops" id="pay-go-pro" role="dialog" data-keyboard="false">
+	<div class="modal-dialog wow_mat_mdl payment_box">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title"><?php echo $wo['lang']['choose_a_payment_method'] ?></h4>
+			</div>
+			<div class="modal-body">
+				<div class="pay-go-pro-alert"></div>
+				<div class="pay_using">
+					<?php if ($can_buy == true && $wo['hide'] == false) { ?>
+						<button class="btn-walletpay btn valign" onclick="pay_using_wallet({pro_type_id}, '{pro_type_description}');">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M22 6h-7a6 6 0 1 0 0 12h7v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v2zm-7 2h8v8h-8a4 4 0 1 1 0-8zm0 3v2h3v-2h-3z"/></svg> <?php echo $wo['lang']['wallet'] ?> (<?php echo Wo_GetCurrency($wo['config']['currency']) . $wallet;?>)
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['paypal'] == 'yes') { ?>
+						<button class="btn valign btn-paypal" onclick="Wo_GetPayPalLink('{pro_type}');">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 0 0-.794.68l-.04.22-.63 3.993-.032.17a.804.804 0 0 1-.794.679H7.72a.483.483 0 0 1-.477-.558L7.418 21h1.518l.95-6.02h1.385c4.678 0 7.75-2.203 8.796-6.502zm-2.96-5.09c.762.868.983 1.81.752 3.285-.019.123-.04.24-.062.36-.735 3.773-3.089 5.446-6.956 5.446H8.957c-.63 0-1.174.414-1.354 1.002l-.014-.002-.93 5.894H3.121a.051.051 0 0 1-.05-.06l2.598-16.51A.95.95 0 0 1 6.607 2h5.976c2.183 0 3.716.469 4.523 1.388z" fill="currentColor"></path></svg> <?php echo $wo['lang']['paypal'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['qiwi_payment'] == 1) { ?>
+						<button class="btn valign btn-qiwi" onclick="Wo_QiwiPay('{pro_type}');">
+							<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 48" width="42" height="48" fill="currentColor"><path fill-rule="evenodd" d="m46.5 27.2zm1.5 0.1v3.3h1.1l1.9-3.3h1.6l-2.3 3.8v0.1l2.5 4.3h-1.7l-2-3.6h-1.1v3.6h-1.5v-8.2zm8.1 2.1c1.8 0 3.3 1.3 3.3 3.1 0 1.8-1.5 3.1-3.3 3.1-1.8 0-3.2-1.3-3.2-3.1 0-1.8 1.4-3.1 3.2-3.1zm0 4.9c1 0.1 1.9-0.7 1.9-1.7 0.1-1-0.7-1.9-1.7-1.9-1-0.1-1.9 0.7-1.9 1.7v0.1c-0.1 1 0.7 1.8 1.6 1.8zm5.8-4.7v4.6h1.9v-4.6h1.4v4.6h1.8v-4.6h1.4v5.9h-7.9v-5.9zm10.7-0.2c1.7 0 2.6 1.3 2.6 2.8q0 0.3 0 0.6h-4c0.1 1 0.8 1.5 1.7 1.5 0.6 0 1.2-0.2 1.7-0.6l0.6 1c-0.7 0.6-1.5 0.9-2.4 0.9-1.9 0-3.2-1.4-3.2-3.1 0-1.8 1.3-3.1 3-3.1zm1.2 2.4c0-0.8-0.6-1.3-1.2-1.3-0.7 0-1.3 0.6-1.4 1.3zm2.1 2.4c0.8-0.1 1.3-0.7 1.3-2.8v-1.8h4.3v5.9h-1.5v-4.7h-1.4v0.6c0 2.6-0.7 4.1-2.6 4.1v-1.3zm9.7-4.8c1.7 0 2.6 1.3 2.6 2.8q0 0.3 0 0.6h-4.1c0.1 0.9 0.9 1.6 1.8 1.6 0.6-0.1 1.2-0.3 1.7-0.7l0.6 1.1c-0.7 0.5-1.5 0.8-2.4 0.8-2 0-3.2-1.4-3.2-3.1 0-1.8 1.2-3.1 3-3.1zm1.1 2.4c0-0.8-0.5-1.3-1.1-1.3-0.8 0-1.4 0.6-1.5 1.3zm4.2-2.2v2.2h0.7l1.5-2.2h1.6l-1.9 2.8 2.1 3.1h-1.6l-1.6-2.4h-0.8v2.4h-1.4v-5.9z"/><path fill-rule="evenodd" d="m67.2 8.9v14c0 0.2-0.2 0.3-0.4 0.3h-2.9c-0.2 0-0.3-0.1-0.3-0.3v-14c0-0.2 0.1-0.4 0.3-0.4h2.9c0.2 0 0.4 0.2 0.4 0.4zm22.5-0.2q0.1 0.1 0.1 0.3l-4.7 14c-0.1 0.1-0.2 0.2-0.4 0.2h-2.5c-0.2 0-0.3-0.1-0.4-0.2l-2.7-8.2-2.8 8.2c-0.1 0.1-0.2 0.2-0.4 0.2h-2.5c-0.1 0-0.3-0.1-0.3-0.2l-4.7-14q-0.1-0.2 0-0.3 0.1-0.2 0.3-0.2h3.2c0.2 0 0.3 0.1 0.4 0.3l2.5 8.3 2.8-8.3c0-0.2 0.2-0.3 0.3-0.3h2.3c0.1 0 0.3 0.1 0.3 0.3l2.8 8.3 2.5-8.3c0.1-0.1 0.2-0.3 0.4-0.3h3.2q0.1 0 0.3 0.2zm4.8 0.2v14c0 0.2-0.1 0.3-0.3 0.3h-2.9c-0.2 0-0.4-0.1-0.4-0.3v-14c0-0.2 0.2-0.4 0.4-0.4h2.9c0.2 0 0.3 0.2 0.3 0.4zm-32.6 13.9c0.1 0.1 0.1 0.3 0 0.4q-0.1 0.1-0.2 0.1h-3.5q-0.2 0-0.4-0.2l-0.6-0.7c-3.5 2.3-8.3 1.2-10.6-2.3-2.3-3.6-1.3-8.4 2.3-10.7 3.5-2.3 8.3-1.2 10.6 2.3 1.7 2.5 1.7 5.8 0 8.4 0 0 2.4 2.7 2.4 2.7zm-6.9-3.1l-1.6-1.9c-0.1-0.1 0-0.3 0.1-0.4q0.1-0.1 0.2-0.1h3.2c0.1-0.4 0.2-0.9 0.2-1.4 0-2.3-1.7-4.3-4-4.3-2.4 0-4.1 2-4.1 4.3 0 2.3 1.7 4.2 4.1 4.2 0.6 0 1.3-0.1 1.9-0.4zm-36 20.9q0 0 0 0 0 0 0 0zm-19-19c0-10.5 8.5-19 19-19 10.5 0 19 8.6 19 19 0 3.5-0.9 6.8-2.7 9.8q-0.1 0.1-0.2 0 0 0 0-0.1c-0.7-4.6-3.5-7.2-7.7-8-0.3 0-0.4-0.2 0.1-0.3q2-0.2 4 0.1 0-0.7 0-1.5c0-6.9-5.6-12.5-12.5-12.5-6.9 0-12.6 5.6-12.6 12.5 0 7 5.7 12.6 12.6 12.6h0.6q-0.3-1.7-0.2-3.4c0-0.8 0.1-0.9 0.5-0.3 1.7 3 4.2 5.7 9.1 6.8 3.9 0.9 7.9 1.9 12.2 7.3 0.4 0.5-0.2 1-0.6 0.6-4.4-3.8-8.4-5.1-12-5.1-4 0-6.8 0.5-9.6 0.5-10.5 0-19-8.5-19-19zm30 11.6c0.9 0.7 1.1 1.5 0.7 2.1-0.3 0.4-0.7 0.6-1.2 0.5-0.4 0-0.9-0.1-1.3-0.4-0.7-0.7-1-1.8-0.5-2.4 0.3-0.2 0.6-0.4 0.9-0.4 0.6 0.1 1 0.3 1.4 0.6zm3.9-1.8c0.1 0.8-0.1 1.1-0.4 1.1-0.3 0-0.7-0.3-1.1-1-0.4-0.6-0.6-1.4-0.4-1.8 0.2-0.2 0.6-0.3 0.8-0.2 0.8 0.3 1 1.4 1.1 1.9z"/></svg> <?php echo $wo['lang']['qiwi'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['credit_card'] == 'yes') { ?>
+						<button class="btn-cart btn valign" onclick="Wo_CheckOutCard({pro_type_id}, '{pro_type_description}', {pro_type_price}, 'credit_card');">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M3 3h18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm17 9H4v7h16v-7zm0-4V5H4v3h16z" fill="currentColor"></path></svg> <?php echo $wo['lang']['credit_card'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['bank_payment'] == '1') { ?>
+						<button class="bank_payment btn valign" onclick="Wo_CheckOutCard({pro_type_id}, '{pro_type_description}', {pro_type_price}, 'bank_payment');">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M2 20h20v2H2v-2zm2-8h2v7H4v-7zm5 0h2v7H9v-7zm4 0h2v7h-2v-7zm5 0h2v7h-2v-7zM2 7l10-5 10 5v4H2V7zm2 1.236V9h16v-.764l-8-4-8 4zM12 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" fill="currentColor"></path></svg> <?php echo $wo['lang']['bank_transfer'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['bitcoin'] == 'yes') { ?>
+						<button class="btn-bitcoin btn valign" onclick="Wo_CheckOutCard({pro_type_id}, '{pro_type_description}', {pro_type_price}, 'bitcoin');">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M14.24 10.56C13.93 11.8 12 11.17 11.4 11L11.95 8.82C12.57 9 14.56 9.26 14.24 10.56M11.13 12.12L10.53 14.53C11.27 14.72 13.56 15.45 13.9 14.09C14.26 12.67 11.87 12.3 11.13 12.12M21.7 14.42C20.36 19.78 14.94 23.04 9.58 21.7C4.22 20.36 .963 14.94 2.3 9.58C3.64 4.22 9.06 .964 14.42 2.3C19.77 3.64 23.03 9.06 21.7 14.42M14.21 8.05L14.66 6.25L13.56 6L13.12 7.73C12.83 7.66 12.54 7.59 12.24 7.53L12.68 5.76L11.59 5.5L11.14 7.29C10.9 7.23 10.66 7.18 10.44 7.12L10.44 7.12L8.93 6.74L8.63 7.91C8.63 7.91 9.45 8.1 9.43 8.11C9.88 8.22 9.96 8.5 9.94 8.75L8.71 13.68C8.66 13.82 8.5 14 8.21 13.95C8.22 13.96 7.41 13.75 7.41 13.75L6.87 15L8.29 15.36C8.56 15.43 8.82 15.5 9.08 15.56L8.62 17.38L9.72 17.66L10.17 15.85C10.47 15.93 10.76 16 11.04 16.08L10.59 17.87L11.69 18.15L12.15 16.33C14 16.68 15.42 16.54 16 14.85C16.5 13.5 16 12.7 15 12.19C15.72 12 16.26 11.55 16.41 10.57C16.61 9.24 15.59 8.53 14.21 8.05Z" fill="currentColor"></path></svg> <?php echo $wo['lang']['bitcoin'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['coinbase_payment'] == '1' && !empty($wo['config']['coinbase_key'])) { ?>
+						<button class="btn-coinbase btn valign" onclick="pay_using_coinbase();">
+							<img src="<?php echo $wo['config']['theme_url'];?>/img/coinbase.png"> <?php echo $wo['lang']['coinbase'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['alipay'] == 'yes') { ?>
+						<button class="btn-alipay btn valign" onclick="Wo_CheckOutCard({pro_type_id}, '{pro_type_description}', {pro_type_price}, 'alipay');">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M21.422 15.358c-3.83-1.153-6.055-1.84-6.678-2.062a12.41 12.41 0 0 0 1.32-3.32H12.8V8.872h4v-.68h-4V6.344h-1.536c-.28 0-.312.248-.312.248v1.592H7.2v.68h3.752v1.104H7.88v.616h6.224a10.972 10.972 0 0 1-.888 2.176c-1.408-.464-2.192-.784-3.912-.944-3.256-.312-4.008 1.48-4.128 2.576C5 16.064 6.48 17.424 8.688 17.424s3.68-1.024 5.08-2.72c1.167.558 3.338 1.525 6.514 2.902A9.99 9.99 0 0 1 12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10a9.983 9.983 0 0 1-.578 3.358zm-12.99 1.01c-2.336 0-2.704-1.48-2.584-2.096.12-.616.8-1.416 2.104-1.416 1.496 0 2.832.384 4.44 1.16-1.136 1.48-2.52 2.352-3.96 2.352z"/></svg> Alipay
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['checkout_payment'] == 'yes') { ?>
+						<button class="btn-check btn valign" onclick="Wo_CheckOutCard({pro_type_id}, '{pro_type_description}', {pro_type_price}, 'checkout');">
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve"> <path fill="currentColor" d="M512,256c0,24.409-3.417,48.013-9.791,70.374C471.636,433.539,372.976,512,256,512 C114.615,512,0,397.385,0,256S114.615,0,256,0c112.149,0,207.454,72.119,242.071,172.502C507.099,198.677,512,226.764,512,256z"/> <g> <path style="fill:#F0EFEB;" d="M498.072,172.502c-19.926-12.455-45.108-17.784-71.45-12.904 c-44.23,8.192-74.073,44.387-74.094,91.167c-0.387,6.071,0.188,13.354,1.985,20.511c8.589,34.262,29.414,58.943,66.173,68.305 c30.103,7.67,57.971,3.929,81.523-13.208C508.583,304.013,512,280.409,512,256C512,226.764,507.099,198.677,498.072,172.502z M490.851,295.643c-16.865,18.15-38.013,22.936-61.2,16.645c-23.928-6.499-37.48-23.604-43.071-47.355 c-1.17-4.963-1.546-10.021-1.296-14.221c0.021-32.434,19.435-57.522,48.232-63.206c38.076-7.513,72.422,19.895,73.895,58.776 C508.123,264.903,503.745,281.767,490.851,295.643z"/> <path style="fill:#F0EFEB;" d="M84.868,312.922c12.492,0,24.985,0,37.476,0c13.791,0,27.583,0.135,41.371-0.085 c3.992-0.064,5.327,1.111,5.091,5.137c-0.332,5.659-0.428,11.379,0.021,17.022c0.388,4.87-1.636,5.606-5.925,5.588 c-36.91-0.15-73.82-0.087-110.73-0.087c-13.526,0-13.104-0.018-13.689-13.669c-0.332-7.75,1.921-12.893,8.097-17.96 c22.096-18.125,43.654-36.911,65.297-55.583c6.453-5.567,12.277-11.784,16.926-19.021c5.188-8.074,6.848-16.926,5.221-26.21 c-2.922-16.664-19.722-25.666-38.273-20.93c-12.54,3.201-21.052,11.856-28.623,21.486c-2.861,3.639-4.581,3.916-7.954,0.935 c-4.699-4.153-9.793-7.873-14.827-11.631c-1.899-1.417-2.722-2.39-1.067-4.792c21.73-31.543,52.725-42.546,88.687-30.858 c38.834,12.621,42.357,56.672,26.059,81.762c-7.615,11.723-17.872,20.935-28.433,29.82c-15.021,12.639-30.179,25.116-45.279,37.663 C84.498,311.98,84.683,312.451,84.868,312.922z"/> <path style="fill:#F0EFEB;" d="M284.865,343.452c-54.955,1.164-96.58-39.644-96.716-90.472 c-0.123-46.273,26.955-82.92,69.758-92.655c30.503-6.938,59.117-2.159,84.541,17.437c4.598,3.543,4.352,5.552,0.273,9.008 c-4.629,3.922-8.965,8.245-13.037,12.749c-2.925,3.235-4.868,3.752-8.727,0.8c-16.533-12.647-35.196-17.295-55.577-12.103 c-25.378,6.466-43.248,29.734-44.409,57.509c-0.971,23.229,6.213,43.253,25.18,57.717c21.007,16.02,50.546,15.303,73.637-1.764 c4.195-3.101,6.369-3.111,9.705,0.753c3.959,4.585,8.463,8.749,13.056,12.718c3.134,2.707,2.306,4.116-0.445,6.434 C324.287,336.604,303.68,343.595,284.865,343.452z"/> </g></svg> <?php echo $wo['lang']['2checkout'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['paystack_payment'] == 'yes') { ?>
+						<button class="btn-paystack btn valign" onclick="pay_using_paystack('{pro_type}');">
+							<img src="<?php echo $wo['config']['theme_url'];?>/img/paystack.png"> <?php echo $wo['lang']['paystack'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['cashfree_payment'] == 'yes') { ?>
+						<button class="btn-cashfree btn valign" onclick="pay_using_cashfree('{pro_type}');">
+							<img src="<?php echo $wo['config']['theme_url'];?>/img/cashfree.png"> <?php echo $wo['lang']['cashfree'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['razorpay_payment'] == 'yes' && !empty($wo['config']['razorpay_key_id']) && !empty($wo['config']['razorpay_key_secret'])) { ?>
+						<button class="btn-razorpay btn valign" onclick="pay_using_razorpay('{pro_type}');">
+							<img src="<?php echo $wo['config']['theme_url'];?>/img/razorpay.png"> <?php echo $wo['lang']['razorpay'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['paysera_payment'] == 'yes' && !empty($wo['config']['paysera_project_id']) && !empty($wo['config']['paysera_sign_password'])) { ?>
+						<button class="btn-paysera btn valign" onclick="pay_using_paysera('{pro_type}');">
+							<img src="<?php echo $wo['config']['theme_url'];?>/img/paysera.png"> <?php echo $wo['lang']['paysera'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['yoomoney_payment'] == '1' && !empty($wo['config']['yoomoney_wallet_id']) && !empty($wo['config']['yoomoney_notifications_secret'])) { ?>
+						<button class="btn-yoomoney btn valign" onclick="pay_using_yoomoney();">
+							<svg width="57" height="40" viewBox="0 0 57 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M36.33 0c-11.14 0-20 8.987-20 20 0 11.14 8.987 20 20 20 11.012 0 20-8.987 20-20s-8.988-20-20-20zm0 27.342c-4.051 0-7.47-3.418-7.47-7.469 0-4.05 3.419-7.468 7.47-7.468 4.05 0 7.468 3.418 7.468 7.468-.127 4.178-3.418 7.469-7.469 7.469zM16.203 5.696V34.81h-7.09L0 5.696h16.203z" fill="#8B3FFD"/></svg> <?php echo $wo['lang']['yoomoney'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['iyzipay_payment'] == '1' && !empty($wo['config']['iyzipay_key']) && !empty($wo['config']['iyzipay_secret_key'])) { ?>
+						<button class="btn-iyzipay btn valign" onclick="pay_using_iyzipay();">
+							<img src="<?php echo $wo['config']['theme_url'];?>/img/iyzipay.png"> <?php echo $wo['lang']['iyzipay'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['securionpay_payment'] == '1' && !empty($wo['config']['securionpay_public_key']) && !empty($wo['config']['securionpay_secret_key'])) { ?>
+						<button class="btn-securionpay btn valign" onclick="securionpay_pay();">
+							<img src="<?php echo $wo['config']['theme_url'];?>/img/securionpay.png"> <?php echo $wo['lang']['securionpay'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['authorize_payment'] == '1' && !empty($wo['config']['authorize_login_id']) && !empty($wo['config']['authorize_transaction_key'])) { ?>
+						<button class="btn-authorize btn valign" onclick="open_authorize();">
+							<img src="<?php echo $wo['config']['theme_url'];?>/img/authorize.png"> <?php echo $wo['lang']['authorize'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['fluttewave_payment'] == '1') { ?>
+						<button class="btn-fluttewave btn valign" onclick="open_fluttewave();">
+							<img src="<?php echo $wo['config']['theme_url'];?>/img/paysera.png"> <?php echo $wo['lang']['fluttewave'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['fortumo_payment'] == '1') { ?>
+						<button class="btn-fortumo btn valign" onclick="pay_using_fortumo();">
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 58 58" xml:space="preserve"> <g id="XMLID_9_"> <path id="XMLID_114_" style="fill:#8798CC;" d="M54.783,50H3.217C1.44,50,0,48.56,0,46.783V11.217C0,9.44,1.44,8,3.217,8h51.566 C56.56,8,58,9.44,58,11.217v35.566C58,48.56,56.56,50,54.783,50"/> <rect id="XMLID_113_" y="13" style="fill:#556180;" width="58" height="8"/> <path id="XMLID_112_" style="fill:#B0D3F0;" d="M15,26H6c-0.553,0-1,0.448-1,1s0.447,1,1,1h9c0.553,0,1-0.448,1-1S15.553,26,15,26" /> <path id="XMLID_111_" style="fill:#B0D3F0;" d="M29,27c0-0.552-0.447-1-1-1h-9c-0.553,0-1,0.448-1,1s0.447,1,1,1h9 C28.553,28,29,27.552,29,27"/> <path id="XMLID_110_" style="fill:#B0D3F0;" d="M7,31H6c-0.553,0-1,0.448-1,1s0.447,1,1,1h1c0.553,0,1-0.448,1-1S7.553,31,7,31"/> <path id="XMLID_109_" style="fill:#B0D3F0;" d="M13,31h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h2c0.553,0,1-0.448,1-1S13.553,31,13,31 "/> <path id="XMLID_108_" style="fill:#B0D3F0;" d="M18,31h-1c-0.553,0-1,0.448-1,1s0.447,1,1,1h1c0.553,0,1-0.448,1-1S18.553,31,18,31 "/> <path id="XMLID_107_" style="fill:#B0D3F0;" d="M24,31h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h2c0.553,0,1-0.448,1-1S24.553,31,24,31 "/> <path id="XMLID_106_" style="fill:#B0D3F0;" d="M27.29,31.29C27.109,31.48,27,31.74,27,32c0,0.26,0.109,0.52,0.29,0.71 C27.478,32.89,27.728,33,28,33c0.26,0,0.519-0.11,0.71-0.29C28.89,32.52,29,32.26,29,32c0-0.26-0.11-0.52-0.29-0.71 C28.34,30.92,27.66,30.92,27.29,31.29"/> <rect id="XMLID_105_" x="36" y="34" style="fill:#91BAE1;" width="16" height="10"/> </g> </svg> <?php echo $wo['lang']['fortumo'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['aamarpay_payment'] == '1') { ?>
+						<button class="btn-aamarpay btn valign" onclick="pay_using_aamarpay();">
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 58 58" xml:space="preserve"> <g id="XMLID_9_"> <path id="XMLID_114_" style="fill:#8798CC;" d="M54.783,50H3.217C1.44,50,0,48.56,0,46.783V11.217C0,9.44,1.44,8,3.217,8h51.566 C56.56,8,58,9.44,58,11.217v35.566C58,48.56,56.56,50,54.783,50"/> <rect id="XMLID_113_" y="13" style="fill:#556180;" width="58" height="8"/> <path id="XMLID_112_" style="fill:#B0D3F0;" d="M15,26H6c-0.553,0-1,0.448-1,1s0.447,1,1,1h9c0.553,0,1-0.448,1-1S15.553,26,15,26" /> <path id="XMLID_111_" style="fill:#B0D3F0;" d="M29,27c0-0.552-0.447-1-1-1h-9c-0.553,0-1,0.448-1,1s0.447,1,1,1h9 C28.553,28,29,27.552,29,27"/> <path id="XMLID_110_" style="fill:#B0D3F0;" d="M7,31H6c-0.553,0-1,0.448-1,1s0.447,1,1,1h1c0.553,0,1-0.448,1-1S7.553,31,7,31"/> <path id="XMLID_109_" style="fill:#B0D3F0;" d="M13,31h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h2c0.553,0,1-0.448,1-1S13.553,31,13,31 "/> <path id="XMLID_108_" style="fill:#B0D3F0;" d="M18,31h-1c-0.553,0-1,0.448-1,1s0.447,1,1,1h1c0.553,0,1-0.448,1-1S18.553,31,18,31 "/> <path id="XMLID_107_" style="fill:#B0D3F0;" d="M24,31h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h2c0.553,0,1-0.448,1-1S24.553,31,24,31 "/> <path id="XMLID_106_" style="fill:#B0D3F0;" d="M27.29,31.29C27.109,31.48,27,31.74,27,32c0,0.26,0.109,0.52,0.29,0.71 C27.478,32.89,27.728,33,28,33c0.26,0,0.519-0.11,0.71-0.29C28.89,32.52,29,32.26,29,32c0-0.26-0.11-0.52-0.29-0.71 C28.34,30.92,27.66,30.92,27.29,31.29"/> <rect id="XMLID_105_" x="36" y="34" style="fill:#91BAE1;" width="16" height="10"/> </g> </svg> <?php echo $wo['lang']['aamarpay'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['ngenius_payment'] == '1') { ?>
+						<button class="btn-ngenius btn valign" onclick="pay_using_ngenius();">
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 58 58" xml:space="preserve"> <g id="XMLID_9_"> <path id="XMLID_114_" style="fill:#8798CC;" d="M54.783,50H3.217C1.44,50,0,48.56,0,46.783V11.217C0,9.44,1.44,8,3.217,8h51.566 C56.56,8,58,9.44,58,11.217v35.566C58,48.56,56.56,50,54.783,50"/> <rect id="XMLID_113_" y="13" style="fill:#556180;" width="58" height="8"/> <path id="XMLID_112_" style="fill:#B0D3F0;" d="M15,26H6c-0.553,0-1,0.448-1,1s0.447,1,1,1h9c0.553,0,1-0.448,1-1S15.553,26,15,26" /> <path id="XMLID_111_" style="fill:#B0D3F0;" d="M29,27c0-0.552-0.447-1-1-1h-9c-0.553,0-1,0.448-1,1s0.447,1,1,1h9 C28.553,28,29,27.552,29,27"/> <path id="XMLID_110_" style="fill:#B0D3F0;" d="M7,31H6c-0.553,0-1,0.448-1,1s0.447,1,1,1h1c0.553,0,1-0.448,1-1S7.553,31,7,31"/> <path id="XMLID_109_" style="fill:#B0D3F0;" d="M13,31h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h2c0.553,0,1-0.448,1-1S13.553,31,13,31 "/> <path id="XMLID_108_" style="fill:#B0D3F0;" d="M18,31h-1c-0.553,0-1,0.448-1,1s0.447,1,1,1h1c0.553,0,1-0.448,1-1S18.553,31,18,31 "/> <path id="XMLID_107_" style="fill:#B0D3F0;" d="M24,31h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h2c0.553,0,1-0.448,1-1S24.553,31,24,31 "/> <path id="XMLID_106_" style="fill:#B0D3F0;" d="M27.29,31.29C27.109,31.48,27,31.74,27,32c0,0.26,0.109,0.52,0.29,0.71 C27.478,32.89,27.728,33,28,33c0.26,0,0.519-0.11,0.71-0.29C28.89,32.52,29,32.26,29,32c0-0.26-0.11-0.52-0.29-0.71 C28.34,30.92,27.66,30.92,27.29,31.29"/> <rect id="XMLID_105_" x="36" y="34" style="fill:#91BAE1;" width="16" height="10"/> </g> </svg> <?php echo $wo['lang']['ngenius'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['braintree_payment'] == '1') { ?>
+						<button class="btn-braintree btn valign" onclick="pay_using_braintree();">
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 58 58" xml:space="preserve"> <g id="XMLID_9_"> <path id="XMLID_114_" style="fill:#8798CC;" d="M54.783,50H3.217C1.44,50,0,48.56,0,46.783V11.217C0,9.44,1.44,8,3.217,8h51.566 C56.56,8,58,9.44,58,11.217v35.566C58,48.56,56.56,50,54.783,50"/> <rect id="XMLID_113_" y="13" style="fill:#556180;" width="58" height="8"/> <path id="XMLID_112_" style="fill:#B0D3F0;" d="M15,26H6c-0.553,0-1,0.448-1,1s0.447,1,1,1h9c0.553,0,1-0.448,1-1S15.553,26,15,26" /> <path id="XMLID_111_" style="fill:#B0D3F0;" d="M29,27c0-0.552-0.447-1-1-1h-9c-0.553,0-1,0.448-1,1s0.447,1,1,1h9 C28.553,28,29,27.552,29,27"/> <path id="XMLID_110_" style="fill:#B0D3F0;" d="M7,31H6c-0.553,0-1,0.448-1,1s0.447,1,1,1h1c0.553,0,1-0.448,1-1S7.553,31,7,31"/> <path id="XMLID_109_" style="fill:#B0D3F0;" d="M13,31h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h2c0.553,0,1-0.448,1-1S13.553,31,13,31 "/> <path id="XMLID_108_" style="fill:#B0D3F0;" d="M18,31h-1c-0.553,0-1,0.448-1,1s0.447,1,1,1h1c0.553,0,1-0.448,1-1S18.553,31,18,31 "/> <path id="XMLID_107_" style="fill:#B0D3F0;" d="M24,31h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h2c0.553,0,1-0.448,1-1S24.553,31,24,31 "/> <path id="XMLID_106_" style="fill:#B0D3F0;" d="M27.29,31.29C27.109,31.48,27,31.74,27,32c0,0.26,0.109,0.52,0.29,0.71 C27.478,32.89,27.728,33,28,33c0.26,0,0.519-0.11,0.71-0.29C28.89,32.52,29,32.26,29,32c0-0.26-0.11-0.52-0.29-0.71 C28.34,30.92,27.66,30.92,27.29,31.29"/> <rect id="XMLID_105_" x="36" y="34" style="fill:#91BAE1;" width="16" height="10"/> </g> </svg> <?php echo $wo['lang']['braintree'] ?>
+						</button>
+					<?php } ?>
+					<?php if ($wo['config']['payfast_payment'] == '1') { ?>
+						<button class="btn-payfast btn valign" onclick="pay_using_payfast();">
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 58 58" xml:space="preserve"> <g id="XMLID_9_"> <path id="XMLID_114_" style="fill:#8798CC;" d="M54.783,50H3.217C1.44,50,0,48.56,0,46.783V11.217C0,9.44,1.44,8,3.217,8h51.566 C56.56,8,58,9.44,58,11.217v35.566C58,48.56,56.56,50,54.783,50"/> <rect id="XMLID_113_" y="13" style="fill:#556180;" width="58" height="8"/> <path id="XMLID_112_" style="fill:#B0D3F0;" d="M15,26H6c-0.553,0-1,0.448-1,1s0.447,1,1,1h9c0.553,0,1-0.448,1-1S15.553,26,15,26" /> <path id="XMLID_111_" style="fill:#B0D3F0;" d="M29,27c0-0.552-0.447-1-1-1h-9c-0.553,0-1,0.448-1,1s0.447,1,1,1h9 C28.553,28,29,27.552,29,27"/> <path id="XMLID_110_" style="fill:#B0D3F0;" d="M7,31H6c-0.553,0-1,0.448-1,1s0.447,1,1,1h1c0.553,0,1-0.448,1-1S7.553,31,7,31"/> <path id="XMLID_109_" style="fill:#B0D3F0;" d="M13,31h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h2c0.553,0,1-0.448,1-1S13.553,31,13,31 "/> <path id="XMLID_108_" style="fill:#B0D3F0;" d="M18,31h-1c-0.553,0-1,0.448-1,1s0.447,1,1,1h1c0.553,0,1-0.448,1-1S18.553,31,18,31 "/> <path id="XMLID_107_" style="fill:#B0D3F0;" d="M24,31h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h2c0.553,0,1-0.448,1-1S24.553,31,24,31 "/> <path id="XMLID_106_" style="fill:#B0D3F0;" d="M27.29,31.29C27.109,31.48,27,31.74,27,32c0,0.26,0.109,0.52,0.29,0.71 C27.478,32.89,27.728,33,28,33c0.26,0,0.519-0.11,0.71-0.29C28.89,32.52,29,32.26,29,32c0-0.26-0.11-0.52-0.29-0.71 C28.34,30.92,27.66,30.92,27.29,31.29"/> <rect id="XMLID_105_" x="36" y="34" style="fill:#91BAE1;" width="16" height="10"/> </g> </svg> <?php echo $wo['lang']['payfast'] ?>
+						</button>
+					<?php } ?>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

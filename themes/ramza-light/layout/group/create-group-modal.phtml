@@ -1,0 +1,140 @@
+<div class="modal fade" id="create-group" tabindex="-1" role="dialog" aria-labelledby="create-group-title" aria-hidden="true">
+	<div class="modal-dialog wow_mat_mdl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="create-group-title"><?php echo $wo['lang']['create_new_group'] ?></h4>
+			</div>
+			<form class="create-group-form form-horizontal" method="post">
+				<div class="modal-body">
+					<label class="tag_field">
+						<input id="group_title" name="group_title" type="text" maxlength="120" required placeholder=" ">
+						<span><?php echo $wo['lang']['group_name']; ?></span>
+					</label>
+					<label class="tag_field">
+						<input id="group_name" name="group_name" type="text" maxlength="32" required autocomplete="off" pattern="[A-Za-z0-9_]+" placeholder=" ">
+						<span><?php echo $wo['lang']['group'];?> URL</span>
+					</label>
+					<div class="help-block group-url-preview"><?php echo $wo['config']['site_url'];?>/</div>
+					<div class="row">
+						<div class="col-lg-6">
+							<label class="tag_field">
+								<select id="privacy" name="privacy">
+									<option value="1" ><?php echo $wo['lang']['public'];?> </option>
+									<option value="2" ><?php echo $wo['lang']['private'];?> </option>
+								</select>
+								<span><?php echo $wo['lang']['group_type'];?></span>
+							</label>
+						</div>
+						<div class="col-lg-6">
+							<label class="tag_field">
+								<select name="category" id="category" onchange="GetGroupSubCategory(this)">
+									<?php foreach ($wo['group_categories'] as $category_id => $category_name) {?>
+										<option value="<?php echo $category_id?>"><?php echo $category_name; ?></option>
+									<?php } ?>
+								</select>
+								<span><?php echo $wo['lang']['category'];?></span>
+							</label>
+						</div>
+					</div>
+					<?php if (!empty($wo['group_sub_categories'])) { ?>
+						<label class="tag_field">
+							<select name="group_sub_category" id="group_sub_category">
+								<?php
+									if (!empty($wo['group_sub_categories'][array_keys($wo['group_categories'])[0]])) {
+									foreach ($wo['group_sub_categories'][array_keys($wo['group_categories'])[0]] as $id => $sub_category) { ?>
+										<option value="<?php echo $sub_category['id']?>"><?php echo $sub_category['lang']; ?></option>
+								<?php } } ?>
+							</select>
+							<span><?php echo $wo['lang']['sub_category'];?></span>
+						</label>
+					<?php } ?>
+					<?php $fields = Wo_GetCustomFields('group'); 
+						if (!empty($fields)) {
+							foreach ($fields as $key => $wo['field']) {
+								echo Wo_LoadPage('group/fields');
+							}
+						}
+					?>
+					<div class="app-general-alert setting-update-alert"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default btn-mat disable_btn" data-ramza-close-group data-dismiss="modal" aria-label="Close"><?php echo $wo['lang']['cancel']; ?></button>
+					<button type="submit" class="btn btn-main btn-mat disable_btn"><?php echo $wo['lang']['create']; ?></button>
+				</div>
+				<input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+			</form>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	<?php 
+$js_array = json_encode($wo['group_sub_categories']);
+echo "var sub_categories_array = ". $js_array . ";\n";
+?>
+	function GetGroupSubCategory(self) {
+		var id = $(self).val();
+		var text = "";
+		if (typeof(sub_categories_array[id]) == 'undefined') {
+		    $('#group_sub_category').html('');
+		}
+		else{
+		   	sub_categories_array[id].forEach(function(entry) {
+				text = text + "<option value='"+entry.id+"'>"+entry.lang+"</option>";
+			});
+		    $('#group_sub_category').html(text);
+		}
+	}
+	window.RamzaCommunitySlug = window.RamzaCommunitySlug || function(value) {
+		return String(value || '').toLowerCase().trim().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '').replace(/_+/g, '_').replace(/^_+|_+$/g, '').slice(0, 32);
+	};
+	window.RamzaBindGroupForm = window.RamzaBindGroupForm || function($form) {
+		if (!$form.length || $form.data('ramza-bound')) { return; }
+		$form.data('ramza-bound', true);
+		var $title = $form.find('[name="group_title"]');
+		var $slug = $form.find('[name="group_name"]');
+		var slugWasEdited = false;
+		function updatePreview() { $form.find('.group-url-preview').text(<?php echo json_encode(rtrim($wo['config']['site_url'], '/') . '/'); ?> + $slug.val()); }
+		function showErrors(payload) {
+			var errors = payload && $.isArray(payload.errors) ? payload.errors : [payload && (payload.error || payload.message) ? (payload.error || payload.message) : 'Unable to create the group. Please try again.'];
+			var $alert = $('<div class="alert alert-danger" role="alert"></div>');
+			$.each(errors, function(_, error) { $('<div></div>').text($('<div></div>').html(String(error)).text()).appendTo($alert); });
+			$form.find('.app-general-alert').empty().append($alert);
+		}
+		$title.on('input.ramzaGroupSlug', function() { if (!slugWasEdited) { $slug.val(window.RamzaCommunitySlug(this.value)); updatePreview(); } });
+		$slug.on('input.ramzaGroupSlug', function() { slugWasEdited = true; this.value = window.RamzaCommunitySlug(this.value); updatePreview(); });
+		updatePreview();
+		$form.on('submit.ramzaCreateGroup', function(event) {
+			event.preventDefault();
+			$slug.val(window.RamzaCommunitySlug($slug.val()));
+			var $buttons = $form.find('.disable_btn');
+			$buttons.prop('disabled', true);
+			$form.find('.app-general-alert').empty();
+			$.ajax({ url: Wo_Ajax_Requests_File() + '?f=groups&s=create_group', type: 'POST', dataType: 'json', data: $form.serialize() })
+			.done(function(data) {
+				if (data && Number(data.status) === 200 && data.location) { window.location.href = data.location; return; }
+				showErrors(data || {});
+			}).fail(function(xhr) { showErrors(xhr.responseJSON || {}); })
+			.always(function() { $buttons.prop('disabled', false); });
+		});
+	};
+	$(function() {
+		// Bootstrap 3 treats a non-fragment modal href as a remote URL and loads
+		// the complete page shell into .modal-content. Keep this trigger local.
+		$('[data-ramza-create-group]').removeAttr('data-ajax').attr('href', '#create-group').attr('data-remote', 'false');
+		window.RamzaBindGroupForm($('#create-group form.create-group-form'));
+		$(document).off('click.ramzaCreateGroupTrigger', '[data-ramza-create-group]').on('click.ramzaCreateGroupTrigger', '[data-ramza-create-group]', function(event) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			var $modal = $('#create-group');
+			if ($modal.length && $.fn.modal) { $modal.modal('show'); }
+		});
+		$(document).off('click.ramzaCloseGroup', '[data-ramza-close-group]').on('click.ramzaCloseGroup', '[data-ramza-close-group]', function() {
+			var $modal = $('#create-group');
+			if ($.fn.modal) { $modal.modal('hide'); return; }
+			$modal.removeClass('in show').hide().attr('aria-hidden', 'true');
+			$('.modal-backdrop').remove();
+			$('body').removeClass('modal-open').css('padding-right', '');
+		});
+	});
+</script>

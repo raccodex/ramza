@@ -1,0 +1,19 @@
+/* 
+
+Add here your custom css styles Example: p { text-align: center; color: red; } 
+
+*/
+.ramza-reels-empty {
+	display: grid;
+	min-height: calc(100vh - 80px);
+	place-items: center;
+	padding: 32px;
+	background: #111815;
+	color: #fff;
+	text-align: center;
+}
+.ramza-reels-empty div { max-width: 360px; }
+.ramza-reels-empty strong,
+.ramza-reels-empty span { display: block; }
+.ramza-reels-empty strong { font-size: 24px; }
+.ramza-reels-empty span { margin-top: 8px; color: #b9c1bd; font-size: 14px; }

@@ -127,7 +127,7 @@ final class RACInstallerSqlImporter
         }
         $tableCount = count($tableRows);
         if ($tableCount < 100 || !$this->tableExists($database, 'Wo_Config') || !$this->tableExists($database, 'Wo_Users') || !$this->tableExists($database, 'Wo_UserFields')) {
-            throw new RACInstallerUserException('Database import did not produce the expected RACSocial schema. Discard the database and verify wowonder.sql.');
+            throw new RACInstallerUserException('Database import did not produce the expected Ramza schema. Discard the database and verify ramza.sql.');
         }
         $duration = round(microtime(true) - $started, 3);
         $this->logger->info('sql-import', ['result' => 'complete', 'statements' => $statements, 'tables' => $tableCount, 'duration_seconds' => $duration]);

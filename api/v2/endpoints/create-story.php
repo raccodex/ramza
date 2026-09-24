@@ -36,12 +36,8 @@ if (empty($_POST['file_type'])) {
 }
 
 if (empty($error_code)) {
-    $amazone_s3                   = $wo['config']['amazone_s3'];
-    $wasabi_storage                   = $wo['config']['wasabi_storage'];
-    $backblaze_storage                   = $wo['config']['backblaze_storage'];
-    $ftp_upload                   = $wo['config']['ftp_upload'];
-    $spaces                       = $wo['config']['spaces'];
-    $cloud_upload                 = $wo['config']['cloud_upload'];
+    $ffmpeg_ready = function_exists('Ramza_FfmpegEnabled') ? Ramza_FfmpegEnabled() : false;
+    $remoteStorageSnapshot = null;
     $story_title       = (!empty($_POST['story_title'])) ? Wo_Secure($_POST['story_title']) : '';
     $story_description = (!empty($_POST['story_description'])) ? Wo_Secure($_POST['story_description']) : '';
     $file_type         = Wo_Secure($_POST['file_type']);
@@ -63,6 +59,9 @@ if (empty($error_code)) {
             'type' => $_FILES["file"]["type"],
             'types' => 'jpg,png,mp4,gif,jpeg,mov,webm'
         );
+        if ($file_type === 'video' && $ffmpeg_ready && empty($_FILES['cover']['tmp_name'])) {
+            $remoteStorageSnapshot = Wo_SuspendRemoteStorage();
+        }
         $media    = Wo_ShareFile($fileInfo);
         if (!empty($media)) {
             $filename = $media['filename'];
@@ -94,16 +93,16 @@ if (empty($error_code)) {
                         'size' => $_FILES["cover"]["size"],
                         'type' => $_FILES["cover"]["type"]
                     );
-                    $media            = Wo_ShareFile($fileInfo);
-                    $file_type        = explode('/', $fileInfo['type']);
+                    $coverMedia       = Wo_ShareFile($fileInfo);
+                    $cover_file_type  = explode('/', $fileInfo['type']);
                     if (empty($thumb)) {
-                        if (in_array(strtolower(pathinfo($media['filename'], PATHINFO_EXTENSION)), array(
+                        if (!empty($coverMedia['filename']) && in_array(strtolower(pathinfo($coverMedia['filename'], PATHINFO_EXTENSION)), array(
                             "gif",
                             "jpg",
                             "png",
                             'jpeg'
                         ))) {
-                            $thumb             = $media['filename'];
+                            $thumb             = $coverMedia['filename'];
                             $explode2          = @end(explode('.', $thumb));
                             $explode3          = @explode('.', $thumb);
                             $last_file         = $explode3[0] . '_small.' . $explode2;
@@ -129,33 +128,35 @@ if (empty($error_code)) {
             foreach ($sources as $registration_data) {
                 Wo_InsertUserStoryMedia($registration_data);
             }
-            if (empty($thumb) && $wo['config']['ffmpeg_system'] == 'on' && $file_type == 'video') {
-                $ffmpeg_b         = $wo['config']['ffmpeg_binary_file'];
-                $total_seconds    = ffmpeg_duration($media['filename']);
+            if (empty($thumb) && $ffmpeg_ready && $file_type === 'video' && !empty($filename)) {
+                $ffmpeg_b         = Ramza_FfmpegCommand();
+                $total_seconds    = ffmpeg_duration($filename);
                 $thumb_1_duration = (int) ($total_seconds > 10) ? 11 : 1;
                 $dir              = "upload/photos/" . date('Y') . '/' . date('m');
+                if (!is_dir($dir)) {
+                    @mkdir($dir, 0777, true);
+                }
                 $image_thumb      = $dir . '/' . Wo_GenerateKey() . '_' . date('d') . '_' . md5(time()) . "_image.jpeg";
-                $output_thumb     = shell_exec("$ffmpeg_b -ss \"$thumb_1_duration\" -i " . $media['filename'] . " -vframes 1 -f mjpeg $image_thumb 2<&1");
+                $output_thumb     = shell_exec($ffmpeg_b . ' -ss ' . escapeshellarg((string) $thumb_1_duration) . ' -i ' . escapeshellarg($filename) . ' -vframes 1 -f mjpeg ' . escapeshellarg($image_thumb) . ' 2>&1');
+                if ($remoteStorageSnapshot !== null) {
+                    Wo_RestoreRemoteStorage($remoteStorageSnapshot);
+                    $remoteStorageSnapshot = null;
+                }
                 if (file_exists($image_thumb) && !empty(getimagesize($image_thumb))) {
                     $crop_image                   = Wo_Resize_Crop_Image(400, 400, $image_thumb, $image_thumb, $wo['config']['images_quality']);
-                    $wo['config']['amazone_s3']   = $amazone_s3;
-                    $wo['config']['wasabi_storage']   = $wasabi_storage;
-                    $wo['config']['backblaze_storage']   = $backblaze_storage;
-                    $wo['config']['ftp_upload']   = $ftp_upload;
-                    $wo['config']['spaces']       = $spaces;
-                    $wo['config']['cloud_upload'] = $cloud_upload;
                     Wo_UploadToS3($image_thumb);
                     $thumb = $image_thumb;
                 } else {
                     @unlink($image_thumb);
                 }
-                $wo['config']['amazone_s3']   = $amazone_s3;
-                $wo['config']['wasabi_storage']   = $wasabi_storage;
-                $wo['config']['backblaze_storage']   = $backblaze_storage;
-                $wo['config']['ftp_upload']   = $ftp_upload;
-                $wo['config']['spaces']       = $spaces;
-                $wo['config']['cloud_upload'] = $cloud_upload;
-                Wo_UploadToS3($media['filename']);
+                Wo_UploadToS3($filename);
+            }
+            if ($remoteStorageSnapshot !== null) {
+                Wo_RestoreRemoteStorage($remoteStorageSnapshot);
+                $remoteStorageSnapshot = null;
+                if (!empty($filename)) {
+                    Wo_UploadToS3($filename);
+                }
             }
             if (!empty($thumb)) {
                 $thumb        = Wo_Secure($thumb);

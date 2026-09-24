@@ -34,11 +34,25 @@ if (isset($ServerErrors) && !empty($ServerErrors)) {
     }
     die();
 }
+if (function_exists('get_ip_address')) {
+    $_SERVER['REMOTE_ADDR'] = get_ip_address();
+}
 $baned_ips = Wo_GetBanned("user");
 if (in_array($_SERVER["REMOTE_ADDR"], $baned_ips)) {
     exit();
 }
 $config    = Wo_GetConfig();
+$themeAliases = array(
+    "default" => "ramza-light",
+    "sunshine" => "ramza-light",
+    "ramza" => "ramza-light",
+    "ramza-light" => "ramza-light"
+);
+$normalizeTheme = function ($theme) use ($themeAliases) {
+    $theme = strtolower(trim((string) $theme));
+    return !empty($themeAliases[$theme]) ? $themeAliases[$theme] : $theme;
+};
+$config["theme"] = $normalizeTheme($config["theme"] ?? "ramza-light");
 if ($config['developer_mode'] == 1) {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
@@ -47,8 +61,8 @@ if ($config['developer_mode'] == 1) {
 $db        = new MysqliDb($sqlConnect);
 $all_langs = Wo_LangsNamesFromDB();
 $wo['iso'] = GetIso();
+$insert = false;
 foreach ($all_langs as $key => $value) {
-    $insert = false;
     if (!in_array($value, array_keys($config))) {
         $db->insert(T_CONFIG, array(
             "name" => $value,
@@ -57,25 +71,218 @@ foreach ($all_langs as $key => $value) {
         $insert = true;
     }
 }
+$rac_algorithm_config_defaults = array(
+    "algorithm_system" => "1",
+    "algorithm_profile_mode" => "balanced",
+    "algorithm_track_behavior" => "1",
+    "algorithm_track_search" => "1",
+    "algorithm_track_video_watch" => "1",
+    "algorithm_track_likes" => "1",
+    "algorithm_track_comments" => "1",
+    "algorithm_track_shares" => "1",
+    "algorithm_track_follows" => "1",
+    "algorithm_track_categories" => "1",
+    "algorithm_track_location" => "1",
+    "algorithm_signal_following" => "35",
+    "algorithm_signal_interest" => "30",
+    "algorithm_signal_trending" => "20",
+    "algorithm_signal_freshness" => "10",
+    "algorithm_signal_exploration" => "5",
+    "algorithm_signal_location" => "12",
+    "algorithm_multiplier_search" => "1.20",
+    "algorithm_multiplier_video" => "1.35",
+    "algorithm_multiplier_like_category" => "1.30",
+    "algorithm_multiplier_trending" => "1.15",
+    "algorithm_trending_window_hours" => "24",
+    "algorithm_freshness_hours" => "72",
+    "algorithm_max_same_author" => "3",
+    "algorithm_max_same_category" => "5",
+    "algorithm_max_author_streak" => "1",
+    "algorithm_max_category_streak" => "2",
+    "algorithm_diversity_window" => "8",
+    "algorithm_min_exploration_percent" => "10",
+    "algorithm_affinity_decay" => "0.985",
+    "algorithm_negative_feedback_penalty" => "0.65",
+    "algorithm_sensitive_filter" => "1",
+    "algorithm_admin_stage" => "advanced_recommendation_connected",
+    "algorithm_advanced_topics" => "1",
+    "algorithm_relevance_mode" => "balanced",
+    "algorithm_track_impressions" => "1",
+    "algorithm_track_dwell" => "1",
+    "algorithm_track_quick_skips" => "1",
+    "algorithm_signal_impression_event" => "0.10",
+    "algorithm_signal_click_event" => "1.00",
+    "algorithm_signal_open_post_event" => "1.50",
+    "algorithm_signal_like_event" => "3.00",
+    "algorithm_signal_reaction_event" => "3.00",
+    "algorithm_signal_comment_event" => "5.00",
+    "algorithm_signal_reply_event" => "5.00",
+    "algorithm_signal_share_event" => "7.00",
+    "algorithm_signal_repost_event" => "8.00",
+    "algorithm_signal_save_event" => "8.00",
+    "algorithm_signal_follow_after_view_event" => "10.00",
+    "algorithm_signal_profile_visit_event" => "3.00",
+    "algorithm_signal_watch_25_event" => "1.00",
+    "algorithm_signal_watch_50_event" => "3.00",
+    "algorithm_signal_watch_75_event" => "5.00",
+    "algorithm_signal_watch_complete_event" => "8.00",
+    "algorithm_signal_rewatch_event" => "10.00",
+    "algorithm_signal_sound_on_event" => "1.50",
+    "algorithm_signal_dwell_event" => "0.80",
+    "algorithm_signal_expand_text_event" => "1.50",
+    "algorithm_signal_open_comments_event" => "1.50",
+    "algorithm_signal_search_topic_event" => "6.00",
+    "algorithm_signal_hashtag_click_event" => "4.00",
+    "algorithm_signal_send_post_event" => "7.00",
+    "algorithm_signal_topic_preference_event" => "8.00",
+    "algorithm_signal_quick_skip_event" => "-2.00",
+    "algorithm_signal_short_watch_event" => "-2.00",
+    "algorithm_signal_hide_event" => "-8.00",
+    "algorithm_signal_not_interested_event" => "-12.00",
+    "algorithm_signal_unfollow_event" => "-10.00",
+    "algorithm_signal_mute_event" => "-15.00",
+    "algorithm_signal_report_event" => "-25.00",
+    "algorithm_signal_block_event" => "-100.00",
+    "algorithm_rank_topic_match" => "34",
+    "algorithm_rank_related_topic" => "18",
+    "algorithm_rank_collaborative" => "10",
+    "algorithm_rank_negative_topic" => "42",
+    "algorithm_rank_creator_affinity" => "20",
+    "algorithm_rank_quality" => "12",
+    "algorithm_rank_network" => "18",
+    "algorithm_rank_seen_penalty" => "35",
+    "algorithm_rank_boost_cap" => "8",
+    "algorithm_pool_followed" => "40",
+    "algorithm_pool_interest" => "30",
+    "algorithm_pool_related" => "10",
+    "algorithm_pool_collaborative" => "5",
+    "algorithm_pool_trending" => "5",
+    "algorithm_pool_new_creator" => "5",
+    "algorithm_pool_exploration" => "5",
+    "algorithm_interest_decay_days" => "21",
+    "algorithm_event_retention_days" => "45",
+    "algorithm_impression_retention_days" => "14",
+    "algorithm_event_batch_limit" => "40",
+    "algorithm_topic_limit_per_post" => "8",
+    "algorithm_candidate_topic_limit" => "12",
+    "algorithm_candidate_seen_hours" => "48",
+    "algorithm_max_topic_streak" => "2",
+    "algorithm_debug_mode" => "0"
+);
+$rac_storage_config_defaults = array(
+    "cloudflare_r2_storage" => "0",
+    "cloudflare_r2_account_id" => "",
+    "cloudflare_r2_bucket_name" => "",
+    "cloudflare_r2_access_key" => "",
+    "cloudflare_r2_secret_key" => "",
+    "cloudflare_r2_public_url" => "",
+    "s3_compatible_storage" => "0",
+    "s3_compatible_name" => "S3 Compatible",
+    "s3_compatible_endpoint" => "",
+    "s3_compatible_region" => "us-east-1",
+    "s3_compatible_bucket" => "",
+    "s3_compatible_access_key" => "",
+    "s3_compatible_secret_key" => "",
+    "s3_compatible_public_url" => "",
+    "s3_compatible_path_style" => "1"
+);
+$rac_ai_config_defaults = array(
+    "gemini_api_key" => "",
+    "gemini_model" => "gemini-3.5-flash",
+    "gemini_image_model" => "gemini-3.1-flash-image",
+    "custom_ai_provider_name" => "Custom AI",
+    "custom_ai_base_url" => "",
+    "custom_ai_api_key" => "",
+    "custom_ai_auth_header" => "authorization_bearer",
+    "custom_ai_model" => "",
+    "site_assistant_system" => "0",
+    "site_assistant_provider" => "site_default",
+    "site_assistant_image_provider" => "site_default",
+    "site_assistant_retrieval" => "1",
+    "site_assistant_actions" => "1",
+    "site_assistant_max_results" => "8"
+    ,"cloudflare_ai_image_system" => "0"
+    ,"cloudflare_ai_account_id" => ""
+    ,"cloudflare_ai_api_token" => ""
+    ,"cloudflare_ai_text_model" => "@cf/meta/llama-3.1-8b-instruct"
+    ,"cloudflare_ai_image_model" => "@cf/black-forest-labs/flux-1-schnell"
+);
+$rac_realtime_config_defaults = array(
+    "ramza_call_provider" => "twilio",
+    "ramza_live_provider" => "agora",
+    "ramza_webrtc_system" => "0",
+    "ramza_webrtc_stun_urls" => "stun:stun.cloudflare.com:3478",
+    "ramza_webrtc_turn_mode" => "self_hosted",
+    "ramza_webrtc_turn_host" => "",
+    "ramza_webrtc_turn_port" => "3478",
+    "ramza_webrtc_turn_tls_port" => "5349",
+    "ramza_webrtc_turn_tls" => "0",
+    "ramza_webrtc_turn_ttl" => "3600",
+    "ramza_webrtc_turn_secret" => "",
+    "ramza_webrtc_turn_urls" => "",
+    "ramza_webrtc_turn_username" => "",
+    "ramza_webrtc_turn_credential" => "",
+    "ramza_webrtc_ice_timeout" => "18",
+    "ramza_webrtc_max_live_peers" => "6",
+    "diagnostic_reporting_system" => "0",
+    "diagnostic_auto_send" => "0",
+    "diagnostic_include_logs" => "1",
+    "developer_portal_url" => "",
+    "developer_portal_token" => "",
+    "diagnostic_last_sent_at" => "0",
+    "diagnostic_last_status" => "never"
+);
+$rac_pwa_config_defaults = array(
+    "pwa_system" => "0",
+    "pwa_install_banner" => "1",
+    "pwa_app_name" => !empty($config["siteName"]) ? $config["siteName"] : "Ramza",
+    "pwa_short_name" => !empty($config["siteName"]) ? $config["siteName"] : "Ramza",
+    "pwa_description" => !empty($config["siteDesc"]) ? $config["siteDesc"] : "Ramza social community",
+    "pwa_theme_color" => "#c94b57",
+    "pwa_background_color" => "#f6f7f9",
+    "pwa_display" => "standalone",
+    "pwa_start_url" => "/",
+    "pwa_scope" => "/",
+    "pwa_offline_title" => "You are offline",
+    "pwa_offline_text" => "Ramza saved the app shell. Reconnect to refresh your feed and messages.",
+    "pwa_icon_192" => "",
+    "pwa_icon_512" => "",
+    "pwa_cache_strategy" => "network_first",
+    "pwa_cache_pages" => "1"
+);
+foreach (array_merge($rac_algorithm_config_defaults, $rac_storage_config_defaults, $rac_ai_config_defaults, $rac_realtime_config_defaults, $rac_pwa_config_defaults) as $key => $value) {
+    if (!array_key_exists($key, $config)) {
+        $db->insert(T_CONFIG, array(
+            "name" => $key,
+            "value" => $value
+        ));
+        $insert = true;
+    }
+}
 if ($insert == true) {
     $config = Wo_GetConfig();
+    $config["theme"] = $normalizeTheme($config["theme"] ?? "ramza-light");
 }
-if (isset($_GET["theme"]) && in_array($_GET["theme"], array(
-        "default",
-        "sunshine",
-        "ramza",
-        "wondertag"
+if (isset($_GET["theme"])) {
+    $requestedTheme = $normalizeTheme($_GET["theme"]);
+    if (in_array($requestedTheme, array(
+        "ramza-light"
     ))) {
-    $_SESSION["theme"] = $_GET["theme"];
+        $_SESSION["theme"] = $requestedTheme;
+    }
 }
 if (isset($_SESSION["theme"]) && !empty($_SESSION["theme"])) {
-    $config["theme"] = $_SESSION["theme"];
+    $config["theme"] = $normalizeTheme($_SESSION["theme"]);
+    $_SESSION["theme"] = $config["theme"];
     if ($_SERVER["REQUEST_URI"] == "/v2/wonderful" || $_SERVER["REQUEST_URI"] == "/v2/ramza") {
         header("Location: " . $_SERVER["HTTP_REFERER"]);
     }
 }
 $config["withdrawal_payment_method"] = json_decode($config['withdrawal_payment_method'],true);
 // Config Url
+if (!is_dir(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "themes" . DIRECTORY_SEPARATOR . $config["theme"])) {
+    $config["theme"] = "ramza-light";
+}
 $config["theme_url"] = $site_url . "/themes/" . $config["theme"];
 $config["site_url"]  = $site_url;
 $wo["site_url"]      = $site_url;
@@ -95,6 +302,14 @@ if (!empty($config["bucket_name_2"])) {
     $s3_site_url_2 = str_replace("{bucket}", $config["bucket_name_2"], $s3_site_url_2);
 }
 $config["s3_site_url_2"]   = $s3_site_url_2;
+$config["cloudflare_r2_site_url"] = "";
+if (!empty($config["cloudflare_r2_account_id"]) && !empty($config["cloudflare_r2_bucket_name"])) {
+    $config["cloudflare_r2_site_url"] = "https://" . trim($config["cloudflare_r2_account_id"]) . ".r2.cloudflarestorage.com/" . trim($config["cloudflare_r2_bucket_name"]);
+}
+$config["s3_compatible_site_url"] = "";
+if (!empty($config["s3_compatible_endpoint"]) && !empty($config["s3_compatible_bucket"])) {
+    $config["s3_compatible_site_url"] = rtrim($config["s3_compatible_endpoint"], "/") . "/" . trim($config["s3_compatible_bucket"]);
+}
 $wo["config"]              = $config;
 $ccode                     = Wo_CustomCode("g");
 $ccode                     = is_array($ccode) ? $ccode : array();
@@ -115,6 +330,13 @@ $wo["purchase_code"] = "";
 if (!empty($purchase_code)) {
     $wo["purchase_code"] = $purchase_code;
 }
+require_once __DIR__ . "/license_guard.php";
+Ramza_LicenseGuard();
+require_once __DIR__ . "/ramza_addons.php";
+require_once __DIR__ . "/ramza_webrtc.php";
+require_once __DIR__ . "/site_assistant.php";
+require_once __DIR__ . "/ramza_updater.php";
+require_once __DIR__ . "/ramza_diagnostics.php";
 // Login With Url
 $wo["facebookLoginUrl"]   = $config["site_url"] . "/login-with.php?provider=Facebook";
 $wo["twitterLoginUrl"]    = $config["site_url"] . "/login-with.php?provider=Twitter";
@@ -303,7 +525,7 @@ if (empty($wo["lang"])) {
 }
 $wo["second_post_button_icon"] = $config["second_post_button"] == "wonder" ? '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="8"></line></svg>' : '<svg xmlns="http://www.w3.org/2000/svg" width="58.553" height="58.266" viewBox="0 0 58.553 58.266" class="feather flip"> <path d="M-7080.317,1279.764l-26.729-1.173a1.657,1.657,0,0,1-1.55-1.717l1.11-33.374a4.112,4.112,0,0,1,2.361-3.6l.014-.005a13.62,13.62,0,0,1,1.978-.363h.007a9.007,9.007,0,0,0,3.249-.771c2.645-1.845,3.973-4.658,5.259-7.378l.005-.013.031-.061.059-.13.012-.023c.272-.576.61-1.289.944-1.929l0-.007c.576-1.105,2.327-4.46,4.406-5.107a2.3,2.3,0,0,1,.59-.105c.036,0,.072,0,.109,0a2.55,2.55,0,0,1,1.212.324c2.941,1.554,1.212,7.451.561,9.672a38.306,38.306,0,0,1-3.7,8.454l-.71,1.218,18.363.808a3.916,3.916,0,0,1,3.784,3.735,3.783,3.783,0,0,1-1.123,2.834,3.629,3.629,0,0,1-2.559,1.055c-.046,0-.1,0-.145,0h-.027l-2.141-.093-9.331-.41-.075,1.7,9.333.408a3.721,3.721,0,0,1,2.666,1.3,3.855,3.855,0,0,1,.936,2.934,3.779,3.779,0,0,1-3.821,3.38c-.061,0-.122,0-.181-.005l-1.974-.082-8.9-.392-.075,1.7,8.9.39a3.723,3.723,0,0,1,2.666,1.3,3.86,3.86,0,0,1,.937,2.933,3.784,3.784,0,0,1-3.827,3.381c-.057,0-.118,0-.177,0l-1.976-.088-8.472-.372-.075,1.7,8.474.372a3.726,3.726,0,0,1,2.666,1.3,3.857,3.857,0,0,1,.935,2.933,3.782,3.782,0,0,1-3.827,3.381C-7080.2,1279.765-7080.26,1279.765-7080.317,1279.764Zm-38.4,0-.089,0a6.558,6.558,0,0,1-6.193-6.8l.907-27.293a6.446,6.446,0,0,1,2.074-4.553,6.214,6.214,0,0,1,3.954-1.672c.081,0,.17-.005.29-.005s.212,0,.292.005a6.561,6.561,0,0,1,6.192,6.8l-.907,27.293a6.441,6.441,0,0,1-2.072,4.547,6.249,6.249,0,0,1-4.261,1.681Z" transform="translate(7126.251 -1222.75)" fill="none" stroke="currentColor" stroke-width="2.5"></path> </svg>';
 $theme_settings                = array();
-$theme_settings["theme"]       = "ramza";
+$theme_settings["theme"]       = "ramza-light";
 if (file_exists("./themes/" . $config["theme"] . "/layout/404/dont-delete-this-file.json")) {
     $theme_settings = json_decode(file_get_contents("./themes/" . $config["theme"] . "/layout/404/dont-delete-this-file.json"), true);
 }
@@ -521,7 +743,17 @@ if (!$wo['config']['can_use_ai_blog']) {
 $wo['config']['report_reasons'] = json_decode($wo['config']['report_reasons'],true);
 
 
-$wo['config']['filesVersion'] = "4.3.3";
+$ramzaRuntimeVersion = function_exists('Ramza_UpdateCurrentVersion') ? Ramza_UpdateCurrentVersion() : '1.0';
+$wo['config']['filesVersion'] = $ramzaRuntimeVersion;
+$wo['config']['version'] = $ramzaRuntimeVersion;
+$wo['futureWebsiteModes'] = array(
+    'twitter' => '2.0',
+    'askfm' => '2.5',
+    'tiktok' => '3.0',
+);
+if (!empty($wo['config']['website_mode']) && isset($wo['futureWebsiteModes'][$wo['config']['website_mode']]) && version_compare($wo['config']['version'], $wo['futureWebsiteModes'][$wo['config']['website_mode']], '<')) {
+    $wo['config']['website_mode'] = 'facebook';
+}
 
 if ($wo['config']['filesVersion'] != $wo['config']['version']) {
     ini_set('display_errors', 0);

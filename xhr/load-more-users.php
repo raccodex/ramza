@@ -14,7 +14,7 @@ if ($f == 'load-more-users') {
         , 10, $offset);
         if (count($groups) > 0) {
             foreach ($groups as $wo['result']) {
-                if ($wo['config']['theme'] == 'sunshine') {
+                if ($wo['config']['theme'] == 'ramza-light') {
                     $html .= Wo_LoadPage('search/user-result');
                 }
                 else{

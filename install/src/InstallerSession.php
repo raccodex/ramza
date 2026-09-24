@@ -55,7 +55,17 @@ final class RACInstallerSession
 
     public function clearSensitive(): void
     {
-        unset($_SESSION['purchase_code'], $_SESSION['database'], $_SESSION['admin'], $_SESSION['install_running'], $_SESSION['license_verified_at']);
+        unset(
+            $_SESSION['purchase_code'],
+            $_SESSION['envato_username'],
+            $_SESSION['license_reference'],
+            $_SESSION['license_certificate'],
+            $_SESSION['database'],
+            $_SESSION['source_database'],
+            $_SESSION['admin'],
+            $_SESSION['install_running'],
+            $_SESSION['license_verified_at']
+        );
     }
 
     public function destroy(): void

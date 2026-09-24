@@ -9,7 +9,7 @@ final class RACInstallerApp
     private RACInstallerCsrf $csrf;
     private RACInstallerRequirements $requirements;
     private RACInstallerInstallLock $lock;
-    private array $steps = ['welcome', 'requirements', 'database', 'site', 'admin', 'install', 'finish'];
+    private array $steps = ['welcome', 'requirements', 'mode', 'database', 'source', 'site', 'admin', 'install', 'finish'];
 
     public function __construct()
     {
@@ -30,6 +30,10 @@ final class RACInstallerApp
         }
         if (!RACInstallerConfigWriter::canWriteFreshConfig($this->paths->configFile)
             || !RACInstallerNodeConfigWriter::canWriteFreshNodeConfig($this->paths->nodeConfigFile)) {
+            if ($this->restoreMissingLockForValidInstall()) {
+                $this->render('locked', ['step' => 'finish']);
+                return;
+            }
             $this->render('recovery', ['step' => 'welcome']);
             return;
         }
@@ -72,10 +76,28 @@ final class RACInstallerApp
             if (!$result['required_pass']) {
                 throw new RACInstallerUserException('Resolve every required item before continuing.');
             }
-            $this->advance('database');
+            $this->advance('mode');
+            rac_installer_redirect('mode');
+        }
+        if ($action === 'mode') {
+            $mode = rac_installer_post_string('install_mode', 16) ?? '';
+            if (!in_array($mode, ['fresh', 'migrate'], true)) {
+                throw new RACInstallerUserException('Choose a fresh installation or a WoWonder migration.');
+            }
+            $this->session->set('install_mode', $mode);
+            $this->session->forget('database');
+            $this->session->forget('source_database');
+            $this->session->forget('site');
+            $this->session->forget('admin');
+            $this->session->set('max_step', 'database');
+            $this->session->regenerate();
             rac_installer_redirect('database');
         }
         if ($action === 'database') {
+            $mode = (string) $this->session->get('install_mode', '');
+            if (!in_array($mode, ['fresh', 'migrate'], true)) {
+                throw new RACInstallerUserException('Choose an installation type first.');
+            }
             $validator = new RACInstallerDatabaseValidator($this->logger);
             $database = $validator->validate([
                 'host' => rac_installer_post_string('db_host', 255) ?? '',
@@ -85,10 +107,41 @@ final class RACInstallerApp
             ]);
             $this->session->set('database', $database);
             $this->session->regenerate();
+            $next = $mode === 'migrate' ? 'source' : 'site';
+            $this->advance($next);
+            rac_installer_redirect($next);
+        }
+        if ($action === 'source') {
+            if ((string) $this->session->get('install_mode', '') !== 'migrate') {
+                throw new RACInstallerUserException('WoWonder source settings are available only in migration mode.');
+            }
+            if (!isset($_POST['migration_consent']) || !is_string($_POST['migration_consent']) || $_POST['migration_consent'] !== 'yes') {
+                throw new RACInstallerUserException('Confirm that you authorize Ramza to read and copy the selected WoWonder community.');
+            }
+            $database = $this->session->get('database');
+            if (!is_array($database)) {
+                throw new RACInstallerUserException('Validate the new empty Ramza database first.');
+            }
+            $source = (new RACInstallerWoWonderMigrator($this->logger, $this->paths))->validateSource([
+                'host' => rac_installer_post_string('source_db_host', 255) ?? '',
+                'name' => rac_installer_post_string('source_db_name', 128) ?? '',
+                'user' => rac_installer_post_string('source_db_user', 128) ?? '',
+                'pass' => rac_installer_post_string('source_db_pass', 1024) ?? '',
+                'root_path' => rac_installer_post_string('source_root_path', 4096) ?? '',
+            ], $database);
+            $this->session->set('source_database', $source);
+            $this->session->regenerate();
             $this->advance('site');
             rac_installer_redirect('site');
         }
         if ($action === 'site') {
+            $mode = (string) $this->session->get('install_mode', '');
+            if (!in_array($mode, ['fresh', 'migrate'], true)) {
+                throw new RACInstallerUserException('Choose an installation type first.');
+            }
+            if ($mode === 'migrate' && !is_array($this->session->get('source_database'))) {
+                throw new RACInstallerUserException('Validate the WoWonder source before continuing.');
+            }
             $postInstall = new RACInstallerPostInstall($this->logger);
             $site = $postInstall->validateSite([
                 'url' => rac_installer_post_string('site_url', 2048) ?? '',
@@ -96,21 +149,16 @@ final class RACInstallerApp
                 'title' => rac_installer_post_string('site_title', 150) ?? '',
                 'email' => rac_installer_post_string('site_email', 254) ?? '',
             ]);
-            $purchaseCode = rac_installer_post_string('purchase_code', 512) ?? '';
-            $endpoint = defined('RACSOCIAL_LICENSE_ENDPOINT') ? (string) constant('RACSOCIAL_LICENSE_ENDPOINT') : '';
-            $license = new RACInstallerLicenseVerifier($this->logger, new RACInstallerCurlHttpClient(), $endpoint);
-            $result = $license->verify($purchaseCode, $site['url']);
-            if (!$result['ok']) {
-                throw new RACInstallerUserException($result['message']);
-            }
             $this->session->set('site', $site);
-            $this->session->set('purchase_code', $purchaseCode);
-            $this->session->set('license_verified_at', time());
             $this->session->regenerate();
-            $this->advance('admin');
-            rac_installer_redirect('admin');
+            $next = $mode === 'migrate' ? 'install' : 'admin';
+            $this->advance($next);
+            rac_installer_redirect($next);
         }
         if ($action === 'admin') {
+            if ((string) $this->session->get('install_mode', '') !== 'fresh') {
+                throw new RACInstallerUserException('Migration keeps the existing WoWonder administrators.');
+            }
             $password = rac_installer_post_string('admin_password', 128) ?? '';
             $confirmation = rac_installer_post_string('admin_password_confirmation', 128) ?? '';
             if (!hash_equals($password, $confirmation)) {
@@ -135,12 +183,15 @@ final class RACInstallerApp
 
     private function runInstallation(): void
     {
+        $mode = (string) $this->session->get('install_mode', '');
         $database = $this->session->get('database');
         $site = $this->session->get('site');
         $admin = $this->session->get('admin');
-        $purchaseCode = $this->session->get('purchase_code');
-        $verifiedAt = (int) $this->session->get('license_verified_at', 0);
-        if (!is_array($database) || !is_array($site) || !is_array($admin) || !is_string($purchaseCode) || $verifiedAt < time() - 1800) {
+        $sourceDatabase = $this->session->get('source_database');
+        $modeStateValid = $mode === 'fresh'
+            ? is_array($admin)
+            : ($mode === 'migrate' && is_array($sourceDatabase));
+        if (!is_array($database) || !is_array($site) || !$modeStateValid) {
             throw new RACInstallerUserException('The validated installer state expired. Start again before making database changes.');
         }
         if ($this->session->get('install_running') === true) {
@@ -154,19 +205,40 @@ final class RACInstallerApp
         try {
             $validator = new RACInstallerDatabaseValidator($this->logger);
             $database = $validator->validate($database);
-            $configWriter->prepare($database, $site, $purchaseCode);
-            $nodeWriter->prepare($database, $site, $purchaseCode);
+            $configWriter->prepare($database, $site, '', []);
+            $nodeWriter->prepare($database, $site, '');
             $connection = $validator->connect($database);
-            $import = (new RACInstallerSqlImporter($this->logger))->import($connection, $this->paths->sqlDump);
-            $adminUserId = (new RACInstallerPostInstall($this->logger))->configure($connection, $site, $admin);
+            $postInstall = new RACInstallerPostInstall($this->logger);
+            if ($mode === 'migrate') {
+                $migration = (new RACInstallerWoWonderMigrator($this->logger, $this->paths))->migrate($connection, $sourceDatabase);
+                $adminUserId = $postInstall->configureMigration($connection, $site);
+                $import = [
+                    'tables' => (int) $migration['tables'],
+                    'schema_fingerprint' => $this->schemaFingerprint($connection),
+                ];
+                $summary = array_merge(['mode' => 'migrate'], $migration);
+            } else {
+                $sqlImporter = new RACInstallerSqlImporter($this->logger);
+                $baseImport = $sqlImporter->import($connection, $this->paths->sqlDump);
+                $mobileImport = $sqlImporter->import($connection, $this->paths->mobileApiMigration);
+                $import = $mobileImport;
+                $import['statements'] = (int) $baseImport['statements'] + (int) $mobileImport['statements'];
+                $adminUserId = $postInstall->configure($connection, $site, $admin);
+                $summary = ['mode' => 'fresh', 'tables' => (int) $import['tables']];
+            }
             (new RACInstallerHtaccessWriter($this->paths))->installIfMissing();
             $nodeWriter->commit();
             $configWriter->commit();
             $this->lock->create($site['url'], $import['schema_fingerprint']);
             $configWriter->finalize();
             $nodeWriter->finalize();
-            $this->logger->info('installation', ['result' => 'complete', 'tables' => $import['tables'], 'admin_user_id' => $adminUserId]);
-            $this->session->set('install_summary', ['tables' => $import['tables']]);
+            $this->logger->info('installation', [
+                'result' => 'complete',
+                'mode' => $mode,
+                'tables' => $import['tables'],
+                'admin_user_id' => $adminUserId,
+            ]);
+            $this->session->set('install_summary', $summary);
             $this->session->clearSensitive();
             $this->advance('finish');
         } catch (Throwable $error) {
@@ -182,6 +254,101 @@ final class RACInstallerApp
                 $connection->close();
             }
             $this->session->forget('install_running');
+        }
+    }
+
+    private function schemaFingerprint(mysqli $database): string
+    {
+        $tables = [];
+        $result = $database->query(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_type = 'BASE TABLE' ORDER BY table_name"
+        );
+        while ($row = $result->fetch_assoc()) {
+            $tables[] = (string) $row['table_name'];
+        }
+        $result->free();
+        return hash('sha256', implode("\n", $tables));
+    }
+
+    /**
+     * Restore a deleted install lock only when the existing PHP configuration
+     * opens a real Ramza database containing the required core tables.
+     */
+    private function restoreMissingLockForValidInstall(): bool
+    {
+        if (!is_file($this->paths->configFile) || !is_readable($this->paths->configFile)) {
+            return false;
+        }
+
+        try {
+            $configuration = (static function (string $path): array {
+                $sql_db_host = $sql_db_user = $sql_db_pass = $sql_db_name = $site_url = '';
+                $table_prefix = 'Wo_';
+                require $path;
+                return compact(
+                    'sql_db_host',
+                    'sql_db_user',
+                    'sql_db_pass',
+                    'sql_db_name',
+                    'site_url',
+                    'table_prefix'
+                );
+            })($this->paths->configFile);
+
+            foreach (['sql_db_host', 'sql_db_user', 'sql_db_name', 'site_url'] as $requiredKey) {
+                if (!is_string($configuration[$requiredKey]) || trim($configuration[$requiredKey]) === '') {
+                    return false;
+                }
+            }
+            if (!is_string($configuration['sql_db_pass'])) {
+                return false;
+            }
+
+            $database = new mysqli(
+                trim($configuration['sql_db_host']),
+                trim($configuration['sql_db_user']),
+                $configuration['sql_db_pass'],
+                trim($configuration['sql_db_name'])
+            );
+            if ($database->connect_errno !== 0) {
+                return false;
+            }
+            try {
+                $database->set_charset('utf8mb4');
+                $prefix = is_string($configuration['table_prefix']) && preg_match('/^[A-Za-z0-9_]+$/', $configuration['table_prefix']) === 1
+                    ? $configuration['table_prefix']
+                    : 'Wo_';
+                $requiredTables = [$prefix . 'Config', $prefix . 'Users'];
+                $statement = $database->prepare(
+                    'SELECT COUNT(*) FROM information_schema.tables ' .
+                    'WHERE table_schema = DATABASE() AND table_type = ? AND table_name IN (?, ?)'
+                );
+                if (!$statement) {
+                    return false;
+                }
+                $tableType = 'BASE TABLE';
+                $statement->bind_param('sss', $tableType, $requiredTables[0], $requiredTables[1]);
+                $statement->execute();
+                $statement->bind_result($requiredCount);
+                $statement->fetch();
+                $statement->close();
+                if ((int) $requiredCount !== count($requiredTables)) {
+                    return false;
+                }
+
+                $fingerprint = $this->schemaFingerprint($database);
+                if ($fingerprint === hash('sha256', '')) {
+                    return false;
+                }
+                $this->lock->create(trim($configuration['site_url']), $fingerprint);
+                $this->logger->info('install-lock-restored', ['reason' => 'validated-existing-install']);
+                return true;
+            } finally {
+                $database->close();
+            }
+        } catch (Throwable $error) {
+            $this->logger->error('install-lock-recovery', $error);
+            return false;
         }
     }
 
@@ -205,7 +372,13 @@ final class RACInstallerApp
 
     private function viewData(string $step): array
     {
-        $data = ['step' => $step];
+        $mode = (string) $this->session->get('install_mode', '');
+        $source = $this->session->get('source_database', []);
+        $data = [
+            'step' => $step,
+            'mode' => $mode,
+            'source' => is_array($source) ? $source : [],
+        ];
         if ($step === 'requirements') {
             $data['requirements'] = $this->requirements->evaluate();
         }
@@ -214,6 +387,14 @@ final class RACInstallerApp
             $data['database'] = $this->session->get('database', []);
             $data['admin'] = $this->session->get('admin', []);
             $data['requirements'] = $this->requirements->evaluate();
+        }
+        if ($step === 'site' && is_array($source) && $mode === 'migrate') {
+            $data['site_defaults'] = [
+                'url' => (string) ($source['site_url'] ?? ''),
+                'name' => (string) ($source['site_name'] ?? 'Ramza'),
+                'title' => (string) ($source['site_title'] ?? ''),
+                'email' => (string) ($source['site_email'] ?? ''),
+            ];
         }
         if ($step === 'admin') {
             $site = $this->session->get('site', []);

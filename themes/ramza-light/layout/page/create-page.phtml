@@ -1,0 +1,140 @@
+<div class="page-margin">
+	<div class="container">
+		<h2 class="tag_page_title m5"><?php echo $wo['lang']['pages'];?></h2>
+		<div class="page-margin wow_content wow_sett_content">
+			<div class="valign wo_page_hdng">
+				<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M17,14H19V17H22V19H19V22H17V19H14V17H17V14M12.4,5H18V12C15.78,12 13.84,13.21 12.8,15H11L10.6,13H5V20H3V3H12L12.4,5Z"></path></svg></span> <?php echo $wo['lang']['create_new_page'];?>
+			</div>
+			<form class="create-page-form form-horizontal" method="post">
+				<label class="tag_field">
+					<input id="page_title" name="page_title" type="text" maxlength="120" required placeholder=" ">
+					<span><?php echo $wo['lang']['page_name']; ?></span>
+				</label>
+				<label class="tag_field">
+					<input id="page_name" name="page_name" type="text" maxlength="32" required autocomplete="off" pattern="[A-Za-z0-9_]+" placeholder=" ">
+					<span><?php echo $wo['lang']['page'];?> URL</span>
+				</label>
+				<div class="help-block" id="page-url-preview"><?php echo $wo['config']['site_url'];?>/</div>
+				<label class="tag_field">
+					<textarea name="page_description" id="page_description" rows="4" placeholder=" "></textarea>
+					<span><?php echo $wo['lang']['page_description']; ?></span>
+				</label>
+				<div class="help-block"><?php echo $wo['lang']['page_description_info'];?></div>
+				<label class="tag_field">
+					<select name="page_category" id="page_category" onchange="GetPageSubCategory(this)">
+						<?php foreach ($wo['page_categories'] as $category_id => $category_name) {?>
+							<option value="<?php echo $category_id?>"><?php echo $category_name; ?></option>
+						<?php } ?>
+					</select>
+					<span><?php echo $wo['lang']['page_category']; ?></span>
+				</label>
+				<?php if (!empty($wo['page_sub_categories'])) { ?>
+					<label class="tag_field">
+						<select name="page_sub_category" id="page_sub_category">
+							<?php
+							if (!empty($wo['page_sub_categories'][array_keys($wo['page_categories'])[0]])) {
+							foreach ($wo['page_sub_categories'][array_keys($wo['page_categories'])[0]] as $id => $sub_category) { ?>
+								<option value="<?php echo $sub_category['id']?>"><?php echo $sub_category['lang']; ?></option>
+							<?php } } ?>
+						</select>
+						<span><?php echo $wo['lang']['sub_category']; ?></span>
+					</label>
+				<?php } ?>
+				<?php $fields = Wo_GetCustomFields('page'); 
+					if (!empty($fields)) {
+						foreach ($fields as $key => $wo['field']) {
+							echo Wo_LoadPage('page/fields');
+						}
+					}
+				?>
+				<div class="app-general-alert setting-update-alert"></div>
+				<div class="text-center">
+					<a class="btn btn-mat disable_btn" data-ajax="?link1=pages" href="<?php echo Wo_SeoLink('index.php?link1=pages');?>">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"></path></svg> <?php echo $wo['lang']['go_back'];?>
+					</a>
+					<button class="btn btn-main btn-mat btn-mat-raised disable_btn" type="submit"><?php echo $wo['lang']['create']; ?></button>
+				</div>
+				<input type="hidden" name="hash_id" value="<?php echo Wo_CreateSession();?>">
+			</form>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	<?php
+$js_array = json_encode($wo['page_sub_categories']);
+echo "var sub_categories_array = ". $js_array . ";\n";
+?>
+	function GetPageSubCategory(self) {
+		var id = $(self).val();
+		var text = "";
+		if (typeof(sub_categories_array[id]) == 'undefined') {
+		    $('#page_sub_category').html('');
+		}
+		else{
+		   	sub_categories_array[id].forEach(function(entry) {
+				text = text + "<option value='"+entry.id+"'>"+entry.lang+"</option>";
+			});
+		    $('#page_sub_category').html(text);
+		}
+	}
+	window.RamzaCommunitySlug = window.RamzaCommunitySlug || function(value) {
+		return String(value || '').toLowerCase().trim().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '').replace(/_+/g, '_').replace(/^_+|_+$/g, '').slice(0, 32);
+	};
+	$(function() {
+		var $form = $('form.create-page-form');
+		var $title = $form.find('[name="page_title"]');
+		var $slug = $form.find('[name="page_name"]');
+		var slugWasEdited = false;
+		function updatePreview() {
+			$('#page-url-preview').text(<?php echo json_encode(rtrim($wo['config']['site_url'], '/') . '/'); ?> + $slug.val());
+		}
+		function showErrors(payload) {
+			var errors = payload && $.isArray(payload.errors) ? payload.errors : [payload && (payload.error || payload.message) ? (payload.error || payload.message) : 'Unable to create the page. Please try again.'];
+			var $alert = $('<div class="alert alert-danger" role="alert"></div>');
+			$.each(errors, function(_, error) {
+				$('<div></div>').text($('<div></div>').html(String(error)).text()).appendTo($alert);
+			});
+			$form.find('.app-general-alert').empty().append($alert);
+		}
+		$title.on('input.ramzaPageSlug', function() {
+			if (!slugWasEdited) {
+				$slug.val(window.RamzaCommunitySlug(this.value));
+				updatePreview();
+			}
+		});
+		$slug.on('input.ramzaPageSlug', function() {
+			slugWasEdited = true;
+			this.value = window.RamzaCommunitySlug(this.value);
+			updatePreview();
+		}).on('blur.ramzaPageSlug', function() {
+			this.value = window.RamzaCommunitySlug(this.value);
+			updatePreview();
+		});
+		updatePreview();
+		$form.off('submit.ramzaCreatePage').on('submit.ramzaCreatePage', function(event) {
+			event.preventDefault();
+			$slug.val(window.RamzaCommunitySlug($slug.val()));
+			var $buttons = $form.find('.disable_btn');
+			$buttons.prop('disabled', true);
+			$form.find('.app-general-alert').empty();
+			$.ajax({
+				url: Wo_Ajax_Requests_File() + '?f=pages&s=create_page',
+				type: 'POST',
+				dataType: 'json',
+				data: $form.serialize()
+			}).done(function(data) {
+				if (data && Number(data.status) === 200 && data.location) {
+					window.location.href = data.location;
+					return;
+				}
+				showErrors(data || {});
+			}).fail(function(xhr) {
+				showErrors(xhr.responseJSON || {});
+			}).always(function() {
+				$buttons.prop('disabled', false);
+				if (typeof scrollToTop === 'function') { scrollToTop(); }
+			});
+		});
+	});
+</script>

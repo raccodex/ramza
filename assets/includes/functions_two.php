@@ -5174,6 +5174,81 @@ function Wo_AddPostVideoView($post_id = false) {
     }
     return false;
 }
+function Wo_AddPostView($post_id = false) {
+    global $sqlConnect, $wo;
+    if (empty($post_id) || !is_numeric($post_id)) {
+        return false;
+    }
+    $post_id = (int)Wo_Secure($post_id);
+    $table_posts = defined('T_POSTS') ? T_POSTS : 'Wo_Posts';
+    $table_post_views = defined('T_POST_VIEWS') ? T_POST_VIEWS : 'Wo_PostViews';
+
+    $query = mysqli_query($sqlConnect, "SELECT `id`, `views`, `videoViews`, `user_id` FROM {$table_posts} WHERE `id` = '{$post_id}' LIMIT 1");
+    if (!$query || mysqli_num_rows($query) == 0) {
+        return false;
+    }
+    $fetched_data = mysqli_fetch_assoc($query);
+    $current_views = isset($fetched_data['views']) ? (int)$fetched_data['views'] : (int)$fetched_data['videoViews'];
+    $post_owner_id = (int)($fetched_data['user_id'] ?? 0);
+
+    $view_type = (!empty($wo['config']['post_view_type']) && $wo['config']['post_view_type'] == 'unique') ? 'unique' : 'repeat';
+    $user_id = (!empty($wo['user']['user_id']) && is_numeric($wo['user']['user_id'])) ? (int)$wo['user']['user_id'] : 0;
+    $raw_ip = function_exists('get_ip_address') ? get_ip_address() : ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
+    $ip_address = Wo_Secure($raw_ip);
+    $time = time();
+
+    if ($view_type === 'unique') {
+        if ($user_id > 0) {
+            $check_sql = "SELECT `id` FROM {$table_post_views} WHERE `post_id` = '{$post_id}' AND `user_id` = '{$user_id}' LIMIT 1";
+        } else {
+            $check_sql = "SELECT `id` FROM {$table_post_views} WHERE `post_id` = '{$post_id}' AND `ip_address` = '{$ip_address}' LIMIT 1";
+        }
+        $check_query = mysqli_query($sqlConnect, $check_sql);
+        if ($check_query && mysqli_num_rows($check_query) > 0) {
+            return $current_views;
+        }
+
+        @mysqli_query($sqlConnect, "INSERT INTO {$table_post_views} (`post_id`, `user_id`, `ip_address`, `time`) VALUES ('{$post_id}', '{$user_id}', '{$ip_address}', '{$time}')");
+        $new_views = $current_views + 1;
+        $updated = mysqli_query($sqlConnect, "UPDATE {$table_posts} SET `views` = '{$new_views}' WHERE `id` = '{$post_id}'");
+        if (!$updated) {
+            mysqli_query($sqlConnect, "UPDATE {$table_posts} SET `videoViews` = '{$new_views}' WHERE `id` = '{$post_id}'");
+        }
+
+        if (function_exists('Wo_RamzaAlgorithmLogRealtimeInteraction')) {
+            Wo_RamzaAlgorithmLogRealtimeInteraction(array(
+                'user_id' => $user_id,
+                'post_id' => $post_id,
+                'type' => 'view',
+                'target_user_id' => $post_owner_id,
+                'weight' => 1.0,
+                'timestamp' => $time
+            ));
+        }
+
+        return $new_views;
+    } else {
+        @mysqli_query($sqlConnect, "INSERT INTO {$table_post_views} (`post_id`, `user_id`, `ip_address`, `time`) VALUES ('{$post_id}', '{$user_id}', '{$ip_address}', '{$time}')");
+        $new_views = $current_views + 1;
+        $updated = mysqli_query($sqlConnect, "UPDATE {$table_posts} SET `views` = `views` + 1 WHERE `id` = '{$post_id}'");
+        if (!$updated) {
+            mysqli_query($sqlConnect, "UPDATE {$table_posts} SET `videoViews` = `videoViews` + 1 WHERE `id` = '{$post_id}'");
+        }
+
+        if (function_exists('Wo_RamzaAlgorithmLogRealtimeInteraction')) {
+            Wo_RamzaAlgorithmLogRealtimeInteraction(array(
+                'user_id' => $user_id,
+                'post_id' => $post_id,
+                'type' => 'view',
+                'target_user_id' => $post_owner_id,
+                'weight' => 1.0,
+                'timestamp' => $time
+            ));
+        }
+
+        return $new_views;
+    }
+}
 function Wo_SendMessage($data = array()) {
     global $wo, $sqlConnect,$siteEncryptKey;
     include_once "assets/libraries/PHPMailer-Master/vendor/autoload.php";
@@ -5533,10 +5608,13 @@ function Wo_ConfirmSMSUser($user_id, $code, $email_code = "") {
     }
 }
 function Wo_CreateSession() {
-    $hash = sha1(rand(1111, 9999));
     if (!empty($_SESSION["hash_id"])) {
-        $_SESSION["hash_id"] = $_SESSION["hash_id"];
         return $_SESSION["hash_id"];
+    }
+    try {
+        $hash = bin2hex(random_bytes(24));
+    } catch (\Exception $e) {
+        $hash = sha1(uniqid(mt_rand(), true) . microtime(true));
     }
     $_SESSION["hash_id"] = $hash;
     return $hash;
@@ -5545,19 +5623,19 @@ function Wo_CheckSession($hash = "") {
     if (!isset($_SESSION["hash_id"]) || empty($_SESSION["hash_id"])) {
         return false;
     }
-    if (empty($hash)) {
+    if (empty($hash) || !is_string($hash)) {
         return false;
     }
-    if ($hash == $_SESSION["hash_id"]) {
-        return true;
-    }
-    return false;
+    return hash_equals($_SESSION["hash_id"], $hash);
 }
 function Wo_CreateMainSession() {
-    $hash = substr(sha1(rand(1111, 9999)), 0, 20);
     if (!empty($_SESSION["main_hash_id"])) {
-        $_SESSION["main_hash_id"] = $_SESSION["main_hash_id"];
         return $_SESSION["main_hash_id"];
+    }
+    try {
+        $hash = bin2hex(random_bytes(20));
+    } catch (\Exception $e) {
+        $hash = substr(sha1(uniqid(mt_rand(), true) . microtime(true)), 0, 40);
     }
     $_SESSION["main_hash_id"] = $hash;
     return $hash;
@@ -5566,13 +5644,10 @@ function Wo_CheckMainSession($hash = "") {
     if (!isset($_SESSION["main_hash_id"]) || empty($_SESSION["main_hash_id"])) {
         return false;
     }
-    if (empty($hash)) {
+    if (empty($hash) || !is_string($hash)) {
         return false;
     }
-    if ($hash == $_SESSION["main_hash_id"]) {
-        return true;
-    }
-    return false;
+    return hash_equals($_SESSION["main_hash_id"], $hash);
 }
 
 function Wo_ReplenishingUserBalance($sum) {
@@ -7153,7 +7228,7 @@ function Wo_CheckPaystackPayment($ref) {
         if ($result) {
             if ($result["data"]) {
                 if ($result["data"]["status"] == "success") {
-                    return true;
+                    return $result["data"];
                 } else {
                     die("Transaction was not successful: Last gateway response was: " . $result["data"]["gateway_response"]);
                 }
@@ -7168,20 +7243,40 @@ function Wo_CheckPaystackPayment($ref) {
     }
 }
 function IsSaveUrl($url) {
-    if (empty($url)) {
+    global $wo;
+    if (empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
         return array(
             "status" => 400
         );
+    }
+    $parsed = parse_url($url);
+    $scheme = strtolower($parsed['scheme'] ?? '');
+    if (!in_array($scheme, array('http', 'https'), true) || empty($parsed['host'])) {
+        return array(
+            "status" => 400
+        );
+    }
+    $host = $parsed['host'];
+    $ip = gethostbyname($host);
+    $is_public = filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+    if ($is_public === false) {
+        $dev_mode = !empty($wo['config']['developer_mode']) && $wo['config']['developer_mode'] == 1;
+        if (!($dev_mode && ($host === 'localhost' || $ip === '127.0.0.1'))) {
+            return array(
+                "status" => 400
+            );
+        }
     }
     $headers = array();
     $ch      = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_URL, $url);
-    //curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 20);
+    curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+    curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    // Only calling the head
-    curl_setopt($ch, CURLOPT_HEADER, true); // header will be at output
+    curl_setopt($ch, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_NOBODY, true);
     curl_setopt($ch, CURLOPT_HEADERFUNCTION, function($curl, $header) use (&$headers) {
         $len    = strlen($header);

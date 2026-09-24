@@ -32,10 +32,16 @@ if ($f == 'album') {
             );
             if (!empty($_POST['id'])) {
                 if (is_numeric($_POST['id'])) {
-                    $post_data = array(
-                        'album_name' => Wo_Secure($_POST['album_name'])
-                    );
-                    $id        = Wo_UpdatePostData($_POST['id'], $post_data);
+                    $album_post_id = Wo_Secure($_POST['id']);
+                    $album_post = Wo_PostData($album_post_id);
+                    if (empty($album_post) || ($album_post['user_id'] != $wo['user']['user_id'] && !Wo_IsAdmin())) {
+                        $errors[] = $error_icon . $wo['lang']['please_check_details'];
+                    } else {
+                        $post_data = array(
+                            'album_name' => Wo_Secure($_POST['album_name'])
+                        );
+                        $id        = Wo_UpdatePostData($_POST['id'], $post_data);
+                    }
                 }
             } else {
                 $id = Wo_RegisterPost($post_data);

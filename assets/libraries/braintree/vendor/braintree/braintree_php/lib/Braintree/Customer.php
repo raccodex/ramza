@@ -268,6 +268,7 @@ class Customer extends Base
         }
         $this->_set('venmoAccounts', $venmoAccountArray);
 
+        // NEXT_MAJOR_VERSION remove Visa_Checkout_Card
         $visaCheckoutCardArray = [];
         if (isset($customerAttribs['visaCheckoutCards'])) {
             foreach ($customerAttribs['visaCheckoutCards'] as $visaCheckoutCard) {
@@ -276,7 +277,8 @@ class Customer extends Base
         }
         $this->_set('visaCheckoutCards', $visaCheckoutCardArray);
 
-        $samsungPayCardArray = [];
+        // NEXT_MAJOR_VERSION remove samsungPayCard
+        $samsungPayCardArray = []; // Deprecated
         if (isset($customerAttribs['samsungPayCards'])) {
             foreach ($customerAttribs['samsungPayCards'] as $samsungPayCard) {
                 $samsungPayCardArray[] = SamsungPayCard::factory($samsungPayCard);
@@ -300,6 +302,7 @@ class Customer extends Base
         }
         $this->_set('usBankAccounts', $usBankAccountArray);
 
+        // NEXT_MAJOR_VERSION remove samsungPayCard
         $this->_set('paymentMethods', array_merge(
             $this->creditCards,
             $this->paypalAccounts,
@@ -307,7 +310,7 @@ class Customer extends Base
             $this->googlePayCards,
             $this->venmoAccounts,
             $this->visaCheckoutCards,
-            $this->samsungPayCards,
+            $this->samsungPayCards, // Deprecated
             $this->usBankAccounts
         ));
 
@@ -356,19 +359,20 @@ class Customer extends Base
     }
 
     protected $_attributes = [
-        'addresses'      => '',
-        'company'        => '',
-        'creditCards'    => '',
-        'email'          => '',
-        'fax'            => '',
-        'firstName'      => '',
-        'id'             => '',
-        'lastName'       => '',
-        'phone'          => '',
-        'taxIdentifiers' => '',
-        'createdAt'      => '',
-        'updatedAt'      => '',
-        'website'        => '',
+        'addresses'          => '',
+        'company'            => '',
+        'createdAt'          => '',
+        'creditCards'        => '',
+        'email'              => '',
+        'fax'                => '',
+        'firstName'          => '',
+        'id'                 => '',
+        'internationalPhone' => '',
+        'lastName'           => '',
+        'phone'              => '',
+        'taxIdentifiers'     => '',
+        'updatedAt'          => '',
+        'website'            => '',
         ];
 
     /**

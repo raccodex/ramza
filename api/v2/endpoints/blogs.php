@@ -14,7 +14,7 @@ $required_fields =  array(
                         'reply_delete',
                         'reply_fetch'
                     );
-$reactions_types = array_keys($wo['reactions_types']);
+$reactions_types = Ramza_GetActiveReactionIds();
 $limit = (!empty($_POST['limit']) && is_numeric($_POST['limit']) && $_POST['limit'] > 0 && $_POST['limit'] <= 50 ? Wo_Secure($_POST['limit']) : 20);
 $offset = (!empty($_POST['offset']) && is_numeric($_POST['offset']) && $_POST['offset'] > 0 ? Wo_Secure($_POST['offset']) : 0);
 

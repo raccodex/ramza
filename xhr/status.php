@@ -29,6 +29,8 @@ if ($f == 'status') {
             $ftp_upload                   = $wo['config']['ftp_upload'];
             $spaces                       = $wo['config']['spaces'];
             $cloud_upload                 = $wo['config']['cloud_upload'];
+            $cloudflare_r2_storage        = $wo['config']['cloudflare_r2_storage'] ?? 0;
+            $s3_compatible_storage        = $wo['config']['s3_compatible_storage'] ?? 0;
             $registration_data            = array();
             $registration_data['user_id'] = $wo['user']['id'];
             $registration_data['posted']  = time();
@@ -61,16 +63,20 @@ if ($f == 'status') {
                             $wo['config']['ftp_upload']   = 0;
                             $wo['config']['spaces']       = 0;
                             $wo['config']['cloud_upload'] = 0;
+                            $wo['config']['cloudflare_r2_storage'] = 0;
+                            $wo['config']['s3_compatible_storage'] = 0;
                         }
                         if ($fileInfo['size'] > 0) {
                             $fileInfo['file'] = $fileInfo['tmp_name'];
-                            if (empty($_FILES["cover"]) && $wo['config']['ffmpeg_system'] == 'on') {
+                            if (empty($_FILES["cover"]) && Ramza_FfmpegEnabled()) {
                                 $wo['config']['amazone_s3']   = 0;
                                 $wo['config']['wasabi_storage']   = 0;
                                 $wo['config']['backblaze_storage']   = 0;
                                 $wo['config']['ftp_upload']   = 0;
                                 $wo['config']['spaces']       = 0;
                                 $wo['config']['cloud_upload'] = 0;
+                                $wo['config']['cloudflare_r2_storage'] = 0;
+                                $wo['config']['s3_compatible_storage'] = 0;
                             }
                             $media = Wo_ShareFile($fileInfo);
                             if (!empty($media) && $media['filename'] && in_array(strtolower(pathinfo($media['filename'], PATHINFO_EXTENSION)), array(
@@ -98,13 +104,13 @@ if ($f == 'status') {
                                     exit();
                                 }
                             }
-                            if (empty($_FILES["cover"]) && $wo['config']['ffmpeg_system'] == 'on') {
-                                $ffmpeg_b         = $wo['config']['ffmpeg_binary_file'];
+                            if (empty($_FILES["cover"]) && Ramza_FfmpegEnabled()) {
+                                $ffmpeg_b         = Ramza_FfmpegCommand();
                                 $total_seconds    = ffmpeg_duration($media['filename']);
                                 $thumb_1_duration = (int) ($total_seconds > 10) ? 11 : 1;
                                 $dir              = "upload/photos/" . date('Y') . '/' . date('m');
                                 $image_thumb      = $dir . '/' . Wo_GenerateKey() . '_' . date('d') . '_' . md5(time()) . "_image.jpeg";
-                                $output_thumb     = shell_exec("$ffmpeg_b -ss \"$thumb_1_duration\" -i " . $media['filename'] . " -vframes 1 -f mjpeg $image_thumb 2<&1");
+                                $output_thumb     = shell_exec($ffmpeg_b . ' -ss ' . escapeshellarg((string) $thumb_1_duration) . ' -i ' . escapeshellarg($media['filename']) . ' -vframes 1 -f mjpeg ' . escapeshellarg($image_thumb) . ' 2>&1');
                                 if (file_exists($image_thumb) && !empty(@getimagesize($image_thumb))) {
                                     $crop_image                   = Wo_Resize_Crop_Image(400, 400, $image_thumb, $image_thumb, $wo['config']['images_quality']);
                                     $wo['config']['amazone_s3']   = $amazone_s3;
@@ -113,6 +119,8 @@ if ($f == 'status') {
                                     $wo['config']['ftp_upload']   = $ftp_upload;
                                     $wo['config']['spaces']       = $spaces;
                                     $wo['config']['cloud_upload'] = $cloud_upload;
+                                    $wo['config']['cloudflare_r2_storage'] = $cloudflare_r2_storage;
+                                    $wo['config']['s3_compatible_storage'] = $s3_compatible_storage;
                                     Wo_UploadToS3($image_thumb);
                                     $thumb = $image_thumb;
                                 } else {
@@ -124,6 +132,8 @@ if ($f == 'status') {
                                 $wo['config']['ftp_upload']   = $ftp_upload;
                                 $wo['config']['spaces']       = $spaces;
                                 $wo['config']['cloud_upload'] = $cloud_upload;
+                                $wo['config']['cloudflare_r2_storage'] = $cloudflare_r2_storage;
+                                $wo['config']['s3_compatible_storage'] = $s3_compatible_storage;
                                 Wo_UploadToS3($media['filename']);
                             }
                             $file_type = explode('/', $fileInfo['type']);
@@ -163,6 +173,8 @@ if ($f == 'status') {
                                     $wo['config']['ftp_upload']   = $ftp_upload;
                                     $wo['config']['spaces']       = $spaces;
                                     $wo['config']['cloud_upload'] = $cloud_upload;
+                                    $wo['config']['cloudflare_r2_storage'] = $cloudflare_r2_storage;
+                                    $wo['config']['s3_compatible_storage'] = $s3_compatible_storage;
                                     $upload_s3                    = Wo_UploadToS3($last_file);
                                     $upload_s3                    = Wo_UploadToS3($media['filename']);
                                     $thumb                        = $last_file;
@@ -188,6 +200,8 @@ if ($f == 'status') {
                             $wo['config']['ftp_upload']   = 0;
                             $wo['config']['spaces']       = 0;
                             $wo['config']['cloud_upload'] = 0;
+                            $wo['config']['cloudflare_r2_storage'] = 0;
+                            $wo['config']['s3_compatible_storage'] = 0;
                             $fileInfo                     = array(
                                 'file' => $_FILES["cover"]["tmp_name"],
                                 'name' => $_FILES['cover']['name'],
@@ -224,6 +238,8 @@ if ($f == 'status') {
                                     $wo['config']['ftp_upload']   = $ftp_upload;
                                     $wo['config']['spaces']       = $spaces;
                                     $wo['config']['cloud_upload'] = $cloud_upload;
+                                    $wo['config']['cloudflare_r2_storage'] = $cloudflare_r2_storage;
+                                    $wo['config']['s3_compatible_storage'] = $s3_compatible_storage;
                                     $upload_s3                    = Wo_UploadToS3($last_file);
                                     $thumb                        = $last_file;
                                 }
@@ -333,8 +349,8 @@ if ($f == 'status') {
         $data            = array(
             'status' => 400
         );
-        $reactions_types = array_keys($wo['reactions_types']);
-        if (!empty($_GET['story_id']) && is_numeric($_GET['story_id']) && $_GET['story_id'] > 0 && !empty($_GET['reaction']) && in_array($_GET['reaction'], $reactions_types)) {
+        $reactions_types = Ramza_GetActiveReactionIds();
+        if (!empty($_GET['story_id']) && is_numeric($_GET['story_id']) && $_GET['story_id'] > 0 && !empty($_GET['reaction']) && in_array((int) $_GET['reaction'], $reactions_types, true)) {
             $story_id = Wo_Secure($_GET['story_id']);
             $story    = $db->where('id', $story_id)->getOne(T_USER_STORY);
             if (!empty($story)) {

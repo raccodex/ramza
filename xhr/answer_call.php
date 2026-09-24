@@ -7,7 +7,7 @@ if ($f == 'answer_call') {
         } else {
             $query = mysqli_query($sqlConnect, "UPDATE " . T_VIDEOS_CALLES . " SET `active` = 1 WHERE `id` = '$id'");
         }
-        if ($wo['config']['agora_chat_video'] == 1) {
+        if (function_exists('Ramza_CallProvider') ? Ramza_CallProvider() === 'agora' : $wo['config']['agora_chat_video'] == 1) {
             $query = mysqli_query($sqlConnect, "UPDATE " . T_AGORA . " SET `active` = 1 WHERE `id` = '$id'");
         }
         if ($query) {
@@ -15,7 +15,7 @@ if ($f == 'answer_call') {
                 'status' => 200
             );
             if ($_GET['type'] == 'audio') {
-                if ($wo['config']['agora_chat_video'] == 1) {
+                if (function_exists('Ramza_CallProvider') ? Ramza_CallProvider() === 'agora' : $wo['config']['agora_chat_video'] == 1) {
                     $query = mysqli_query($sqlConnect, "SELECT * FROM " . T_AGORA . " WHERE `id` = '{$id}'");
                 }
                 else{

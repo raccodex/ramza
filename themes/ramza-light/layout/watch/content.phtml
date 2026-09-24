@@ -1,0 +1,80 @@
+<div class="page-margin">
+    <div class="container">
+		<h2 class="tag_page_title"><?php echo $wo['lang']['watch']; ?></h2>
+		
+		<div class="page-margin">
+			<div class="watch_posts" data-page-type="watch">
+				<?php
+				$stories = Wo_GetPosts(array('filter_by' => 'local_video','not_monetization' => true));
+				if (count($stories) <= 0) {
+					echo Wo_LoadPage('watch/no-watch-videos');
+				} else {
+					foreach ($stories as $wo['story']) {
+						echo Wo_LoadPage('story/content');
+					}
+				}
+				?>
+			</div>
+			
+			<?php if (count($stories) > 0) { ?>
+            <div class="load-more pointer" id="load-more-posts" onclick="Wo_GetMoreWatchPosts();">
+                <span class="btn btn-default text-center pointer"><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg></span> <?php echo $wo['lang']['load_more_posts'];?></span>
+            </div>
+            <?php } ?>
+		</div>
+    </div>
+</div>
+
+<script>
+	var scrolledW = 0;
+    $(function () {
+        $(window).scroll(function () {
+          var nearToBottom = 100;
+          if($('.watch_posts').length > 0) {
+              if ($(window).scrollTop() + $(window).height() > $(document).height() - nearToBottom) {
+                if (scrolledW == 0) {
+                   scrolledW = 1;
+                   Wo_GetMoreWatchPosts();
+                }
+              }
+          }
+        });
+    });
+
+
+    function Wo_GetMoreWatchPosts() {
+        var after_post_id = $('div.post:last').attr('data-post-id');
+        $('.watch_posts').append('<div class="hidden loading-status loading-single"></div>');
+          $('#load-more-posts').hide();
+          $('.loading-status').hide().html('<div class="wow_content p15 tag_post_skel"><div class="valign"><div class="skel skel_50 skel_avatar"></div><div><div class="skel skel_2 skel_noti_name"></div><div class="skel skel_2 skel_noti_time"></div></div></div><div class="valign tag_post_skel_foot"><div class="valign"><div class="skel skel_action"></div><div class="skel skel_action"></div></div><div><div class="skel skel_action"></div></div></div></div><div class="wow_content p15 tag_post_skel"><div class="valign"><div class="skel skel_50 skel_avatar"></div><div><div class="skel skel_2 skel_noti_name"></div><div class="skel skel_2 skel_noti_time"></div></div></div><div class="valign tag_post_skel_foot"><div class="valign"><div class="skel skel_action"></div><div class="skel skel_action"></div></div><div><div class="skel skel_action"></div></div></div></div>').removeClass('hidden').show();
+          Wo_progressIconLoader($('#load-more-posts'));
+
+        $.get(Wo_Ajax_Requests_File(), {
+            f: 'watch',
+            s: 'load_more_posts',
+            after_post_id: after_post_id
+          }, function (data) {
+            if (data.length == 0) {
+              $('body').attr('no-more-posts', "true");
+			  $('#load-more-posts').html('<div class="wow_content p15"><div class="empty_state"><svg height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m26 32h-20c-3.314 0-6-2.686-6-6v-20c0-3.314 2.686-6 6-6h20c3.314 0 6 2.686 6 6v20c0 3.314-2.686 6-6 6z" fill="#fff9dd"/><path d="m20.167 8h-8.333c-1.012 0-1.834.822-1.834 1.833v12.333c0 1.012.822 1.834 1.833 1.834h8.333c1.012 0 1.834-.822 1.834-1.833v-12.334c0-1.011-.822-1.833-1.833-1.833zm-7.5 3.333h3.5c.368 0 .667.299.667.667s-.299.667-.667.667h-3.5c-.369 0-.667-.299-.667-.667s.298-.667.667-.667zm6.666 9.334h-6.667c-.368 0-.666-.299-.666-.667s.299-.667.667-.667h6.667c.368 0 .666.299.666.667s-.298.667-.667.667zm0-2.667h-6.667c-.368 0-.666-.298-.666-.667s.299-.667.667-.667h6.667c.368 0 .667.299.667.667s-.299.667-.668.667zm0-2.667h-6.667c-.368 0-.667-.299-.667-.667s.299-.666.668-.666h6.667c.368 0 .666.298.666.667s-.298.666-.667.666z" fill="#ffd200"/></svg>' + $('#get_no_posts_name').val() + '</div></div>');
+              scrolledW = 1;
+            }
+            else{
+                $('body').removeAttr('no-more-posts');
+                $('.watch_posts').append(data);
+                scrolledW = 0;
+            }
+            $('#load-more-posts').show();
+            $('.loading-status').remove();
+            Wo_progressIconLoader($('#load-more-posts'));
+        });
+    }
+	
+    <?php if(isset($wo['single_story'])) { ?>
+    var single_post_id = <?php echo $wo['single_story']->id;?>;
+    $('.lightbox-container').remove();
+    setTimeout(() => {
+        Wo_CloseLightbox()
+        Wo_OpenLightBox(single_post_id)}, 100)
+    <?php } ?>
+</script>

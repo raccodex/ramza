@@ -39,6 +39,7 @@ class CreditCardGateway
     public function create($attribs)
     {
         Util::verifyKeys(self::createSignature(), $attribs);
+        $this->_checkForDeprecatedAttributes($attribs);
         return $this->_doCreate('/payment_methods', ['credit_card' => $attribs]);
     }
 
@@ -54,6 +55,7 @@ class CreditCardGateway
      */
     public function createNoValidate($attribs)
     {
+        $this->_checkForDeprecatedAttributes($attribs);
         $result = $this->create($attribs);
         return Util::returnObjectOrThrowException(__CLASS__, $result);
     }
@@ -187,16 +189,20 @@ class CreditCardGateway
         }
     }
 
+    // NEXT_MAJOR_VERSION Remove this method
    /**
      * Create a credit on the card for the passed transaction
      *
      * @param string $token              belonging to the credit card
      * @param array  $transactionAttribs containing request parameters
      *
+     * @deprecated
+     *
      * @return Result\Successful|Result\Error
      */
     public function credit($token, $transactionAttribs)
     {
+        trigger_error("CreditCard::credit has been deprecated in favor of Transaction::credit", E_USER_DEPRECATED);
         $this->_validateId($token);
         return Transaction::credit(
             array_merge(
@@ -206,6 +212,7 @@ class CreditCardGateway
         );
     }
 
+    // NEXT_MAJOR_VERSION Remove this method
     /**
      * Create a credit on this card, assuming validations will pass
      *
@@ -216,24 +223,31 @@ class CreditCardGateway
      *
      * @throws Exception\ValidationError
      *
+     * @deprecated
+     *
      * @return Transaction
      */
     public function creditNoValidate($token, $transactionAttribs)
     {
+        trigger_error("CreditCard::creditNoValidate has been deprecated in favor of Transaction::creditNoValidate", E_USER_DEPRECATED);
         $result = $this->credit($token, $transactionAttribs);
         return Util::returnObjectOrThrowException('Braintree\Transaction', $result);
     }
 
+    // NEXT_MAJOR_VERSION Remove this method
     /**
      * Create a new sale for the current card
      *
      * @param string $token              belonging to the credit card
      * @param array  $transactionAttribs containing request parameters
      *
+     * @deprecated
+     *
      * @return Result\Successful|Result\Error
      */
     public function sale($token, $transactionAttribs)
     {
+        trigger_error("CreditCard::sale has been deprecated in favor of Transaction::sale", E_USER_DEPRECATED);
         $this->_validateId($token);
         return Transaction::sale(
             array_merge(
@@ -243,6 +257,7 @@ class CreditCardGateway
         );
     }
 
+    // NEXT_MAJOR_VERSION Remove this method
     /**
      * Create a new sale using this card, assuming validations will pass
      *
@@ -253,10 +268,13 @@ class CreditCardGateway
      *
      * @throws Exception\ValidationsFailed
      *
+     * @deprecated
+     *
      * @return Transaction
      */
     public function saleNoValidate($token, $transactionAttribs)
     {
+        trigger_error("CreditCard::saleNoValidate has been deprecated in favor of Transaction::saleNoValidate", E_USER_DEPRECATED);
         $result = $this->sale($token, $transactionAttribs);
         return Util::returnObjectOrThrowException('Braintree\Transaction', $result);
     }
@@ -275,6 +293,7 @@ class CreditCardGateway
     public function update($token, $attributes)
     {
         Util::verifyKeys(self::updateSignature(), $attributes);
+        $this->_checkForDeprecatedAttributes($attributes);
         $this->_validateId($token);
         return $this->_doUpdate('put', '/payment_methods/credit_card/' . $token, ['creditCard' => $attributes]);
     }
@@ -295,6 +314,7 @@ class CreditCardGateway
      */
     public function updateNoValidate($token, $attributes)
     {
+        $this->_checkForDeprecatedAttributes($attributes);
         $result = $this->update($token, $attributes);
         return Util::returnObjectOrThrowException(__CLASS__, $result);
     }
@@ -314,12 +334,17 @@ class CreditCardGateway
         return new Result\Successful();
     }
 
+    // NEXT_MAJOR_VERSION Remove venmoSdkSession
+    // The old venmo SDK class has been deprecated
     private static function baseOptions()
     {
         return [
+            'accountInformationInquiry',
+            'failOnDuplicatePaymentMethod',
+            'failOnDuplicatePaymentMethodForCustomer',
             'makeDefault',
             'skipAdvancedFraudChecking',
-            'venmoSdkSession',
+            'venmoSdkSession', //Deprecated
             'verificationAccountType',
             'verificationAmount',
             'verificationMerchantAccountId',
@@ -327,11 +352,13 @@ class CreditCardGateway
         ];
     }
 
+    // NEXT_MAJOR_VERSION Remove venmoSdkPaymentMethodCode
+    // The old venmo SDK class has been deprecated
     private static function baseSignature($options)
     {
          return [
              'billingAddressId', 'cardholderName', 'cvv', 'number',
-             'expirationDate', 'expirationMonth', 'expirationYear', 'token', 'venmoSdkPaymentMethodCode',
+             'expirationDate', 'expirationMonth', 'expirationYear', 'token', 'venmoSdkPaymentMethodCode', // Deprecated
              'deviceData', 'paymentMethodNonce',
              ['options' => $options],
              [
@@ -355,7 +382,8 @@ class CreditCardGateway
             'locality',
             'region',
             'postalCode',
-            'streetAddress'
+            'streetAddress',
+            'phoneNumber'
         ];
     }
 
@@ -363,7 +391,6 @@ class CreditCardGateway
     public static function createSignature()
     {
         $options = self::baseOptions();
-        $options[] = "failOnDuplicatePaymentMethod";
         $signature = self::baseSignature($options);
         $signature[] = 'customerId';
         $signature[] = self::threeDSecurePassThruSignature();
@@ -391,7 +418,6 @@ class CreditCardGateway
     public static function updateSignature()
     {
         $options = self::baseOptions();
-        $options[] = "failOnDuplicatePaymentMethod";
         $signature = self::baseSignature($options);
         $signature[] = self::threeDSecurePassThruSignature();
 
@@ -404,6 +430,7 @@ class CreditCardGateway
         ];
 
         foreach ($signature as $key => $value) {
+            // phpcs:ignore
             if (is_array($value) and array_key_exists('billingAddress', $value)) {
                 // phpcs:ignore
                 $signature[$key]['billingAddress'] = array_merge_recursive($value['billingAddress'], $updateExistingBillingSignature);
@@ -464,6 +491,13 @@ class CreditCardGateway
             throw new Exception\Unexpected(
                 "Expected address or apiErrorResponse"
             );
+        }
+    }
+
+    private function _checkForDeprecatedAttributes($attributes)
+    {
+        if (isset($attributes['venmoSdkSession']) || isset($attributes['venmoSdkPaymentMethodCode'])) {
+            trigger_error('The Venmo SDK integration is Unsupported. Please update your integration to use Pay with Venmo instead.', E_USER_DEPRECATED);
         }
     }
 }

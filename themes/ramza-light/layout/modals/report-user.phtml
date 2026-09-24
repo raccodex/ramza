@@ -1,0 +1,65 @@
+<div class="modal fade" id="report-user-modal" role="dialog">
+	<div class="modal-dialog modal-md wow_mat_mdl">
+		<form id="report-user-form-<?php echo $wo['user_profile']['user_id'];?>" method="post">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title"><?php echo $wo['lang']['report_user_text']; ?></h4>
+				</div>
+				<div class="modal-body report-textarea-<?php echo $wo['user_profile']['user_id'];?>">
+					<div class="report_alert"></div>
+					<label class="tag_field">
+						<select name="reason">
+							<?php foreach ($wo['config']['report_reasons'] as $key => $value) { ?>
+								<option value="<?php echo $value; ?>"><?php echo $wo['lang'][$value]; ?></option>
+							<?php } ?>
+						</select>
+						<span><?php echo $wo['lang']['reason'] ?></span>
+					</label>
+
+					<label class="tag_field">
+						<textarea placeholder=" " dir="auto" rows="5" name="text"></textarea>
+						<span><?php echo $wo['lang']['please_explain_the_reason'] ?></span>
+					</label>
+
+				    <input type="hidden" name="user" value="<?php echo $wo['user_profile']['user_id'];?>">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default btn-mat disable_btn" data-dismiss="modal" aria-label="Close"><?php echo $wo['lang']['cancel'] ?></button>
+					<button type="submit" class="btn btn-main btn-mat disable_btn" id="report-user-button"><?php echo $wo['lang']['report']; ?></button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	jQuery(document).ready(function($) {
+		  var textarea = $('.report-textarea-<?php echo $wo['user_profile']['user_id'];?> textarea');
+		  var text = textarea.val();
+		$('#report-user-form-<?php echo $wo['user_profile']['user_id'];?>').ajaxForm({
+	      url: Wo_Ajax_Requests_File() + '?f=reports&s=report_user',
+	      beforeSubmit: function(arr, $form, options) { 
+	     //  	if ($('.report-textarea-<?php echo $wo['user_profile']['user_id'];?>').find('textarea').val() == '') {
+		    //   $('.report-textarea-<?php echo $wo['user_profile']['user_id'];?>').find('.report_alert').html("<div class='alert alert-danger'><?php echo $wo['lang']['reason_empty']; ?></div>");
+		    //   return false;
+		    // }
+	      },
+	      beforeSend: function() {
+			$('#report-user-modal').find('.disable_btn').attr('disabled','disabled');
+	      },
+	      success: function(data) {
+	        if(data.status == 200 && data.code == 1) {
+	        	$('.report-textarea-<?php echo $wo['user_profile']['user_id'];?>').find('.report_alert').html("<div class='alert alert-success'>"+data.message+"</div>");
+				$('#report-user-modal').find('.disable_btn').removeAttr("disabled");
+	        	setTimeout(function () {
+	        		$('#report-user-modal').modal('hide');
+	        		location.reload();
+	        	},2000);
+		    }
+		    else{
+				$('#report-user-modal').find('.disable_btn').removeAttr("disabled");
+			    location.reload();
+			    $('#report-user-modal').modal('hide');
+		    }
+	    }});
+	});
+</script>
